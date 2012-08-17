@@ -1,0 +1,21 @@
+author: NoRC
+description: Community Bridging plugin based of ChillerCrafts ForumBridge plugin
+main: net.netmanagers.community.Main
+name: CommunityBridge
+version: 1.06
+commands:
+    cbban:
+        description: Bans from the forum.
+        usage: /cbban <username>
+    cbunban:
+        description: Unbans from the forum.
+        usage: /cbunban <username>
+    cbrank:
+        description: Ranks on the forum.
+        usage: /cbrank <username> <rank>
+    cbsync:
+        description: Syncs to the forum.
+        usage: /cbsync
+    cbsyncall:
+        description: Syncs everyone to the forum.
+        usage: /cbsyncall
