@@ -41,6 +41,7 @@ public class Main extends JavaPlugin {
 	public static boolean groups_table_enabled = false;
 	public static boolean basic_tracking = false;
 	public static boolean auto_sync = false;
+  public static boolean auto_remind = false;
 	public static boolean secondary_groups = false;
 	public static boolean show_primary_group = false;
 	public static boolean kick_unregistered = false;
@@ -79,7 +80,8 @@ public class Main extends JavaPlugin {
 	public static int default_group;
 	public static int minposts_required;
 	public static long auto_sync_every;
-		
+	public static long auto_remind_every;
+  
 	public static String multi_table_key_field;
 	public static String multi_table_key_value;	
 	public static String multi_table_value_field;	
@@ -159,7 +161,8 @@ public class Main extends JavaPlugin {
 			multi_tables_use_key = config.getBoolean("multi-tables-use-key");
 			secondary_groups = config.getBoolean("secondary-groups");
 			use_banned = config.getBoolean("use-banned-field");
-			auto_sync = config.getBoolean("auto-sync");			
+			auto_sync = config.getBoolean("auto-sync");
+      auto_remind = config.getBoolean("auto-remind");
 			kick_unregistered = config.getBoolean("kick-unregistered");
 				
 			require_avatar = config.getBoolean("profile-requirements.require-avatar");
@@ -234,6 +237,7 @@ public class Main extends JavaPlugin {
 			
 			default_group = config.getInt("users-table.default-group");
 			auto_sync_every = config.getLong("auto-sync-every");
+      auto_remind_every = config.getLong("auto-remind-every");
 			
 			if (use_banned) {
 				is_banned_field = config.getString("users-table.banned-field");
@@ -242,7 +246,8 @@ public class Main extends JavaPlugin {
 			}
 
 			if(show_config){
-				Main.log.info("Auto Sync : " + auto_sync);
+				Main.log.info("Auto Sync   : " + auto_sync);
+        Main.log.info("Auto Remind :" + auto_remind);
 				Main.log.info("Kick Unregistered : " + kick_unregistered);
 				Main.log.info("Multi Tables : " + multi_tables);
 				Main.log.info("Basic Tracking : " + basic_tracking);
@@ -284,6 +289,11 @@ public class Main extends JavaPlugin {
 				if(auto_sync)
 					startSyncing();
 				
+        if (auto_remind)
+        {
+          startAutoReminder();
+        }
+        
 				saveConfig();
 				
 				log.info("Enabled!");
@@ -315,12 +325,25 @@ public class Main extends JavaPlugin {
 	private void startSyncing() {
 		log.info("Auto Sync Every: " + auto_sync_every);
 		getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
-			public void run() {
+			public void run()
+      {
 				syncAll();
 			}
 		}, auto_sync_every, auto_sync_every);
 	}
-	
+
+  private void startAutoReminder()
+  {
+    log.info("Auto Remind Unregistered Every: " + auto_remind_every);
+    getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable()
+    {
+      public void run()
+      {
+        remindUnregistered();
+      }
+   	}, auto_remind_every, auto_remind_every);
+  }	
+  
 	private void ResetOnlineStatus(){
 		try {
 			if (multi_tables) {
@@ -364,16 +387,19 @@ public class Main extends JavaPlugin {
 		try {
 			ResultSet res;
 			if (multi_tables) {
-				if(multi_tables_use_key){
-					res = Main.sql.sqlQuery("SELECT * FROM " + multi_table + " WHERE " + multi_table_key_field + " = '" + multi_table_key_value + "' AND " + multi_table_value_field + " = '" + username + "' order by " + multi_table_user_id_field + " desc");					
-				}else{
-					res = Main.sql.sqlQuery("SELECT * FROM  "+ multi_table +" WHERE " + multi_table_value_field + " = '" + username + "' order by " + multi_table_user_id_field + " desc");					
+				if(multi_tables_use_key)
+        {
+ 					res = Main.sql.sqlQuery("SELECT * FROM " + multi_table + " WHERE " + multi_table_key_field + " = '" + multi_table_key_value + "' AND " + multi_table_value_field + " = '" + username + "' order by " + multi_table_user_id_field + " desc");          
+        }
+        else 
+        {
+ 					res = Main.sql.sqlQuery("SELECT * FROM  "+ multi_table +" WHERE " + multi_table_value_field + " = '" + username + "' order by " + multi_table_user_id_field + " desc");
 				}
 				if (res.next())
 					userId = res.getInt(multi_table_user_id_field);
 			} else {
-				res = Main.sql.sqlQuery("SELECT * FROM " + users_table + " WHERE " + user_name_field + " = '" + username + "' order by " + user_id_field + " desc");
-				if (res.next())
+ 				res = Main.sql.sqlQuery("SELECT * FROM " + users_table + " WHERE " + user_name_field + " = '" + username + "' order by " + user_id_field + " desc");
+        if (res.next())
 					userId = res.getInt(user_id_field);
 			}			
 			return userId;
@@ -530,7 +556,35 @@ public class Main extends JavaPlugin {
 			SyncPlayer(play, false);
 		}
 	}
+  
+  public static void RemindPlayer(Player p)
+  {		
+    int id = getUserId(p.getName());
+    if (id == 0)
+    {
+      if (kick_unregistered)
+      {
+        p.kickPlayer(unregistered_message);
+      } 
+      else
+      {			
+        p.sendMessage(ChatColor.RED + unregistered_messagereminder);
+        log.info(p.getName() + " issued unregistered reminder notice");					
+      }
+    }						
+  }
 	
+  public static void remindUnregistered()
+  {
+    log.info("Running Auto UnRegistered Auto Reminder");
+    
+    for (Player play : Bukkit.getOnlinePlayers())
+    {
+      RemindPlayer(play);
+    }
+	
+  }
+
 	public static void SyncPlayer(Player p, boolean firstsync){		
 		try {
 			int id = getUserId(p.getName());
@@ -550,6 +604,7 @@ public class Main extends JavaPlugin {
 						if (banned)							
 							p.kickPlayer("You have been banned from the site.");
 					}
+          
 					boolean requirements_met = true;
 					
 					if(require_minposts){

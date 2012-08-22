@@ -28,7 +28,7 @@ public class EventListener implements Listener {
 				if(Main.onlinestatus_enabled){
 					try {
 						if (Main.multi_tables && Main.multi_tables_use_key){
-							Main.sql.updateQuery("UPDATE " + Main.multi_table + " SET " + Main.multi_table_value_field + " = '" + Main.onlinestatus_valueoffline + "' WHERE " + Main.multi_table_user_id_field + " = '" + id + "' and " + Main.multi_table_key_field +" = '" + Main.onlinestatus_key_value + "'");							
+							Main.sql.updateQuery("UPDATE " + Main.multi_table + " SET " + Main.multi_table_value_field + " = '" + Main.onlinestatus_valueoffline + "' WHERE " + Main.multi_table_user_id_field + " = '" + id + "' and " + Main.multi_table_key_field +" = '" + Main.onlinestatus_key_value + "'");
 						}else if(Main.multi_tables){
 							Main.sql.updateQuery("UPDATE " + Main.multi_table + " SET " + Main.onlinestatus_field + " = '" + Main.onlinestatus_valueoffline + "' WHERE " + Main.multi_table_user_id_field + " = '" + id + "'");
 						}else{

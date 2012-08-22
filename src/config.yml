@@ -1,5 +1,5 @@
 # 
-# Sample Invision Power Board Config
+# Sample Board Config
 #
 # Please ensure if you run your minecraft server on a remote host
 # that your MySQL server allows REMOTE connections.
@@ -67,13 +67,23 @@ secondary-groups: true
 # The permissions system (PEX, bPerms, GroupManager)
 permissions-system: GroupManager
 
-# This is a timer that will check and sync all data with your database at a set interval
+# This is a timer that will check and sync all data with your database at a set
+# interval
 auto-sync: true
 
-# The interval for the auto-sync timer, this should be no less than 15-20minutes (time in milliseconds)
-auto-sync-every: 1200000
+# The interval for the auto-sync timer, this should be no less than 15-20minutes
+#(time in ticks, 1 tick = 1/20th of a second)
+auto-sync-every: 24000
 
-# This is for extra features of the bridge plugin that allow you to save Age, Gametime, Last Online, Health etc to the database
+# This is a timer that will notify unregistered users more frequently to register
+auto-remind: true
+
+# The interval for the auto-remind timer, this should be no less than 5-10minutes
+#(time in ticks, 1 tick = 1/20th of a second)
+auto-remind-every: 12000
+
+# This is for extra features of the bridge plugin that allow you to save age,
+# gametime, last online, health, etc. to the database
 enable-basic-tracking: true
 
 #
