@@ -2,7 +2,7 @@ author: NoRC
 description: Community Bridging plugin based of ChillerCrafts ForumBridge plugin
 main: net.netmanagers.community.Main
 name: CommunityBridge
-version: 1.07
+version: 1.08
 commands:
     cbban:
         description: Bans from the forum.
