@@ -384,21 +384,39 @@ public class Main extends JavaPlugin {
 
 	public static int getUserId(String username) {
 		int userId = 0;
-		try {
+    String query;
+		try
+    {
 			ResultSet res;
-			if (multi_tables) {
+			if (multi_tables)
+      {
 				if(multi_tables_use_key)
         {
- 					res = Main.sql.sqlQuery("SELECT * FROM " + multi_table + " WHERE " + multi_table_key_field + " = '" + multi_table_key_value + "' AND " + multi_table_value_field + " = '" + username + "' order by " + multi_table_user_id_field + " desc");          
+          query = "SELECT * FROM " + multi_table
+                  + " WHERE " + multi_table_key_field + " = '" 
+                  + multi_table_key_value
+                  + "' AND LOWER(" + multi_table_value_field + ") = LOWER('"
+                  + username
+                  + "') ORDER BY " + multi_table_user_id_field + " DESC";
         }
         else 
         {
- 					res = Main.sql.sqlQuery("SELECT * FROM  "+ multi_table +" WHERE " + multi_table_value_field + " = '" + username + "' order by " + multi_table_user_id_field + " desc");
+          query = "SELECT * FROM  "+ multi_table
+                  + " WHERE LOWER(" + multi_table_value_field +
+                  ") = LOWER('" + username
+                  + "') ORDER BY " + multi_table_user_id_field + " DESC";
 				}
+				res = Main.sql.sqlQuery(query);
 				if (res.next())
 					userId = res.getInt(multi_table_user_id_field);
-			} else {
- 				res = Main.sql.sqlQuery("SELECT * FROM " + users_table + " WHERE " + user_name_field + " = '" + username + "' order by " + user_id_field + " desc");
+			}
+      else
+      {
+        query = "SELECT * FROM " + users_table
+                + " WHERE LOWER(" + user_name_field
+                + ") = LOWER('" + username
+                + "') order by " + user_id_field + " desc";
+ 				res = Main.sql.sqlQuery(query);
         if (res.next())
 					userId = res.getInt(user_id_field);
 			}			
@@ -409,11 +427,14 @@ public class Main extends JavaPlugin {
 			
 		} catch (IllegalAccessException e) {
 			
-		} catch (SQLException e) {
+		}
+    catch (SQLException e)
+    {
 			log.severe("Broken User ID SQL Query, check your config.yml");
 			e.printStackTrace();
 			disablePlugin();
 		}
+    
 		return userId;
 	}
 
