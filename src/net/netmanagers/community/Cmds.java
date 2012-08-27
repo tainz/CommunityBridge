@@ -22,26 +22,7 @@ public class Cmds implements CommandExecutor {
 			if (label.equalsIgnoreCase("cbban")) {
 				if (p.hasPermission("communitybridge.cbban")) {
 					if (split.length == 1) {
-						try {
-							if (Bukkit.getPlayer(split[0]) != null) {
-								Player pl = Bukkit.getPlayer(split[0]);
-								Main.sql.updateQuery("UPDATE "+Main.users_table+" SET "+Main.is_banned_field+"='1' WHERE "+Main.user_id_field+"='" + Main.getUserId(pl.getName()) + "'");
-								pl.kickPlayer("You have been banned from the site.");
-								Main.log.info("Banning " + pl.getName() + " from the site");
-								p.sendMessage(ChatColor.RED + "Banned " + pl.getName() + " from the site");
-							} else {
-								OfflinePlayer pl = Bukkit.getOfflinePlayer(split[0]);
-								Main.sql.updateQuery("UPDATE "+Main.users_table+" SET "+Main.is_banned_field+"='1' WHERE "+Main.user_id_field+"='" + Main.getUserId(pl.getName()) + "'");								
-								Main.log.info("Banning " + pl.getName() + " from the site");
-								p.sendMessage(ChatColor.RED + "Banned " + pl.getName() + " from the site");
-							}
-						} catch (MalformedURLException e) {
-							e.printStackTrace();
-						} catch (InstantiationException e) {
-							e.printStackTrace();
-						} catch (IllegalAccessException e) {
-							e.printStackTrace();
-						}
+            banPlayer(p, split[0]);
 					} else {
 						p.sendMessage(ChatColor.RED + "Incorrect usage: /cbban <username>");
 					}
@@ -51,18 +32,7 @@ public class Cmds implements CommandExecutor {
 			} else if (label.equalsIgnoreCase("cbunban")) {
 				if (p.hasPermission("communitybridge.cbunban")) {
 					if (split.length == 1) {
-						try {
-							OfflinePlayer pl = Bukkit.getOfflinePlayer(split[0]);
-							Main.sql.updateQuery("UPDATE "+Main.users_table+" SET "+Main.is_banned_field+"='0' WHERE "+Main.user_id_field+"='" + Main.getUserId(pl.getName()) + "'");							
-							Main.log.info("Unbanning " + pl.getName() + " from the site");
-							p.sendMessage(ChatColor.RED + pl.getName() + " has been unbanned");
-						} catch (MalformedURLException e) {
-							e.printStackTrace();
-						} catch (InstantiationException e) {
-							e.printStackTrace();
-						} catch (IllegalAccessException e) {
-							e.printStackTrace();
-						}
+            unbanPlayer(p, split[0]);
 					} else {
 						p.sendMessage(ChatColor.RED + "Incorrect usage: /cbunban <username>");
 					}
@@ -191,4 +161,70 @@ public class Cmds implements CommandExecutor {
 		}
 		return true;
 	}
+
+  private void banPlayer(Player staff, String victimString)
+  {
+    String query;
+    try
+    {
+      if (Bukkit.getPlayer(victimString) == null)
+      {
+        OfflinePlayer victim = Bukkit.getOfflinePlayer(victimString);
+        query = "UPDATE " + Main.users_table +
+                " SET " + Main.is_banned_field + "='1'" +
+                " WHERE " + Main.user_id_field + "='" +
+                Main.getUserId(victim.getName()) + "'";
+        Main.log.info(query);
+        Main.sql.updateQuery(query);
+        Main.log.info("Banning " + victim.getName() + " from the site");
+        if (staff != null)
+        {
+          staff.sendMessage(ChatColor.RED + "Banned " + victim.getName() +
+                            " from the site");
+        }
+      }
+      else
+      {
+        Player victim = Bukkit.getPlayer(victimString);
+        query = "UPDATE " + Main.users_table +
+                " SET " + Main.is_banned_field +"='1'" +
+                " WHERE " + Main.user_id_field + "='" +
+                Main.getUserId(victim.getName()) + "'";
+        Main.log.info(query);
+        Main.sql.updateQuery(query);
+        victim.kickPlayer("You have been banned from the site.");
+        Main.log.info("Banning " + victim.getName() + " from the site");
+        if (staff != null)
+        {
+          staff.sendMessage(ChatColor.RED + "Banned " + victim.getName() + " from the site");
+        }
+      }
+    } catch (MalformedURLException e) {
+      e.printStackTrace();
+    } catch (InstantiationException e) {
+      e.printStackTrace();
+    } catch (IllegalAccessException e) {
+      e.printStackTrace();
+    }
+  }
+
+  private void unbanPlayer(Player staff, String victimString)
+  {
+    try
+    {
+      OfflinePlayer victim = Bukkit.getOfflinePlayer(victimString);
+      Main.sql.updateQuery("UPDATE "+Main.users_table+" SET "+Main.is_banned_field+"='0' WHERE "+Main.user_id_field+"='" + Main.getUserId(victim.getName()) + "'");							
+      Main.log.info("Unbanning " + victim.getName() + " from the site");
+      if (staff != null)
+      {
+        staff.sendMessage(ChatColor.RED + victim.getName() + " has been unbanned");
+      }
+    } catch (MalformedURLException e) {
+      e.printStackTrace();
+    } catch (InstantiationException e) {
+      e.printStackTrace();
+    } catch (IllegalAccessException e) {
+      e.printStackTrace();
+    }
+  }
 }
