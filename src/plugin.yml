@@ -4,18 +4,47 @@ main: net.netmanagers.community.Main
 name: CommunityBridge
 version: 1.08
 commands:
-    cbban:
-        description: Bans from the forum.
-        usage: /cbban <username>
-    cbunban:
-        description: Unbans from the forum.
-        usage: /cbunban <username>
-    cbrank:
-        description: Ranks on the forum.
-        usage: /cbrank <username> <rank>
-    cbsync:
-        description: Syncs to the forum.
-        usage: /cbsync
-    cbsyncall:
-        description: Syncs everyone to the forum.
-        usage: /cbsyncall
+  cbban:
+    description: Bans from the forum.
+    usage: /cbban <username>
+    permission: communitybridge.cbban
+  cbrank:
+    description: Ranks on the forum.
+    usage: /cbrank <username> <rank>
+    permission: communitybridge.cbrank
+  cbsync:
+    description: Syncs to the forum.
+    usage: /cbsync
+    permission: communitybridge.cbsync
+  cbsyncall:
+    description: Syncs everyone to the forum.
+    usage: /cbsyncall
+    permission: communitybridge.cbsyncall
+  cbunban:
+    description: Unbans from the forum.
+    usage: /cbunban <username>
+    permission: communitybridge.cbunban
+permissions:
+  communitybridge.*:
+    description: Grants access to all CommunityBridge commands
+    children:
+      communitybridge.cbban: true
+      communitybridge.cbrank: true
+      communitybridge.cbsync: true
+      communitybridge.cbsyncall: true
+      communitybridge.cbunban: true
+  communitybridge.cbban:
+    description: Allows use of the /cbban command.
+    default: false
+  communitybridge.cbrank:
+    description: Allows use of the /cbrank command.
+    default: false
+  communitybridge.cbsync:
+    description: Allows use of the /cbsync command.
+    default: true
+  communitybridge.cbsyncall:
+    description: Allows use of the /cbsyncall command.
+    default: false
+  communitybridge.cbunban:
+    description: Allows use of the /cbunban command.
+    default: false
