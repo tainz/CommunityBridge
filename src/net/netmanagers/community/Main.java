@@ -265,18 +265,24 @@ public class Main extends JavaPlugin {
 					Main.log.info("Tracking Wallet        : " + wallet_enabled);
 				}
 			}
-			
-			int gr = 0;
+
+      // Determine how many groups are configured.
+			int count = 0;
 			for (String s : config.getKeys(true)) {
 				if (s.contains("groups.")) {
-					gr++;
+					count++;
 				}
 			}
 
-			groups = new String[gr];
-
-			for (int i = 0; i < gr; i++) {
-				groups[i] = config.getString("groups." + (i + 1));
+      groups = new String[count];
+      
+      // Collect a list of configurated groups.
+      count = 0;
+      for (String s : config.getKeys(true)) {
+				if (s.contains("groups.")) {
+					groups[count] = config.getString(s);
+          count++;
+				}
 			}
 
 			sql = new SQL(config.get("db-host") + ":" + config.get("db-port"), config.get("db-database") + "", config.get("db-username") + "", config.get("db-password") + "");
