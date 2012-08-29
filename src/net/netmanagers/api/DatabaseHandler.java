@@ -33,7 +33,7 @@ public class DatabaseHandler {
 			Main.log.severe("No MySQL Driver Found");
 			this.connection = null;
 		} catch (SQLException e) {
-			Main.log.severe("Could not connect to MySQL Server.");
+			Main.log.severe("Could not connect to MySQL Server:" + e.getMessage());
 			this.connection = null;
 		}
 	}
