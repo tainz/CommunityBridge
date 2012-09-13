@@ -40,9 +40,14 @@ public class Main extends JavaPlugin {
 	public static boolean banlist_table_enabled = false;
 	public static boolean groups_table_enabled = false;
 	public static boolean basic_tracking = false;
-	public static boolean auto_sync = false;
+	
+  public static boolean auto_sync = false;
   public static boolean auto_remind = false;
-	public static boolean secondary_groups = false;
+  public static String auto_every_unit;
+	public static long auto_sync_every;
+	public static long auto_remind_every;
+
+  public static boolean secondary_groups = false;
 	public static boolean show_primary_group = false;
 	public static boolean kick_unregistered = false;
 	public static boolean require_avatar = false;
@@ -79,8 +84,6 @@ public class Main extends JavaPlugin {
 	public static int banned_users_group;
 	public static int default_group;
 	public static int minposts_required;
-	public static long auto_sync_every;
-	public static long auto_remind_every;
   
 	public static String multi_table_key_field;
 	public static String multi_table_key_value;	
@@ -161,10 +164,15 @@ public class Main extends JavaPlugin {
 			multi_tables_use_key = config.getBoolean("multi-tables-use-key");
 			secondary_groups = config.getBoolean("secondary-groups");
 			use_banned = config.getBoolean("use-banned-field");
-			auto_sync = config.getBoolean("auto-sync");
-      auto_remind = config.getBoolean("auto-remind");
 			kick_unregistered = config.getBoolean("kick-unregistered");
-				
+
+      auto_sync = config.getBoolean("auto-sync");
+      auto_remind = config.getBoolean("auto-remind");
+      auto_every_unit = config.getString("auto-every-unit", "ticks");
+
+			auto_sync_every = config.getLong("auto-sync-every");
+      auto_remind_every = config.getLong("auto-remind-every");
+      
 			require_avatar = config.getBoolean("profile-requirements.require-avatar");
 			avatar_table = config.getString("profile-requirements.require-avatar-table");
 			avatar_user_field = config.getString("profile-requirements.require-avatar-user-id-field");
@@ -236,8 +244,7 @@ public class Main extends JavaPlugin {
 			lifeticks_field = config.getString("basic-tracking.field-lifeticks-field");
 			
 			default_group = config.getInt("users-table.default-group");
-			auto_sync_every = config.getLong("auto-sync-every");
-      auto_remind_every = config.getLong("auto-remind-every");
+      
 			
 			if (use_banned) {
 				is_banned_field = config.getString("users-table.banned-field");
@@ -287,14 +294,19 @@ public class Main extends JavaPlugin {
 
 			sql = new SQL(config.get("db-host") + ":" + config.get("db-port"), config.get("db-database") + "", config.get("db-username") + "", config.get("db-password") + "");
 			sql.initialize();			
-			if(sql.checkConnection()){				
+			if(sql.checkConnection())
+      {				
 				if (basic_tracking && onlinestatus_enabled)
+        {
 					ResetOnlineStatus();
-				
+        }
 				syncAll();
-				if(auto_sync)
+        
+				if (auto_sync)
+        {
 					startSyncing();
-				
+        }
+        
         if (auto_remind)
         {
           startAutoReminder();
@@ -328,26 +340,70 @@ public class Main extends JavaPlugin {
         }		
 	}
 	
-	private void startSyncing() {
-		log.info("Auto Sync Every: " + auto_sync_every);
-		getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
+	private void startSyncing()
+  {
+    long every = auto_sync_every; // Effectively defaulting to ticks.
+    String unit = "ticks";   
+    
+    if (auto_every_unit.toLowerCase().startsWith("second"))
+    {
+      every = auto_sync_every * 20; // 20 ticks per second.
+      unit = "seconds";
+    }
+    else if (auto_every_unit.toLowerCase().startsWith("minute"))
+    {
+      every = auto_sync_every * 1200; // 20 ticks per second, 60 sec per minute
+      unit = "minutes";
+    }
+    else if (auto_every_unit.toLowerCase().startsWith("hour"))
+    {
+      every = auto_sync_every * 72000; // 20 ticks/s 60s/m, 60m/h
+      unit = "hours";
+    }   
+    
+		log.info(String.format("Auto Sync Every: %d %s.", auto_sync_every, unit));
+		getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable()
+    {
+      @Override
 			public void run()
       {
 				syncAll();
 			}
-		}, auto_sync_every, auto_sync_every);
+		}, every, every);
 	}
 
   private void startAutoReminder()
   {
-    log.info("Auto Remind Unregistered Every: " + auto_remind_every);
+    long every = auto_remind_every; // Effectively defaulting to ticks.
+    
+    String unit = "ticks";
+    
+    if (auto_every_unit.toLowerCase().startsWith("second"))
+    {
+      every = auto_remind_every * 20; // 20 ticks per second.
+      unit = "seconds";
+    }
+    else if (auto_every_unit.toLowerCase().startsWith("minute"))
+    {
+      every = auto_remind_every * 1200; // 20 ticks per second, 60 sec/minute
+      unit = "minutes";
+    }
+    else if (auto_every_unit.toLowerCase().startsWith("hour"))
+    {
+      every = auto_remind_every * 72000; // 20 ticks/s 60s/m, 60m/h
+      unit = "hours";
+    }
+    
+    log.info(String.format("Auto Remind Unregistered Every: %d %s.",
+                           auto_remind_every, unit));
     getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable()
     {
+      @Override
       public void run()
       {
         remindUnregistered();
       }
-   	}, auto_remind_every, auto_remind_every);
+   	}, every, every);
   }	
   
 	private void ResetOnlineStatus(){

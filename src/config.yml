@@ -71,16 +71,21 @@ permissions-system: GroupManager
 # interval
 auto-sync: true
 
-# The interval for the auto-sync timer, this should be no less than 15-20minutes
-#(time in ticks, 1 tick = 1/20th of a second)
-auto-sync-every: 24000
+# Set the unit of measurement for sync and reminder scheduling. Options are:
+# ticks, seconds, minutes, or hours. Note that this applies to both
+# auto-sync-every and auto-remind-every.
+auto-every-unit: minutes
+
+# The interval for the auto-sync timer, this should be no less than
+# 15-20 minutes.
+auto-sync-every: 20
 
 # This is a timer that will notify unregistered users more frequently to register
 auto-remind: true
 
-# The interval for the auto-remind timer, this should be no less than 5-10minutes
-#(time in ticks, 1 tick = 1/20th of a second)
-auto-remind-every: 12000
+# The interval for the auto-remind timer, this should be no less than
+# 5-10 minutes.
+auto-remind-every: 10
 
 # This is for extra features of the bridge plugin that allow you to save age,
 # gametime, last online, health, etc. to the database
