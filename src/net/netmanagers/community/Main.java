@@ -252,7 +252,18 @@ public class Main extends JavaPlugin {
 				banned_users_group = config.getInt("users-table.banned-users-group");
 			}
 
-			if(show_config){
+      if (basic_tracking &&
+          !(onlinestatus_enabled && lastonline_enabled && gametime_enabled &&
+          totalxp_enabled && currentxp_enabled && level_enabled &&
+          health_enabled && lifeticks_enabled && wallet_enabled))
+      {
+        Main.log.info("WARNING: Basic tracking is enabled but none of the "
+                     + "fields are enabled. Basic tracking will NOT be performed.");
+        basic_tracking = false;
+      }
+  
+			if (show_config)
+      {
 				Main.log.info("Auto Sync   : " + auto_sync);
         Main.log.info("Auto Remind :" + auto_remind);
 				Main.log.info("Kick Unregistered : " + kick_unregistered);
@@ -260,7 +271,8 @@ public class Main extends JavaPlugin {
 				Main.log.info("Basic Tracking : " + basic_tracking);
 				Main.log.info("Require Avatar : " + require_avatar);
 				Main.log.info("Min Posts : " + require_minposts);
-				if(basic_tracking){			
+				if (basic_tracking)
+        {			
 					Main.log.info("Tracking Online Status : " + onlinestatus_enabled);
 					Main.log.info("Tracking Last Online   : " + lastonline_enabled);
 					Main.log.info("Tracking Game Time     : " + gametime_enabled);
