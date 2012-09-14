@@ -227,6 +227,7 @@ basic-tracking:
   field-lastonline-field: field_15
   
   # Enable tracking how much time is spent on server
+  # Note: This relies on 'lastonline' being enabled to work.
   field-gametime-enabled: true  
   
   # Multi-Tables-Use-Key value for multi-tables.field-key-field   
@@ -234,6 +235,19 @@ basic-tracking:
   
   # Multi-Tables / Single Table field for Value
   field-gametime-field: field_16
+  
+  # If you want to have a profile field that contains the gametime expressed
+  # in words (5 hours, 33 minutes...), create the custom field on your forum
+  # and enter its name here. Otherwise, leave 'blank': ''
+  # Note that for this to work, the field-gametime-field must also be set.
+  field-gametime-formatted-field: ''
+  
+  # Multi-Tables-Use-Key value for multi-tables.field-key-field  
+  # If you want to have a profile field that contains the gametime expressed
+  # in words (5 hours, 33 minutes...), create the custom field on your forum
+  # and enter its name here. Otherwise, leave 'blank': ''
+  # Note that for this to work, the field-gametime-key-value must also be set.
+  field-gametime-formatted-key-value: ''
   
   # Enable Total XP earnt tracking
   field-totalxp-enabled: true

@@ -108,21 +108,31 @@ public class Main extends JavaPlugin {
 	public static String onlinestatus_field;
 	public static String onlinestatus_valueoffline;
 	public static String onlinestatus_valueonline;
-	public static String lastonline_key_value;
+	
+  public static String lastonline_key_value;
 	public static String lastonline_field;	
-	public static String gametime_key_value;
+	
+  public static String gametime_key_value;
 	public static String gametime_field;
+  public static String gametime_formatted_key_value;
+  public static String gametime_formatted_field;
+  
 	public static String totalxp_key_value;	
 	public static String totalxp_field;
-	public static String currentxp_key_value;	
+	
+  public static String currentxp_key_value;	
 	public static String currentxp_field;
-	public static String level_key_value;	
+	
+  public static String level_key_value;	
 	public static String level_field;
-	public static String health_key_value;	
+	
+  public static String health_key_value;	
 	public static String health_field;
-	public static String lifeticks_key_value;	
+	
+  public static String lifeticks_key_value;	
 	public static String lifeticks_field;
-	public static String wallet_key_value;	
+	
+  public static String wallet_key_value;	
 	public static String wallet_field;
 	
 	public static String[] groups;
@@ -218,28 +228,37 @@ public class Main extends JavaPlugin {
 			onlinestatus_field = config.getString("basic-tracking.field-onlinestatus-field");
 			onlinestatus_valueonline = config.getString("basic-tracking.field-onlinestatus-valueonline");
 			onlinestatus_valueoffline = config.getString("basic-tracking.field-onlinestatus-valueoffline");
-			lastonline_enabled = config.getBoolean("basic-tracking.field-lastonline-enabled");
+			
+      lastonline_enabled = config.getBoolean("basic-tracking.field-lastonline-enabled");
 			lastonline_key_value = config.getString("basic-tracking.field-lastonline-key-value");			
 			lastonline_field = config.getString("basic-tracking.field-lastonline-field");
-			wallet_enabled = config.getBoolean("basic-tracking.field-wallet-enabled");
+			
+      wallet_enabled = config.getBoolean("basic-tracking.field-wallet-enabled");
 			wallet_key_value = config.getString("basic-tracking.field-wallet-key-value");
 			wallet_field = config.getString("basic-tracking.field-wallet-field");
-			gametime_enabled = config.getBoolean("basic-tracking.field-gametime-enabled");
+			
+      gametime_enabled = config.getBoolean("basic-tracking.field-gametime-enabled");
 			gametime_key_value = config.getString("basic-tracking.field-gametime-key-value");			
 			gametime_field = config.getString("basic-tracking.field-gametime-field");
-			totalxp_enabled = config.getBoolean("basic-tracking.field-totalxp-enabled");
+      gametime_formatted_field = config.getString("basic-tracking.field-gametime-formatted-field");
+			gametime_formatted_key_value = config.getString("basic-tracking.field-gametime-formatted-key-value");
+      totalxp_enabled = config.getBoolean("basic-tracking.field-totalxp-enabled");
 			totalxp_key_value = config.getString("basic-tracking.field-totalxp-key-value");			
 			totalxp_field = config.getString("basic-tracking.field-totalxp-field");
-			currentxp_enabled = config.getBoolean("basic-tracking.field-currentxp-enabled");
+			
+      currentxp_enabled = config.getBoolean("basic-tracking.field-currentxp-enabled");
 			currentxp_key_value = config.getString("basic-tracking.field-currentxp-key-value");			
 			currentxp_field = config.getString("basic-tracking.field-currentxp-field");
-			level_enabled = config.getBoolean("basic-tracking.field-level-enabled");
+			
+      level_enabled = config.getBoolean("basic-tracking.field-level-enabled");
 			level_key_value = config.getString("basic-tracking.field-level-key-value");		
 			level_field = config.getString("basic-tracking.field-level-field");
-			health_enabled = config.getBoolean("basic-tracking.field-health-enabled");
+			
+      health_enabled = config.getBoolean("basic-tracking.field-health-enabled");
 			health_key_value = config.getString("basic-tracking.field-health-key-value");
 			health_field = config.getString("basic-tracking.field-health-field");
-			lifeticks_enabled = config.getBoolean("basic-tracking.field-lifeticks-enabled");
+			
+      lifeticks_enabled = config.getBoolean("basic-tracking.field-lifeticks-enabled");
 			lifeticks_key_value = config.getString("basic-tracking.field-lifeticks-key-value");
 			lifeticks_field = config.getString("basic-tracking.field-lifeticks-field");
 			
@@ -455,7 +474,7 @@ public class Main extends JavaPlugin {
 			e.printStackTrace();
 		}
 	}
-
+ 
 	public static int getUserId(String username) {
 		int userId = 0;
     String query;
@@ -512,6 +531,7 @@ public class Main extends JavaPlugin {
 		return userId;
 	}
 
+  
 	public static ResultSet getOnlinePlayerInfo(String username) {
 		try {
 			ResultSet res;
@@ -960,7 +980,53 @@ public class Main extends JavaPlugin {
 			disablePlugin();
 		}		
 	}
-	
+  
+  public static String timeElapsedtoString(int time)
+  {
+    if (time == 0)
+    {
+      return "0 seconds";
+    }
+    
+    String elapsed = "";
+    
+    if (time >= 86400)
+    {
+      elapsed = elapsed
+              + time / 86400 + " day"
+              + (time >= 172800 ? "s" : "");
+      time = time - 86400 * (time / 86400); // Ah, the joys of integer math.
+    }
+    
+    if (time >= 3600)
+    {
+      elapsed = elapsed
+              + (!elapsed.isEmpty() ? ", " : "")
+              + time / 3600 + " hour"
+              + (time >= 7200 ? "s" : "");
+      time = time - 3600 * (time / 3600);
+    }
+
+    if (time >= 60)
+    {
+      elapsed = elapsed
+              + (!elapsed.isEmpty() ? ", " : "")
+              + time / 60 + " minute"
+              + (time >= 120 ? "s" : "");
+      time = time - 60 * (time / 60);
+    }
+    
+    if (time > 0)
+    {
+      elapsed = elapsed
+              + (!elapsed.isEmpty() ? ", " : "")
+              + time + " second"
+              + (time >= 1 ? "s" : "");
+    }
+    return elapsed;
+  }
+
+  
 	public static void UpdateTrackingStats(int u, Player p){
 		
 		float currentxp = p.getExp();
@@ -1009,13 +1075,31 @@ public class Main extends JavaPlugin {
 				if(lifeticks_enabled)
 					sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + lifeticks + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + lifeticks_key_value + "'");						
 
-				if(gametime_enabled)
-					sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + t + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + lastonline_key_value + "'");
+				if (lastonline_enabled)
+					sql.updateQuery("UPDATE " + multi_table
+                         + " SET " + multi_table_value_field + " = '" + t
+                         + "' WHERE " + multi_table_user_id_field + " = '" + u
+                         + "' AND " + multi_table_key_field +" = '"
+                         + lastonline_key_value + "'");
 									
-				if(lastonline_enabled && gametime_enabled)
-					sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + gametime + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + gametime_key_value + "'");
-				
-			}else{	
+				if (lastonline_enabled && gametime_enabled)
+        {
+					sql.updateQuery("UPDATE " + multi_table
+                         + " SET " + multi_table_value_field + " = '" + gametime
+                         + "' WHERE " + multi_table_user_id_field + " = '" + u
+                         + "' AND " + multi_table_key_field + " = '"
+                         + gametime_key_value + "'");
+          if (!gametime_formatted_key_value.isEmpty())
+          {
+            sql.updateQuery("UPDATE " + multi_table
+                           + " SET " + multi_table_value_field + " = '"
+                           + timeElapsedtoString(gametime).substring(0, 60) + "'"
+                           + " WHERE " + multi_table_user_id_field + " = '" + u
+                           + "' AND " + multi_table_key_field + " = '"
+                           + gametime_formatted_key_value + "'");
+          }
+        }
+			} else {	
 				
 				if(multi_tables){
 					res = Main.sql.sqlQuery("SELECT * FROM  "+ multi_table +" WHERE " + multi_table_user_id_field + " = '" + u + "'");
@@ -1053,9 +1137,18 @@ public class Main extends JavaPlugin {
 				if(lifeticks_enabled)
 					SQLParts.add(Main.lifeticks_field + " = '" + lifeticks + "'");
 				
-				if(gametime_enabled)
+				if (gametime_enabled)
+        {
 					SQLParts.add(Main.gametime_field + " = '" + gametime + "'");
-				
+          
+          if (!gametime_formatted_field.isEmpty())
+          {
+            SQLParts.add(Main.gametime_formatted_field + " = '"
+                        + timeElapsedtoString(gametime).substring(0, 60)
+                        + "'");
+          }
+        }
+        
 				if(lastonline_enabled)
 					SQLParts.add(Main.lastonline_field + " = '" + t + "'");
 			
