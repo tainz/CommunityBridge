@@ -253,9 +253,9 @@ public class Main extends JavaPlugin {
 			}
 
       if (basic_tracking &&
-          !(onlinestatus_enabled && lastonline_enabled && gametime_enabled &&
-          totalxp_enabled && currentxp_enabled && level_enabled &&
-          health_enabled && lifeticks_enabled && wallet_enabled))
+          !(onlinestatus_enabled || lastonline_enabled || gametime_enabled ||
+          totalxp_enabled || currentxp_enabled || level_enabled ||
+          health_enabled || lifeticks_enabled || wallet_enabled))
       {
         Main.log.info("WARNING: Basic tracking is enabled but none of the "
                      + "fields are enabled. Basic tracking will NOT be performed.");
