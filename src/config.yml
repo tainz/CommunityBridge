@@ -23,7 +23,8 @@ db-password: password
 # This will show you some basic configuration in logs when the plugin starts
 show-config: true
 
-# If set to true it will show a message to the user that they have been placed into a group
+# If set to true it will show a message to the user that they have been placed
+# into a group
 show-primary-group: false
 
 # This message is displaed when show-primary-group is false to registered users
@@ -35,19 +36,23 @@ unregistered-message: Unregistered Account - Please Register at YOURFORUMURL for
 # This is shown when auto-sync runs to remind a user to register
 unregistered-messagereminder: Just a reminder to visit YOURFORUMURL and register today!
 
-# When true this will not allow un-registered players onto the server, and show the unregistered-message in the form of a kick
+# When true this will not allow un-registered players onto the server, and show
+# the unregistered-message in the form of a kick
 kick-unregistered: true
 
-# Multi-Tables are when you have all your tracking/minecraft usernames in a different table to the users table
+# Multi-Tables are when you have all your tracking/minecraft usernames in a
+# different table to the users table
 multi-tables: true
 
-# Forums like XenForo use a table that has rows for each custom field as opposed to columns for each custom field  
+# Forums like XenForo use a table that has rows for each custom field as opposed
+# to columns for each custom field  
 multi-tables-use-key: false
 
 # If set to true it will not allow banned players from your website to connect
 use-banned-field: true
 
-# Ban List in Seperate Table (Such as PHPBB) If you include a value for reason then it will display that when booting the player
+# Ban List in Seperate Table (Such as PHPBB) If you include a value for reason
+# then it will display that when booting the player
 banlist-table:
     enabled: true
     table: phpbb_banlist
@@ -80,7 +85,8 @@ auto-every-unit: minutes
 # 15-20 minutes.
 auto-sync-every: 20
 
-# This is a timer that will notify unregistered users more frequently to register
+# This is a timer that will notify unregistered users more frequently to
+# register
 auto-remind: true
 
 # The interval for the auto-remind timer, this should be no less than
@@ -89,7 +95,7 @@ auto-remind-every: 10
 
 # This is for extra features of the bridge plugin that allow you to save age,
 # gametime, last online, health, etc. to the database
-enable-basic-tracking: true
+enable-basic-tracking: false
 
 #
 # Main Users table configuration
@@ -121,9 +127,9 @@ users-table:
   default-group: 2
 
 #
-# This is only for multi-table websites where information is not all contained in the users table
+# This is only for multi-table websites where information is not all contained
+# in the users table
 #
-
 multi-table:
   
   # Table that contains custom information for MineCraft
@@ -135,16 +141,19 @@ multi-table:
   # This is the field that contains the KEY for multi-tables-use-key (XenForo)
   field-key-field: key_str
   
-  # The value that is to be matched in field-key-field when looking for their Minecraft Username
+  # The value that is to be matched in field-key-field when looking for their
+  # Minecraft Username
   field-key-value: mcusername
   
-  # This is for when multi-tables-use-key is false (Invision Power Board) it contains their Minecraft Username
+  # This is for when multi-tables-use-key is false (Invision Power Board) it
+  # contains their Minecraft Username
   field-value-field: field_11
 
 
 #
 # Optional
-# You can place users in the default group if they do not have an Avatar or Minimum Posts or both
+# You can place users in the default group if they do not have an Avatar or
+# Minimum Posts or both
 #
 
 profile-requirements:
@@ -297,3 +306,4 @@ groups:
   '6': moderator
   '4': admin
   '5': banned
+  
