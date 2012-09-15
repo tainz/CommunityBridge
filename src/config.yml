@@ -1,4 +1,4 @@
-# 
+#
 # Sample Board Config
 #
 # Please ensure if you run your minecraft server on a remote host
@@ -28,7 +28,7 @@ show-config: true
 show-primary-group: false
 
 # This message is displaed when show-primary-group is false to registered users
-registered-message: Registered Account, Linked to Server Forums 
+registered-message: Registered Account, Linked to Server Forums
 
 # This is shown to users when they connect that arn't registered
 unregistered-message: Unregistered Account - Please Register at YOURFORUMURL for full access
@@ -45,7 +45,7 @@ kick-unregistered: true
 multi-tables: true
 
 # Forums like XenForo use a table that has rows for each custom field as opposed
-# to columns for each custom field  
+# to columns for each custom field
 multi-tables-use-key: false
 
 # If set to true it will not allow banned players from your website to connect
@@ -58,13 +58,13 @@ banlist-table:
     table: phpbb_banlist
     user-id-field: ban_userid
     reason-field: ban_reason
-    
-# Groups in Seperate Table (Such as PHPBB) 
+
+# Groups in Seperate Table (Such as PHPBB)
 groups-table:
     enabled: true
     table: phpbb_users_groups
     user-id-field: ban_userid
-    group-id-field: ban_reason    
+    group-id-field: ban_reason
 
 # If you have a second group level and want to make use of it
 secondary-groups: true
@@ -102,27 +102,27 @@ enable-basic-tracking: false
 #
 
 users-table:
-  # Users Database Table 
+  # Users Database Table
   table: ipbog3members
-  
+
   # The field that contains their Minecraft Username
   user-name-field: username
-  
+
   # The field that contains their Unique ID across your site
   user-id-field: member_id
-  
+
   # The field that contains their Primary Group
   groups-id-field: member_group_id
-  
+
   # The field that contains their Secondary Group
   secondary-groups-id-field: sub_group_ids
-  
-  # The Banned Field should be a 1 or 0  
+
+  # The Banned Field should be a 1 or 0
   banned-field: member_banned
-  
+
   # The Group Banned Users are placed in on your site
   banned-users-group: 5
-  
+
   # The Default Group for when a group can't be found or they are unregistred.
   default-group: 2
 
@@ -131,20 +131,20 @@ users-table:
 # in the users table
 #
 multi-table:
-  
+
   # Table that contains custom information for MineCraft
   table: ipbog3pfields_content
-  
+
   # The field that has their users id
   field-user-id-field: member_id
-  
+
   # This is the field that contains the KEY for multi-tables-use-key (XenForo)
   field-key-field: key_str
-  
+
   # The value that is to be matched in field-key-field when looking for their
   # Minecraft Username
   field-key-value: mcusername
-  
+
   # This is for when multi-tables-use-key is false (Invision Power Board) it
   # contains their Minecraft Username
   field-value-field: field_11
@@ -157,37 +157,37 @@ multi-table:
 #
 
 profile-requirements:
-  
+
   # Enable Forced Website Avatar
   require-avatar: true
-  
+
   # Message when Avatar Not Found
   require-avatar-message: This server requires players to upload an avatar to their profile.
-  
+
   # Table that contains user avatars
   require-avatar-table: ipbog3profile_portal
-  
+
   # Field that has their User ID
   require-avatar-user-id-field: member_id
-  
+
   # Field that has their Avatar (Empty/null value for no avatar)
   require-avatar-field: pp_main_photo
-  
+
   # Enable Forced Minimum Posts
   require-minposts: true
-  
+
   # Messages when Minimum Posts not met
   require-minposts-message: This server requires players to have a minimum of 3 forum posts.
-  
+
   # Required amount of minimum Posts
   require-minposts-count: 3
-  
+
   # Table that contains their post count
   require-minposts-table: ipbog3members
-  
+
   # Field that has their User ID
   require-minposts-user-id-field: member_id
-  
+
   # Field that has their post count
   require-minposts-field: posts
 
@@ -198,121 +198,136 @@ profile-requirements:
 #
 
 basic-tracking:
-  
+
   # Table that contains the custom fields
   table: ipbog3pfields_content
-  
+
   # Enable Tracking of Online status
   field-onlinestatus-enabled: true
-  
+
   # Value to place in table when online
   field-onlinestatus-valueonline: 1
-  
+
   # Value to place in table when offline
   field-onlinestatus-valueoffline: 0
-    
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field   
+
+  # Multi-Tables-Use-Key value for multi-tables.field-key-field
   field-onlinestatus-key-value: mconlinestatus
-  
+
   # Multi-Tables / Single Table field for Value
-  field-onlinestatus-field: field_14  
-  
+  field-onlinestatus-field: field_14
+
   # Enable tracking if player is online or not
   field-lastonline-enabled: true
-  
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field   
+
+  # Multi-Tables-Use-Key value for multi-tables.field-key-field
   field-lastonline-key-value: mclastonline
-  
+
   # Multi-Tables / Single Table field for Value
   field-lastonline-field: field_15
-  
+
+  # If you want to have a profile field that contains the gametime expressed
+  # in words (5 hours, 33 minutes...), create the custom field on your forum
+  # and enter its name here. Otherwise, leave 'blank': ''
+  # Note that for this to work, the field-lastonline-field must also have
+  # field/column and be configured correctly.
+  field-lastonline-formatted-field: ''
+
+  # Multi-Tables-Use-Key value for multi-tables.field-key-field
+  # If you want to have a profile field that contains the gametime expressed
+  # in words (5 hours, 33 minutes...), create the custom field on your forum
+  # and enter its name here. Otherwise, leave 'blank': ''
+  # Note that for this to work, the field-lastonline-key-value must also have
+  # field/column and be configured correctly.
+  field-lastonline-formatted-key-value: ''
+
   # Enable tracking how much time is spent on server
   # Note: This relies on 'lastonline' being enabled to work.
-  field-gametime-enabled: true  
-  
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field   
-  field-gametime-key-value: mcgametime  
-  
+  field-gametime-enabled: true
+
+  # Multi-Tables-Use-Key value for multi-tables.field-key-field
+  field-gametime-key-value: mcgametime
+
   # Multi-Tables / Single Table field for Value
   field-gametime-field: field_16
-  
+
   # If you want to have a profile field that contains the gametime expressed
   # in words (5 hours, 33 minutes...), create the custom field on your forum
   # and enter its name here. Otherwise, leave 'blank': ''
   # Note that for this to work, the field-gametime-field must also be set.
   field-gametime-formatted-field: ''
-  
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field  
+
+  # Multi-Tables-Use-Key value for multi-tables.field-key-field
   # If you want to have a profile field that contains the gametime expressed
   # in words (5 hours, 33 minutes...), create the custom field on your forum
   # and enter its name here. Otherwise, leave 'blank': ''
   # Note that for this to work, the field-gametime-key-value must also be set.
   field-gametime-formatted-key-value: ''
-  
+
   # Enable Total XP earnt tracking
   field-totalxp-enabled: true
-  
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field   
+
+  # Multi-Tables-Use-Key value for multi-tables.field-key-field
   field-totalxp-key-value: mctotalxp
-  
-  # Multi-Tables / Single Table field for Value  
+
+  # Multi-Tables / Single Table field for Value
   field-totalxp-field: field_18
-  
+
   # Enable Current XP tracking (progress to next level)
   field-currentxp-enabled: true
-  
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field   
-  field-currentxp-key-value: mccurrentxp  
-  
+
+  # Multi-Tables-Use-Key value for multi-tables.field-key-field
+  field-currentxp-key-value: mccurrentxp
+
   # Multi-Tables / Single Table field for Value
   field-currentxp-field: field_17
-  
-  # Enable Level tracking 
+
+  # Enable Level tracking
   field-level-enabled: true
-  
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field   
-  field-level-key-value: mclevel  
-  
+
+  # Multi-Tables-Use-Key value for multi-tables.field-key-field
+  field-level-key-value: mclevel
+
   # Multi-Tables / Single Table field for Value
   field-level-field: field_19
-  
+
   # Enable tracking of players health
   field-health-enabled: true
-  
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field   
+
+  # Multi-Tables-Use-Key value for multi-tables.field-key-field
   field-health-key-value: mchealth
-  
+
   # Multi-Tables / Single Table field for Value
   field-health-field: field_20
-  
+
   # Enable tracking of players time alive since last death
   field-lifeticks-enabled: true
-  
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field   
+
+  # Multi-Tables-Use-Key value for multi-tables.field-key-field
   field-lifeticks-key-value: mclifeticks
-  
+
   # Multi-Tables / Single Table field for Value
-  field-lifeticks-field: field_21  
-  
+  field-lifeticks-field: field_21
+
   # Enable Wallet Tracking (NOT IN USE YET)
   field-wallet-enabled: false
-  
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field   
+
+  # Multi-Tables-Use-Key value for multi-tables.field-key-field
   field-wallet-key-value: mcwallet
-  
+
   # Multi-Tables / Single Table field for Value
   field-wallet-field: field_23
 
 #
 # Group Configuration
-# Basicly the number of the left is the value in the database, 
+# Basicly the number of the left is the value in the database,
 # the text on the right is the group name in your permissions
-# system. 
+# system.
 #
 # I suggest you map ALL forum groups to a group in your permission
 # system.
 #
-  
+
 groups:
   '1': validating
   '2': guest
@@ -320,4 +335,3 @@ groups:
   '6': moderator
   '4': admin
   '5': banned
-  
