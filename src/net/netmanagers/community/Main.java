@@ -123,7 +123,9 @@ public class Main extends JavaPlugin
 	public static String totalxp_field;
 
   public static String currentxp_key_value;
+  public static String currentxp_formatted_key_value;
 	public static String currentxp_field;
+	public static String currentxp_formatted_field;
 
   public static String level_key_value;
 	public static String level_field;
@@ -260,6 +262,8 @@ public class Main extends JavaPlugin
       currentxp_enabled = config.getBoolean("basic-tracking.field-currentxp-enabled");
 			currentxp_key_value = config.getString("basic-tracking.field-currentxp-key-value");
 			currentxp_field = config.getString("basic-tracking.field-currentxp-field");
+			currentxp_formatted_key_value = config.getString("basic-tracking.field-currentxp-formatted-key-value", "");
+			currentxp_formatted_field = config.getString("basic-tracking.field-currentxp-formatted-field", "");
 
       level_enabled = config.getBoolean("basic-tracking.field-level-enabled");
 			level_key_value = config.getString("basic-tracking.field-level-key-value");
@@ -304,6 +308,7 @@ public class Main extends JavaPlugin
 				Main.log.info("Basic Tracking : " + basic_tracking);
 				Main.log.info("Require Avatar : " + require_avatar);
 				Main.log.info("Min Posts : " + require_minposts);
+
 				if (basic_tracking)
         {
 					Main.log.info("Tracking Online Status : " + onlinestatus_enabled);
@@ -1006,7 +1011,11 @@ public class Main extends JavaPlugin
 				if (lastonline_enabled)
         {
 					checkDBSanity(u, lastonline_key_value);
-					sql.updateQuery("UPDATE "+Main.multi_table+" SET " + multi_table_value_field +" = '" + t + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + lastonline_key_value + "'");
+					sql.updateQuery("UPDATE " + Main.multi_table
+									       + " SET " + multi_table_value_field + " = '" + t
+									       + "' WHERE " + multi_table_user_id_field + " = '" + u
+									       + "' AND " + multi_table_key_field + " = '"
+									       + lastonline_key_value + "'");
 				}
 
 				if (currentxp_enabled)
@@ -1198,6 +1207,7 @@ public class Main extends JavaPlugin
 	public static void UpdateTrackingStats(int u, Player p)
   {
 		float currentxp = p.getExp();
+		String currentxp_formatted = ((int)(currentxp * 100)) + "%";
 		int t = (int) (System.currentTimeMillis() / 1000L);
     Date date = new Date();
     SimpleDateFormat format = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss a");
@@ -1244,32 +1254,46 @@ public class Main extends JavaPlugin
 					}
 				}
 
-				if(onlinestatus_enabled)
+				if (onlinestatus_enabled)
         {
           sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + onlinestatus_valueonline + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + onlinestatus_key_value + "'");
         }
 
-				if(totalxp_enabled)
+				if (totalxp_enabled)
         {
           sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + totalxp + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + totalxp_key_value + "'");
         }
 
-				if(currentxp_enabled)
+				if (currentxp_enabled)
         {
-          sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + currentxp + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + currentxp_key_value + "'");
+          sql.updateQuery("UPDATE " + multi_table
+									       + " SET " + multi_table_value_field + " = '" + currentxp
+									       + "' WHERE " + multi_table_user_id_field + " = '" + u
+									       + "' AND " + multi_table_key_field + " = '"
+									       + currentxp_key_value + "'");
+					
+					if (!currentxp_formatted_key_value.isEmpty())
+					{
+						sql.updateQuery("UPDATE " + multi_table
+													 + " SET " + multi_table_value_field + " = '"
+													 + currentxp_formatted
+													 + "' WHERE " + multi_table_user_id_field + " = '" + u
+													 + "' AND " + multi_table_key_field + " = '"
+													 + currentxp_formatted_key_value + "'");
+					}
         }
 
-				if(level_enabled)
+				if (level_enabled)
         {
           sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + level + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + level_key_value + "'");
         }
 
-				if(health_enabled)
+				if (health_enabled)
         {
           sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + health + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + health_key_value + "'");
         }
 
-				if(lifeticks_enabled)
+				if (lifeticks_enabled)
         {
           sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + lifeticks + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + lifeticks_key_value + "'");
         }
@@ -1361,6 +1385,12 @@ public class Main extends JavaPlugin
 				if (currentxp_enabled)
         {
           SQLParts.add(Main.currentxp_field + " = '" + currentxp + "'");
+					
+					if (!currentxp_formatted_field.isEmpty())
+					{
+						SQLParts.add(Main.currentxp_formatted_field + " = '"
+										    + currentxp_formatted + "'");
+					}
         }
 
 				if (level_enabled)

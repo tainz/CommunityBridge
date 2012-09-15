@@ -279,6 +279,12 @@ basic-tracking:
   # Multi-Tables-Use-Key value for multi-tables.field-key-field
   field-currentxp-key-value: mccurrentxp
 
+  # Multi-Tables / Single Table field for formatted version.
+  field-currentxp-formatted-field: ''
+
+  # Multi-Tables-Use Key 'field' for formatted version.
+  field-currentxp-formatted-key-value: ''
+
   # Multi-Tables / Single Table field for Value
   field-currentxp-field: field_17
 
