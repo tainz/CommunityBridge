@@ -460,7 +460,8 @@ public class Main extends JavaPlugin
    	}, every, every);
   }
 
-	private void ResetOnlineStatus(){
+	private void ResetOnlineStatus()
+  {
 		try {
 			if (multi_tables)
       {
@@ -603,62 +604,62 @@ public class Main extends JavaPlugin
 		return null;
 	}
 
-	public static boolean setGroup(int groupId, Player p, boolean n) {
-		String cmd = "";
-		 try {
-			 String gr = config.getString((new StringBuilder("groups.")).append(groupId).toString());
-			 if (permissions_system.equalsIgnoreCase("PEX"))
-			 {
-				 if (!PermissionsEx.getUser(p).getGroupsNames()[0].equalsIgnoreCase(gr))
-				 {
-					 PermissionsEx.getUser(p).setGroups(new String[] { gr });
-					 if(n)
-           {
-             log.info((new StringBuilder("Set ")).append(p.getName()).append(" to group ").append(gr).toString());
-           }
-					 return true;
-				 }
-			 }
-       else
-			 {
-				 if(permissions_system.equalsIgnoreCase("bPerms"))
-				 {
-					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), (new StringBuilder("world ")).append(p.getWorld().getName()).toString());
-					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), (new StringBuilder("user ")).append(p.getName()).toString());
-					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), (new StringBuilder("user setgroup ")).append(gr).toString());
-					 if(n)
-           {
-             log.info((new StringBuilder("Set ")).append(p.getName()).append(" to group ").append(gr).toString());
-           }
-					 return true;
-				 }
-				 if(permissions_system.equalsIgnoreCase("GroupManager"))
-				 {
-					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "manuadd " + p.getName() + " " + gr);
-					 if(n)
-           {
-             log.info((new StringBuilder("Setting ")).append(p.getName()).append(" to group ").append(gr).toString());
-           }
-					 return true;
-				 }
-				 if(permissions_system.equalsIgnoreCase("PermsBukkit"))
-				 {
-					 cmd = "permissions player setgroup " + p.getName() + " " + gr;
-					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), cmd);
-					 if(n)
-           {
-             log.info((new StringBuilder("Set ")).append(p.getName()).append(" to group ").append(gr).toString());
-           }
-					 return true;
-				 }
-			 }
-		 } catch (Error e) {
-			 log.severe(e.getMessage());
-		 }
+	public static boolean setGroup(int groupId, Player p, boolean n)
+  {
+    try
+    {
+      String gr = config.getString((new StringBuilder("groups.")).append(groupId).toString());
 
-		 return false;
+      if (permissions_system.equalsIgnoreCase("PEX"))
+      {
+        if (!PermissionsEx.getUser(p).getGroupsNames()[0].equalsIgnoreCase(gr))
+        {
+          PermissionsEx.getUser(p).setGroups(new String[] { gr });
+          if (n)
+          {
+            log.info((new StringBuilder("Set ")).append(p.getName()).append(" to group ").append(gr).toString());
+          }
+          return true;
+        }
+      }
+      else if (permissions_system.equalsIgnoreCase("bPerms"))
+			{
+        Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), (new StringBuilder("world ")).append(p.getWorld().getName()).toString());
+        Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), (new StringBuilder("user ")).append(p.getName()).toString());
+        Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), (new StringBuilder("user setgroup ")).append(gr).toString());
+
+        if (n)
+        {
+          log.info((new StringBuilder("Set ")).append(p.getName()).append(" to group ").append(gr).toString());
+        }
+        return true;
+      }
+      else if (permissions_system.equalsIgnoreCase("GroupManager"))
+      {
+        Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "manuadd " + p.getName() + " " + gr);
+        if (n)
+        {
+          log.info((new StringBuilder("Setting ")).append(p.getName()).append(" to group ").append(gr).toString());
+        }
+        return true;
+      }
+      else if (permissions_system.equalsIgnoreCase("PermsBukkit"))
+      {
+        String cmd = "permissions player setgroup " + p.getName() + " " + gr;
+        Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), cmd);
+
+        if (n)
+        {
+          log.info((new StringBuilder("Set ")).append(p.getName()).append(" to group ").append(gr).toString());
+        }
+        return true;
+      }
+    } catch (Error e) {
+      log.severe(e.getMessage());
+    }
+
+    return false;
 	}
-
 
 	public static boolean addGroup(int groupId, Player p, boolean n) {
 		 try {
