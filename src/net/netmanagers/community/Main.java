@@ -519,7 +519,7 @@ public class Main extends JavaPlugin
 			ResultSet res;
 			if (multi_tables)
       {
-				if(multi_tables_use_key)
+				if (multi_tables_use_key)
         {
           query = "SELECT * FROM " + multi_table
                   + " WHERE " + multi_table_key_field + " = '"
@@ -546,7 +546,7 @@ public class Main extends JavaPlugin
         query = "SELECT * FROM " + users_table
                 + " WHERE LOWER(" + user_name_field
                 + ") = LOWER('" + username
-                + "') order by " + user_id_field + " desc";
+                + "') ORDER BY " + user_id_field + " desc";
  				res = Main.sql.sqlQuery(query);
         if (res.next())
         {
