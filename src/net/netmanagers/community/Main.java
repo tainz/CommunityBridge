@@ -1200,7 +1200,7 @@ public class Main extends JavaPlugin
 		float currentxp = p.getExp();
 		int t = (int) (System.currentTimeMillis() / 1000L);
     Date date = new Date();
-    SimpleDateFormat format = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
+    SimpleDateFormat format = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss a");
 		int lifeticks = p.getTicksLived();
 		int totalxp = p.getTotalExperience();
 		int level = p.getLevel();
