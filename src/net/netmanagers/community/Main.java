@@ -134,7 +134,9 @@ public class Main extends JavaPlugin
 	public static String health_field;
 
   public static String lifeticks_key_value;
+	public static String lifeticks_formatted_key_value;
 	public static String lifeticks_field;
+	public static String lifeticks_formatted_field;
 
   public static String wallet_key_value;
 	public static String wallet_field;
@@ -276,6 +278,8 @@ public class Main extends JavaPlugin
       lifeticks_enabled = config.getBoolean("basic-tracking.field-lifeticks-enabled");
 			lifeticks_key_value = config.getString("basic-tracking.field-lifeticks-key-value");
 			lifeticks_field = config.getString("basic-tracking.field-lifeticks-field");
+			lifeticks_formatted_key_value = config.getString("basic-tracking.field-lifeticks-formatted-key-value", "");
+			lifeticks_formatted_field = config.getString("basic-tracking.field-lifeticks-formatted-field", "");
 
 			default_group = config.getInt("users-table.default-group");
 
@@ -1200,6 +1204,12 @@ public class Main extends JavaPlugin
               + time + " second"
               + (time >= 1 ? "s" : "");
     }
+		
+		if (elapsed.length() >= 60)
+		{
+			elapsed = elapsed.substring(0, 60);
+		}
+		
     return elapsed;
   }
 
@@ -1212,6 +1222,7 @@ public class Main extends JavaPlugin
     Date date = new Date();
     SimpleDateFormat format = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss a");
 		int lifeticks = p.getTicksLived();
+		String lifeticks_formatted = timeElapsedtoString((int)(lifeticks / 20));
 		int totalxp = p.getTotalExperience();
 		int level = p.getLevel();
 		int health = p.getHealth();
@@ -1245,11 +1256,6 @@ public class Main extends JavaPlugin
             {
               gametime = gametime + (t - lastonline);
               timeElapsed = timeElapsedtoString(gametime);
-
-              if (timeElapsed.length() >= 60)
-              {
-                timeElapsed = timeElapsed.substring(0, 60);
-              }
             }
 					}
 				}
@@ -1295,7 +1301,21 @@ public class Main extends JavaPlugin
 
 				if (lifeticks_enabled)
         {
-          sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + lifeticks + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + lifeticks_key_value + "'");
+          sql.updateQuery("UPDATE " + multi_table
+									       + " SET " + multi_table_value_field + " = '"
+									       + lifeticks
+									       + "' WHERE " + multi_table_user_id_field + " = '" + u
+									       + "' AND " + multi_table_key_field + " = '"
+									       + lifeticks_key_value + "'");
+					if (!lifeticks_formatted_key_value.isEmpty())
+					{
+						sql.updateQuery("UPDATE " + multi_table
+													 + " SET " + multi_table_value_field + " = '"
+													 + lifeticks_formatted
+													 + "' WHERE " + multi_table_user_id_field + " = '" + u
+													 + "' AND " + multi_table_key_field + " = '"
+													 + lifeticks_formatted_key_value + "'");						
+					}
         }
 
 				if (lastonline_enabled)
@@ -1361,12 +1381,6 @@ public class Main extends JavaPlugin
             {
               gametime = gametime + (t - lastonline);
               timeElapsed = timeElapsedtoString(gametime);
-
-              if (timeElapsed.length() >= 60)
-              {
-                timeElapsed = timeElapsed.substring(0, 60);
-              }
-
             }
 					}
 				}
@@ -1406,6 +1420,12 @@ public class Main extends JavaPlugin
 				if (lifeticks_enabled)
         {
           SQLParts.add(Main.lifeticks_field + " = '" + lifeticks + "'");
+					
+					if (!lifeticks_formatted_field.isEmpty())
+					{
+						SQLParts.add(Main.lifeticks_formatted_field
+										    + " = '" + lifeticks_formatted + "'");
+					}
         }
 
 				if (gametime_enabled)

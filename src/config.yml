@@ -315,6 +315,12 @@ basic-tracking:
   # Multi-Tables / Single Table field for Value
   field-lifeticks-field: field_21
 
+  # Multi-Tables-Use-Key value for multi-tables.field-key-field
+  field-lifeticks-formatted-key-value: ''
+
+  # Multi-Tables / Single Table field for Value
+  field-lifeticks-formatted-field: ''
+
   # Enable Wallet Tracking (NOT IN USE YET)
   field-wallet-enabled: false
 
