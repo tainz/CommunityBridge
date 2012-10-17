@@ -213,12 +213,12 @@ public class Main extends JavaPlugin
 			unregistered_messagereminder = config.getString("unregistered-messagereminder");
 
 			banlist_table_enabled = config.getBoolean("banlist-table.enabled");
-			banlist_table = config.getString("banlist.table-name");
+			banlist_table = config.getString("banlist-table.table");
 			banlist_user_id_field = config.getString("banlist-table.user-id-field");
 			banlist_banned_id_field = config.getString("banlist-table.user-id-field");
 
 			groups_table_enabled = config.getBoolean("groups-table.enabled");
-			groups_table = config.getString("groups-table.table-name");
+			groups_table = config.getString("groups-table.table");
 			groups_user_id_field = config.getString("groups-table.user-id-field");
 			groups_group_id_field = config.getString("groups-table.group-id-field");
 
