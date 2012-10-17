@@ -25,7 +25,7 @@ show-config: true
 
 # If set to true it will show a message to the user that they have been placed
 # into a group
-show-primary-group: false
+show-primary-group: true
 
 # This message is displaed when show-primary-group is false to registered users
 registered-message: Registered Account, Linked to Server Forums
@@ -49,25 +49,25 @@ multi-tables: true
 multi-tables-use-key: false
 
 # If set to true it will not allow banned players from your website to connect
-use-banned-field: true
+use-banned-field: false
 
 # Ban List in Seperate Table (Such as PHPBB) If you include a value for reason
 # then it will display that when booting the player
 banlist-table:
-    enabled: true
+    enabled: false
     table: phpbb_banlist
     user-id-field: ban_userid
     reason-field: ban_reason
 
 # Groups in Seperate Table (Such as PHPBB)
 groups-table:
-    enabled: true
+    enabled: false
     table: phpbb_users_groups
     user-id-field: ban_userid
     group-id-field: ban_reason
 
 # If you have a second group level and want to make use of it
-secondary-groups: true
+secondary-groups: false
 
 # The permissions system (PEX, bPerms, GroupManager)
 permissions-system: GroupManager
@@ -159,7 +159,7 @@ multi-table:
 profile-requirements:
 
   # Enable Forced Website Avatar
-  require-avatar: true
+  require-avatar: false
 
   # Message when Avatar Not Found
   require-avatar-message: This server requires players to upload an avatar to their profile.
@@ -174,7 +174,7 @@ profile-requirements:
   require-avatar-field: pp_main_photo
 
   # Enable Forced Minimum Posts
-  require-minposts: true
+  require-minposts: false
 
   # Messages when Minimum Posts not met
   require-minposts-message: This server requires players to have a minimum of 3 forum posts.
