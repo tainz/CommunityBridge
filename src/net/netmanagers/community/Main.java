@@ -170,7 +170,7 @@ public class Main extends JavaPlugin
 		getCommand("cbsync").setExecutor(new Cmds());
 		getCommand("cbsyncall").setExecutor(new Cmds());
 
-		if   (config.get("db-username").equals("username")
+		if (config.get("db-username").equals("username")
        && config.get("db-password").equals("password"))
     {
 			log.info("Using default config file.");
@@ -283,7 +283,6 @@ public class Main extends JavaPlugin
 
 			default_group = config.getInt("users-table.default-group");
 
-
 			if (use_banned)
       {
 				is_banned_field = config.getString("users-table.banned-field");
@@ -292,16 +291,6 @@ public class Main extends JavaPlugin
       {
 				banned_users_group = config.getInt("users-table.banned-users-group");
 			}
-
-      if (basic_tracking &&
-          !(onlinestatus_enabled || lastonline_enabled || gametime_enabled ||
-          totalxp_enabled || currentxp_enabled || level_enabled ||
-          health_enabled || lifeticks_enabled || wallet_enabled))
-      {
-        Main.log.info("WARNING: Basic tracking is enabled but none of the "
-                     + "fields are enabled. Basic tracking will NOT be performed.");
-        basic_tracking = false;
-      }
 
 			if (show_config)
       {
@@ -350,10 +339,15 @@ public class Main extends JavaPlugin
 				}
 			}
 
-			sql = new SQL(config.get("db-host") + ":" + config.get("db-port"), config.get("db-database") + "", config.get("db-username") + "", config.get("db-password") + "");
+			sql = new SQL(config.get("db-host") + ":" + config.get("db-port"),
+							      config.get("db-database") + "",
+							      config.get("db-username") + "",
+							      config.get("db-password") + "");
 			sql.initialize();
 			if (sql.checkConnection())
       {
+				if (analyzeConfiguration())
+				{
 				if (basic_tracking && onlinestatus_enabled)
         {
 					ResetOnlineStatus();
@@ -378,6 +372,11 @@ public class Main extends JavaPlugin
       {
 				disablePlugin();
 			}
+		}
+      else
+      {
+				disablePlugin();
+	}
 		}
 	}
 
@@ -1484,4 +1483,385 @@ public class Main extends JavaPlugin
 			disablePlugin();
 		}
 	}
+
+	/** 
+  * Check to see if a table exists.
+  * 
+	* @param tableName Name of the table to check
+	* @return Empty string if the check succeeds otherwise an error string
+  */
+	public static Boolean checkColumn(String keyName, String tableName,
+					                          String columnName)
+	{
+		ResultSet result;
+		String errorBase;
+		errorBase = "Error while checking '" + keyName
+						  + "' set to '" + columnName + "': ";
+		
+		try
+		{
+			result = sql.sqlQuery("SHOW COLUMNS FROM `" + tableName
+							              + "` LIKE '" + columnName + "'");
+			
+			if (result == null)
+			{}
+			else
+			{
+				
+				if (result.next())
+				{
+					return true;
+}
+				log.severe(errorBase + "Column does not exist.");
+			}
+			return false;
+		}
+		catch (SQLException e)
+		{
+			log.severe(errorBase + e.getMessage());
+			return false;
+		}
+		catch (MalformedURLException e)
+		{
+			log.severe(errorBase + e.getMessage());
+			return false;
+		}
+		catch (InstantiationException e)
+		{
+			log.severe(errorBase + e.getMessage());
+			return false;
+		}
+		catch (IllegalAccessException e)
+		{
+			log.severe(errorBase + e.getMessage());
+			return false;
+		}
+	}
+	
+	/** 
+  * Check to see if a table exists.
+  * 
+	* @param tableName Name of the table to check
+	* @return Empty string if the check succeeds otherwise an error string
+  */
+	public static Boolean checkTable(String keyName, String tableName)
+	{
+		ResultSet result;
+		String errorBase;
+		errorBase = "Error while checking '" + keyName
+						  + "' set to '" + tableName + "': ";
+		
+		try
+		{
+			result = sql.sqlQuery("SHOW TABLES LIKE '" + tableName + "'");
+			
+			if (result == null)
+			{}
+			else
+			{
+				
+				if (result.next())
+				{
+					return true;
+}
+				log.severe(errorBase + "Table does not exist.");
+			}
+			return false;
+		}
+		catch (SQLException e)
+		{
+			log.severe(errorBase + e.getMessage());
+			return false;
+		}
+		catch (MalformedURLException e)
+		{
+			log.severe(errorBase + e.getMessage());
+			return false;
+		}
+		catch (InstantiationException e)
+		{
+			log.severe(errorBase + e.getMessage());
+			return false;
+		}
+		catch (IllegalAccessException e)
+		{
+			log.severe(errorBase + e.getMessage());
+			return false;
+		}
+	}
+	
+	/** 
+  * Analyze the configuration for potential problems.
+  * 
+  * Checks for the existence of the specified tables and columns within those
+	* tables.
+  */
+	public static Boolean analyzeConfiguration()
+	{
+		Boolean status = true;
+		Boolean userTableStatus = true;
+		Boolean multiTableStatus = true;
+		Boolean tempStatus = true;
+		
+		status = checkTable("users-table.table", users_table);
+		userTableStatus = status;
+		
+		if (status)
+		{
+			status = status & checkColumn("users-table.username", users_table,
+							                      user_name_field);
+			status = status & checkColumn("users-table.user-id-field", users_table,
+							                      user_id_field);
+			if (secondary_groups)
+			{
+				status = status & checkColumn("user-table.secondary-groups-id-field",
+								                      users_table, secondary_groups_id_field);
+			}
+			
+			if (use_banned)
+			{
+				status = status & checkColumn("user-table.banned-field",
+								                      users_table, is_banned_field);
+			}
+		}
+		
+		if (groups_table_enabled)
+		{
+			tempStatus = checkTable("groups-table.table", groups_table);
+			
+			status = status & tempStatus;
+			
+			if (tempStatus)
+			{
+				status = status & checkColumn("groups-table.user-id-field",
+								                      groups_table, groups_user_id_field);
+				status = status & checkColumn("groups-table.group-id-field",
+								                      groups_table, groups_group_id_field);
+			}
+		}
+		else
+		{
+			// We're not using groups table, so we check the group id designated
+			// by user-table keys.
+			if (status)
+			{
+				status = status & checkColumn("users-table.groups-id-field",
+								                      users_table, groups_id_field);
+			}
+		}
+
+		if (use_banned && banlist_table_enabled)
+		{
+			tempStatus = checkTable("banlist-table.table", banlist_table);
+			status = status & tempStatus;
+			
+			if (tempStatus)
+			{
+				status = status & checkColumn("banlist-table.user-id-field",
+								                      banlist_table, banlist_user_id_field);
+				//status = status & checkColumn("banlist-table.reason-field",
+				//				                      banlist_table, banlist_reason_field);
+			}
+		}
+
+		if (multi_tables)
+		{
+			multiTableStatus = checkTable("multi-table.table", multi_table);
+			status = status & multiTableStatus;
+			
+			if (multiTableStatus)
+			{
+				status = status & checkColumn("multi-table.field-user-id-field",
+								                      multi_table, multi_table_user_id_field);
+				if (multi_tables_use_key)
+				{
+					status = status & checkColumn("multi-table.field-key-field",
+									                      multi_table, multi_table_key_field);
+				}
+				else
+				{
+					status = status & checkColumn("multi-table.field-value-field",
+									                      multi_table, multi_table_value_field);
+				}
+			}
+		}
+		
+		if (require_avatar)
+		{
+			tempStatus = checkTable("profile-requirements.require-avatar-table",
+							                avatar_table);
+			status = status & tempStatus;
+			
+			if (tempStatus)
+			{
+				status = status
+							 & checkColumn("profile-requirements.require-avatar-users-id-field",
+								             avatar_table, avatar_user_field);
+				status = status
+							 & checkColumn("profile-requirements.require-avatar-field",
+								             avatar_table, avatar_field);
+			}
+		}
+		
+		if (require_minposts)
+		{
+			tempStatus = checkTable("profile-requirements.require-minposts-table",
+							                minposts_table);
+			status = status & tempStatus;
+			
+			if (tempStatus)
+			{
+				status = status
+							 & checkColumn("profile-requirements.require-minposts-user-id-field",
+								             minposts_table, minposts_user_field);
+				status = status
+							 & checkColumn("profile-requirements.require-minposts-user-id-field",
+								             minposts_table, minposts_field);
+			}
+		}
+		
+		if (basic_tracking)
+		{
+			if (multi_tables && multiTableStatus)
+			{
+				checkTrackingColumns(multi_table);
+			}
+			else if (userTableStatus)
+			{
+				checkTrackingColumns(users_table);
+			}
+		}
+		
+		return status;
+	}
+	
+	public static void checkTrackingColumns(String trackingTable)
+	{
+		if (onlinestatus_enabled)
+		{
+			if (checkColumn("basic-tracking.field-onlinestatus-field", trackingTable,
+							        onlinestatus_field))
+			{}
+			else
+			{
+				onlinestatus_enabled = false;
+				log.severe("'online status' tracking disabled due to previous error.");
+			}
+		}
+		
+		if (lastonline_enabled)
+		{
+			if (checkColumn("basic-tracking.field-lastonline-field", trackingTable,
+				              lastonline_field)
+			 && checkColumn("basic-tracking.field-lastonline-formatted-field",
+							        trackingTable, lastonline_formatted_field))
+			{}
+			else
+			{
+				lastonline_enabled = false;
+				log.severe("'last online' tracking disabled due to previous error(s).");
+			}			
+		}
+		
+		if (gametime_enabled)
+		{
+			if (checkColumn("basic-tracking.field-gametime-field", trackingTable,
+						          gametime_field)
+			 && checkColumn("basic-tracking.field-gametime-formatted-field",
+							        trackingTable, gametime_formatted_field))
+			{}
+			else
+			{
+				gametime_enabled = false;
+				log.severe("'game time' tracking disabled due to previous error(s).");
+			}			
+		}
+		
+		if (totalxp_enabled)
+		{
+			if (checkColumn("basic-tracking.field-totalxp-field", trackingTable,
+						          totalxp_field))
+			{}
+			else
+			{
+				totalxp_enabled = false;
+				log.severe("'total xp' tracking disabled due to previous error(s).");
+			}
+		}
+		
+		if (currentxp_enabled)
+		{
+			if (checkColumn("basic-tracking.field-currentxp-field", trackingTable,
+						          currentxp_field)
+			 && checkColumn("basic-tracking.field-currentxp-formatted-field",
+							        trackingTable, currentxp_formatted_field))
+			{}
+			else
+			{
+				currentxp_enabled = false;
+				log.severe("'current xp' tracking disabled due to previous error(s).");
+			}			
+		}
+		
+		if (level_enabled)
+		{
+			if (checkColumn("basic-tracking.field-level-field", trackingTable,
+						          level_field))
+			{}
+			else
+			{
+				level_enabled = false;
+				log.severe("'level' tracking disabled due to previous error(s).");
+			}
+		}
+		
+		if (health_enabled)
+		{
+			if (checkColumn("basic-tracking.field-health-field", trackingTable,
+						          health_field))
+			{}
+			else
+			{
+				health_enabled = false;
+				log.severe("'health' tracking disabled due to previous error(s).");
+			}			
+		}
+		
+		if (lifeticks_enabled)
+		{
+			if (checkColumn("basic-tracking.field-lifeticks-field", trackingTable,
+						          lifeticks_field)
+			 && checkColumn("basic-tracking.field-lifeticks-formatted-field",
+							        trackingTable, lifeticks_formatted_field))
+			{}
+			else
+			{
+				lifeticks_enabled = false;
+				log.severe("'lifeticks' tracking disabled due to previous error(s).");
+			}			
+		}
+		
+		if (wallet_enabled)
+		{
+			if (checkColumn("basic-tracking.field-wallet-field", trackingTable,
+						          wallet_field))
+			{}
+			else
+			{
+				wallet_enabled = false;
+				log.severe("'wallet' tracking disabled due to previous error(s).");
+			}			
+		}
+		
+    if ((onlinestatus_enabled || lastonline_enabled || gametime_enabled
+			 ||totalxp_enabled      || currentxp_enabled  || level_enabled
+			 ||health_enabled       || lifeticks_enabled  || wallet_enabled))
+		{}
+		else
+    {
+      basic_tracking = false;
+      log.severe("Basic tracking is enabled, but all individual trackers are"
+                +"disabled. Basic tracking is now turned off.");
+    }
+	}	
 }
