@@ -1735,6 +1735,11 @@ public class Main extends JavaPlugin
 		return status;
 	}
 	
+	/** 
+  * Check the basic tracking columns configuration
+  * 
+	* @param trackingTable Name of the table that the tracking columns reside on
+	*/
 	public static void checkTrackingColumns(String trackingTable)
 	{
 		if (onlinestatus_enabled)
