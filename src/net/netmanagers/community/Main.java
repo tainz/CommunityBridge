@@ -1861,7 +1861,7 @@ public class Main extends JavaPlugin
     {
       basic_tracking = false;
       log.severe("Basic tracking is enabled, but all individual trackers are"
-                +"disabled. Basic tracking is now turned off.");
+                +" disabled. Basic tracking is now turned off.");
     }
 	}	
 }
