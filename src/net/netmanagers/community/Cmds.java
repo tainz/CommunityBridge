@@ -176,12 +176,8 @@ public class Cmds implements CommandExecutor {
                 Main.getUserId(victim.getName()) + "'";
         Main.log.info(query);
         Main.sql.updateQuery(query);
-        Main.log.info("Banning " + victim.getName() + " from the site");
-        if (staff != null)
-        {
-          staff.sendMessage(ChatColor.RED + "Banned " + victim.getName() +
-                            " from the site");
-        }
+				sendAndLog(staff, "banned " + victim.getName() + " from the site.",
+								  ChatColor.RED);
       }
       else
       {
@@ -193,18 +189,21 @@ public class Cmds implements CommandExecutor {
         Main.log.info(query);
         Main.sql.updateQuery(query);
         victim.kickPlayer("You have been banned from the site.");
-        Main.log.info("Banning " + victim.getName() + " from the site");
-        if (staff != null)
-        {
-          staff.sendMessage(ChatColor.RED + "Banned " + victim.getName() + " from the site");
-        }
+				sendAndLog(staff, "banned " + victim.getName() + " from the site",
+								   ChatColor.RED);
       }
-    } catch (MalformedURLException e) {
-      e.printStackTrace();
-    } catch (InstantiationException e) {
-      e.printStackTrace();
-    } catch (IllegalAccessException e) {
-      e.printStackTrace();
+    }
+		catch (MalformedURLException e)
+		{
+      Main.log.severe("Error in banPlayer(): " + e.getMessage());
+    }
+		catch (InstantiationException e)
+		{
+      Main.log.severe("Error in banPlayer(): " + e.getMessage());
+    }
+		catch (IllegalAccessException e)
+		{
+      Main.log.severe("Error in banPlayer(): " + e.getMessage());
     }
   }
 
@@ -213,18 +212,66 @@ public class Cmds implements CommandExecutor {
     try
     {
       OfflinePlayer victim = Bukkit.getOfflinePlayer(victimString);
-      Main.sql.updateQuery("UPDATE "+Main.users_table+" SET "+Main.is_banned_field+"='0' WHERE "+Main.user_id_field+"='" + Main.getUserId(victim.getName()) + "'");							
-      Main.log.info("Unbanning " + victim.getName() + " from the site");
-      if (staff != null)
-      {
-        staff.sendMessage(ChatColor.RED + victim.getName() + " has been unbanned");
-      }
-    } catch (MalformedURLException e) {
-      e.printStackTrace();
-    } catch (InstantiationException e) {
-      e.printStackTrace();
-    } catch (IllegalAccessException e) {
-      e.printStackTrace();
+      Main.sql.updateQuery("UPDATE " + Main.users_table
+							           + " SET " + Main.is_banned_field + "='0'"
+							           + " WHERE " + Main.user_id_field + "='"
+							           + Main.getUserId(victim.getName()) + "'");
+			sendAndLog(staff, "unbanned " + victim.getName() + " from the site",
+							   ChatColor.RED);
+    }
+		catch (MalformedURLException e)
+		{
+      Main.log.severe("Error in unbanPlayer(): " + e.getMessage());
+    }
+		catch (InstantiationException e)
+		{
+      Main.log.severe("Error in unbanPlayer(): " + e.getMessage());
+    }
+		catch (IllegalAccessException e)
+		{
+      Main.log.severe("Error in unbanPlayer(): " + e.getMessage());
     }
   }
+
+	/** 
+  * Send response message to player (if possible) AND to the console/log.
+  * 
+	* @param staff Target Player object or null
+	* @param message Message to send
+	* @param color ChatColor for message text, not used for console/log
+  */
+	private void sendAndLog(Player staff, String message, ChatColor color)
+  {
+		String name;
+		if (staff == null)
+		{
+			name = "Console";
+		}
+		else
+		{
+			staff.sendMessage(color + message);
+			name = staff.getName();
+		}
+		
+		Main.log.info(name + " " + message);
+  }
+	
+	/** 
+  * Send response message to player (if possible) or to the console/log.
+  * 
+	* @param staff Target Player object or null
+	* @param message Message to send
+	* @param color ChatColor for message text, not used for console/log
+  */
+  private void sendOrLog(Player staff, String message, ChatColor color)
+  {
+    if (staff == null)
+    {
+      Main.log.info("Console " + message);
+		}
+    else
+    {
+      staff.sendMessage(color + message);
+		}
+	}
 }
