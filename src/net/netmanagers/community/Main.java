@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.logging.Logger;
 import net.netmanagers.api.Logging;
 import net.netmanagers.api.SQL;
@@ -81,8 +82,8 @@ public class Main extends JavaPlugin
 
 	public static String is_banned_field;
 
-	public static int banned_users_group;
-	public static int default_group;
+	public static String banned_users_group;
+	public static String default_group;
 	public static int minposts_required;
 
 	public static String multi_table_key_field;
@@ -141,7 +142,7 @@ public class Main extends JavaPlugin
   public static String wallet_key_value;
 	public static String wallet_field;
 
-	public static String[] groups;
+	public static Map<String, Object> groups;
 
 	@Override
 	public void onEnable()
@@ -281,7 +282,7 @@ public class Main extends JavaPlugin
 			lifeticks_formatted_key_value = config.getString("basic-tracking.field-lifeticks-formatted-key-value", "");
 			lifeticks_formatted_field = config.getString("basic-tracking.field-lifeticks-formatted-field", "");
 
-			default_group = config.getInt("users-table.default-group");
+			default_group = config.getString("users-table.default-group");
 
 			if (use_banned)
       {
@@ -289,7 +290,7 @@ public class Main extends JavaPlugin
 			}
       else
       {
-				banned_users_group = config.getInt("users-table.banned-users-group");
+				banned_users_group = config.getString("users-table.banned-users-group");
 			}
 
 			if (show_config)
@@ -315,30 +316,9 @@ public class Main extends JavaPlugin
 					Main.log.info("Tracking Wallet        : " + wallet_enabled);
 				}
 			}
-
-      // Determine how many groups are configured.
-			int count = 1;
-			for (String s : config.getKeys(true))
-      {
-				if (s.contains("groups."))
-        {
-					count++;
-				}
-			}
-
-      groups = new String[count];
-
-      // Collect a list of configurated groups.
-      count = 1;
-      for (String s : config.getKeys(true))
-      {
-				if (s.contains("groups."))
-        {
-					groups[count] = config.getString(s);
-          count++;
-				}
-			}
-
+			
+			groups = config.getConfigurationSection("groups").getValues(true);
+			
 			sql = new SQL(config.get("db-host") + ":" + config.get("db-port"),
 							      config.get("db-database") + "",
 							      config.get("db-username") + "",
@@ -611,54 +591,97 @@ public class Main extends JavaPlugin
 		}
 		return null;
 	}
+	
+	/**
+	 * Asks permissions system if a player is the member of a given group.
+	 * 
+	 * @param groupId
+	 * @param player
+	 * @return 
+	 */
+	public static boolean isMemberOfGroup(String groupName, String playerName)
+	{
+		try
+		{
+			if (permissions_system.equalsIgnoreCase("PEX"))
+			{
+				return PermissionsEx.getUser(playerName).inGroup(groupName);
+			}
+		}
+		catch (Error e)
+		{
+			log.severe(e.getMessage());
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * A case insensitive check to see if a given group is in the group mapping.
+	 * 
+	 * @param groupName String containing the group name to search for.
+	 * @return true if the group is in the mapping.
+	 */
+	public static boolean inGroupMap(String groupName)
+	{
+		for (Object value : groups.values())
+		{
+			if (((String)value).equalsIgnoreCase(groupName))
+			{
+				return true;
+			}
+		}
 
-	public static boolean setGroup(int groupId, Player p, boolean n)
+		return false;
+	}
+	
+	public static boolean setGroup(String groupName, Player player, boolean n)
   {
     try
     {
-      String gr = config.getString((new StringBuilder("groups.")).append(groupId).toString());
-
       if (permissions_system.equalsIgnoreCase("PEX"))
       {
-        if (!PermissionsEx.getUser(p).getGroupsNames()[0].equalsIgnoreCase(gr))
-        {
-          PermissionsEx.getUser(p).setGroups(new String[] { gr });
+        if (isMemberOfGroup(groupName, player.getName()))
+        {}
+				else
+				{
+          PermissionsEx.getUser(player).setGroups(new String[] { groupName });
           if (n)
           {
-            log.info((new StringBuilder("Set ")).append(p.getName()).append(" to group ").append(gr).toString());
+            log.info((new StringBuilder("Set ")).append(player.getName()).append(" to group ").append(groupName).toString());
           }
           return true;
         }
       }
       else if (permissions_system.equalsIgnoreCase("bPerms"))
 			{
-        Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), (new StringBuilder("world ")).append(p.getWorld().getName()).toString());
-        Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), (new StringBuilder("user ")).append(p.getName()).toString());
-        Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), (new StringBuilder("user setgroup ")).append(gr).toString());
+        Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), (new StringBuilder("world ")).append(player.getWorld().getName()).toString());
+        Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), (new StringBuilder("user ")).append(player.getName()).toString());
+        Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), (new StringBuilder("user setgroup ")).append(groupName).toString());
 
         if (n)
         {
-          log.info((new StringBuilder("Set ")).append(p.getName()).append(" to group ").append(gr).toString());
+          log.info((new StringBuilder("Set ")).append(player.getName()).append(" to group ").append(groupName).toString());
         }
         return true;
       }
       else if (permissions_system.equalsIgnoreCase("GroupManager"))
       {
-        Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "manuadd " + p.getName() + " " + gr);
+        Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "manuadd " + player.getName() + " " + groupName);
         if (n)
         {
-          log.info((new StringBuilder("Setting ")).append(p.getName()).append(" to group ").append(gr).toString());
+          log.info((new StringBuilder("Setting ")).append(player.getName()).append(" to group ").append(groupName).toString());
         }
         return true;
       }
       else if (permissions_system.equalsIgnoreCase("PermsBukkit"))
       {
-        String cmd = "permissions player setgroup " + p.getName() + " " + gr;
+        String cmd = "permissions player setgroup " + player.getName() + " " + groupName;
         Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), cmd);
 
         if (n)
         {
-          log.info((new StringBuilder("Set ")).append(p.getName()).append(" to group ").append(gr).toString());
+          log.info((new StringBuilder("Set ")).append(player.getName()).append(" to group ").append(groupName).toString());
         }
         return true;
       }
@@ -722,20 +745,65 @@ public class Main extends JavaPlugin
 
 		 return false;
 	}
-
-	public static int getGroup(String id)
-  {
-		for (int i = 1; i <= groups.length; i++)
-    {
-			if (groups[i].toLowerCase().contains(id.toLowerCase()))
-      {
-				return i;
+	
+	/**
+	 * Returns a database group ID from a permissions group name
+	 * 
+	 * @param groupName String containing group name to search for.
+	 * @return String containing database group ID or null if not found.
+	 */
+	public static String getGroupID(String groupName)
+	{
+		for (Map.Entry<String, Object> entry : Main.groups.entrySet())
+		{
+			if (((String)entry.getValue()).equalsIgnoreCase(groupName))
+			{
+				return (String)entry.getKey();
 			}
 		}
 		
-		return 0;
+		return null;
+	}
+	/**
+	 * Returns a permissions group name from a database group ID
+	 * 
+	 * @param groupID  String containing group ID to search for.
+	 * @return String containing permissions group name or null if not found.
+	 */
+	public static String getGroupName(String groupID)
+  {
+		for (Map.Entry<String, Object> entry : Main.groups.entrySet())
+		{
+			if (entry.getKey().equalsIgnoreCase(groupID))
+			{
+				return (String)entry.getValue();
+			}
+		}
+		
+		return null;
 	}
 
+	/**
+	 * Returns exact permissions group name from (presumably user entered)
+	 * permissions group name
+	 * 
+	 * @param groupName  String containing group name to search for.
+	 * @return String containing group name or null if not found.
+	 */
+	public static String getGroupNameFull(String groupName)
+	{
+		for (Object value : groups.values())
+		{
+			if (((String)value).equalsIgnoreCase(groupName))
+			{
+				return (String)value;
+			}
+		}
+		
+		return null;		
+	}
+	
+	
 	public static void syncAll() {
 		log.info("Running Auto Sync");
 		for (Player play : Bukkit.getOnlinePlayers())
@@ -772,15 +840,17 @@ public class Main extends JavaPlugin
 
   }
 
-	public static void SyncPlayer(Player p, boolean firstsync){
-		try {
+	public static void SyncPlayer(Player p, boolean firstsync)
+	{
+		try
+		{
 			int id = getUserId(p.getName());
 			if (id > 0)
       {
 				ResultSet res = sql.sqlQuery("SELECT * FROM " + users_table + " WHERE " + user_id_field + " = '" + id + "'");
 				if (res.next())
         {
-					int group = res.getInt(groups_id_field);
+					String groupName = (String)groups.get(res.getString(groups_id_field));
 
 					if (use_banned)
           {
@@ -790,13 +860,10 @@ public class Main extends JavaPlugin
             {
               p.kickPlayer("You have been banned from the site.");
             }
-
 					}
           else
           {
-						boolean banned = res.getInt(groups_id_field) == banned_users_group ? true : false;
-
-						if (banned)
+						if (res.getString(groups_id_field).equalsIgnoreCase(banned_users_group))
             {
               p.kickPlayer("You have been banned from the site.");
             }
@@ -821,7 +888,7 @@ public class Main extends JavaPlugin
 
 					if (requirements_met)
           {
-						setGroup(group, p, firstsync);
+						setGroup(groupName, p, firstsync);
 
 						if (secondary_groups)
             {
@@ -840,8 +907,7 @@ public class Main extends JavaPlugin
 					}
           else
           {
-						setGroup(Main.default_group, p, firstsync);
-						group = Main.default_group;
+						setGroup(default_group, p, firstsync);
 					}
 
 					if (firstsync)
@@ -853,15 +919,14 @@ public class Main extends JavaPlugin
 
 						if (show_primary_group)
             {
-							p.sendMessage(ChatColor.YELLOW + "Registered " + Main.config.getString("groups." + group) + " Account.");
+							p.sendMessage(ChatColor.YELLOW + "Registered " + groupName + " Account.");
 						}
             else
             {
 							p.sendMessage(ChatColor.YELLOW + registered_message);
 						}
 
-						Main.log.info(p.getName() + " linked to Community User #"+ id + ", Group: " + Main.config.getString("groups." + group));
-
+						Main.log.info(p.getName() + " linked to Community User #"+ id + ", Group: " + groupName);
 					}
           else if (basic_tracking)
           {
