@@ -317,7 +317,7 @@ public class Main extends JavaPlugin
 			}
 
       // Determine how many groups are configured.
-			int count = 0;
+			int count = 1;
 			for (String s : config.getKeys(true))
       {
 				if (s.contains("groups."))
@@ -329,7 +329,7 @@ public class Main extends JavaPlugin
       groups = new String[count];
 
       // Collect a list of configurated groups.
-      count = 0;
+      count = 1;
       for (String s : config.getKeys(true))
       {
 				if (s.contains("groups."))
@@ -725,13 +725,14 @@ public class Main extends JavaPlugin
 
 	public static int getGroup(String id)
   {
-		for (int i = 0; i < groups.length; i++)
+		for (int i = 1; i <= groups.length; i++)
     {
 			if (groups[i].toLowerCase().contains(id.toLowerCase()))
       {
-				return i + 1;
+				return i;
 			}
 		}
+		
 		return 0;
 	}
 
