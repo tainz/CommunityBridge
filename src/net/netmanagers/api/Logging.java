@@ -16,7 +16,7 @@ public class Logging {
 		logge.info("[" + pdf.getName() + "] " + text);
 	}
 	
-	public void warn(String text) {
+	public void warning(String text) {
 		logge.warning("[" + pdf.getName() + "] " + text);
 	}
 	

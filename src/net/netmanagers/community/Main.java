@@ -27,7 +27,7 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 public class Main extends JavaPlugin
 {
-	public static Logging log;
+	public static Logger log;
 	public static String thisPluginName = "CommunityBridge";
 	public static PluginDescriptionFile pdf;
 	public static SQL sql;
@@ -148,7 +148,7 @@ public class Main extends JavaPlugin
 	public void onEnable()
   {
 		pdf = this.getDescription();
-		log = new Logging(Logger.getLogger("Minecraft"), pdf);
+		log = this.getLogger(); //new Logging(Logger.getLogger("Minecraft"), pdf);
 
 		configFile = new File(getDataFolder(), "config.yml");
 		if (!configFile.exists())

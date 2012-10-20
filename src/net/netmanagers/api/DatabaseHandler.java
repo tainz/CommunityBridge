@@ -67,7 +67,7 @@ public class DatabaseHandler {
 			if (this.connection != null)
 				this.connection.close();
 		} catch (Exception e) {
-			Main.log.warn("Failed to close database connection! " + e.getMessage());
+			Main.log.warning("Failed to close database connection! " + e.getMessage());
 		}
 	}
 	
@@ -99,7 +99,7 @@ public class DatabaseHandler {
 						return this.connection;
 					
 				} catch (SQLException e1) {					
-					Main.log.warn("Database Connection Error: " + e.getMessage());					
+					Main.log.warning("Database Connection Error: " + e.getMessage());					
 				}					
 			}
 		}		
@@ -120,7 +120,7 @@ public class DatabaseHandler {
 
 			return result;
 		} catch (SQLException ex) {
-			Main.log.warn("Error at SQL Query: " + ex.getMessage());
+			Main.log.warning("Error at SQL Query: " + ex.getMessage());
 		}
 		return null;
 	}
@@ -134,7 +134,7 @@ public class DatabaseHandler {
 			}
 		} catch (SQLException ex) {
 			if (!ex.toString().contains("not return ResultSet"))
-				Main.log.warn("Error at SQL INSERT Query: " + ex);
+				Main.log.warning("Error at SQL INSERT Query: " + ex);
 		}
 	}
 
@@ -147,7 +147,7 @@ public class DatabaseHandler {
 			}
 		} catch (SQLException ex) {
 			if (!ex.toString().contains("not return ResultSet"))
-				Main.log.warn("Error at SQL UPDATE Query: " + ex);						
+				Main.log.warning("Error at SQL UPDATE Query: " + ex);						
 		}
 	}
 
@@ -160,7 +160,7 @@ public class DatabaseHandler {
 			}
 		} catch (SQLException ex) {
 			if (!ex.toString().contains("not return ResultSet"))
-				Main.log.warn("Error at SQL DELETE Query: " + ex);
+				Main.log.warning("Error at SQL DELETE Query: " + ex);
 		}
 	}
 
@@ -182,7 +182,7 @@ public class DatabaseHandler {
 			if (ex.getMessage().contains("exist")) {
 				return Boolean.valueOf(false);
 			}
-			Main.log.warn("Error at SQL Query: " + ex.getMessage());
+			Main.log.warning("Error at SQL Query: " + ex.getMessage());
 		}
 
 		if (sqlQuery("SELECT * FROM " + table) == null)
