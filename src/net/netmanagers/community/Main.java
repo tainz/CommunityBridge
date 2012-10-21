@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.logging.Logger;
-import net.netmanagers.api.Logging;
 import net.netmanagers.api.SQL;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -27,6 +26,7 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 public class Main extends JavaPlugin
 {
+	@SuppressWarnings("NonConstantLogger")
 	public static Logger log;
 	public static String thisPluginName = "CommunityBridge";
 	public static PluginDescriptionFile pdf;
@@ -148,7 +148,7 @@ public class Main extends JavaPlugin
 	public void onEnable()
   {
 		pdf = this.getDescription();
-		log = this.getLogger(); //new Logging(Logger.getLogger("Minecraft"), pdf);
+		log = this.getLogger();
 
 		configFile = new File(getDataFolder(), "config.yml");
 		if (!configFile.exists())
@@ -1664,10 +1664,10 @@ public class Main extends JavaPlugin
   */
 	public static Boolean analyzeConfiguration()
 	{
-		Boolean status = true;
-		Boolean userTableStatus = true;
+		Boolean status;
+		Boolean userTableStatus;
 		Boolean multiTableStatus = true;
-		Boolean tempStatus = true;
+		Boolean tempStatus;
 		
 		status = checkTable("users-table.table", users_table);
 		userTableStatus = status;
