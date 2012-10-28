@@ -30,9 +30,6 @@ db-username: username
 # Database Password
 db-password: password
 
-# This will show you some basic configuration in logs when the plugin starts
-show-config: true
-
 # If set to true it will show a message to the user that they have been placed
 # into a group
 show-primary-group: true
