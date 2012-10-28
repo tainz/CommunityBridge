@@ -3,10 +3,7 @@ description: Community Bridging plugin based off of ChillerCrafts ForumBridge pl
 name: CommunityBridge
 website: http://dev.bukkit.org/server-mods/communitybridge-fm/
 
-# Note: x.y.0: alpha, x.y.1: beta, x.y.2: releasec candidate, x.y.3 final
-#       change in y is minor (bugfixes, new features) change.
-#       change in x is major (massive rewrite) change.
-version: 1.10.3
+version: 1.11.0
 
 main: net.netmanagers.community.Main
 # Note 'usage:' is commented out because as of Bukkit 1.3.1-R2, the message
