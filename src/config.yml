@@ -130,6 +130,8 @@ users-table:
   banned-users-group: 5
 
   # The Default Group for when a group can't be found or they are unregistred.
+  # Note that this is the group ID on the web application, not the permissions
+  # group name.
   default-group: 2
 
 #
