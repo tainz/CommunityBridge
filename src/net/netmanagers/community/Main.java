@@ -181,6 +181,8 @@ public class Main extends JavaPlugin
 		}
     else
     {
+			show_config = config.getBoolean("show-config");
+
 			if (show_config)
       {
 				log.warning("The setting 'show-config' in config.yml is deprecated. Use log-level: config instead.");
@@ -196,7 +198,6 @@ public class Main extends JavaPlugin
 			}
 
 			permissions_system = config.getString("permissions-system");
-			show_config = config.getBoolean("show-config");
 			show_primary_group = config.getBoolean("show-primary-group");
 			basic_tracking = config.getBoolean("enable-basic-tracking");
 			multi_tables = config.getBoolean("multi-tables");
