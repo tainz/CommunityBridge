@@ -30,9 +30,7 @@ public class Main extends JavaPlugin
 	@SuppressWarnings("NonConstantLogger")
 	public static Log log;
 	public static String thisPluginName = "CommunityBridge";
-	public static PluginDescriptionFile pdf;
 	public static SQL sql;
-	public static File configFile;
 	public static FileConfiguration config;
 
 	public static boolean show_config = false;
@@ -148,24 +146,9 @@ public class Main extends JavaPlugin
 	@Override
 	public void onEnable()
   {
-		pdf = this.getDescription();
 		log = new Log(this.getLogger(), Level.CONFIG);
+		saveDefaultConfig();
 		
-		configFile = new File(getDataFolder(), "config.yml");
-		if (!configFile.exists())
-    {
-			configFile.getParentFile().mkdirs();
-			copy(getResource("config.yml"), configFile);
-		}
-		config = new YamlConfiguration();
-		try {
-			config.load(configFile);
-			config.options().copyHeader(true);
-		} catch (Exception e) {
-			log.severe("Error loading config");
-			disablePlugin();
-		}
-
 		getServer().getPluginManager().registerEvents(new EventListener(), this);
 		getCommand("cbban").setExecutor(new Cmds());
 		getCommand("cbunban").setExecutor(new Cmds());
@@ -173,171 +156,20 @@ public class Main extends JavaPlugin
 		getCommand("cbsync").setExecutor(new Cmds());
 		getCommand("cbsyncall").setExecutor(new Cmds());
 
-		if (config.get("db-username").equals("username")
-       && config.get("db-password").equals("password"))
+		if (this.getConfig().get("db-username").equals("username")
+       && this.getConfig().get("db-password").equals("password"))
     {
 			log.config("Using default config file.");
 			getServer().getPluginManager().disablePlugin(this);
 		}
     else
     {
-			show_config = config.getBoolean("show-config");
+			loadConfig();
 
-			if (show_config)
-      {
-				log.warning("The setting 'show-config' in config.yml is deprecated. Use log-level: config instead.");
-				log.setLevel(Level.CONFIG);
-			}			
-
-			if (config.getString("log-level") == null
-				||config.getString("log-level").isEmpty())
-			{}
-			else
-			{
-				log.setLevel(config.getString("log-level"));
-			}
-
-			permissions_system = config.getString("permissions-system");
-			show_primary_group = config.getBoolean("show-primary-group");
-			basic_tracking = config.getBoolean("enable-basic-tracking");
-			multi_tables = config.getBoolean("multi-tables");
-			multi_tables_use_key = config.getBoolean("multi-tables-use-key");
-			secondary_groups = config.getBoolean("secondary-groups");
-			use_banned = config.getBoolean("use-banned-field");
-			kick_unregistered = config.getBoolean("kick-unregistered");
-
-      auto_sync = config.getBoolean("auto-sync");
-      auto_remind = config.getBoolean("auto-remind");
-      auto_every_unit = config.getString("auto-every-unit", "ticks");
-
-			auto_sync_every = config.getLong("auto-sync-every");
-      auto_remind_every = config.getLong("auto-remind-every");
-
-			require_avatar = config.getBoolean("profile-requirements.require-avatar");
-			avatar_table = config.getString("profile-requirements.require-avatar-table");
-			avatar_user_field = config.getString("profile-requirements.require-avatar-user-id-field");
-			avatar_field = config.getString("profile-requirements.require-avatar-field");
-			avatar_message = config.getString("profile-requirements.require-avatar-message");
-
-			require_minposts = config.getBoolean("profile-requirements.require-minposts");
-			minposts_required =  config.getInt("profile-requirements.require-minposts-count");
-			minposts_table = config.getString("profile-requirements.require-minposts-table");
-			minposts_user_field = config.getString("profile-requirements.require-minposts-user-id-field");
-			minposts_field = config.getString("profile-requirements.require-minposts-field");
-			minposts_message = config.getString("profile-requirements.require-minposts-message");
-
-			registered_message = config.getString("registered-message");
-			unregistered_message = config.getString("unregistered-message");
-			unregistered_messagereminder = config.getString("unregistered-messagereminder");
-
-			banlist_table_enabled = config.getBoolean("banlist-table.enabled");
-			banlist_table = config.getString("banlist-table.table");
-			banlist_user_id_field = config.getString("banlist-table.user-id-field");
-			banlist_banned_id_field = config.getString("banlist-table.user-id-field");
-
-			groups_table_enabled = config.getBoolean("groups-table.enabled");
-			groups_table = config.getString("groups-table.table");
-			groups_user_id_field = config.getString("groups-table.user-id-field");
-			groups_group_id_field = config.getString("groups-table.group-id-field");
-
-			users_table = config.getString("users-table.table");
-			user_id_field = config.getString("users-table.user-id-field");
-			user_name_field = config.getString("users-table.user-name-field");
-
-			groups_id_field = config.getString("users-table.groups-id-field");
-			secondary_groups_id_field = config.getString("users-table.secondary-groups-id-field");
-
-			multi_table = config.getString("multi-table.table");
-			multi_table_user_id_field = config.getString("multi-table.field-user-id-field");
-			multi_table_key_field = config.getString("multi-table.field-key-field");
-			multi_table_key_value = config.getString("multi-table.field-key-value");
-			multi_table_value_field = config.getString("multi-table.field-value-field");
-
-			onlinestatus_enabled = config.getBoolean("basic-tracking.field-onlinestatus-enabled");
-			onlinestatus_key_value = config.getString("basic-tracking.field-onlinestatus-key-value");
-			onlinestatus_field = config.getString("basic-tracking.field-onlinestatus-field");
-			onlinestatus_valueonline = config.getString("basic-tracking.field-onlinestatus-valueonline");
-			onlinestatus_valueoffline = config.getString("basic-tracking.field-onlinestatus-valueoffline");
-
-      lastonline_enabled = config.getBoolean("basic-tracking.field-lastonline-enabled");
-			lastonline_key_value = config.getString("basic-tracking.field-lastonline-key-value");
-			lastonline_field = config.getString("basic-tracking.field-lastonline-field");
-			lastonline_formatted_key_value = config.getString("basic-tracking.field-lastonline-formatted-key-value", "");
-			lastonline_formatted_field = config.getString("basic-tracking.field-lastonline-formatted-field", "");
-
-      wallet_enabled = config.getBoolean("basic-tracking.field-wallet-enabled");
-			wallet_key_value = config.getString("basic-tracking.field-wallet-key-value");
-			wallet_field = config.getString("basic-tracking.field-wallet-field");
-
-      gametime_enabled = config.getBoolean("basic-tracking.field-gametime-enabled");
-			gametime_key_value = config.getString("basic-tracking.field-gametime-key-value");
-			gametime_field = config.getString("basic-tracking.field-gametime-field");
-      gametime_formatted_field = config.getString("basic-tracking.field-gametime-formatted-field", "");
-			gametime_formatted_key_value = config.getString("basic-tracking.field-gametime-formatted-key-value", "");
-
-      totalxp_enabled = config.getBoolean("basic-tracking.field-totalxp-enabled");
-			totalxp_key_value = config.getString("basic-tracking.field-totalxp-key-value");
-			totalxp_field = config.getString("basic-tracking.field-totalxp-field");
-
-      currentxp_enabled = config.getBoolean("basic-tracking.field-currentxp-enabled");
-			currentxp_key_value = config.getString("basic-tracking.field-currentxp-key-value");
-			currentxp_field = config.getString("basic-tracking.field-currentxp-field");
-			currentxp_formatted_key_value = config.getString("basic-tracking.field-currentxp-formatted-key-value", "");
-			currentxp_formatted_field = config.getString("basic-tracking.field-currentxp-formatted-field", "");
-
-      level_enabled = config.getBoolean("basic-tracking.field-level-enabled");
-			level_key_value = config.getString("basic-tracking.field-level-key-value");
-			level_field = config.getString("basic-tracking.field-level-field");
-
-      health_enabled = config.getBoolean("basic-tracking.field-health-enabled");
-			health_key_value = config.getString("basic-tracking.field-health-key-value");
-			health_field = config.getString("basic-tracking.field-health-field");
-
-      lifeticks_enabled = config.getBoolean("basic-tracking.field-lifeticks-enabled");
-			lifeticks_key_value = config.getString("basic-tracking.field-lifeticks-key-value");
-			lifeticks_field = config.getString("basic-tracking.field-lifeticks-field");
-			lifeticks_formatted_key_value = config.getString("basic-tracking.field-lifeticks-formatted-key-value", "");
-			lifeticks_formatted_field = config.getString("basic-tracking.field-lifeticks-formatted-field", "");
-
-			if (use_banned)
-      {
-				is_banned_field = config.getString("users-table.banned-field");
-			}
-      else
-      {
-				banned_users_group = config.getString("users-table.banned-users-group");
-			}
-
-			log.config("Auto Sync   : " + auto_sync);
-			log.config("Auto Remind :" + auto_remind);
-			log.config("Kick Unregistered : " + kick_unregistered);
-			log.config("Multi Tables : " + multi_tables);
-			log.config("Basic Tracking : " + basic_tracking);
-			log.config("Require Avatar : " + require_avatar);
-			log.config("Min Posts : " + require_minposts);
-
-			if (basic_tracking)
-			{
-				log.config("Tracking Online Status : " + onlinestatus_enabled);
-				log.config("Tracking Last Online   : " + lastonline_enabled);
-				log.config("Tracking Game Time     : " + gametime_enabled);
-				log.config("Tracking Total XP      : " + totalxp_enabled);
-				log.config("Tracking Current XP    : " + currentxp_enabled);
-				log.config("Tracking Level         : " + level_enabled);
-				log.config("Tracking Health        : " + health_enabled);
-				log.config("Tracking Life Ticks    : " + lifeticks_enabled);
-				log.config("Tracking Wallet        : " + wallet_enabled);
-			}
-			
-			groups = config.getConfigurationSection("groups").getValues(true);
-			
-			// Note: groups is a map <String, Object> so we need the cast.
-			default_group = (String)groups.get(config.getString("users-table.default-group"));
-
-			sql = new SQL(config.get("db-host") + ":" + config.get("db-port"),
-							      config.get("db-database") + "",
-							      config.get("db-username") + "",
-							      config.get("db-password") + "");
+			sql = new SQL(this.getConfig().get("db-host") + ":" + this.getConfig().get("db-port"),
+							      this.getConfig().get("db-database") + "",
+							      this.getConfig().get("db-username") + "",
+							      this.getConfig().get("db-password") + "");
 			sql.initialize();
 			if (sql.checkConnection())
       {
@@ -358,8 +190,6 @@ public class Main extends JavaPlugin
         {
           startAutoReminder();
         }
-
-				saveConfig();
 
 				log.config("Enabled!");
 			}
@@ -388,6 +218,7 @@ public class Main extends JavaPlugin
 
 	private static void disablePlugin()
   {
+		// TODO: Consider: className.Bukkit.getPluginManager().disablePlugin(className);
 		PluginManager pm = Bukkit.getServer().getPluginManager();
 		for (Plugin plugin : pm.getPlugins()) {
             if (plugin.getDescription().getName().equalsIgnoreCase(thisPluginName)) {
@@ -493,23 +324,8 @@ public class Main extends JavaPlugin
 		}
 	}
 
-	protected void copy(InputStream in, File file) {
-		try {
-			OutputStream out = new FileOutputStream(file);
-			byte[] buf = new byte[1024];
-			int len;
-			while ((len = in.read(buf)) > 0)
-      {
-				out.write(buf, 0, len);
-			}
-			out.close();
-			in.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public static int getUserId(String username) {
+	public static int getUserId(String username)
+	{
 		int userId = 0;
     String query;
 		try
@@ -1957,4 +1773,161 @@ public class Main extends JavaPlugin
                 +" disabled. Basic tracking is now turned off.");
     }
 	}	
+
+	private void loadConfig()
+	{
+		show_config = this.getConfig().getBoolean("show-config");
+
+		if (show_config)
+		{
+			log.warning("The setting 'show-config' in config.yml is deprecated. Use log-level: config instead.");
+			log.setLevel(Level.CONFIG);
+		}			
+
+		if (this.getConfig().getString("log-level") == null
+			||this.getConfig().getString("log-level").isEmpty())
+		{}
+		else
+		{
+			log.setLevel(this.getConfig().getString("log-level"));
+		}
+
+		permissions_system = this.getConfig().getString("permissions-system");
+		show_primary_group = this.getConfig().getBoolean("show-primary-group");
+		basic_tracking = this.getConfig().getBoolean("enable-basic-tracking");
+		multi_tables = this.getConfig().getBoolean("multi-tables");
+		multi_tables_use_key = this.getConfig().getBoolean("multi-tables-use-key");
+		secondary_groups = this.getConfig().getBoolean("secondary-groups");
+		use_banned = this.getConfig().getBoolean("use-banned-field");
+		kick_unregistered = this.getConfig().getBoolean("kick-unregistered");
+
+		auto_sync = this.getConfig().getBoolean("auto-sync");
+		auto_remind = this.getConfig().getBoolean("auto-remind");
+		auto_every_unit = this.getConfig().getString("auto-every-unit", "ticks");
+
+		auto_sync_every = this.getConfig().getLong("auto-sync-every");
+		auto_remind_every = this.getConfig().getLong("auto-remind-every");
+
+		require_avatar = this.getConfig().getBoolean("profile-requirements.require-avatar");
+		avatar_table = this.getConfig().getString("profile-requirements.require-avatar-table");
+		avatar_user_field = this.getConfig().getString("profile-requirements.require-avatar-user-id-field");
+		avatar_field = this.getConfig().getString("profile-requirements.require-avatar-field");
+		avatar_message = this.getConfig().getString("profile-requirements.require-avatar-message");
+
+		require_minposts = this.getConfig().getBoolean("profile-requirements.require-minposts");
+		minposts_required =  this.getConfig().getInt("profile-requirements.require-minposts-count");
+		minposts_table = this.getConfig().getString("profile-requirements.require-minposts-table");
+		minposts_user_field = this.getConfig().getString("profile-requirements.require-minposts-user-id-field");
+		minposts_field = this.getConfig().getString("profile-requirements.require-minposts-field");
+		minposts_message = this.getConfig().getString("profile-requirements.require-minposts-message");
+
+		registered_message = this.getConfig().getString("registered-message");
+		unregistered_message = this.getConfig().getString("unregistered-message");
+		unregistered_messagereminder = this.getConfig().getString("unregistered-messagereminder");
+
+		banlist_table_enabled = this.getConfig().getBoolean("banlist-table.enabled");
+		banlist_table = this.getConfig().getString("banlist-table.table");
+		banlist_user_id_field = this.getConfig().getString("banlist-table.user-id-field");
+		banlist_banned_id_field = this.getConfig().getString("banlist-table.user-id-field");
+
+		groups_table_enabled = this.getConfig().getBoolean("groups-table.enabled");
+		groups_table = this.getConfig().getString("groups-table.table");
+		groups_user_id_field = this.getConfig().getString("groups-table.user-id-field");
+		groups_group_id_field = this.getConfig().getString("groups-table.group-id-field");
+
+		users_table = this.getConfig().getString("users-table.table");
+		user_id_field = this.getConfig().getString("users-table.user-id-field");
+		user_name_field = this.getConfig().getString("users-table.user-name-field");
+
+		groups_id_field = this.getConfig().getString("users-table.groups-id-field");
+		secondary_groups_id_field = this.getConfig().getString("users-table.secondary-groups-id-field");
+
+		multi_table = this.getConfig().getString("multi-table.table");
+		multi_table_user_id_field = this.getConfig().getString("multi-table.field-user-id-field");
+		multi_table_key_field = this.getConfig().getString("multi-table.field-key-field");
+		multi_table_key_value = this.getConfig().getString("multi-table.field-key-value");
+		multi_table_value_field = this.getConfig().getString("multi-table.field-value-field");
+
+		onlinestatus_enabled = this.getConfig().getBoolean("basic-tracking.field-onlinestatus-enabled");
+		onlinestatus_key_value = this.getConfig().getString("basic-tracking.field-onlinestatus-key-value");
+		onlinestatus_field = this.getConfig().getString("basic-tracking.field-onlinestatus-field");
+		onlinestatus_valueonline = this.getConfig().getString("basic-tracking.field-onlinestatus-valueonline");
+		onlinestatus_valueoffline = this.getConfig().getString("basic-tracking.field-onlinestatus-valueoffline");
+
+		lastonline_enabled = this.getConfig().getBoolean("basic-tracking.field-lastonline-enabled");
+		lastonline_key_value = this.getConfig().getString("basic-tracking.field-lastonline-key-value");
+		lastonline_field = this.getConfig().getString("basic-tracking.field-lastonline-field");
+		lastonline_formatted_key_value = this.getConfig().getString("basic-tracking.field-lastonline-formatted-key-value", "");
+		lastonline_formatted_field = this.getConfig().getString("basic-tracking.field-lastonline-formatted-field", "");
+
+		wallet_enabled = this.getConfig().getBoolean("basic-tracking.field-wallet-enabled");
+		wallet_key_value = this.getConfig().getString("basic-tracking.field-wallet-key-value");
+		wallet_field = this.getConfig().getString("basic-tracking.field-wallet-field");
+
+		gametime_enabled = this.getConfig().getBoolean("basic-tracking.field-gametime-enabled");
+		gametime_key_value = this.getConfig().getString("basic-tracking.field-gametime-key-value");
+		gametime_field = this.getConfig().getString("basic-tracking.field-gametime-field");
+		gametime_formatted_field = this.getConfig().getString("basic-tracking.field-gametime-formatted-field", "");
+		gametime_formatted_key_value = this.getConfig().getString("basic-tracking.field-gametime-formatted-key-value", "");
+
+		totalxp_enabled = this.getConfig().getBoolean("basic-tracking.field-totalxp-enabled");
+		totalxp_key_value = this.getConfig().getString("basic-tracking.field-totalxp-key-value");
+		totalxp_field = this.getConfig().getString("basic-tracking.field-totalxp-field");
+
+		currentxp_enabled = this.getConfig().getBoolean("basic-tracking.field-currentxp-enabled");
+		currentxp_key_value = this.getConfig().getString("basic-tracking.field-currentxp-key-value");
+		currentxp_field = this.getConfig().getString("basic-tracking.field-currentxp-field");
+		currentxp_formatted_key_value = this.getConfig().getString("basic-tracking.field-currentxp-formatted-key-value", "");
+		currentxp_formatted_field = this.getConfig().getString("basic-tracking.field-currentxp-formatted-field", "");
+
+		level_enabled = this.getConfig().getBoolean("basic-tracking.field-level-enabled");
+		level_key_value = this.getConfig().getString("basic-tracking.field-level-key-value");
+		level_field = this.getConfig().getString("basic-tracking.field-level-field");
+
+		health_enabled = this.getConfig().getBoolean("basic-tracking.field-health-enabled");
+		health_key_value = this.getConfig().getString("basic-tracking.field-health-key-value");
+		health_field = this.getConfig().getString("basic-tracking.field-health-field");
+
+		lifeticks_enabled = this.getConfig().getBoolean("basic-tracking.field-lifeticks-enabled");
+		lifeticks_key_value = this.getConfig().getString("basic-tracking.field-lifeticks-key-value");
+		lifeticks_field = this.getConfig().getString("basic-tracking.field-lifeticks-field");
+		lifeticks_formatted_key_value = this.getConfig().getString("basic-tracking.field-lifeticks-formatted-key-value", "");
+		lifeticks_formatted_field = this.getConfig().getString("basic-tracking.field-lifeticks-formatted-field", "");
+
+		if (use_banned)
+		{
+			is_banned_field = this.getConfig().getString("users-table.banned-field");
+		}
+		else
+		{
+			banned_users_group = this.getConfig().getString("users-table.banned-users-group");
+		}
+
+		log.config("Auto Sync   : " + auto_sync);
+		log.config("Auto Remind :" + auto_remind);
+		log.config("Kick Unregistered : " + kick_unregistered);
+		log.config("Multi Tables : " + multi_tables);
+		log.config("Basic Tracking : " + basic_tracking);
+		log.config("Require Avatar : " + require_avatar);
+		log.config("Min Posts : " + require_minposts);
+
+		if (basic_tracking)
+		{
+			log.config("Tracking Online Status : " + onlinestatus_enabled);
+			log.config("Tracking Last Online   : " + lastonline_enabled);
+			log.config("Tracking Game Time     : " + gametime_enabled);
+			log.config("Tracking Total XP      : " + totalxp_enabled);
+			log.config("Tracking Current XP    : " + currentxp_enabled);
+			log.config("Tracking Level         : " + level_enabled);
+			log.config("Tracking Health        : " + health_enabled);
+			log.config("Tracking Life Ticks    : " + lifeticks_enabled);
+			log.config("Tracking Wallet        : " + wallet_enabled);
+		}
+		
+		groups = this.getConfig().getConfigurationSection("groups").getValues(true);
+		
+		// Note: groups is a map <String, Object> so we need the cast.
+		default_group = (String)groups.get(this.getConfig().getString("users-table.default-group"));
+	}
 }
+
