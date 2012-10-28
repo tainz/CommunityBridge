@@ -706,17 +706,18 @@ public class Main extends JavaPlugin
     return false;
 	}
 
-	public static boolean addGroup(int groupId, Player p, boolean n) {
-		 try {
-			 String gr = config.getString((new StringBuilder("groups.")).append(groupId).toString());
+	public static boolean addGroup(String groupName, Player p, boolean n)
+	{
+		 try
+		 {
 			 if (permissions_system.equalsIgnoreCase("PEX"))
 			 {
-				 if(!PermissionsEx.getUser(p).getGroupsNames()[0].equalsIgnoreCase(gr))
+				 if(!PermissionsEx.getUser(p).getGroupsNames()[0].equalsIgnoreCase(groupName))
 				 {
-					 PermissionsEx.getUser(p).addGroup(gr);
+					 PermissionsEx.getUser(p).addGroup(groupName);
 					 if(n)
            {
-             log.fine((new StringBuilder("Added ")).append(p.getName()).append(" to group ").append(gr).toString());
+             log.fine((new StringBuilder("Added ")).append(p.getName()).append(" to group ").append(groupName).toString());
            }
 					 return true;
 				 }
@@ -727,33 +728,35 @@ public class Main extends JavaPlugin
 				 {
 					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), (new StringBuilder("world ")).append(p.getWorld().getName()).toString());
 					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), (new StringBuilder("user ")).append(p.getName()).toString());
-					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), (new StringBuilder("user addgroup ")).append(gr).toString());
+					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), (new StringBuilder("user addgroup ")).append(groupName).toString());
 					 if(n)
            {
-             log.fine((new StringBuilder("Added ")).append(p.getName()).append(" to group ").append(gr).toString());
+             log.fine((new StringBuilder("Added ")).append(p.getName()).append(" to group ").append(groupName).toString());
            }
 					 return true;
 				 }
 				 if(permissions_system.equalsIgnoreCase("GroupManager"))
 				 {
-					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "manuadd " + p.getName() + " " + gr);
+					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "manuadd " + p.getName() + " " + groupName);
 					 if(n)
            {
-             log.fine((new StringBuilder("Adding ")).append(p.getName()).append(" to group ").append(gr).toString());
+             log.fine((new StringBuilder("Adding ")).append(p.getName()).append(" to group ").append(groupName).toString());
            }
 					 return true;
 				 }
 				 if(permissions_system.equalsIgnoreCase("PermsBukkit"))
 				 {
-					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "permissions player addgroup " + p.getName() + " " + gr);
+					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "permissions player addgroup " + p.getName() + " " + groupName);
 					 if(n)
            {
-             log.fine((new StringBuilder("Adding ")).append(p.getName()).append(" to group ").append(gr).toString());
+             log.fine((new StringBuilder("Adding ")).append(p.getName()).append(" to group ").append(groupName).toString());
            }
 					 return true;
 				 }
 			 }
-		 } catch (Error e) {
+		 }
+		 catch (Error e)
+		 {
 			 log.severe(e.getMessage());
 		 }
 
@@ -908,13 +911,13 @@ public class Main extends JavaPlugin
 						if (secondary_groups)
             {
 							String extra_groups = res.getString(secondary_groups_id_field);
-							if (extra_groups.length()>0)
+							if (extra_groups.length() > 0)
               {
 								for(String g: extra_groups.split(","))
                 {
 									if(!g.isEmpty())
                   {
-                    addGroup(Integer.parseInt(g), p, firstsync);
+                    addGroup((String)groups.get(g), p, firstsync);
                   }
 								}
 							}
