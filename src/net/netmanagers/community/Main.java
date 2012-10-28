@@ -298,7 +298,8 @@ public class Main extends JavaPlugin
 			lifeticks_formatted_key_value = config.getString("basic-tracking.field-lifeticks-formatted-key-value", "");
 			lifeticks_formatted_field = config.getString("basic-tracking.field-lifeticks-formatted-field", "");
 
-			default_group = config.getString("users-table.default-group");
+			// Note: groups is a map <String, Object> so we need the cast.
+			default_group = (String)groups.get(config.getString("users-table.default-group"));
 
 			if (use_banned)
       {
@@ -863,6 +864,7 @@ public class Main extends JavaPlugin
 				ResultSet res = sql.sqlQuery("SELECT * FROM " + users_table + " WHERE " + user_id_field + " = '" + id + "'");
 				if (res.next())
         {
+					// Note: groups is a map <String, Object> so we need the cast.
 					String groupName = (String)groups.get(res.getString(groups_id_field));
 
 					if (use_banned)
