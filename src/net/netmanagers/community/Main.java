@@ -307,14 +307,16 @@ public class Main extends JavaPlugin
       {
 				sql.updateQuery("UPDATE " + users_table + " SET " + onlinestatus_field + " = '" + onlinestatus_valueoffline + "'  WHERE " + onlinestatus_field + " = '" + onlinestatus_valueonline + "'");
 			}
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
+		}
+		catch (MalformedURLException e)
+		{
+			log.severe("Error in ResetOnlineStatus: " + e.getMessage());
 			disablePlugin();
 		} catch (InstantiationException e) {
-			e.printStackTrace();
+			log.severe("Error in ResetOnlineStatus: " + e.getMessage());
 			disablePlugin();
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			log.severe("Error in ResetOnlineStatus: " + e.getMessage());
 			disablePlugin();
 		}
 	}
@@ -372,8 +374,8 @@ public class Main extends JavaPlugin
 		}
     catch (SQLException e)
     {
+			log.severe("Error in getUserId():" + e.getMessage());
 			log.severe("Broken User ID SQL Query, check your config.yml");
-			e.printStackTrace();
 			disablePlugin();
 		}
 
@@ -410,9 +412,11 @@ public class Main extends JavaPlugin
 
 		} catch (IllegalAccessException e) {
 
-		} catch (SQLException e) {
+		}
+		catch (SQLException e)
+		{
+			log.severe("Error in getOnlinePlayerInfo(): " + e.getMessage());
 			log.severe("Broken Get Online Player Info SQL Query, check your config.yml");
-			e.printStackTrace();
 			disablePlugin();
 		}
 		return null;
@@ -814,13 +818,22 @@ public class Main extends JavaPlugin
         sql.insertQuery("INSERT INTO " + multi_table + " (`"+multi_table_user_id_field+"`, `"+multi_table_key_field+"`, `"+multi_table_value_field+"`) VALUES ('" + u + "', '" + keyval + "', 0)");
       }
 
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
+		}
+		catch (MalformedURLException e)
+		{
+			log.severe("Error in checkDBSanity(): " + e.getMessage());
+		}
+		catch (InstantiationException e)
+		{
+			log.severe("Error in checkDBSanity(): " + e.getMessage());
+		}
+		catch (IllegalAccessException e)
+		{
+			log.severe("Error in checkDBSanity(): " + e.getMessage());
+		}
+		catch (SQLException e)
+		{
+			log.severe("Error in checkDBSanity(): " + e.getMessage());
 			log.severe("Database SQL Error with " + keyval);
 			disablePlugin();
 		}
@@ -878,15 +891,23 @@ public class Main extends JavaPlugin
         }
       }
 
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
+		}
+		catch (MalformedURLException e)
+		{
+			log.severe("Error in checkMinPosts():" + e.getMessage());
+		}
+		catch (InstantiationException e)
+		{
+			log.severe("Error in checkMinPosts():" + e.getMessage());
+		}
+		catch (IllegalAccessException e)
+		{
+			log.severe("Error in checkMinPosts():" + e.getMessage());
+		}
+		catch (SQLException e)
+		{
+			log.severe("Error in checkMinPosts():" + e.getMessage());
 			log.severe("Broken Post Count SQL Query, check your config.yml");
-			e.printStackTrace();
 			disablePlugin();
 		}
 		p.sendMessage(ChatColor.YELLOW + minposts_message);
@@ -1047,15 +1068,23 @@ public class Main extends JavaPlugin
 					}
 				}
 			}
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
+		}
+		catch (MalformedURLException e)
+		{
+			log.severe("Error in LoadTrackingStats(): " + e.getMessage());
+		}
+		catch (InstantiationException e)
+		{
+			log.severe("Error in LoadTrackingStats(): " + e.getMessage());
+		}
+		catch (IllegalAccessException e)
+		{
+			log.severe("Error in LoadTrackingStats(): " + e.getMessage());
+		}
+		catch (SQLException e)
+		{
+			log.severe("Error in LoadTrackingStats(): " + e.getMessage());
 			log.severe("Broken Stat Tracking SQL Query, check your config.yml");
-			e.printStackTrace();
 			disablePlugin();
 		}
 	}
@@ -1369,16 +1398,23 @@ public class Main extends JavaPlugin
 					sql.updateQuery("UPDATE " + users_table + " SET " + SQLUpdates + " WHERE " + user_id_field + " = '" + u + "'");
 				}
 			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
+		}
+		catch (SQLException e)
+		{
+			log.severe("Error in UpdateTrackingStats(): " + e.getMessage());
+		}
+		catch (MalformedURLException e)
+		{
+			log.severe("Error in UpdateTrackingStats(): " + e.getMessage());
+		}
+		catch (InstantiationException e)
+		{
+			log.severe("Error in UpdateTrackingStats(): " + e.getMessage());
+		}
+		catch (IllegalAccessException e)
+		{
+			log.severe("Error in UpdateTrackingStats(): " + e.getMessage());
 			log.severe("Broken Save Stats SQL Query, check your config.yml");
-			e.printStackTrace();
 			disablePlugin();
 		}
 	}
