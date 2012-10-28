@@ -11,7 +11,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.logging.Logger;
 import net.netmanagers.api.SQL;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -22,12 +21,13 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.ruhlendavis.mc.utility.Log;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 public class Main extends JavaPlugin
 {
 	@SuppressWarnings("NonConstantLogger")
-	public static Logger log;
+	public static Log log;
 	public static String thisPluginName = "CommunityBridge";
 	public static PluginDescriptionFile pdf;
 	public static SQL sql;
@@ -148,8 +148,8 @@ public class Main extends JavaPlugin
 	public void onEnable()
   {
 		pdf = this.getDescription();
-		log = this.getLogger();
-
+		log = new Log(this.getLogger());
+		
 		configFile = new File(getDataFolder(), "config.yml");
 		if (!configFile.exists())
     {
