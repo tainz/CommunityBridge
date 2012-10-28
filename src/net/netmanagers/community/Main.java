@@ -706,18 +706,21 @@ public class Main extends JavaPlugin
     return false;
 	}
 
-	public static boolean addGroup(String groupName, Player p, boolean n)
+	public static boolean addGroup(String groupName, Player player, boolean n)
 	{
 		 try
 		 {
 			 if (permissions_system.equalsIgnoreCase("PEX"))
 			 {
-				 if(!PermissionsEx.getUser(p).getGroupsNames()[0].equalsIgnoreCase(groupName))
+	       if (isMemberOfGroup(groupName, player.getName()))
+		     {}
+				 else
 				 {
-					 PermissionsEx.getUser(p).addGroup(groupName);
-					 if(n)
+					 PermissionsEx.getUser(player).addGroup(groupName);
+					 
+					 if (n)
            {
-             log.fine((new StringBuilder("Added ")).append(p.getName()).append(" to group ").append(groupName).toString());
+             log.fine((new StringBuilder("Added ")).append(player.getName()).append(" to group ").append(groupName).toString());
            }
 					 return true;
 				 }
@@ -726,30 +729,30 @@ public class Main extends JavaPlugin
 			 {
 				 if(permissions_system.equalsIgnoreCase("bPerms"))
 				 {
-					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), (new StringBuilder("world ")).append(p.getWorld().getName()).toString());
-					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), (new StringBuilder("user ")).append(p.getName()).toString());
+					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), (new StringBuilder("world ")).append(player.getWorld().getName()).toString());
+					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), (new StringBuilder("user ")).append(player.getName()).toString());
 					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), (new StringBuilder("user addgroup ")).append(groupName).toString());
 					 if(n)
            {
-             log.fine((new StringBuilder("Added ")).append(p.getName()).append(" to group ").append(groupName).toString());
+             log.fine((new StringBuilder("Added ")).append(player.getName()).append(" to group ").append(groupName).toString());
            }
 					 return true;
 				 }
 				 if(permissions_system.equalsIgnoreCase("GroupManager"))
 				 {
-					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "manuadd " + p.getName() + " " + groupName);
+					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "manuadd " + player.getName() + " " + groupName);
 					 if(n)
            {
-             log.fine((new StringBuilder("Adding ")).append(p.getName()).append(" to group ").append(groupName).toString());
+             log.fine((new StringBuilder("Adding ")).append(player.getName()).append(" to group ").append(groupName).toString());
            }
 					 return true;
 				 }
 				 if(permissions_system.equalsIgnoreCase("PermsBukkit"))
 				 {
-					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "permissions player addgroup " + p.getName() + " " + groupName);
+					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "permissions player addgroup " + player.getName() + " " + groupName);
 					 if(n)
            {
-             log.fine((new StringBuilder("Adding ")).append(p.getName()).append(" to group ").append(groupName).toString());
+             log.fine((new StringBuilder("Adding ")).append(player.getName()).append(" to group ").append(groupName).toString());
            }
 					 return true;
 				 }
