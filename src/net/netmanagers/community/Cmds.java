@@ -153,7 +153,7 @@ public class Cmds implements CommandExecutor
                 " SET " + Main.is_banned_field + "='1'" +
                 " WHERE " + Main.user_id_field + "='" +
                 Main.getUserId(victim.getName()) + "'";
-        Main.log.info(query);
+        Main.log.finer(query);
         Main.sql.updateQuery(query);
 				sendAndLog(staff, "banned " + victim.getName() + " from the site.",
 								  ChatColor.RED);
@@ -165,7 +165,7 @@ public class Cmds implements CommandExecutor
                 " SET " + Main.is_banned_field +"='1'" +
                 " WHERE " + Main.user_id_field + "='" +
                 Main.getUserId(victim.getName()) + "'";
-        Main.log.info(query);
+        Main.log.finer(query);
         Main.sql.updateQuery(query);
         victim.kickPlayer("You have been banned from the site.");
 				sendAndLog(staff, "banned " + victim.getName() + " from the site",
@@ -191,11 +191,13 @@ public class Cmds implements CommandExecutor
     try
     {
       OfflinePlayer victim = Bukkit.getOfflinePlayer(victimString);
-      Main.sql.updateQuery("UPDATE " + Main.users_table
-							           + " SET " + Main.is_banned_field + "='0'"
-							           + " WHERE " + Main.user_id_field + "='"
-							           + Main.getUserId(victim.getName()) + "'");
-			sendAndLog(staff, "unbanned " + victim.getName() + " from the site",
+			String query = "UPDATE " + Main.users_table
+							     + " SET " + Main.is_banned_field + "='0'"
+							     + " WHERE " + Main.user_id_field + "='"
+							     + Main.getUserId(victim.getName()) + "'";
+			Main.log.finer(query);
+			Main.sql.updateQuery(query);
+							sendAndLog(staff, "unbanned " + victim.getName() + " from the site",
 							   ChatColor.RED);
     }
 		catch (MalformedURLException e)
@@ -274,10 +276,12 @@ public class Cmds implements CommandExecutor
 
 		try
 		{
-			Main.sql.updateQuery("UPDATE " + Main.users_table
-												 + " SET " + Main.groups_id_field + "='" + groupID
-												 + "' WHERE " + Main.user_id_field + "='"
-												 + Main.getUserId(playerName) + "'");
+			String query = "UPDATE " + Main.users_table
+									 + " SET " + Main.groups_id_field + "='" + groupID
+									 + "' WHERE " + Main.user_id_field + "='"
+									 + Main.getUserId(playerName) + "'";
+			Main.log.finer(query);
+			Main.sql.updateQuery(query);
 			sendAndLog(sender, "Changed group for " + playerName
 											 + " to '" + groupArgument
 											 + "' in the application database.",

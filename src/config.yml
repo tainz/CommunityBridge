@@ -1,10 +1,20 @@
 #
 # Sample Board Config
 #
+
+# Log level controls the degree of detail that is sent to the console/log
+# The possible settings are (in order of quietest to noisiest:
+#   info, config, fine, finer, finest, all
+# - During configuration, I recommend using 'config'.
+# - During normal operation, I recommend using 'info'.
+# - If you want to see the notifications that the synchronize and reminder
+#   notices have been sent, use 'fine'
+# - During troubleshooting of problems, set this to either finest or all.
+log-level: config
+
 # Please ensure if you run your minecraft server on a remote host
 # that your MySQL server allows REMOTE connections.
 #
-
 # Hostname for your MySQL Server
 db-host: localhost
 
@@ -100,7 +110,6 @@ enable-basic-tracking: false
 #
 # Main Users table configuration
 #
-
 users-table:
   # Users Database Table
   table: ipbog3members

@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.logging.Level;
 import net.netmanagers.api.SQL;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -148,7 +149,7 @@ public class Main extends JavaPlugin
 	public void onEnable()
   {
 		pdf = this.getDescription();
-		log = new Log(this.getLogger());
+		log = new Log(this.getLogger(), Level.CONFIG);
 		
 		configFile = new File(getDataFolder(), "config.yml");
 		if (!configFile.exists())
@@ -161,7 +162,8 @@ public class Main extends JavaPlugin
 			config.load(configFile);
 			config.options().copyHeader(true);
 		} catch (Exception e) {
-			log.info("Error loading config");
+			log.severe("Error loading config");
+			disablePlugin();
 		}
 
 		getServer().getPluginManager().registerEvents(new EventListener(), this);
@@ -174,11 +176,25 @@ public class Main extends JavaPlugin
 		if (config.get("db-username").equals("username")
        && config.get("db-password").equals("password"))
     {
-			log.info("Using default config file.");
+			log.config("Using default config file.");
 			getServer().getPluginManager().disablePlugin(this);
 		}
     else
     {
+			if (show_config)
+      {
+				log.warning("The setting 'show-config' in config.yml is deprecated. Use log-level: config instead.");
+				log.setLevel(Level.CONFIG);
+			}			
+
+			if (config.getString("log-level") == null
+				||config.getString("log-level").isEmpty())
+			{}
+			else
+			{
+				log.setLevel(config.getString("log-level"));
+			}
+
 			permissions_system = config.getString("permissions-system");
 			show_config = config.getBoolean("show-config");
 			show_primary_group = config.getBoolean("show-primary-group");
@@ -293,28 +309,25 @@ public class Main extends JavaPlugin
 				banned_users_group = config.getString("users-table.banned-users-group");
 			}
 
-			if (show_config)
-      {
-				Main.log.info("Auto Sync   : " + auto_sync);
-        Main.log.info("Auto Remind :" + auto_remind);
-				Main.log.info("Kick Unregistered : " + kick_unregistered);
-				Main.log.info("Multi Tables : " + multi_tables);
-				Main.log.info("Basic Tracking : " + basic_tracking);
-				Main.log.info("Require Avatar : " + require_avatar);
-				Main.log.info("Min Posts : " + require_minposts);
+			log.config("Auto Sync   : " + auto_sync);
+			log.config("Auto Remind :" + auto_remind);
+			log.config("Kick Unregistered : " + kick_unregistered);
+			log.config("Multi Tables : " + multi_tables);
+			log.config("Basic Tracking : " + basic_tracking);
+			log.config("Require Avatar : " + require_avatar);
+			log.config("Min Posts : " + require_minposts);
 
-				if (basic_tracking)
-        {
-					Main.log.info("Tracking Online Status : " + onlinestatus_enabled);
-					Main.log.info("Tracking Last Online   : " + lastonline_enabled);
-					Main.log.info("Tracking Game Time     : " + gametime_enabled);
-					Main.log.info("Tracking Total XP      : " + totalxp_enabled);
-					Main.log.info("Tracking Current XP    : " + currentxp_enabled);
-					Main.log.info("Tracking Level         : " + level_enabled);
-					Main.log.info("Tracking Health        : " + health_enabled);
-					Main.log.info("Tracking Life Ticks    : " + lifeticks_enabled);
-					Main.log.info("Tracking Wallet        : " + wallet_enabled);
-				}
+			if (basic_tracking)
+			{
+				log.config("Tracking Online Status : " + onlinestatus_enabled);
+				log.config("Tracking Last Online   : " + lastonline_enabled);
+				log.config("Tracking Game Time     : " + gametime_enabled);
+				log.config("Tracking Total XP      : " + totalxp_enabled);
+				log.config("Tracking Current XP    : " + currentxp_enabled);
+				log.config("Tracking Level         : " + level_enabled);
+				log.config("Tracking Health        : " + health_enabled);
+				log.config("Tracking Life Ticks    : " + lifeticks_enabled);
+				log.config("Tracking Wallet        : " + wallet_enabled);
 			}
 			
 			groups = config.getConfigurationSection("groups").getValues(true);
@@ -346,7 +359,7 @@ public class Main extends JavaPlugin
 
 				saveConfig();
 
-				log.info("Enabled!");
+				log.config("Enabled!");
 			}
       else
       {
@@ -368,7 +381,7 @@ public class Main extends JavaPlugin
 			sql.close();
 		}
 
-		log.info("Disabled...");
+		log.config("Disabled...");
 	}
 
 	private static void disablePlugin()
@@ -403,7 +416,7 @@ public class Main extends JavaPlugin
       unit = "hours";
     }
 
-		log.info(String.format("Auto Sync Every: %d %s.", auto_sync_every, unit));
+		log.config(String.format("Auto Sync Every: %d %s.", auto_sync_every, unit));
 		getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable()
     {
       @Override
@@ -436,7 +449,7 @@ public class Main extends JavaPlugin
       unit = "hours";
     }
 
-    log.info(String.format("Auto Remind Unregistered Every: %d %s.",
+    log.config(String.format("Auto Remind Unregistered Every: %d %s.",
                            auto_remind_every, unit));
     getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable()
     {
@@ -648,7 +661,7 @@ public class Main extends JavaPlugin
           PermissionsEx.getUser(player).setGroups(new String[] { groupName });
           if (n)
           {
-            log.info((new StringBuilder("Set ")).append(player.getName()).append(" to group ").append(groupName).toString());
+            log.fine((new StringBuilder("Set ")).append(player.getName()).append(" to group ").append(groupName).toString());
           }
           return true;
         }
@@ -661,7 +674,7 @@ public class Main extends JavaPlugin
 
         if (n)
         {
-          log.info((new StringBuilder("Set ")).append(player.getName()).append(" to group ").append(groupName).toString());
+          log.fine((new StringBuilder("Set ")).append(player.getName()).append(" to group ").append(groupName).toString());
         }
         return true;
       }
@@ -670,7 +683,7 @@ public class Main extends JavaPlugin
         Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "manuadd " + player.getName() + " " + groupName);
         if (n)
         {
-          log.info((new StringBuilder("Setting ")).append(player.getName()).append(" to group ").append(groupName).toString());
+          log.fine((new StringBuilder("Setting ")).append(player.getName()).append(" to group ").append(groupName).toString());
         }
         return true;
       }
@@ -681,7 +694,7 @@ public class Main extends JavaPlugin
 
         if (n)
         {
-          log.info((new StringBuilder("Set ")).append(player.getName()).append(" to group ").append(groupName).toString());
+          log.fine((new StringBuilder("Set ")).append(player.getName()).append(" to group ").append(groupName).toString());
         }
         return true;
       }
@@ -702,7 +715,7 @@ public class Main extends JavaPlugin
 					 PermissionsEx.getUser(p).addGroup(gr);
 					 if(n)
            {
-             log.info((new StringBuilder("Added ")).append(p.getName()).append(" to group ").append(gr).toString());
+             log.fine((new StringBuilder("Added ")).append(p.getName()).append(" to group ").append(gr).toString());
            }
 					 return true;
 				 }
@@ -716,7 +729,7 @@ public class Main extends JavaPlugin
 					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), (new StringBuilder("user addgroup ")).append(gr).toString());
 					 if(n)
            {
-             log.info((new StringBuilder("Added ")).append(p.getName()).append(" to group ").append(gr).toString());
+             log.fine((new StringBuilder("Added ")).append(p.getName()).append(" to group ").append(gr).toString());
            }
 					 return true;
 				 }
@@ -725,7 +738,7 @@ public class Main extends JavaPlugin
 					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "manuadd " + p.getName() + " " + gr);
 					 if(n)
            {
-             log.info((new StringBuilder("Adding ")).append(p.getName()).append(" to group ").append(gr).toString());
+             log.fine((new StringBuilder("Adding ")).append(p.getName()).append(" to group ").append(gr).toString());
            }
 					 return true;
 				 }
@@ -734,7 +747,7 @@ public class Main extends JavaPlugin
 					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "permissions player addgroup " + p.getName() + " " + gr);
 					 if(n)
            {
-             log.info((new StringBuilder("Adding ")).append(p.getName()).append(" to group ").append(gr).toString());
+             log.fine((new StringBuilder("Adding ")).append(p.getName()).append(" to group ").append(gr).toString());
            }
 					 return true;
 				 }
@@ -805,7 +818,7 @@ public class Main extends JavaPlugin
 	
 	
 	public static void syncAll() {
-		log.info("Running Auto Sync");
+		log.fine("Running Auto Sync");
 		for (Player play : Bukkit.getOnlinePlayers())
     {
 			SyncPlayer(play, false);
@@ -824,14 +837,14 @@ public class Main extends JavaPlugin
       else
       {
         p.sendMessage(ChatColor.RED + unregistered_messagereminder);
-        log.info(p.getName() + " issued unregistered reminder notice");
+        log.fine(p.getName() + " issued unregistered reminder notice");
       }
     }
   }
 
   public static void remindUnregistered()
   {
-    log.info("Running Auto UnRegistered Auto Reminder");
+    log.fine("Running Auto UnRegistered Auto Reminder");
 
     for (Player play : Bukkit.getOnlinePlayers())
     {
@@ -926,7 +939,7 @@ public class Main extends JavaPlugin
 							p.sendMessage(ChatColor.YELLOW + registered_message);
 						}
 
-						Main.log.info(p.getName() + " linked to Community User #"+ id + ", Group: " + groupName);
+						log.fine(p.getName() + " linked to Community User #"+ id + ", Group: " + groupName);
 					}
           else if (basic_tracking)
           {
@@ -946,12 +959,12 @@ public class Main extends JavaPlugin
 					if (firstsync)
           {
 						p.sendMessage(ChatColor.RED + unregistered_message);
-						log.info(p.getName() + "'s name not set or not registered on community site");
+						log.fine(p.getName() + "'s name not set or not registered on community site");
 					}
           else
           {
 						p.sendMessage(ChatColor.RED + unregistered_messagereminder);
-						log.info(p.getName() + " issued unregistered reminder notice");
+						log.fine(p.getName() + " issued unregistered reminder notice");
 					}
 				}
 			}
@@ -1023,7 +1036,7 @@ public class Main extends JavaPlugin
 		}
 
 		p.sendMessage(ChatColor.YELLOW + avatar_message);
-		log.info((new StringBuilder("Notice Issued to ")).append(p.getName()).append(" for not having profile avatar").toString());
+		log.fine((new StringBuilder("Notice Issued to ")).append(p.getName()).append(" for not having profile avatar").toString());
 		return false;
 	}
 
@@ -1057,7 +1070,7 @@ public class Main extends JavaPlugin
 			disablePlugin();
 		}
 		p.sendMessage(ChatColor.YELLOW + minposts_message);
-		log.info((new StringBuilder("Notice Issued to ")).append(p.getName()).append(" for having less than ").append(minposts_required).append(" posts").toString());
+		log.fine((new StringBuilder("Notice Issued to ")).append(p.getName()).append(" for having less than ").append(minposts_required).append(" posts").toString());
 
 		return false;
 	}
