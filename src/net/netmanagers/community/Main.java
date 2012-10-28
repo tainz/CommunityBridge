@@ -1,9 +1,5 @@
 package net.netmanagers.community;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,10 +12,8 @@ import net.netmanagers.api.SQL;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.ruhlendavis.mc.utility.Log;
@@ -171,37 +165,38 @@ public class Main extends JavaPlugin
 							      this.getConfig().get("db-username") + "",
 							      this.getConfig().get("db-password") + "");
 			sql.initialize();
+			
 			if (sql.checkConnection())
       {
 				if (analyzeConfiguration())
 				{
-				if (basic_tracking && onlinestatus_enabled)
-        {
-					ResetOnlineStatus();
-        }
-				syncAll();
+					if (basic_tracking && onlinestatus_enabled)
+					{
+						ResetOnlineStatus();
+					}
+					syncAll();
 
-				if (auto_sync)
-        {
-					startSyncing();
-        }
+					if (auto_sync)
+					{
+						startSyncing();
+					}
 
-        if (auto_remind)
-        {
-          startAutoReminder();
-        }
+					if (auto_remind)
+					{
+						startAutoReminder();
+					}
 
-				log.config("Enabled!");
+					log.config("Enabled!");
+				}
+		    else
+			  {
+					disablePlugin();
+				}
 			}
-      else
-      {
+			else
+			{
 				disablePlugin();
 			}
-		}
-      else
-      {
-				disablePlugin();
-	}
 		}
 	}
 
