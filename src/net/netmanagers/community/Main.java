@@ -16,6 +16,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.ruhlendavis.mc.communitybridge.PermissionHandler;
+import org.ruhlendavis.mc.communitybridge.PermissionHandlerBPerms;
+import org.ruhlendavis.mc.communitybridge.PermissionHandlerPEX;
 import org.ruhlendavis.mc.utility.Log;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
@@ -136,6 +139,8 @@ public class Main extends JavaPlugin
 	public static String wallet_field;
 
 	public static Map<String, Object> groups;
+	
+	public static PermissionHandler permissionHandler;
 
 	@Override
 	public void onEnable()
@@ -423,30 +428,6 @@ public class Main extends JavaPlugin
 	}
 	
 	/**
-	 * Asks permissions system if a player is the member of a given group.
-	 * 
-	 * @param groupId
-	 * @param player
-	 * @return 
-	 */
-	public static boolean isMemberOfGroup(String groupName, String playerName)
-	{
-		try
-		{
-			if (permissions_system.equalsIgnoreCase("PEX"))
-			{
-				return PermissionsEx.getUser(playerName).inGroup(groupName);
-			}
-		}
-		catch (Error e)
-		{
-			log.severe(e.getMessage());
-		}
-		
-		return false;
-	}
-	
-	/**
 	 * A case insensitive check to see if a given group is in the group mapping.
 	 * 
 	 * @param groupName String containing the group name to search for.
@@ -471,7 +452,7 @@ public class Main extends JavaPlugin
     {
       if (permissions_system.equalsIgnoreCase("PEX"))
       {
-        if (isMemberOfGroup(groupName, player.getName()))
+        if (permissionHandler.isMemberOfGroup(player.getName(), groupName))
         {}
 				else
 				{
@@ -528,7 +509,7 @@ public class Main extends JavaPlugin
 		 {
 			 if (permissions_system.equalsIgnoreCase("PEX"))
 			 {
-	       if (isMemberOfGroup(groupName, player.getName()))
+	       if (permissionHandler.isMemberOfGroup(player.getName(), groupName))
 		     {}
 				 else
 				 {
@@ -1824,6 +1805,24 @@ public class Main extends JavaPlugin
 		}
 
 		permissions_system = this.getConfig().getString("permissions-system");
+		
+		if (this.getConfig().getString("permissions-system").equalsIgnoreCase("PEX"))
+		{
+			permissionHandler = new PermissionHandlerPEX();
+		}
+    else if (this.getConfig().getString("permissions-system").equalsIgnoreCase("bPerms"))
+		{
+			permissionHandler = new PermissionHandlerBPerms();
+		}
+    else if (this.getConfig().getString("permissions-system").equalsIgnoreCase("GroupManager"))
+		{
+			
+		}
+    else if (this.getConfig().getString("permissions-system").equalsIgnoreCase("PermsBukkit"))
+		{
+			
+		}
+		
 		show_primary_group = this.getConfig().getBoolean("show-primary-group");
 		basic_tracking = this.getConfig().getBoolean("enable-basic-tracking");
 		multi_tables = this.getConfig().getBoolean("multi-tables");
@@ -1961,4 +1960,3 @@ public class Main extends JavaPlugin
 		default_group = (String)groups.get(this.getConfig().getString("users-table.default-group"));
 	}
 }
-

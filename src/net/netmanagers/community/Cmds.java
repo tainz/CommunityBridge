@@ -246,7 +246,7 @@ public class Cmds implements CommandExecutor
 			playerName = player.getName();
 		}
 
-		if (Main.isMemberOfGroup(groupName, playerName))
+		if (Main.permissionHandler.isMemberOfGroup(playerName, groupName))
 		{
 			sendOrLog(sender, "'" + playerName + "' is already member of group '"
 							        + groupArgument + "'.",
