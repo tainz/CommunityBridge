@@ -45,11 +45,11 @@ unregistered-messagereminder: Just a reminder to visit YOURFORUMURL and register
 
 # When true this will not allow un-registered players onto the server, and show
 # the unregistered-message in the form of a kick
-kick-unregistered: true
+kick-unregistered: false
 
 # Multi-Tables are when you have all your tracking/minecraft usernames in a
 # different table to the users table
-multi-tables: true
+multi-tables: false
 
 # Forums like XenForo use a table that has rows for each custom field as opposed
 # to columns for each custom field
