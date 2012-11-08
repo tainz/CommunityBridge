@@ -680,7 +680,7 @@ public class Main extends JavaPlugin
               p.kickPlayer("You have been banned from the site.");
             }
 					}
-          else
+          else if (banlist_table_enabled)
           {
 						if (res.getString(groups_id_field).equalsIgnoreCase(banned_users_group))
             {
@@ -1567,7 +1567,7 @@ public class Main extends JavaPlugin
 			}
 		}
 
-		if (use_banned && banlist_table_enabled)
+		if (banlist_table_enabled)
 		{
 			tempStatus = checkTable("banlist-table.table", banlist_table);
 			status = status & tempStatus;
