@@ -25,7 +25,7 @@ public class PermissionHandlerPEX implements PermissionHandler
 	{
 		try
 		{
-				return PermissionsEx.getUser(playerName).inGroup(groupName);
+			return PermissionsEx.getUser(playerName).inGroup(groupName);
 		}
 		catch (Error e)
 		{
