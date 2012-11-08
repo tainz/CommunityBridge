@@ -18,6 +18,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.ruhlendavis.mc.communitybridge.PermissionHandler;
 import org.ruhlendavis.mc.communitybridge.PermissionHandlerBPerms;
+import org.ruhlendavis.mc.communitybridge.PermissionHandlerGroupManager;
 import org.ruhlendavis.mc.communitybridge.PermissionHandlerPEX;
 import org.ruhlendavis.mc.utility.Log;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
@@ -1816,7 +1817,8 @@ public class Main extends JavaPlugin
 		}
     else if (this.getConfig().getString("permissions-system").equalsIgnoreCase("GroupManager"))
 		{
-			
+			// We need the plugin reference for GroupManager.
+			permissionHandler = new PermissionHandlerGroupManager(this);
 		}
     else if (this.getConfig().getString("permissions-system").equalsIgnoreCase("PermsBukkit"))
 		{
