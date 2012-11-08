@@ -1,5 +1,5 @@
 #
-# Sample Board Config
+# Community Bridge Configuration File
 #
 
 # Log level controls the degree of detail that is sent to the console/log
@@ -69,9 +69,9 @@ banlist-table:
 # Eventually, all settings related to group synchronization will reside here.
 group-synchronization:
   primary-group:
-    enabled: false
+    enabled: true
     # If a user's group ID on the web application side is on this list, it
-    # won't be synchronized. (NOT YET IMPLEMENTED)
+    # won't be synchronized. Example: ['1','2','3','115']. [] is an empty list.
     group-ids-to-ignore: []
     
     # If a player's group name is on this list the web application group won't
@@ -352,14 +352,10 @@ basic-tracking:
 
 #
 # Group Configuration
-# Basicly the number of the left is the value in the database,
-# the text on the right is the group name in your permissions
+# The strings on the left ('1', '2', etc.) is the group ID in the web application's
+# mysql database, the string on the right is the group name in your permissions
 # system.
 #
-# I suggest you map ALL forum groups to a group in your permission
-# system.
-#
-
 groups:
   '1': validating
   '2': guest

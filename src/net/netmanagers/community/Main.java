@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,6 +34,7 @@ public class Main extends JavaPlugin
 	public static FileConfiguration config;
 
 	public static boolean primary_group_synchronization_enabled;
+	public static List<String> primary_group_ids_to_ignore;
 
 	public static boolean show_config = false;
 	public static boolean multi_tables = false;
@@ -668,11 +670,13 @@ public class Main extends JavaPlugin
 			int id = getUserId(p.getName());
 			if (id > 0)
       {
-				ResultSet res = sql.sqlQuery("SELECT * FROM " + users_table + " WHERE " + user_id_field + " = '" + id + "'");
+				ResultSet res = sql.sqlQuery("SELECT * FROM " + users_table
+								                   + " WHERE " + user_id_field + " = '" + id + "'");
 				if (res.next())
         {
 					// Note: groups is a map <String, Object> so we need the cast.
-					String groupName = (String)groups.get(res.getString(groups_id_field));
+					String groupID = res.getString(groups_id_field);
+					String groupName = (String)groups.get(groupID);
 
 					if (use_banned)
           {
@@ -710,13 +714,14 @@ public class Main extends JavaPlugin
 
 					if (requirements_met)
           {
-						if (isOkayToSetPrimaryGroup())
+						if (isOkayToSetPrimaryGroup(groupID))
 						{
 							setGroup(groupName, p, firstsync);
 						}
 						else
 						{
-							log.finer(p.getName() + "'s primary group not synchronized because sync is off");
+							log.finer(p.getName()
+											+ "'s primary group not synchronized due to config.");
 						}
 						
 						if (secondary_groups)
@@ -736,7 +741,7 @@ public class Main extends JavaPlugin
 					}
           else
           {
-						if (isOkayToSetPrimaryGroup())
+						if (isOkayToSetPrimaryGroup(groupID))
 						{
 							setGroup(default_group, p, firstsync);
 						}
@@ -753,7 +758,7 @@ public class Main extends JavaPlugin
               Main.LoadTrackingStats(id, p);
             }
 
-						if (isOkayToSetPrimaryGroup())
+						if (isOkayToSetPrimaryGroup(groupID))
 						{
 							if (show_primary_group)
 							{
@@ -782,7 +787,7 @@ public class Main extends JavaPlugin
 				}
         else
         {
-					if (isOkayToSetPrimaryGroup())
+					if (isOkayToSetPrimaryGroup(null))
 					{
 						setGroup(Main.default_group, p, true);
 						if (firstsync)
@@ -1860,7 +1865,19 @@ public class Main extends JavaPlugin
 		
 		// The new group synchronization section is handled here.
 		// Beginning with primary group.
-		primary_group_synchronization_enabled = this.getConfig().getBoolean("group-synchronization.primary-group.enabled");
+		primary_group_synchronization_enabled = this.getConfig().getBoolean("group-synchronization.primary-group.enabled", true);
+
+		log.config("Primary Group Synchronization Enabled: "
+						 + primary_group_synchronization_enabled);
+		if (primary_group_synchronization_enabled)
+		{
+			// primary group IDs to ignore
+			List<String> defaultList = new ArrayList();
+			this.getConfig().addDefault("group-synchronization.primary-group.group-ids-to-ignore", defaultList);
+			primary_group_ids_to_ignore = this.getConfig().getStringList("group-synchronization.primary-group.group-ids-to-ignore");
+			log.config("Primary Group IDs to Ignore: "
+							 + primary_group_ids_to_ignore);
+		}
 		
 		show_primary_group = this.getConfig().getBoolean("show-primary-group");
 		basic_tracking = this.getConfig().getBoolean("enable-basic-tracking");
@@ -1999,8 +2016,9 @@ public class Main extends JavaPlugin
 		default_group = (String)groups.get(this.getConfig().getString("users-table.default-group"));
 	}
 	
-	public static boolean isOkayToSetPrimaryGroup()
+	public static boolean isOkayToSetPrimaryGroup(String groupID)
 	{
-		return primary_group_synchronization_enabled;
+		return primary_group_synchronization_enabled
+			  && (groupID == null || !primary_group_ids_to_ignore.contains(groupID));
 	}
 }
