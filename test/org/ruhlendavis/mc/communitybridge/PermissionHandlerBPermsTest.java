@@ -63,6 +63,7 @@ public class PermissionHandlerBPermsTest
 		String goodGroup = "goodGroup";
 		String badPlayerName = "badPlayer";
 		String badGroup = "badGroup";
+		String noexistGroup = "thisgroupdoesnotexist";
 		
 		String [] goodPlayerGroups = { goodGroup };
 		String [] badPlayerGroups = { badGroup };
@@ -81,10 +82,9 @@ public class PermissionHandlerBPermsTest
 											 ph.isMemberOfGroup(badPlayerName, goodGroup));
 		Assert.assertFalse("isMemberOfGroup should return false with bPerms, correct"
 						         + " player and incorrect group",
-											 ph.isMemberOfGroup(goodPlayerName, "thisgroupdoesnotexist"));
+											 ph.isMemberOfGroup(goodPlayerName, noexistGroup));
 		Assert.assertFalse("isMemberOfGroup should return false with bPerms, incorrect"
 						         + " player and incorrect group",
-											 ph.isMemberOfGroup(badPlayerName, "thisgroupdoesnotexist"));
-
+											 ph.isMemberOfGroup(badPlayerName, noexistGroup));
 	}
 }
