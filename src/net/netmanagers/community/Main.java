@@ -31,6 +31,8 @@ public class Main extends JavaPlugin
 	public static SQL sql;
 	public static FileConfiguration config;
 
+	public static boolean primary_group_synchronization_enabled;
+
 	public static boolean show_config = false;
 	public static boolean multi_tables = false;
 	public static boolean multi_tables_use_key = false;
@@ -707,8 +709,15 @@ public class Main extends JavaPlugin
 
 					if (requirements_met)
           {
-						setGroup(groupName, p, firstsync);
-
+						if (isOkayToSetPrimaryGroup())
+						{
+							setGroup(groupName, p, firstsync);
+						}
+						else
+						{
+							log.finer(p.getName() + "'s primary group not synchronized because sync is off");
+						}
+						
 						if (secondary_groups)
             {
 							String extra_groups = res.getString(secondary_groups_id_field);
@@ -726,7 +735,14 @@ public class Main extends JavaPlugin
 					}
           else
           {
-						setGroup(default_group, p, firstsync);
+						if (isOkayToSetPrimaryGroup())
+						{
+							setGroup(default_group, p, firstsync);
+						}
+						else
+						{
+							log.finer(p.getName() + "'s  primary group not synchronized due to config.");
+						}
 					}
 
 					if (firstsync)
@@ -736,16 +752,20 @@ public class Main extends JavaPlugin
               Main.LoadTrackingStats(id, p);
             }
 
-						if (show_primary_group)
-            {
-							p.sendMessage(ChatColor.YELLOW + "Registered " + groupName + " Account.");
-						}
-            else
-            {
-							p.sendMessage(ChatColor.YELLOW + registered_message);
-						}
+						if (isOkayToSetPrimaryGroup())
+						{
+							if (show_primary_group)
+							{
+								p.sendMessage(ChatColor.YELLOW + "Registered " + groupName + " Account.");
+							}
+							else
+							{
+								p.sendMessage(ChatColor.YELLOW + registered_message);
+							}
 
-						log.fine(p.getName() + " linked to Community User #"+ id + ", Group: " + groupName);
+							log.fine(p.getName() + " linked to Community User #"
+										 + id + ", Group: " + groupName);
+						}
 					}
           else if (basic_tracking)
           {
@@ -761,16 +781,23 @@ public class Main extends JavaPlugin
 				}
         else
         {
-					setGroup(Main.default_group, p, true);
-					if (firstsync)
-          {
-						p.sendMessage(ChatColor.RED + unregistered_message);
-						log.fine(p.getName() + "'s name not set or not registered on community site");
+					if (isOkayToSetPrimaryGroup())
+					{
+						setGroup(Main.default_group, p, true);
+						if (firstsync)
+						{
+							p.sendMessage(ChatColor.RED + unregistered_message);
+							log.fine(p.getName() + "'s name not set or not registered on community site");
+						}
+						else
+						{
+							p.sendMessage(ChatColor.RED + unregistered_messagereminder);
+							log.fine(p.getName() + " issued unregistered reminder notice");
+						}
 					}
-          else
-          {
-						p.sendMessage(ChatColor.RED + unregistered_messagereminder);
-						log.fine(p.getName() + " issued unregistered reminder notice");
+					else
+					{
+						log.finer(p.getName() + "'s  primary group not set to default due to config.");
 					}
 				}
 			}
@@ -1825,6 +1852,8 @@ public class Main extends JavaPlugin
 			
 		}
 		
+		primary_group_synchronization_enabled = this.getConfig().getBoolean("group-synchronization.primary-group.enabled");
+		
 		show_primary_group = this.getConfig().getBoolean("show-primary-group");
 		basic_tracking = this.getConfig().getBoolean("enable-basic-tracking");
 		multi_tables = this.getConfig().getBoolean("multi-tables");
@@ -1960,5 +1989,10 @@ public class Main extends JavaPlugin
 		
 		// Note: groups is a map <String, Object> so we need the cast.
 		default_group = (String)groups.get(this.getConfig().getString("users-table.default-group"));
+	}
+	
+	public static boolean isOkayToSetPrimaryGroup()
+	{
+		return primary_group_synchronization_enabled;
 	}
 }

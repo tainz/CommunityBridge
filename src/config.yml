@@ -66,6 +66,18 @@ banlist-table:
     user-id-field: ban_userid
     reason-field: ban_reason
 
+# Eventually, all settings related to group synchronization will reside here.
+group-synchronization:
+  primary-group:
+    enabled: false
+    # If a user's group ID on the web application side is on this list, it
+    # won't be synchronized. (NOT YET IMPLEMENTED)
+    group-ids-to-ignore: []
+    
+    # If a player's group name is on this list the web application group won't
+    # be synchronized over it. (NOT YET IMPLEMENTED)
+    group-names-to-ignore: []
+
 # Groups in Seperate Table (Such as PHPBB)
 groups-table:
     enabled: false
