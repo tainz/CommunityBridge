@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import net.netmanagers.api.SQL;
@@ -1816,6 +1817,8 @@ public class Main extends JavaPlugin
 
 	private void loadConfig()
 	{
+		// We do this first so that if log-level is set, it will override the
+		// deprecated setting 'show-config'
 		show_config = this.getConfig().getBoolean("show-config");
 
 		if (show_config)
@@ -1824,6 +1827,7 @@ public class Main extends JavaPlugin
 			log.setLevel(Level.CONFIG);
 		}			
 
+		// Either way, we should set the log level before doing anything else.
 		if (this.getConfig().getString("log-level") == null
 			||this.getConfig().getString("log-level").isEmpty())
 		{}
@@ -1832,6 +1836,8 @@ public class Main extends JavaPlugin
 			log.setLevel(this.getConfig().getString("log-level"));
 		}
 
+		// TODO: Remove 'permissions_system' field when all permissions system
+		// related code has been moved to the PermissionHandler interface.
 		permissions_system = this.getConfig().getString("permissions-system");
 		
 		if (this.getConfig().getString("permissions-system").equalsIgnoreCase("PEX"))
@@ -1852,6 +1858,8 @@ public class Main extends JavaPlugin
 			
 		}
 		
+		// The new group synchronization section is handled here.
+		// Beginning with primary group.
 		primary_group_synchronization_enabled = this.getConfig().getBoolean("group-synchronization.primary-group.enabled");
 		
 		show_primary_group = this.getConfig().getBoolean("show-primary-group");
