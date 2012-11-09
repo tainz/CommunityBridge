@@ -7,6 +7,7 @@ package org.ruhlendavis.mc.communitybridge;
 import de.bananaco.bpermissions.api.ApiLayer;
 import de.bananaco.bpermissions.api.util.CalculableType;
 import net.netmanagers.community.Main;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -18,6 +19,43 @@ import static org.mockito.Mockito.when;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import static org.junit.Assert.*;
+import net.netmanagers.community.Main;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import static org.mockito.Mockito.when;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import net.netmanagers.community.Main;
+import org.anjocaido.groupmanager.GroupManager;
+import org.anjocaido.groupmanager.dataholder.worlds.WorldsHolder;
+import org.anjocaido.groupmanager.permissions.AnjoPermissionsHandler;
+import org.bukkit.Server;
+import org.bukkit.plugin.PluginManager;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import static org.mockito.Mockito.when;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import static org.mockito.Mockito.mock;
 
 /**
  *
@@ -59,6 +97,8 @@ public class PermissionHandlerBPermsTest
 	public void testIsMemberOfGroup()
 	{
 		PowerMockito.mockStatic(ApiLayer.class);
+		JavaPlugin plugin = mock(JavaPlugin.class);
+		
 		String goodPlayerName = "goodPlayer";
 		String goodGroup = "goodGroup";
 		String badPlayerName = "badPlayer";
@@ -72,7 +112,7 @@ public class PermissionHandlerBPermsTest
 		when(ApiLayer.getGroups(null, CalculableType.USER, badPlayerName)).thenReturn(badPlayerGroups);
 		
 		Main.permissions_system = "bPerms";
-		PermissionHandler ph = Main.permissionHandler = new PermissionHandlerBPerms();
+		PermissionHandler ph = Main.permissionHandler = new PermissionHandlerBPerms(plugin);
 
 		Assert.assertTrue("isMemberOfGroup should return true with bPerms, correct"
 						        + " player and correct group",
