@@ -6,10 +6,7 @@ package org.ruhlendavis.mc.communitybridge;
 
 import org.anjocaido.groupmanager.GroupManager;
 import org.anjocaido.groupmanager.permissions.AnjoPermissionsHandler;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
 
 /**
  *  Implements the permission handler interface for GroupManager.
@@ -21,34 +18,34 @@ public class PermissionHandlerGroupManager implements PermissionHandler
 {
 	private static GroupManager groupManager;
 	
-	public PermissionHandlerGroupManager(Plugin plugin)
+	public PermissionHandlerGroupManager(Plugin plugin) throws IllegalStateException
 	{
-		Plugin GMplugin = plugin.getServer().getPluginManager().getPlugin("GroupManager");
+		Plugin groupManagerPlugin = plugin.getServer().getPluginManager().getPlugin("GroupManager");
  
-		if (GMplugin != null && GMplugin.isEnabled())
+		if (groupManagerPlugin != null && groupManagerPlugin.isEnabled())
 		{
-			groupManager = (GroupManager)GMplugin;
+			groupManager = (GroupManager)groupManagerPlugin;
 		}
 		else
 		{
-			// TODO: Determine what to throw when the GroupManager plugin isn't available
+			throw new IllegalStateException("GroupManager is either not present or not enabled.");
 		}
 	}
 	
 	@Override
 	public boolean isMemberOfGroup(String playerName, String groupName)
 	{
-		AnjoPermissionsHandler h = groupManager.getWorldsHolder().getWorldPermissionsByPlayerName(playerName);
+		AnjoPermissionsHandler handler;
+		
+		handler = groupManager.getWorldsHolder().getWorldPermissionsByPlayerName(playerName);
 
-		if (h == null)
+		if (handler == null)
 		{
-			// TODO: handle a null handler
+			return false;
 		}
 		else
 		{
-			h.inGroup(playerName, groupName);
+			return handler.inGroup(playerName, groupName);
 		}
-						
-		return true;
 	}
 }
