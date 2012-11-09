@@ -13,7 +13,6 @@ import org.bukkit.plugin.Plugin;
  * 
  * @author Feaelin
  */
-// TODO: Test and confirm the functionality of this class
 public class PermissionHandlerGroupManager implements PermissionHandler
 {
 	private static GroupManager groupManager;
