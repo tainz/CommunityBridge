@@ -472,11 +472,17 @@ public class Main extends JavaPlugin
       }
       else if (permissions_system.equalsIgnoreCase("bPerms"))
 			{
-        Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), (new StringBuilder("world ")).append(player.getWorld().getName()).toString());
-        Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), (new StringBuilder("user ")).append(player.getName()).toString());
-        Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), (new StringBuilder("user setgroup ")).append(groupName).toString());
+				String command = "world " + player.getWorld().getName();
+				log.finest("setGroup(): " + command);
+        Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), command);
+				command = "user " + player.getName();
+				log.finest("setGroup(): " + command);
+        Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), command);
+				command = "user setgroup " + groupName;
+				log.finest("setGroup(): " + command);
+        Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), command);
 
-        if (n)
+				if (n)
         {
           log.fine((new StringBuilder("Set ")).append(player.getName()).append(" to group ").append(groupName).toString());
         }
