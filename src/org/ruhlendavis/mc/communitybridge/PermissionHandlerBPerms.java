@@ -8,6 +8,7 @@ import net.netmanagers.community.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Implements the PermissionHandler interface for bPermissions
@@ -16,17 +17,21 @@ import org.bukkit.entity.Player;
  */
 public class PermissionHandlerBPerms implements PermissionHandler
 {
-	public PermissionHandlerBPerms()
-	{}
+	private static JavaPlugin plugin;
+	public PermissionHandlerBPerms(JavaPlugin pluginIn)
+	{
+		plugin = pluginIn;
+	}
 	
 	@Override
 	public boolean isMemberOfGroup(String playerName, String groupName)
 	{
 		try
 		{
-			// getGroups for bPerms needs a world, but we'll use 'null' and use
+			// getGroups for bPerms needs a world, but we'll use
 			// the default world. For now.
-			String [] groups = ApiLayer.getGroups(null, CalculableType.USER, playerName);
+			String worldName = plugin.getServer().getWorlds().get(0).getName();
+			String [] groups = ApiLayer.getGroups(worldName, CalculableType.USER, playerName);
 		  return Arrays.asList(groups).contains(groupName);
 		}
 		catch (Error e)
