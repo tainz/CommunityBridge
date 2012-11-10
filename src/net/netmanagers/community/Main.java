@@ -1599,7 +1599,7 @@ public class Main extends JavaPlugin
 		{
 			// We're not using groups table, so we check the group id designated
 			// by user-table keys.
-			if (status)
+			if (status && primary_group_synchronization_enabled)
 			{
 				status = status & checkColumn("users-table.groups-id-field",
 								                      users_table, groups_id_field);
