@@ -16,3 +16,5 @@ nb-configuration.xml
 *.ear
 /nbproject/genfiles.properties
 /nbproject/build-impl.xml
+*.log
+*.aux
