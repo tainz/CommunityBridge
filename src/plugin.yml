@@ -2,7 +2,7 @@ authors: [ChillerCraft, NoRC, Feaelin]
 description: Community Bridging plugin based off of ChillerCrafts ForumBridge plugin
 name: CommunityBridge
 website: http://dev.bukkit.org/server-mods/communitybridge-fm/
-version: 1.11.0
+version: 1.11.1
 
 softdepend: [PermissionsEx, GroupManager, bPerms]
 main: net.netmanagers.community.Main
