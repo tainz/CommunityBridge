@@ -671,6 +671,9 @@ public class Main extends JavaPlugin
 
 	public static void SyncPlayer(Player p, boolean firstsync)
 	{
+		String groupID = "";
+		String groupName = "";
+				
 		try
 		{
 			int id = getUserId(p.getName());
@@ -680,10 +683,6 @@ public class Main extends JavaPlugin
 								                   + " WHERE " + user_id_field + " = '" + id + "'");
 				if (res.next())
         {
-					// Note: groups is a map <String, Object> so we need the cast.
-					String groupID = res.getString(groups_id_field);
-					String groupName = (String)groups.get(groupID);
-
 					if (use_banned)
           {
 						boolean banned = res.getBoolean(is_banned_field);
@@ -693,14 +692,7 @@ public class Main extends JavaPlugin
               p.kickPlayer("You have been banned from the site.");
             }
 					}
-          else if (banlist_table_enabled)
-          {
-						if (res.getString(groups_id_field).equalsIgnoreCase(banned_users_group))
-            {
-              p.kickPlayer("You have been banned from the site.");
-            }
-					}
-
+					
 					boolean requirements_met = true;
 
 					if (require_minposts)
@@ -717,43 +709,59 @@ public class Main extends JavaPlugin
               requirements_met = false;
             }
 					}
+					
+					if (primary_group_synchronization_enabled)
+					{
+						// Note: groups is a map <String, Object> so we need the cast.
+						groupID = res.getString(groups_id_field);
+						groupName = (String)groups.get(groupID);
 
-					if (requirements_met)
-          {
-						if (isOkayToSetPrimaryGroup(groupID))
+						if (banlist_table_enabled)
 						{
-							setGroup(groupName, p, firstsync);
+							if (res.getString(groups_id_field).equalsIgnoreCase(banned_users_group))
+							{
+								p.kickPlayer("You have been banned from the site.");
+							}
+						}
+
+						if (requirements_met)
+						{
+							if (isOkayToSetPrimaryGroup(groupID))
+							{
+								setGroup(groupName, p, firstsync);
+							}
+							else
+							{
+								log.finer(p.getName()
+												+ "'s primary group not synchronized due to config.");
+							}
 						}
 						else
 						{
-							log.finer(p.getName()
-											+ "'s primary group not synchronized due to config.");
-						}
-						
-						if (secondary_groups)
-            {
-							String extra_groups = res.getString(secondary_groups_id_field);
-							if (extra_groups.length() > 0)
-              {
-								for(String g: extra_groups.split(","))
-                {
-									if(!g.isEmpty())
-                  {
-                    addGroup((String)groups.get(g), p, firstsync);
-                  }
-								}
+							if (isOkayToSetPrimaryGroup(groupID))
+							{
+								setGroup(default_group, p, firstsync);
+							}
+							else
+							{
+								log.finer(p.getName()
+												+ "'s  primary group not synchronized due to config.");
 							}
 						}
 					}
-          else
-          {
-						if (isOkayToSetPrimaryGroup(groupID))
+					
+					if (secondary_groups)
+					{
+						String extra_groups = res.getString(secondary_groups_id_field);
+						if (extra_groups.length() > 0)
 						{
-							setGroup(default_group, p, firstsync);
-						}
-						else
-						{
-							log.finer(p.getName() + "'s  primary group not synchronized due to config.");
+							for(String g: extra_groups.split(","))
+							{
+								if(!g.isEmpty())
+								{
+									addGroup((String)groups.get(g), p, firstsync);
+								}
+							}
 						}
 					}
 
