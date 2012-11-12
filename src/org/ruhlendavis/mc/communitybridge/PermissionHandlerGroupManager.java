@@ -1,26 +1,32 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.ruhlendavis.mc.communitybridge;
 
 import org.anjocaido.groupmanager.GroupManager;
 import org.anjocaido.groupmanager.permissions.AnjoPermissionsHandler;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- *  Implements the permission handler interface for GroupManager.
+ *	Implements the permission handler interface for GroupManager.
  * 
  * @author Feaelin
  */
 public class PermissionHandlerGroupManager implements PermissionHandler
 {
 	private static GroupManager groupManager;
-	
-	public PermissionHandlerGroupManager(Plugin plugin) throws IllegalStateException
+
+	/**
+	 * Setup for the GroupManager Permissions Handler
+	 * 
+	 * @param plugin JavaPlugin This plugin, i.e., CommunityBridge
+	 * @throws IllegalStateException When GroupManager is not loaded or not enabled.
+	 */
+	public PermissionHandlerGroupManager(JavaPlugin pluginIn) throws IllegalStateException
 	{
-		Plugin groupManagerPlugin = plugin.getServer().getPluginManager().getPlugin("GroupManager");
- 
+		Plugin groupManagerPlugin = Bukkit.getServer().getPluginManager().getPlugin("GroupManager");
+
 		if (groupManagerPlugin != null && groupManagerPlugin.isEnabled())
 		{
 			groupManager = (GroupManager)groupManagerPlugin;
@@ -30,17 +36,36 @@ public class PermissionHandlerGroupManager implements PermissionHandler
 			throw new IllegalStateException("GroupManager is either not present or not enabled.");
 		}
 	}
-	
+
+	/**
+	 * Determines whether a player is a member of a group.
+	 * 
+	 * @param playerName String containing the name of the player to check
+	 * @param groupName  String containing the name of the group to check
+	 * @return boolean true if the player is a member of the group
+	 * @throws RuntimeException If it fails to get a GroupManager permissions handler
+	 */
 	@Override
-	public boolean isMemberOfGroup(String playerName, String groupName)
+	public boolean isMemberOfGroup(String playerName, String groupName) throws RuntimeException
 	{
-		AnjoPermissionsHandler handler;
+		String worldName;
 		
-		handler = groupManager.getWorldsHolder().getWorldPermissionsByPlayerName(playerName);
+		Player player = Bukkit.getServer().getPlayerExact(playerName);
+		
+		if (player == null)
+		{
+			worldName = Bukkit.getServer().getWorlds().get(0).getName();
+		}
+		else
+		{
+			worldName = player.getWorld().getName();
+		}
+		
+		AnjoPermissionsHandler handler = groupManager.getWorldsHolder().getWorldPermissions(worldName);
 
 		if (handler == null)
 		{
-			return false;
+			throw new RuntimeException("isMemberOfGroup(): Failed to obtain a GroupManager permissions handler");
 		}
 		else
 		{
