@@ -4,6 +4,8 @@
 \usepackage[pdftex]{graphicx} % Great for including graphics
 \usepackage{wrapfig}          % Wrapper for figures
 
+\usepackage{upquote}
+
 % Relies on the datetime package to reformat the date the way I like.
 \newdateformat{iaindateformat}
               {\THEYEAR\hspace{.5em}\monthname[\THEMONTH]\hspace{.5em}\THEDAY}
@@ -61,7 +63,7 @@
     correct user.
     \item {\bf (NYI)} If authentication is off {\bf DO NOT} force authentication.
     \item {\bf (NYI)} If authentication is on, handle a valid authentication by...
-    \item {\bf (NYI)} If authentication is off, respond to an failed authentication attempt by...
+    \item {\bf (NYI)} If authentication is on, respond to an failed authentication attempt by...
   \end{itemize}
 
   Possible Configurations (order of complexity):
@@ -85,4 +87,71 @@
       key column, value column, data key name.
       Configuration Name: diff\_name\_diff\_table\_keyed
   \end{itemize}
+  \clearpage
+  \subsection{Proposed config.yml Section}
+  \begin{verbatim}
+# Settings associated with linking a minecraft player with a web application's
+# user. As this feature is a prerequisite for all other features, it cannot
+# be disabled. 
+player-user-linking:
+  # Set this to true if you want to require the player to confirm that they're
+  # the player that is registered on the web application by providing their
+  # web application password.
+  authentication-required: false
+
+  # Set these to true to inform players when they log in if they're linked to
+  # the web application. These correspond to the link-unregistered-player and
+  # link-registered-player messages in messages.yml.
+  notify-unregistered-player: true
+  notify-registered-player: true
+
+  # If you want the player disconnected from the game if they haven't
+  # registered set this to true.
+  kick-unregistered: false
+
+  # This needs to be set to either same-name, same-table, multi-table, or
+  # multi-table-with-key.
+  # same-name: Use this option when you want the minecraft playername and the
+  # web application username to be the same.
+  # The remaining three options are for when you want the minecraft playername
+  # and web application username to be different.
+  # same-table: Use this option when the player's minecraft name on the same
+                table as the users table in its own column.
+  # multi-table: Use this option when the player's minecraft name is on a table
+  #              separate from the users table in its own column.
+  # multi-table-with-key: Use this option when the player's minecraft name is
+                          on a table separate from the users table that stores
+                          data in key-value pairs.
+  linking-mode: same-name
+  # Configuration for the table that the web application stores user information
+  # on.
+  users-table:
+    # The name of the table that the web application stores users on.
+    name: users_table
+    user-id-column: user_id
+    username-column: username
+  # Configuration for the table that the minecraft player name is stored on by
+  # the web application.
+  playername-table:
+    # Name of the table that contains the minecraft player name.
+    name: users_table
+    # Column containing the user's user id on the table containing the
+    #  minecraft player name.
+    user-id-column: user_id
+    playername-column: minecraft_playername
+    # These three are only used if the player's minecraft name is on a
+    # table that stores its data in a key-value pair.
+    playername-key: ''
+    key-column: ''
+    value-column: ''
+  \end{verbatim}
+  \subsection{Proposed messages.yml section}
+  Messages related to the linking feature in the messages.yml.
+
+  \begin{verbatim}
+    link-unregistered-player: Unregistered Account - Please register at YOURFORUMURL for full access
+    link-registered-player: Registered Account, Linked to Forums.
+    link-unregistered-reminder: Just a reminder to visit YOURFORUMURL and register today!
+  \end{verbatim}
+
 \end{document}
