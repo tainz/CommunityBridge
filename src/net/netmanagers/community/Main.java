@@ -166,7 +166,7 @@ public class Main extends JavaPlugin
        && this.getConfig().get("db-password").equals("password"))
     {
 			log.config("Using default config file.");
-			getServer().getPluginManager().disablePlugin(this);
+			Bukkit.getServer().getPluginManager().disablePlugin(this);
 		}
     else
     {
