@@ -1869,7 +1869,6 @@ public class Main extends JavaPlugin
 		}
     else if (this.getConfig().getString("permissions-system").equalsIgnoreCase("GroupManager"))
 		{
-			// We need the plugin reference for GroupManager.
 			permissionHandler = new PermissionHandlerGroupManager();
 		}
     else if (this.getConfig().getString("permissions-system").equalsIgnoreCase("PermsBukkit"))
