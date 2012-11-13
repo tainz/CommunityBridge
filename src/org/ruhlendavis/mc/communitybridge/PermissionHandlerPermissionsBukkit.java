@@ -66,6 +66,6 @@ public class PermissionHandlerPermissionsBukkit implements PermissionHandler
 			return false;
 		}
 		
-		return group.getPlayers().contains(playerName);
+		return group.getPlayers().contains(playerName.toLowerCase());
 	}
 }

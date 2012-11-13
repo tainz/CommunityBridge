@@ -96,7 +96,7 @@ public class PermissionHandlerPermissionsBukkitTest
 		String goodGroupName = "goodGroup";
 		String badGroupName = "badGroup";
 		List<String> groupPlayers = new ArrayList();
-		groupPlayers.add(goodPlayer);
+		groupPlayers.add(goodPlayer.toLowerCase());
 		
 		PermissionsPlugin permissions = mock(PermissionsPlugin.class);
 		Group goodGroup = mock(Group.class);
@@ -107,8 +107,11 @@ public class PermissionHandlerPermissionsBukkitTest
 		PermissionHandler ph = Main.permissionHandler = new PermissionHandlerPermissionsBukkit(permissions);
 		
 		Assert.assertTrue("isMemberOfGroup should return true with PermissionsBukkit, correct"
-						        + " player and correct group",
+						        + " player (with caps) and correct group",
 										  ph.isMemberOfGroup(goodPlayer, goodGroupName));
+		Assert.assertTrue("isMemberOfGroup should return true with PermissionsBukkit, correct"
+						        + " player (without caps) and correct group",
+										  ph.isMemberOfGroup(goodPlayer.toLowerCase(), goodGroupName));
 		Assert.assertFalse("isMemberOfGroup should return false with PermissionsBukkit, incorrect"
 						         + " player and correct group",
 											 ph.isMemberOfGroup(badPlayer, goodGroupName));
