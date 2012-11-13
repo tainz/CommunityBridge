@@ -55,7 +55,7 @@ public class PermissionHandlerPermissionsBukkitTest
 		String badPlayer = "badPlayer";
 		String goodGroupName = "goodGroup";
 		String badGroupName = "badGroup";
-		List<String> groupPlayers = new ArrayList();
+		List<String> groupPlayers = new ArrayList<String>();
 		groupPlayers.add(goodPlayer.toLowerCase());
 		
 		PermissionsPlugin permissions = mock(PermissionsPlugin.class);
