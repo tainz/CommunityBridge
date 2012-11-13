@@ -20,7 +20,6 @@ public class PermissionHandlerGroupManager implements PermissionHandler
 	/**
 	 * Setup for the GroupManager Permissions Handler
 	 * 
-	 * @param plugin JavaPlugin This plugin, i.e., CommunityBridge
 	 * @throws IllegalStateException When GroupManager is not loaded or not enabled.
 	 */
 	public PermissionHandlerGroupManager() throws IllegalStateException
