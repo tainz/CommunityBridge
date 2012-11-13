@@ -36,6 +36,17 @@ public class PermissionHandlerGroupManager implements PermissionHandler
 			throw new IllegalStateException("GroupManager is either not present or not enabled.");
 		}
 	}
+	
+	/**
+	 * This is actually here to allow the unit tests to work. This bypasses
+	 * the need to mock all the object types used in the normal constructor.
+	 * 
+	 * @param groupManagerIn
+	 */
+	public PermissionHandlerGroupManager(GroupManager groupManagerIn) throws IllegalStateException
+	{
+		groupManager = groupManagerIn;
+	}
 
 	/**
 	 * Determines whether a player is a member of a group.
