@@ -95,7 +95,7 @@ public class PermissionHandlerBPermsTest
 	}
 
 	/**
-	 * Test of isMemberOfGroup method, of class PermissionHandlerBPerms.
+	 * Test of isMemberOfGroup method, of class PermissionHandlerBPermissions.
 	 */
 	@Test
 	@PrepareForTest({Bukkit.class, ApiLayer.class})
@@ -130,7 +130,7 @@ public class PermissionHandlerBPermsTest
 		when(ApiLayer.getGroups(worldName, CalculableType.USER, badPlayerName)).thenReturn(badPlayerGroups);
 		
 		Main.permissions_system = "bPerms";
-		PermissionHandler ph = Main.permissionHandler = new PermissionHandlerBPerms();
+		PermissionHandler ph = Main.permissionHandler = new PermissionHandlerBPermissions();
 
 		Assert.assertTrue("isMemberOfGroup should return true with bPerms, correct"
 						        + " player and correct group",
