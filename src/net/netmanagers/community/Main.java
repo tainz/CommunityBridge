@@ -1904,7 +1904,7 @@ public class Main extends JavaPlugin
 		if (primary_group_synchronization_enabled)
 		{
 			// primary group IDs to ignore
-			List<String> defaultList = new ArrayList();
+			List<String> defaultList = new ArrayList<String>();
 			this.getConfig().addDefault("group-synchronization.primary-group.group-ids-to-ignore", defaultList);
 			primary_group_ids_to_ignore = this.getConfig().getStringList("group-synchronization.primary-group.group-ids-to-ignore");
 			log.config("Primary Group IDs to Ignore: "
