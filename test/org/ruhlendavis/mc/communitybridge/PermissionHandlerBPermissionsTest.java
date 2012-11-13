@@ -67,10 +67,10 @@ import static org.mockito.Mockito.mock;
  * @author Feaelin
  */
 @RunWith(PowerMockRunner.class)
-public class PermissionHandlerBPermsTest
+public class PermissionHandlerBPermissionsTest
 {
 	
-	public PermissionHandlerBPermsTest()
+	public PermissionHandlerBPermissionsTest()
 	{
 	}
 	
