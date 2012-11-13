@@ -1837,8 +1837,9 @@ public class Main extends JavaPlugin
 
 	private void loadConfig()
 	{
+		// We'll remove the deprecated setting in six months. Remove On: 2012/May/13
 		// We do this first so that if log-level is set, it will override the
-		// deprecated setting 'show-config'
+		// deprecated setting 'show-config'.
 		show_config = this.getConfig().getBoolean("show-config");
 
 		if (show_config)
@@ -1859,26 +1860,39 @@ public class Main extends JavaPlugin
 		// TODO: Remove 'permissions_system' field when all permissions system
 		// related code has been moved to the PermissionHandler interface.
 		permissions_system = this.getConfig().getString("permissions-system");
-		
-		if (this.getConfig().getString("permissions-system").equalsIgnoreCase("PEX"))
+		try 
 		{
-			permissionHandler = new PermissionHandlerPermissionsEx();
-			log.config("Permissions System: PermissionsEx (PEX)");
+			if (this.getConfig().getString("permissions-system").equalsIgnoreCase("PEX"))
+			{
+				permissionHandler = new PermissionHandlerPermissionsEx();
+				log.config("Permissions System: PermissionsEx (PEX)");
+			}
+			else if (this.getConfig().getString("permissions-system").equalsIgnoreCase("bPerms"))
+			{
+				permissionHandler = new PermissionHandlerBPermissions();
+				log.config("Permissions System: bPermissions (bPerms)");
+			}
+			else if (this.getConfig().getString("permissions-system").equalsIgnoreCase("GroupManager"))
+			{
+				permissionHandler = new PermissionHandlerGroupManager();
+				log.config("Permissions System: GroupManager");
+			}
+			else if (this.getConfig().getString("permissions-system").equalsIgnoreCase("PermsBukkit"))
+			{
+				permissionHandler = new PermissionHandlerPermissionsBukkit();
+				log.config("Permissions System: PermissionsBukkit (PermsBukkit)");
+			}
+			else
+			{
+				log.severe("Unknown permissions system in config.yml. CommunityBridge disabled.");
+				disablePlugin();
+			}
 		}
-    else if (this.getConfig().getString("permissions-system").equalsIgnoreCase("bPerms"))
+		catch (IllegalStateException e)
 		{
-			permissionHandler = new PermissionHandlerBPermissions();
-			log.config("Permissions System: bPermissions (bPerms)");
-		}
-    else if (this.getConfig().getString("permissions-system").equalsIgnoreCase("GroupManager"))
-		{
-			permissionHandler = new PermissionHandlerGroupManager();
-			log.config("Permissions System: GroupManager");
-		}
-    else if (this.getConfig().getString("permissions-system").equalsIgnoreCase("PermsBukkit"))
-		{
-			permissionHandler = new PermissionHandlerPermissionsBukkit();
-			log.config("Permissions System: PermissionsBukkit (PermsBukkit)");
+			log.severe(e.getMessage());
+			log.severe("Disabling CommunityBridge.");
+			disablePlugin();
 		}
 		
 		// The new group synchronization section is handled here.
