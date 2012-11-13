@@ -1,6 +1,8 @@
 package org.ruhlendavis.mc.communitybridge;
 
 import net.netmanagers.community.Main;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 /**
@@ -10,7 +12,29 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
  */
 public class PermissionHandlerPermissionsEx implements PermissionHandler
 {
-	public PermissionHandlerPermissionsEx()
+	/**
+	 * Actual constructor.
+	 * 
+	 * @throws IllegalStateException when PermissionsEx is not present or disabled.
+	 */
+	public PermissionHandlerPermissionsEx() throws IllegalStateException
+	{
+		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("PermissionsEx");
+
+		if (plugin != null && plugin.isEnabled())
+		{}
+		else
+		{
+			throw new IllegalStateException("bPermissions is either not present or not enabled.");
+		}
+	}
+	/**
+	 * Dummy constructor for unit testing purposes.
+	 * 
+	 * @param dummy Any boolean value (not used)
+	 * @throws IllegalStateException Not actually thrown as this is a dummy method
+	 */
+	public PermissionHandlerPermissionsEx(boolean dummy) throws IllegalStateException
 	{}
 	
  /**

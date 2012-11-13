@@ -75,7 +75,7 @@ public class PermissionHandlerPermissionsExTest
 		when(goodUser.inGroup(badGroup)).thenReturn(false);
 		when(badUser.inGroup(anyString())).thenReturn(false);
 		Main.permissions_system = "PEX";
-		PermissionHandler ph = Main.permissionHandler = new PermissionHandlerPermissionsEx();
+		PermissionHandler ph = Main.permissionHandler = new PermissionHandlerPermissionsEx(true);
 		
 		Assert.assertTrue("isMemberOfGroup should return true with PEX, correct"
 						        + " player and correct group",
