@@ -21,6 +21,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.ruhlendavis.mc.communitybridge.PermissionHandler;
 import org.ruhlendavis.mc.communitybridge.PermissionHandlerBPerms;
 import org.ruhlendavis.mc.communitybridge.PermissionHandlerGroupManager;
+import org.ruhlendavis.mc.communitybridge.PermissionHandlerPermissionsBukkit;
 import org.ruhlendavis.mc.communitybridge.PermissionHandlerPermissionsEx;
 import org.ruhlendavis.mc.utility.Log;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
@@ -1873,7 +1874,7 @@ public class Main extends JavaPlugin
 		}
     else if (this.getConfig().getString("permissions-system").equalsIgnoreCase("PermsBukkit"))
 		{
-			
+			permissionHandler = new PermissionHandlerPermissionsBukkit();
 		}
 		
 		// The new group synchronization section is handled here.
