@@ -1865,7 +1865,7 @@ public class Main extends JavaPlugin
 		}
     else if (this.getConfig().getString("permissions-system").equalsIgnoreCase("bPerms"))
 		{
-			permissionHandler = new PermissionHandlerBPerms(this);
+			permissionHandler = new PermissionHandlerBPerms();
 		}
     else if (this.getConfig().getString("permissions-system").equalsIgnoreCase("GroupManager"))
 		{

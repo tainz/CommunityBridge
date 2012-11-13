@@ -6,6 +6,8 @@ package org.ruhlendavis.mc.communitybridge;
 
 import de.bananaco.bpermissions.api.ApiLayer;
 import de.bananaco.bpermissions.api.util.CalculableType;
+import java.util.ArrayList;
+import java.util.List;
 import net.netmanagers.community.Main;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.junit.After;
@@ -42,7 +44,10 @@ import net.netmanagers.community.Main;
 import org.anjocaido.groupmanager.GroupManager;
 import org.anjocaido.groupmanager.dataholder.worlds.WorldsHolder;
 import org.anjocaido.groupmanager.permissions.AnjoPermissionsHandler;
+import org.bukkit.Bukkit;
 import org.bukkit.Server;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -62,7 +67,6 @@ import static org.mockito.Mockito.mock;
  * @author Feaelin
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(ApiLayer.class)
 public class PermissionHandlerBPermsTest
 {
 	
@@ -94,25 +98,39 @@ public class PermissionHandlerBPermsTest
 	 * Test of isMemberOfGroup method, of class PermissionHandlerBPerms.
 	 */
 	@Test
+	@PrepareForTest({Bukkit.class, ApiLayer.class})
 	public void testIsMemberOfGroup()
 	{
-		PowerMockito.mockStatic(ApiLayer.class);
-		JavaPlugin plugin = mock(JavaPlugin.class);
-		
 		String goodPlayerName = "goodPlayer";
 		String goodGroup = "goodGroup";
 		String badPlayerName = "badPlayer";
 		String badGroup = "badGroup";
 		String noexistGroup = "thisgroupdoesnotexist";
-		
+		String worldName = "world";
 		String [] goodPlayerGroups = { goodGroup };
 		String [] badPlayerGroups = { badGroup };
 		
-		when(ApiLayer.getGroups(null, CalculableType.USER, goodPlayerName)).thenReturn(goodPlayerGroups);
-		when(ApiLayer.getGroups(null, CalculableType.USER, badPlayerName)).thenReturn(badPlayerGroups);
+		PowerMockito.mockStatic(Bukkit.class);
+		Server server = mock(Server.class);
+		when(Bukkit.getServer()).thenReturn(server);
+		
+		Player goodPlayer = mock(Player.class);
+		when(server.getPlayerExact(goodPlayerName)).thenReturn(goodPlayer);
+		when(server.getPlayerExact(badPlayerName)).thenReturn(null);
+
+		World world = mock(World.class);
+ 		List<World> worlds =  new ArrayList();
+		worlds.add(world);				
+		when(goodPlayer.getWorld()).thenReturn(world);
+		when(world.getName()).thenReturn("world");
+		when(server.getWorlds()).thenReturn(worlds);
+		
+		PowerMockito.mockStatic(ApiLayer.class);
+		when(ApiLayer.getGroups(worldName, CalculableType.USER, goodPlayerName)).thenReturn(goodPlayerGroups);
+		when(ApiLayer.getGroups(worldName, CalculableType.USER, badPlayerName)).thenReturn(badPlayerGroups);
 		
 		Main.permissions_system = "bPerms";
-		PermissionHandler ph = Main.permissionHandler = new PermissionHandlerBPerms(plugin);
+		PermissionHandler ph = Main.permissionHandler = new PermissionHandlerBPerms();
 
 		Assert.assertTrue("isMemberOfGroup should return true with bPerms, correct"
 						        + " player and correct group",
