@@ -1863,18 +1863,22 @@ public class Main extends JavaPlugin
 		if (this.getConfig().getString("permissions-system").equalsIgnoreCase("PEX"))
 		{
 			permissionHandler = new PermissionHandlerPermissionsEx();
+			log.config("Permissions System: PermissionsEx (PEX)");
 		}
     else if (this.getConfig().getString("permissions-system").equalsIgnoreCase("bPerms"))
 		{
 			permissionHandler = new PermissionHandlerBPermissions();
+			log.config("Permissions System: bPermissions (bPerms)");
 		}
     else if (this.getConfig().getString("permissions-system").equalsIgnoreCase("GroupManager"))
 		{
 			permissionHandler = new PermissionHandlerGroupManager();
+			log.config("Permissions System: GroupManager");
 		}
     else if (this.getConfig().getString("permissions-system").equalsIgnoreCase("PermsBukkit"))
 		{
 			permissionHandler = new PermissionHandlerPermissionsBukkit();
+			log.config("Permissions System: PermissionsBukkit (PermsBukkit)");
 		}
 		
 		// The new group synchronization section is handled here.
