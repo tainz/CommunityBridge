@@ -6,6 +6,7 @@ import java.util.Arrays;
 import net.netmanagers.community.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 /**
  * Implements the PermissionHandler interface for bPermissions
@@ -14,16 +15,38 @@ import org.bukkit.entity.Player;
  */
 public class PermissionHandlerBPermissions implements PermissionHandler
 {
-	public PermissionHandlerBPermissions()
+	/**
+	 * Actual constructor.
+	 * 
+	 * @throws IllegalStateException thrown when bPermissions plugin is not present or disabled.
+	 */
+	public PermissionHandlerBPermissions() throws IllegalStateException
 	{
+		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("bPermissions");
+
+		if (plugin != null && plugin.isEnabled())
+		{}
+		else
+		{
+			throw new IllegalStateException("bPermissions is either not present or not enabled.");
+		}
 	}
+
+	/**
+	 * Dummy constructor for unit testing.
+	 * 
+	 * @param dummy boolean can be any boolean value
+	 * @throws IllegalStateException not actually thrown as this is a dummy method
+	 */
+	public PermissionHandlerBPermissions(boolean dummy) throws IllegalStateException
+	{}
 
 	/**
 	 * Checks to see if a player is the member of a group.
 	 * 
 	 * @param playerName String containing the name of the player to check.
 	 * @param groupName	 String containing the name of the group to check.
-	 * @return boolean true if the player is a member of the group.
+	 * @return A boolean value which is true if the player is a member of the group.
 	 */
 	@Override
 	public boolean isMemberOfGroup(String playerName, String groupName)
@@ -51,6 +74,5 @@ public class PermissionHandlerBPermissions implements PermissionHandler
 		}
 		
 		return false;
-		
 	}
 }

@@ -94,7 +94,7 @@ public class PermissionHandlerBPermissionsTest
 		when(ApiLayer.getGroups(worldName, CalculableType.USER, badPlayerName)).thenReturn(badPlayerGroups);
 		
 		Main.permissions_system = "bPerms";
-		PermissionHandler ph = Main.permissionHandler = new PermissionHandlerBPermissions();
+		PermissionHandler ph = Main.permissionHandler = new PermissionHandlerBPermissions(true);
 
 		Assert.assertTrue("isMemberOfGroup should return true with bPerms, correct"
 						        + " player and correct group",
