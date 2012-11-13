@@ -23,7 +23,7 @@ public class PermissionHandlerGroupManager implements PermissionHandler
 	 * @param plugin JavaPlugin This plugin, i.e., CommunityBridge
 	 * @throws IllegalStateException When GroupManager is not loaded or not enabled.
 	 */
-	public PermissionHandlerGroupManager(JavaPlugin pluginIn) throws IllegalStateException
+	public PermissionHandlerGroupManager() throws IllegalStateException
 	{
 		Plugin groupManagerPlugin = Bukkit.getServer().getPluginManager().getPlugin("GroupManager");
 
