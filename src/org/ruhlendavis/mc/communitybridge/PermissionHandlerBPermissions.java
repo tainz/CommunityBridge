@@ -2,6 +2,7 @@ package org.ruhlendavis.mc.communitybridge;
 
 import de.bananaco.bpermissions.api.ApiLayer;
 import de.bananaco.bpermissions.api.util.CalculableType;
+import java.util.ArrayList;
 import java.util.Arrays;
 import net.netmanagers.community.Main;
 import org.bukkit.Bukkit;
@@ -42,7 +43,54 @@ public class PermissionHandlerBPermissions implements PermissionHandler
 	{}
 
 	/**
+	 * Returns the primary group for a given player.
+	 * Note that for bPermissions, it returns the first group on the player's
+	 * group list for their current world, or the default world if they are
+	 * offline.
+	 * 
+	 * @param playerName String containing the player's name.
+	 * @return String containing the name of the player's primary group.
+	 */
+	@Override
+	public String getPrimaryGroup(String playerName)
+	{
+		String worldName;
+		String [] groups = {};
+		
+		Player player = Bukkit.getServer().getPlayerExact(playerName);
+
+		if (player == null)
+		{
+			worldName = Bukkit.getServer().getWorlds().get(0).getName();
+		}
+		else
+		{
+			worldName = player.getWorld().getName();
+		}
+
+		try
+		{
+			groups = ApiLayer.getGroups(worldName, CalculableType.USER, playerName);
+		}
+		catch(Error e)
+		{
+			Main.log.severe(e.getMessage());
+		}
+		
+		if (groups == null || groups.length == 0)
+		{
+			return null;
+		}
+		else
+		{
+			return groups[0];
+		}
+	}
+	
+	/**
 	 * Checks to see if a player is the member of a group.
+	 * Note that it checks the groups for their current world, or it checks the
+	 * default world if they are offline.
 	 * 
 	 * @param playerName String containing the name of the player to check.
 	 * @param groupName	 String containing the name of the group to check.
@@ -51,28 +99,29 @@ public class PermissionHandlerBPermissions implements PermissionHandler
 	@Override
 	public boolean isMemberOfGroup(String playerName, String groupName)
 	{
+		String worldName;
+		String [] groups = {};
+
+		Player player = Bukkit.getServer().getPlayerExact(playerName);
+
+		if (player == null)
+		{
+			worldName = Bukkit.getServer().getWorlds().get(0).getName();
+		}
+		else
+		{
+			worldName = player.getWorld().getName();
+		}
+
 		try
 		{
-			String worldName;
-			Player player = Bukkit.getServer().getPlayerExact(playerName);
-
-			if (player == null)
-			{
-				worldName = Bukkit.getServer().getWorlds().get(0).getName();
-			}
-			else
-			{
-				worldName = player.getWorld().getName();
-			}
-			
-			String [] groups = ApiLayer.getGroups(worldName, CalculableType.USER, playerName);
-		  return Arrays.asList(groups).contains(groupName);
+			groups = ApiLayer.getGroups(worldName, CalculableType.USER, playerName);
 		}
 		catch (Error e)
 		{
 			Main.log.severe(e.getMessage());
 		}
 		
-		return false;
+		return Arrays.asList(groups).contains(groupName);
 	}
 }

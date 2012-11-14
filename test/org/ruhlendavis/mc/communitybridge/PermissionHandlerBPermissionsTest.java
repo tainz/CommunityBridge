@@ -59,6 +59,48 @@ public class PermissionHandlerBPermissionsTest
 	}
 
 	/**
+	 * Test of getPrimaryGroup method, of class PermissionHandlerBPermissions.
+	 */
+	@Test
+	@PrepareForTest({Bukkit.class, ApiLayer.class})
+	public void testGetPrimaryGroup()
+	{
+		String goodPlayerName = "goodPlayer";
+		String goodGroup = "goodGroup";
+		String badPlayerName = "badPlayer";
+		String worldName = "world";
+		String [] goodPlayerGroups = { goodGroup };
+		String [] badPlayerGroups = {};
+		
+		PowerMockito.mockStatic(Bukkit.class);
+		Server server = mock(Server.class);
+		when(Bukkit.getServer()).thenReturn(server);
+		
+		Player goodPlayer = mock(Player.class);
+		when(server.getPlayerExact(goodPlayerName)).thenReturn(goodPlayer);
+		when(server.getPlayerExact(badPlayerName)).thenReturn(null);
+
+		World world = mock(World.class);
+ 		List<World> worlds =  new ArrayList();
+		worlds.add(world);				
+		when(goodPlayer.getWorld()).thenReturn(world);
+		when(world.getName()).thenReturn("world");
+		when(server.getWorlds()).thenReturn(worlds);
+		
+		PowerMockito.mockStatic(ApiLayer.class);
+		when(ApiLayer.getGroups(worldName, CalculableType.USER, goodPlayerName)).thenReturn(goodPlayerGroups);
+		when(ApiLayer.getGroups(worldName, CalculableType.USER, badPlayerName)).thenReturn(badPlayerGroups);
+		
+		Main.permissions_system = "bPerms";
+		PermissionHandler ph = Main.permissionHandler = new PermissionHandlerBPermissions(true);
+
+		Assert.assertEquals("getPrimaryGroup() should return null with an invalid player",
+						          null, ph.getPrimaryGroup(badPlayerName));
+		Assert.assertEquals("getPrimaryGroup() should return correct group with an valid player",
+						          goodGroup, ph.getPrimaryGroup(goodPlayerName));
+	}
+	
+	/**
 	 * Test of isMemberOfGroup method, of class PermissionHandlerBPermissions.
 	 */
 	@Test

@@ -49,6 +49,13 @@ public class PermissionHandlerPermissionsBukkit implements PermissionHandler
 	{
 		permissions = pIn;
 	}
+
+	@Override
+	public String getPrimaryGroup(String playerName)
+	{
+		return "";
+	}
+	
  /**
 	 * Asks permissions system if a player is the member of a given group.
 	 * 

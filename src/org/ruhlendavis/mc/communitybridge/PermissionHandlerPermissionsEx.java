@@ -36,7 +36,13 @@ public class PermissionHandlerPermissionsEx implements PermissionHandler
 	 */
 	public PermissionHandlerPermissionsEx(boolean dummy) throws IllegalStateException
 	{}
-	
+
+	@Override
+	public String getPrimaryGroup(String playerName)
+	{
+		return "";
+	}
+
  /**
 	 * Asks permissions system if a player is the member of a given group.
 	 * 

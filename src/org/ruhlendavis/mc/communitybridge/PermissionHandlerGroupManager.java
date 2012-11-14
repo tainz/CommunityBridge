@@ -46,7 +46,13 @@ public class PermissionHandlerGroupManager implements PermissionHandler
 	{
 		groupManager = groupManagerIn;
 	}
-
+	
+	@Override
+	public String getPrimaryGroup(String playerName)
+	{
+		return "";
+	}
+	
 	/**
 	 * Determines whether a player is a member of a group.
 	 * 
