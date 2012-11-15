@@ -3,6 +3,7 @@ package org.ruhlendavis.mc.communitybridge;
 import net.netmanagers.community.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
+import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 /**
@@ -25,7 +26,7 @@ public class PermissionHandlerPermissionsEx implements PermissionHandler
 		{}
 		else
 		{
-			throw new IllegalStateException("bPermissions is either not present or not enabled.");
+			throw new IllegalStateException("PermissionsEx is either not present or not enabled.");
 		}
 	}
 	/**
@@ -40,7 +41,13 @@ public class PermissionHandlerPermissionsEx implements PermissionHandler
 	@Override
 	public String getPrimaryGroup(String playerName)
 	{
-		return "";
+		PermissionUser permissionUser = PermissionsEx.getUser(playerName);
+		if (permissionUser == null || permissionUser.getGroupsNames().length == 0)
+		{
+			return null;
+		}
+		
+		return permissionUser.getGroupsNames()[0];
 	}
 
  /**
@@ -55,7 +62,14 @@ public class PermissionHandlerPermissionsEx implements PermissionHandler
 	{
 		try
 		{
-			return PermissionsEx.getUser(playerName).inGroup(groupName);
+			PermissionUser permissionUser = PermissionsEx.getUser(playerName);
+			
+			if (permissionUser == null)
+			{
+				return false;
+			}
+			
+			return permissionUser.inGroup(groupName);
 		}
 		catch (Error e)
 		{
