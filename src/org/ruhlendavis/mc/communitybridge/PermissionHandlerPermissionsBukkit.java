@@ -88,4 +88,10 @@ public class PermissionHandlerPermissionsBukkit implements PermissionHandler
 		
 		return group.getPlayers().contains(playerName.toLowerCase());
 	}
+
+	@Override
+	public boolean isPrimaryGroup(String playerName, String groupName)
+	{
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 }

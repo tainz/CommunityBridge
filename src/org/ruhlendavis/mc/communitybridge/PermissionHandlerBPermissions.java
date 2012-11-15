@@ -124,4 +124,10 @@ public class PermissionHandlerBPermissions implements PermissionHandler
 		
 		return Arrays.asList(groups).contains(groupName);
 	}
+
+	@Override
+	public boolean isPrimaryGroup(String playerName, String groupName)
+	{
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 }

@@ -11,6 +11,17 @@ package org.ruhlendavis.mc.communitybridge;
  */
 public interface PermissionHandler
 {
+	//  public boolean getGroups(String playerName);
+	
+	/**
+	 * Retrieves a player's primary group. For some permission systems, this is
+	 * merely the first group on the list.
+	 * 
+	 * @param playerName String containing the player's name
+	 * @return null if the player does not exist or has no groups, otherwise a String containing the group's name.
+	 */
+	public String getPrimaryGroup(String playerName);
+	
 	/**
 	 *  Determines whether a player is a member of a group.
 	 * 
@@ -19,12 +30,19 @@ public interface PermissionHandler
 	 * @return True only if the player is a member of the group.
 	 */
 	public boolean isMemberOfGroup(String playerName, String groupName);
-		
-	public String getPrimaryGroup(String playerName);
-//	public boolean setPrimaryGroup(String playerName, String groupName);
-//	public boolean isPrimaryGroup(String playerName, String groupName);
 	
-//  public boolean getGroups(String playerName);
+	/**
+	 * Determines whether a player has a group has their primary group.
+	 * 
+	 * @param playerName String containing the player's name
+	 * @param groupName  String containing the group's name
+	 * @return True if the group is the player's primary group.
+	 */
+	public boolean isPrimaryGroup(String playerName, String groupName);
+	
+//	public boolean setPrimaryGroup(String playerName, String groupName);
+
+	
 //	public boolean addToGroup(String playerName, String groupName);
 //	public boolean removeFromGroup(String playerName, String groupName);
 

@@ -78,4 +78,10 @@ public class PermissionHandlerPermissionsEx implements PermissionHandler
 		
 		return false;
 	}
+
+	@Override
+	public boolean isPrimaryGroup(String playerName, String groupName)
+	{
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 }
