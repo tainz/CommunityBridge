@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.ruhlendavis.mc.communitybridge;
 
 import java.util.ArrayList;
@@ -28,7 +24,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
- *
+ *  Tests for the PermissionHandlerGroupManager Class
+ * 
  * @author Feaelin
  */
 @RunWith(PowerMockRunner.class)

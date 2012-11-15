@@ -43,7 +43,7 @@ public class PermissionHandlerBPermissions implements PermissionHandler
 	{}
 
 	/**
-	 * Returns the primary group for a given player.
+	 * Retrieves the primary group for a given player.
 	 * Note that for bPermissions, it returns the first group on the player's
 	 * group list for their current world, or the default world if they are
 	 * offline.

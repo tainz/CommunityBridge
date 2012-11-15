@@ -16,7 +16,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- *
+ * Tests for the PermissionHandlerPermissionsBukkit class
+ * 
  * @author Feaelin
  */
 public class PermissionHandlerPermissionsBukkitTest

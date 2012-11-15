@@ -1,10 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.ruhlendavis.mc.communitybridge;
 
-import net.netmanagers.community.Main;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -12,7 +7,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import org.powermock.api.mockito.PowerMockito;
@@ -22,7 +16,8 @@ import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 /**
- *
+ * Tests for the PermissionHandlerPermissionsEx Class
+ * 
  * @author Feaelin
  */
 @RunWith(PowerMockRunner.class)

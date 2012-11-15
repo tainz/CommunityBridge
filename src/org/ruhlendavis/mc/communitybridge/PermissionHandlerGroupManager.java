@@ -40,13 +40,22 @@ public class PermissionHandlerGroupManager implements PermissionHandler
 	 * This is actually here to allow the unit tests to work. This bypasses
 	 * the need to mock all the object types used in the normal constructor.
 	 * 
-	 * @param groupManagerIn
+	 * @param groupManagerIn The groupManager object mocked by the unit tests.
 	 */
 	public PermissionHandlerGroupManager(GroupManager groupManagerIn) throws IllegalStateException
 	{
 		groupManager = groupManagerIn;
 	}
 	
+	/**
+	 * Retrieves the primary group for a given player.
+	 * Note that for bPermissions, it returns the first group on the player's
+	 * group list for their current world, or the default world if they are
+	 * offline.
+	 * 
+	 * @param playerName String containing the player's name.
+	 * @return String containing the name of the player's primary group.
+	 */
 	@Override
 	public String getPrimaryGroup(String playerName)
 	{
