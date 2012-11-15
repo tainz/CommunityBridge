@@ -50,10 +50,23 @@ public class PermissionHandlerPermissionsBukkit implements PermissionHandler
 		permissions = pIn;
 	}
 
+	/**
+	 * Retrieves the player's primary group.
+	 * 
+	 * @param playerName String containing name of the player to look up.
+	 * @return String containing the name of the player's primary group or null if the player is not found or does not have a primary group.
+	 */
 	@Override
 	public String getPrimaryGroup(String playerName)
 	{
-		return "";
+		if (permissions.getPlayerInfo(playerName) == null
+		 || permissions.getPlayerInfo(playerName).getGroups() == null
+		 || permissions.getPlayerInfo(playerName).getGroups().isEmpty())
+		{
+			return null;
+		}
+		
+		return permissions.getPlayerInfo(playerName).getGroups().get(0).getName();
 	}
 	
  /**
