@@ -37,8 +37,10 @@ public class PermissionHandlerGroupManagerTest
 {
 	private final String goodPlayerName = "goodPlayer";
 	private final	String badPlayerName = "badPlayer";
-	private final	String goodGroup = "goodGroup";
+	private final	String goodGroupName = "goodGroup";
+	private final	String badGroupName = "badGroup";
 	private final String worldName = "world";
+	private final String noexistGroupName = "thisgroupdoesnotexist";
 	private Server server;
 	private Player goodPlayer;
 	private World world;
@@ -83,9 +85,13 @@ public class PermissionHandlerGroupManagerTest
 		when(server.getWorlds()).thenReturn(worlds);
 		when(gmPluginAsGroupManager.getWorldsHolder()).thenReturn(worldHolder);
 		when(worldHolder.getWorldPermissions(worldName)).thenReturn(handler);
+		when(handler.getGroup(goodPlayerName)).thenReturn(goodGroupName);
+		when(handler.inGroup(goodPlayerName, goodGroupName)).thenReturn(true);
+		when(handler.inGroup(badPlayerName, goodGroupName)).thenReturn(false);
+		when(handler.inGroup(goodPlayerName, badGroupName)).thenReturn(false);
+		when(handler.inGroup(badPlayerName, badGroupName)).thenReturn(false);
 		
-		Main.permissions_system = "GroupManager";
-		permissionHandler = Main.permissionHandler = new PermissionHandlerGroupManager(gmPluginAsGroupManager);
+		permissionHandler = new PermissionHandlerGroupManager(gmPluginAsGroupManager);
 	}
 	
 	@After
@@ -96,39 +102,43 @@ public class PermissionHandlerGroupManagerTest
 	@Test
 	public void testGetPrimaryGroup()
 	{
-		when(handler.getGroup(goodPlayerName)).thenReturn(goodGroup);
-
 		Assert.assertEquals("getPrimaryGroup() should return null with an invalid player",
 						          null, permissionHandler.getPrimaryGroup(badPlayerName));
 		Assert.assertEquals("getPrimaryGroup() should return correct group with an valid player",
-						          goodGroup, permissionHandler.getPrimaryGroup(goodPlayerName));
-
+						          goodGroupName, permissionHandler.getPrimaryGroup(goodPlayerName));
 	}
+	
 	/**
 	 * Test of isMemberOfGroup method, of class PermissionHandlerGroupManager.
 	 */
 	@Test
 	public void testIsMemberOfGroup()
 	{
-		String badGroup = "badGroup";
-		String noexistGroup = "thisgroupdoesnotexist";		
-		
-		when(handler.inGroup(goodPlayerName, goodGroup)).thenReturn(true);
-		when(handler.inGroup(badPlayerName, goodGroup)).thenReturn(false);
-		when(handler.inGroup(goodPlayerName, badGroup)).thenReturn(false);
-		when(handler.inGroup(badPlayerName, badGroup)).thenReturn(false);
-		
 		Assert.assertTrue("isMemberOfGroup should return true with GroupManager, correct"
 						        + " player and correct group",
-										  permissionHandler.isMemberOfGroup(goodPlayerName, goodGroup));
+										  permissionHandler.isMemberOfGroup(goodPlayerName, goodGroupName));
 		Assert.assertFalse("isMemberOfGroup should return false with GroupManager, incorrect"
 						         + " player and correct group",
-											 permissionHandler.isMemberOfGroup(badPlayerName, goodGroup));
+											 permissionHandler.isMemberOfGroup(badPlayerName, goodGroupName));
 		Assert.assertFalse("isMemberOfGroup should return false with GroupManager, correct"
 						         + " player and incorrect group",
-											 permissionHandler.isMemberOfGroup(goodPlayerName, noexistGroup));
+											 permissionHandler.isMemberOfGroup(goodPlayerName, noexistGroupName));
 		Assert.assertFalse("isMemberOfGroup should return false with GroupManager, incorrect"
 						         + " player and incorrect group",
-											 permissionHandler.isMemberOfGroup(badPlayerName, noexistGroup));
+											 permissionHandler.isMemberOfGroup(badPlayerName, noexistGroupName));
+	}
+	
+	/**
+	 * Test of isPrimaryGroup method, of class PermissionHandlerGroupManager
+	 */
+	@Test
+	public void testIsPrimaryGroup()
+	{	
+		Assert.assertTrue("isPrimaryGroup() should return true with valid player/group combo",
+						          permissionHandler.isPrimaryGroup(goodPlayerName, goodGroupName));
+		Assert.assertFalse("isPrimaryGroup() should return false with valid player, wrong group",
+						          permissionHandler.isPrimaryGroup(goodPlayerName, noexistGroupName));
+		Assert.assertFalse("isPrimaryGroup() should return false with invalid player",
+						          permissionHandler.isPrimaryGroup(badPlayerName, goodGroupName));
 	}
 }

@@ -29,6 +29,7 @@ public class PermissionHandlerPermissionsEx implements PermissionHandler
 			throw new IllegalStateException("PermissionsEx is either not present or not enabled.");
 		}
 	}
+	
 	/**
 	 * Dummy constructor for unit testing purposes.
 	 * 
@@ -79,9 +80,17 @@ public class PermissionHandlerPermissionsEx implements PermissionHandler
 		return false;
 	}
 
+	/**
+	 * Determines whether a player has a group has their primary group.
+	 * 
+	 * @param playerName String containing the player's name
+	 * @param groupName  String containing the group's name
+	 * @return True if the group is the player's primary group.
+	 */	
 	@Override
 	public boolean isPrimaryGroup(String playerName, String groupName)
 	{
-		throw new UnsupportedOperationException("Not supported yet.");
+		String primaryGroup = this.getPrimaryGroup(playerName);
+		return primaryGroup != null && groupName.equalsIgnoreCase(primaryGroup);
 	}
 }

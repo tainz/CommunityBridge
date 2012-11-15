@@ -27,7 +27,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
- *
+ * Tests for PermissionsHandlerBPermissions
+ * 
  * @author Feaelin
  */
 @RunWith(PowerMockRunner.class)
@@ -35,12 +36,12 @@ import org.powermock.modules.junit4.PowerMockRunner;
 public class PermissionHandlerBPermissionsTest
 {
 	private final String goodPlayerName = "goodPlayer";
-	private final String goodGroup = "goodGroup";
+	private final String goodGroupName = "goodGroup";
 	private final String badPlayerName = "badPlayer";
 	private final String worldName = "world";
-	private final String [] goodPlayerGroups = { goodGroup };
+	private final String [] goodPlayerGroups = { goodGroupName };
 	private final String [] badPlayerGroups = {};
-	private final String noexistGroup = "thisgroupdoesnotexist";
+	private final String noexistGroupName = "thisgroupdoesnotexist";
 	
 	private Server server;
 	private Player goodPlayer;
@@ -100,7 +101,7 @@ public class PermissionHandlerBPermissionsTest
 		Assert.assertEquals("getPrimaryGroup() should return null with an invalid player",
 						          null, permissionHandler.getPrimaryGroup(badPlayerName));
 		Assert.assertEquals("getPrimaryGroup() should return correct group with an valid player",
-						          goodGroup, permissionHandler.getPrimaryGroup(goodPlayerName));
+						          goodGroupName, permissionHandler.getPrimaryGroup(goodPlayerName));
 	}
 	
 	/**
@@ -112,15 +113,29 @@ public class PermissionHandlerBPermissionsTest
 	{
 		Assert.assertTrue("isMemberOfGroup should return true with bPerms, correct"
 						        + " player and correct group",
-										  permissionHandler.isMemberOfGroup(goodPlayerName, goodGroup));
+										  permissionHandler.isMemberOfGroup(goodPlayerName, goodGroupName));
 		Assert.assertFalse("isMemberOfGroup should return false with bPerms, incorrect"
 						         + " player and correct group",
-											 permissionHandler.isMemberOfGroup(badPlayerName, goodGroup));
+											 permissionHandler.isMemberOfGroup(badPlayerName, goodGroupName));
 		Assert.assertFalse("isMemberOfGroup should return false with bPerms, correct"
 						         + " player and incorrect group",
-											 permissionHandler.isMemberOfGroup(goodPlayerName, noexistGroup));
+											 permissionHandler.isMemberOfGroup(goodPlayerName, noexistGroupName));
 		Assert.assertFalse("isMemberOfGroup should return false with bPerms, incorrect"
 						         + " player and incorrect group",
-											 permissionHandler.isMemberOfGroup(badPlayerName, noexistGroup));
+											 permissionHandler.isMemberOfGroup(badPlayerName, noexistGroupName));
 	}
+	
+	/**
+	 * Test of isPrimaryGroup method, of class PermissionHandlerBPermissions.
+	 */
+	@Test
+	public void testIsPrimaryGroup()
+	{	
+		Assert.assertTrue("isPrimaryGroup() should return true with valid player/group combo",
+						          permissionHandler.isPrimaryGroup(goodPlayerName, goodGroupName));
+		Assert.assertFalse("isPrimaryGroup() should return false with valid player, wrong group",
+						          permissionHandler.isPrimaryGroup(goodPlayerName, noexistGroupName));
+		Assert.assertFalse("isPrimaryGroup() should return false with invalid player",
+						          permissionHandler.isPrimaryGroup(badPlayerName, goodGroupName));
+	}	
 }

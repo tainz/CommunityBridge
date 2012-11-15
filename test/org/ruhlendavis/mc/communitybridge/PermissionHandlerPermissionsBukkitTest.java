@@ -25,6 +25,7 @@ public class PermissionHandlerPermissionsBukkitTest
 	private final String badPlayerName = "badPlayer";
 	private final String goodGroupName = "goodGroup";
 	private final	String badGroupName = "badGroup";
+	private final String noexistGroupName = "thisgroupdoesnotexist";
 	private Group goodGroup;
 	private PermissionInfo goodPlayerInfo;
   private PermissionsPlugin permissions;
@@ -120,4 +121,19 @@ public class PermissionHandlerPermissionsBukkitTest
 											 permissionHandler.isMemberOfGroup(badPlayerName, badGroupName));
 
 	}
+	
+	/**
+	 * Test of isPrimaryGroup method, of class PermissionHandlerPermissionsBukkit
+	 */
+	@Test
+	public void testIsPrimaryGroup()
+	{	
+		Assert.assertTrue("isPrimaryGroup() should return true with valid player/group combo",
+						          permissionHandler.isPrimaryGroup(goodPlayerName, goodGroupName));
+		Assert.assertFalse("isPrimaryGroup() should return false with valid player, wrong group",
+						          permissionHandler.isPrimaryGroup(goodPlayerName, noexistGroupName));
+		Assert.assertFalse("isPrimaryGroup() should return false with invalid player",
+						          permissionHandler.isPrimaryGroup(badPlayerName, goodGroupName));
+	}
+
 }

@@ -29,13 +29,17 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 @PrepareForTest(PermissionsEx.class)
 public class PermissionHandlerPermissionsExTest
 {
-	String goodPlayerName = "goodPlayerName";
-	String badPlayerName = "badPlayerName";
-	String goodGroupName = "goodGroupName";
-	String badGroupName = "badGroupName";
-	String [] goodPlayerGroups = { goodGroupName };
+	private final String goodPlayerName = "goodPlayerName";
+	private final String badPlayerName = "badPlayerName";
+	private final String goodGroupName = "goodGroupName";
+	private final String badGroupName = "badGroupName";
+	private final String noexistGroupName = "thisgroupdoesnotexist";
+	private final String noGroupPlayerName = "noGroupPlayerName";
+	private final String [] noGroupPlayerGroups = {};
+	private final String [] goodPlayerGroups = { goodGroupName };
 
 	private PermissionUser goodUser;
+	private PermissionUser noGroupUser;
 	private PermissionHandler permissionHandler = new PermissionHandlerPermissionsEx(true);
 	
 	public PermissionHandlerPermissionsExTest()
@@ -57,9 +61,12 @@ public class PermissionHandlerPermissionsExTest
 	{
 		PowerMockito.mockStatic(PermissionsEx.class);
 		goodUser = mock(PermissionUser.class);
+		noGroupUser = mock(PermissionUser.class);
 		
 		when(PermissionsEx.getUser(goodPlayerName)).thenReturn(goodUser);
 		when(PermissionsEx.getUser(badPlayerName)).thenReturn(null);
+		when(goodUser.getGroupsNames()).thenReturn(goodPlayerGroups);
+		when(noGroupUser.getGroupsNames()).thenReturn(noGroupPlayerGroups);
 	}
 	
 	@After
@@ -73,11 +80,6 @@ public class PermissionHandlerPermissionsExTest
 	@Test
 	public void testGetPrimaryGroup()
 	{
-		String noGroupPlayerName = "noGroupPlayerName";
-		String [] noGroupPlayerGroups = {};
-		PermissionUser noGroupUser = mock(PermissionUser.class);
-		when(noGroupUser.getGroupsNames()).thenReturn(noGroupPlayerGroups);
-		when(goodUser.getGroupsNames()).thenReturn(goodPlayerGroups);
 		Assert.assertEquals("getPrimaryGroup() should return null with an invalid player",
 						          null, permissionHandler.getPrimaryGroup(badPlayerName));
 		Assert.assertEquals("getPrimaryGroup() should return null with a valid player with no groups",
@@ -107,5 +109,19 @@ public class PermissionHandlerPermissionsExTest
 		Assert.assertFalse("isMemberOfGroup should return false with PEX, incorrect"
 						         + " player and incorrect group",
 											 permissionHandler.isMemberOfGroup(badPlayerName, badGroupName));
+	}
+	
+	/**
+	 * Test of isPrimaryGroup method, of class PermissionHandlerPermissionsEx
+	 */
+	@Test
+	public void testIsPrimaryGroup()
+	{	
+		Assert.assertTrue("isPrimaryGroup() should return true with valid player/group combo",
+						          permissionHandler.isPrimaryGroup(goodPlayerName, goodGroupName));
+		Assert.assertFalse("isPrimaryGroup() should return false with valid player, wrong group",
+						          permissionHandler.isPrimaryGroup(goodPlayerName, noexistGroupName));
+		Assert.assertFalse("isPrimaryGroup() should return false with invalid player",
+						          permissionHandler.isPrimaryGroup(badPlayerName, goodGroupName));
 	}
 }

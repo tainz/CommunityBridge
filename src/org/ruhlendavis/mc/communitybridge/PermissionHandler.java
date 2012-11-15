@@ -1,12 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.ruhlendavis.mc.communitybridge;
 
 /**
  *  Defines a common interface for accessing permission systems information.
- * 
+ *
  * @author Feaelin
  */
 public interface PermissionHandler
@@ -39,6 +35,7 @@ public interface PermissionHandler
 	 * @return True if the group is the player's primary group.
 	 */
 	public boolean isPrimaryGroup(String playerName, String groupName);
+
 	
 //	public boolean setPrimaryGroup(String playerName, String groupName);
 
