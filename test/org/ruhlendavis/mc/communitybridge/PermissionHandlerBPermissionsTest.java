@@ -81,7 +81,7 @@ public class PermissionHandlerBPermissionsTest
 		when(server.getPlayerExact(badPlayerName)).thenReturn(null);
 
 		World world = mock(World.class);
- 		List<World> worlds =  new ArrayList();
+ 		List<World> worlds =  new ArrayList<World>();
 		worlds.add(world);				
 		when(goodPlayer.getWorld()).thenReturn(world);
 		when(world.getName()).thenReturn("world");
@@ -125,7 +125,7 @@ public class PermissionHandlerBPermissionsTest
 		when(server.getPlayerExact(badPlayerName)).thenReturn(null);
 
 		World world = mock(World.class);
- 		List<World> worlds =  new ArrayList();
+ 		List<World> worlds =  new ArrayList<World>();
 		worlds.add(world);				
 		when(goodPlayer.getWorld()).thenReturn(world);
 		when(world.getName()).thenReturn("world");
