@@ -50,7 +50,27 @@ public class PermissionHandlerGroupManager implements PermissionHandler
 	@Override
 	public String getPrimaryGroup(String playerName)
 	{
-		return "";
+		String worldName;
+		
+		Player player = Bukkit.getServer().getPlayerExact(playerName);
+		
+		if (player == null)
+		{
+			worldName = Bukkit.getServer().getWorlds().get(0).getName();
+		}
+		else
+		{
+			worldName = player.getWorld().getName();
+		}
+		
+		AnjoPermissionsHandler handler = groupManager.getWorldsHolder().getWorldPermissions(worldName);
+
+		if (handler == null)
+		{
+			throw new RuntimeException("isMemberOfGroup(): Failed to obtain a GroupManager permissions handler");
+		}
+		
+		return handler.getGroup(playerName);
 	}
 	
 	/**
