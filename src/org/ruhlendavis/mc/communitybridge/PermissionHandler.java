@@ -7,7 +7,22 @@ package org.ruhlendavis.mc.communitybridge;
  */
 public interface PermissionHandler
 {
-	//  public boolean getGroups(String playerName);
+	/**
+	 * Adds a player to a group.
+	 * 
+	 * @param playerName String containing the player's name.
+	 * @param groupName  String containing the group's name.
+	 * @return True if the add succeeded, false if it failed for any reason.
+	 */
+	public boolean addToGroup(String playerName, String groupName);
+
+	/**
+	 * Retrieves an array of group names for the player.
+	 * 
+	 * @param playerName String containing the name of the player.
+	 * @return An String array containing the group names.
+	 */
+	public String [] getGroups(String playerName);
 	
 	/**
 	 * Retrieves a player's primary group. For some permission systems, this is
@@ -36,11 +51,21 @@ public interface PermissionHandler
 	 */
 	public boolean isPrimaryGroup(String playerName, String groupName);
 
-	
-//	public boolean setPrimaryGroup(String playerName, String groupName);
+	/**
+	 * Removes a player from a group.
+	 * 
+	 * @param playerName String containing the name of the player.
+	 * @param groupName  String containing the name of the group.
+	 * @return True if the removal succeeded, false if it failed for any reason.
+	 */
+	public boolean removeFromGroup(String playerName, String groupName);
 
-	
-//	public boolean addToGroup(String playerName, String groupName);
-//	public boolean removeFromGroup(String playerName, String groupName);
-
+	/**
+	 * Sets a player's primary group. Note that this may not have any meaning depending on which permissions system is involved.
+	 * 
+	 * @param playerName String containing player's name to set
+	 * @param groupName  String containing group name to set player's primary group to.
+	 * @return true if the set succeeded, false if it failed for any reason.
+	 */
+	public boolean setPrimaryGroup(String playerName, String groupName);
 }

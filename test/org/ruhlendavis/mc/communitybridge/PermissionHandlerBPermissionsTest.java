@@ -4,7 +4,6 @@ import de.bananaco.bpermissions.api.ApiLayer;
 import de.bananaco.bpermissions.api.util.CalculableType;
 import java.util.ArrayList;
 import java.util.List;
-import net.netmanagers.community.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -16,9 +15,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import org.powermock.api.mockito.PowerMockito;
+import static org.powermock.api.mockito.PowerMockito.doNothing;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.spy;
+import static org.powermock.api.mockito.PowerMockito.verifyStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -33,6 +35,7 @@ public class PermissionHandlerBPermissionsTest
 {
 	private final String goodPlayerName = "goodPlayer";
 	private final String goodGroupName = "goodGroup";
+	private final String someOtherGroupName = "someOtherGroup";
 	private final String badPlayerName = "badPlayer";
 	private final String worldName = "world";
 	private final String [] goodPlayerGroups = { goodGroupName };
@@ -78,9 +81,7 @@ public class PermissionHandlerBPermissionsTest
 		when(server.getWorlds()).thenReturn(worlds);
 		when(ApiLayer.getGroups(worldName, CalculableType.USER, goodPlayerName)).thenReturn(goodPlayerGroups);
 		when(ApiLayer.getGroups(worldName, CalculableType.USER, badPlayerName)).thenReturn(badPlayerGroups);
-
-		Main.permissions_system = "bPerms";
-		permissionHandler = Main.permissionHandler = new PermissionHandlerBPermissions(true);
+		permissionHandler = new PermissionHandlerBPermissions(true);
 	}
 	
 	@After
@@ -88,6 +89,31 @@ public class PermissionHandlerBPermissionsTest
 	{
 	}
 
+	/**
+	 * Test of addToGroup method, of class PermissionHandlerBPermissions
+	 */
+	@Test
+	public void testAddToGroup()
+	{
+		spy(ApiLayer.class);
+		doNothing().when(ApiLayer.class);
+		ApiLayer.addGroup(worldName, CalculableType.USER, goodPlayerName, goodGroupName);
+		
+		permissionHandler.addToGroup(goodPlayerName, goodGroupName);
+
+		verifyStatic();
+		ApiLayer.addGroup(worldName, CalculableType.USER, goodPlayerName, goodGroupName);
+	}
+	
+	/**
+	 * Test of getGroups method, of class PermissionHandlerBPermissions.
+	 */
+	@Test
+	public void testGetGroups()
+	{
+		Assert.assertEquals(permissionHandler.getGroups(goodPlayerName), goodPlayerGroups);
+	}
+	
 	/**
 	 * Test of getPrimaryGroup method, of class PermissionHandlerBPermissions.
 	 */
@@ -133,5 +159,37 @@ public class PermissionHandlerBPermissionsTest
 						          permissionHandler.isPrimaryGroup(goodPlayerName, noexistGroupName));
 		Assert.assertFalse("isPrimaryGroup() should return false with invalid player",
 						          permissionHandler.isPrimaryGroup(badPlayerName, goodGroupName));
-	}	
+	}
+	
+	/**
+	 * Test for removeFromGroup for the PermissionHandlerBPermissions class
+	 */
+	@Test
+	public void testRemoveFromGroup()
+	{
+		spy(ApiLayer.class);
+		doNothing().when(ApiLayer.class);
+		ApiLayer.removeGroup(worldName, CalculableType.USER, goodPlayerName, goodGroupName);
+		
+		permissionHandler.removeFromGroup(goodPlayerName, goodGroupName);
+
+		verifyStatic();
+		ApiLayer.removeGroup(worldName, CalculableType.USER, goodPlayerName, goodGroupName);	
+	}
+	
+	/**
+	 * Test for setPrimaryGroup in the PermissionHandlerBPermissions class
+	 */
+	@Test
+	public void testSetPrimaryGroup()
+	{
+		spy(ApiLayer.class);
+		doNothing().when(ApiLayer.class);
+		ApiLayer.addGroup(worldName, CalculableType.USER, goodPlayerName, goodGroupName);
+		
+		permissionHandler.addToGroup(goodPlayerName, goodGroupName);
+
+		verifyStatic();
+		ApiLayer.addGroup(worldName, CalculableType.USER, goodPlayerName, goodGroupName);			
+	}
 }
