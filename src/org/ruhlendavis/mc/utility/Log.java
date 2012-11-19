@@ -7,7 +7,7 @@ import java.util.logging.Logger;
  * Presents a familiar interface to the built-in logging facility while giving
  * us our own level of control over logging levels.
  * 
- * @author Feaelin
+ * @author Feaelin (Iain E. Davis) <iain@ruhlendavis.org>
  */
 public class Log
 {
