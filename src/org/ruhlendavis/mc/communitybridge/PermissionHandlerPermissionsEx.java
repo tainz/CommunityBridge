@@ -49,7 +49,7 @@ public class PermissionHandlerPermissionsEx implements PermissionHandler
 	{
 		try
 		{
-			return PermissionsEx.getUser(playerName).inGroup(groupName);
+			return PermissionsEx.getUser(playerName).inGroup(groupName, false);
 		}
 		catch (Error e)
 		{
