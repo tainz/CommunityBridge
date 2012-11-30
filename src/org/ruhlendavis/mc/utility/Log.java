@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.ruhlendavis.mc.utility;
 
 import java.util.logging.Level;
@@ -11,7 +7,7 @@ import java.util.logging.Logger;
  * Presents a familiar interface to the built-in logging facility while giving
  * us our own level of control over logging levels.
  * 
- * @author Feaelin
+ * @author Feaelin (Iain E. Davis) <iain@ruhlendavis.org>
  */
 public class Log
 {
@@ -19,18 +15,34 @@ public class Log
 	private static java.util.logging.Logger log;
 	private static java.util.logging.Level level;
 	
+	/**
+	 * Constructor for only passing in reference to the logger object.
+	 * 
+	 * @param log Logger object referencing the Bukkit Server logger.
+	 */
 	public Log(Logger log)
 	{
 		Log.log = log;
 		level = Level.INFO;
 	}
 
+	/**
+	 * Constructor to specify both the logger and the initial logging level.
+	 * 
+	 * @param log Logger object referencing the Bukkit Server logger.
+	 * @param level Level type from java.util.logging.Level
+	 */
 	public Log(Logger log, Level level)
 	{
 		Log.log = log;
 		Log.level = level;
 	}
 
+	/**
+	 * Set the logging level based on a string.
+	 * 
+	 * @param level String containing the specified level. One of: all, finest, finer, fine, config, info, warning, severe
+	 */
 	public void setLevel(String level)
 	{
 		if (level.equalsIgnoreCase("info"))
@@ -66,12 +78,22 @@ public class Log
 			this.setLevel(Level.SEVERE);
 		}
 	}
-	
+
+	/**
+	 * Sets the logging level using a java.util.logging.Level type
+	 * 
+	 * @param level Level from java.util.logging.Level
+	 */
 	public void setLevel(Level level)
 	{
 		Log.level = level;
 	}
 
+	/**
+	 * Sends 'message' to the log if the logging level is high enough.
+	 * 
+	 * @param message String containing message to be sent.
+	 */
 	public void finest(String message)
 	{
 		// Finest: 300
@@ -81,6 +103,11 @@ public class Log
 		}
 	}
 	
+	/**
+	 * Sends 'message' to the log if the logging level is high enough.
+	 * 
+	 * @param message String containing message to be sent.
+	 */
 	public void finer(String message)
 	{
 		// Finer: 400
@@ -90,6 +117,11 @@ public class Log
 		}
 	}
 
+	/**
+	 * Sends 'message' to the log if the logging level is high enough.
+	 * 
+	 * @param message String containing message to be sent.
+	 */
 	public void fine(String message)
 	{
 		// Fine: 500
@@ -99,6 +131,11 @@ public class Log
 		}
 	}
 	
+	/**
+	 * Sends 'message' to the log if the logging level is high enough.
+	 * 
+	 * @param message String containing message to be sent.
+	 */
 	public void config(String message)
 	{
 		// Config: 700
@@ -108,6 +145,11 @@ public class Log
 		}
 	}
 	
+	/**
+	 * Sends 'message' to the log if the logging level is high enough.
+	 * 
+	 * @param message String containing message to be sent.
+	 */
 	public void info(String message)
 	{
 		// Info: 800
@@ -117,6 +159,11 @@ public class Log
 		}
 	}
 	
+	/**
+	 * Sends 'message' to the log if the logging level is high enough.
+	 * 
+	 * @param message String containing message to be sent.
+	 */
 	public void warning(String message)
 	{
 		// Warning: 900
@@ -126,6 +173,11 @@ public class Log
 		}
 	}
 	
+	/**
+	 * Sends 'message' to the log if the logging level is high enough.
+	 * 
+	 * @param message String containing message to be sent.
+	 */
 	public void severe(String message)
 	{
 		// Severe: 1000

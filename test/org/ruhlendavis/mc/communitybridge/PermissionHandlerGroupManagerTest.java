@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.ruhlendavis.mc.communitybridge;
 
 import java.util.ArrayList;
@@ -28,12 +24,28 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
- *
+ *  Tests for the PermissionHandlerGroupManager Class
+ * 
  * @author Feaelin
  */
 @RunWith(PowerMockRunner.class)
+@PrepareForTest(Bukkit.class)
 public class PermissionHandlerGroupManagerTest
 {
+	private final String goodPlayerName = "goodPlayer";
+	private final	String badPlayerName = "badPlayer";
+	private final	String goodGroupName = "goodGroup";
+	private final	String badGroupName = "badGroup";
+	private final String worldName = "world";
+	private final String noexistGroupName = "thisgroupdoesnotexist";
+	private Server server;
+	private Player goodPlayer;
+	private World world;
+ 	private	List<World> worlds;
+	private	GroupManager gmPluginAsGroupManager;
+	private	WorldsHolder worldHolder;
+	private	AnjoPermissionsHandler handler;
+	private PermissionHandler permissionHandler;
 	
 	public PermissionHandlerGroupManagerTest()
 	{
@@ -52,6 +64,31 @@ public class PermissionHandlerGroupManagerTest
 	@Before
 	public void setUp()
 	{
+		PowerMockito.mockStatic(Bukkit.class);
+		server = mock(Server.class);
+		goodPlayer = mock(Player.class);
+		world = mock(World.class);
+ 		worlds =  new ArrayList<World>();
+		worlds.add(world);		
+		gmPluginAsGroupManager = mock(GroupManager.class);
+		worldHolder = mock(WorldsHolder.class);
+		handler = mock(AnjoPermissionsHandler.class);
+
+		when(Bukkit.getServer()).thenReturn(server);
+		when(server.getPlayerExact(goodPlayerName)).thenReturn(goodPlayer);
+		when(server.getPlayerExact(badPlayerName)).thenReturn(null);
+		when(goodPlayer.getWorld()).thenReturn(world);
+		when(world.getName()).thenReturn(worldName);
+		when(server.getWorlds()).thenReturn(worlds);
+		when(gmPluginAsGroupManager.getWorldsHolder()).thenReturn(worldHolder);
+		when(worldHolder.getWorldPermissions(worldName)).thenReturn(handler);
+		when(handler.getGroup(goodPlayerName)).thenReturn(goodGroupName);
+		when(handler.inGroup(goodPlayerName, goodGroupName)).thenReturn(true);
+		when(handler.inGroup(badPlayerName, goodGroupName)).thenReturn(false);
+		when(handler.inGroup(goodPlayerName, badGroupName)).thenReturn(false);
+		when(handler.inGroup(badPlayerName, badGroupName)).thenReturn(false);
+		
+		permissionHandler = new PermissionHandlerGroupManager(gmPluginAsGroupManager);
 	}
 	
 	@After
@@ -59,58 +96,46 @@ public class PermissionHandlerGroupManagerTest
 	{
 	}
 
+	@Test
+	public void testGetPrimaryGroup()
+	{
+		Assert.assertEquals("getPrimaryGroup() should return null with an invalid player",
+						          null, permissionHandler.getPrimaryGroup(badPlayerName));
+		Assert.assertEquals("getPrimaryGroup() should return correct group with an valid player",
+						          goodGroupName, permissionHandler.getPrimaryGroup(goodPlayerName));
+	}
+	
 	/**
 	 * Test of isMemberOfGroup method, of class PermissionHandlerGroupManager.
 	 */
 	@Test
-	@PrepareForTest(Bukkit.class)
 	public void testIsMemberOfGroup()
 	{
-		String goodPlayerName = "goodPlayer";
-		String badPlayerName = "badPlayer";
-		String goodGroup = "goodGroup";
-		String badGroup = "badGroup";
-		String noexistGroup = "thisgroupdoesnotexist";		
-		
-		PowerMockito.mockStatic(Bukkit.class);
-		
-		Server server = mock(Server.class);
-		Player goodPlayer = mock(Player.class);
-		World world = mock(World.class);
- 		List<World> worlds =  new ArrayList();
-		worlds.add(world);		
-		GroupManager gmPluginAsGroupManager = mock(GroupManager.class);
-		WorldsHolder worldHolder = mock(WorldsHolder.class);
-		AnjoPermissionsHandler handler = mock(AnjoPermissionsHandler.class);
-		
-		when(Bukkit.getServer()).thenReturn(server);
-		when(server.getPlayerExact(goodPlayerName)).thenReturn(goodPlayer);
-		when(server.getPlayerExact(badPlayerName)).thenReturn(null);
-		when(goodPlayer.getWorld()).thenReturn(world);
-		when(world.getName()).thenReturn("world");
-		when(server.getWorlds()).thenReturn(worlds);
-		when(gmPluginAsGroupManager.getWorldsHolder()).thenReturn(worldHolder);
-		when(worldHolder.getWorldPermissions("world")).thenReturn(handler);		
-
-		when(handler.inGroup(goodPlayerName, goodGroup)).thenReturn(true);
-		when(handler.inGroup(badPlayerName, goodGroup)).thenReturn(false);
-		when(handler.inGroup(goodPlayerName, badGroup)).thenReturn(false);
-		when(handler.inGroup(badPlayerName, badGroup)).thenReturn(false);
-		
-		Main.permissions_system = "GroupManager";
-		PermissionHandler ph = Main.permissionHandler = new PermissionHandlerGroupManager(gmPluginAsGroupManager);
-
 		Assert.assertTrue("isMemberOfGroup should return true with GroupManager, correct"
 						        + " player and correct group",
-										  ph.isMemberOfGroup(goodPlayerName, goodGroup));
+										  permissionHandler.isMemberOfGroup(goodPlayerName, goodGroupName));
 		Assert.assertFalse("isMemberOfGroup should return false with GroupManager, incorrect"
 						         + " player and correct group",
-											 ph.isMemberOfGroup(badPlayerName, goodGroup));
+											 permissionHandler.isMemberOfGroup(badPlayerName, goodGroupName));
 		Assert.assertFalse("isMemberOfGroup should return false with GroupManager, correct"
 						         + " player and incorrect group",
-											 ph.isMemberOfGroup(goodPlayerName, noexistGroup));
+											 permissionHandler.isMemberOfGroup(goodPlayerName, noexistGroupName));
 		Assert.assertFalse("isMemberOfGroup should return false with GroupManager, incorrect"
 						         + " player and incorrect group",
-											 ph.isMemberOfGroup(badPlayerName, noexistGroup));
+											 permissionHandler.isMemberOfGroup(badPlayerName, noexistGroupName));
+	}
+	
+	/**
+	 * Test of isPrimaryGroup method, of class PermissionHandlerGroupManager
+	 */
+	@Test
+	public void testIsPrimaryGroup()
+	{	
+		Assert.assertTrue("isPrimaryGroup() should return true with valid player/group combo",
+						          permissionHandler.isPrimaryGroup(goodPlayerName, goodGroupName));
+		Assert.assertFalse("isPrimaryGroup() should return false with valid player, wrong group",
+						          permissionHandler.isPrimaryGroup(goodPlayerName, noexistGroupName));
+		Assert.assertFalse("isPrimaryGroup() should return false with invalid player",
+						          permissionHandler.isPrimaryGroup(badPlayerName, goodGroupName));
 	}
 }
