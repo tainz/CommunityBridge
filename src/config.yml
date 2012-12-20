@@ -34,7 +34,7 @@ db-password: password
 # into a group
 show-primary-group: true
 
-# This message is displaed when show-primary-group is false to registered users
+# This message is displayed when show-primary-group is false to registered users
 registered-message: Registered Account, Linked to Server Forums
 
 # This is shown to users when they connect that arn't registered
@@ -78,7 +78,7 @@ group-synchronization:
     # be synchronized over it. (NOT YET IMPLEMENTED)
     group-names-to-ignore: []
 
-# Groups in Seperate Table (Such as PHPBB)
+# Groups in Separate Table (Such as PHPBB)
 groups-table:
     enabled: false
     table: phpbb_users_groups
