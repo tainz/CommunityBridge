@@ -1,0 +1,64 @@
+# Settings to control group synchronization features.
+group-synchronization:
+  # Set this to true to use any of the group synchronization features. If this
+  # is false, the rest of this section is ignored.
+  enabled: false
+  
+  # This subsection contains settings for primary group synchronization.
+  primary:
+    enabled: false
+
+    # Notify player that they've been placed in a primary group.
+    notify-player: false
+    
+    # Set this to true if your permissions system uses primary groups.
+    permissions-system-uses-primary-group: false
+
+    # This subsection contains details about how the web-application stores
+    # its primary group information.
+    group-table:
+      # Set this to true if your web application uses primary groups or its
+      # equivalent.
+      enabled: false
+      
+      # Set this to the name of the table that the users' primary group is
+      # stored on.
+      name: primary_group_table
+      
+      # On the table where primary group information is stored, the user_id
+      # column/field
+      user-id-column: user_id_on_primary_group_table
+      
+      # On the table where primary group information is stored, the primary
+      # group column/field
+      group-column: group_id_on_primary_group_table
+  secondary:
+    enabled: false
+
+    # This subsection contains details about how the web-application stores
+    # secondary groups.
+    group-table:
+      # Set this to true if your web application uses secondary groups or its
+      # equivalent.
+      enabled: false
+
+      # Set this to the name of the table that the users' secondary group is
+      # stored on.
+      name: secondary_group_table
+
+      # On the table where primary group information is stored, the user_id
+      # column/field
+      user-id-column: user_id_on_secondary_group_table
+
+      # On the table where primary group information is stored, the primary
+      # group column/field
+      group-column: group_id_on_secondary_group_table
+  groups:
+      '1':
+        direction: webapp
+        group: groupname
+        world: worldname
+      '2':
+        direction: minecraft
+        group: groupname
+        world: worldname
