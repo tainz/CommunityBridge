@@ -20,3 +20,6 @@ nb-configuration.xml
 *.aux
 /coverage
 /output
+*\.txt~
+*\.tex~
+*\.yml~
