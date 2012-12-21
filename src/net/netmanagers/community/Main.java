@@ -220,6 +220,9 @@ public class Main extends JavaPlugin
 	@Override
 	public void onDisable()
   {
+		// Cancel the tasks we'll restart them later
+		Bukkit.getServer().getScheduler().cancelTasks(this);
+		
 		if (sql != null)
     {
 			sql.close();
