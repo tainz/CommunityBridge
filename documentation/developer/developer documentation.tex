@@ -4,6 +4,9 @@
 \usepackage[pdftex]{graphicx} % Great for including graphics
 \usepackage{wrapfig}          % Wrapper for figures
 
+\usepackage{upquote}
+\usepackage{verbatim}
+
 % Relies on the datetime package to reformat the date the way I like.
 \newdateformat{iaindateformat}
               {\THEYEAR\hspace{.5em}\monthname[\THEMONTH]\hspace{.5em}\THEDAY}
@@ -35,16 +38,18 @@
 \setlength{\parskip}{0.5em} 
 \begin{document}
   \section{Overview}
+  Throughout this document, the term ``web application'' is used. The web
+  application can be any forum, CMS, blogging software, etc. that uses MySQL for
+  its database.
+  
   These are the major features of Community Bridge:
   \begin{enumerate}
     \item Minecraft player to web application user ``linking''.
-    \item {\bf(NOT YET IMPLEMENTED)} Authenticating a user against the web
-      application database.
     \item Group synchronization (currently a misnomer, since the
-      ``synchronization'' is only one way)
-    \item Recording statistical information about the players in forum custom
-      fields.
-    \item Kicking of players who are banned from the forum.
+          ``synchronization'' is only one way)
+    \item Recording statistical information about the players in web
+          application custom fields.
+    \item Kicking of players who are banned from the web application.
   \end{enumerate}
   
   The first of the features is essential, without it, none of the other
@@ -52,6 +57,15 @@
   importance, it is the first thing to evaluate when ensuring that
   CommunityBridge is operating correctly.
 
+  \clearpage
+  \subsection{Proposed config.yml Preamble}
+  \verbatiminput{config-preamble.txt}
+
+  \clearpage
+  \subsection{Proposed config.yml Database Section}
+  \verbatiminput{config-database.txt}
+
+  \clearpage
   \section{Linking Feature}
   For each of the following configurations, CB should:
   \begin{itemize}
@@ -61,7 +75,7 @@
     correct user.
     \item {\bf (NYI)} If authentication is off {\bf DO NOT} force authentication.
     \item {\bf (NYI)} If authentication is on, handle a valid authentication by...
-    \item {\bf (NYI)} If authentication is off, respond to an failed authentication attempt by...
+    \item {\bf (NYI)} If authentication is on, respond to an failed authentication attempt by...
   \end{itemize}
 
   Possible Configurations (order of complexity):
@@ -85,4 +99,40 @@
       key column, value column, data key name.
       Configuration Name: diff\_name\_diff\_table\_keyed
   \end{itemize}
+  \clearpage
+  
+  \subsection{Proposed config.yml Section}
+  \verbatiminput{config-linking-feature.txt}
+  
+  \subsection{Proposed messages.yml section}
+  Messages related to the linking feature in the messages.yml.
+  \verbatiminput{message-linking-feature.txt}
+
+  \clearpage
+  \section{Group Synchronization}
+Many web systems have a notion of a ``primary'' group. However, very few of the
+permissions plugins do. This is not a problem when the synchronization is
+``Forums override Minecraft'', but it presents a difficulty the other direction,
+``Minecraft override Forums''.
+
+	\clearpage
+  \subsection{Proposed config.yml Section}
+  \verbatiminput{config-group-synchronization.txt}
+  
+  \clearpage
+  \subsection{Proposed messages.yml Section}
+  \verbatiminput{message-group-synchronization.txt}
+
+  \clearpage
+  \appendix
+  \section{Full Proposed config.yml}
+  \verbatiminput{config-preamble.txt}
+  \verbatiminput{config-database.txt}
+  \verbatiminput{config-linking-feature.txt}
+  \verbatiminput{config-group-synchronization.txt}
+
+  \clearpage
+  \section{Full Proposed messages.yml}
+  \verbatiminput{message-linking-feature.txt}
+  \verbatiminput{message-group-synchronization.txt}
 \end{document}

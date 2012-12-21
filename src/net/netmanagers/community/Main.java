@@ -19,9 +19,10 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.ruhlendavis.mc.communitybridge.PermissionHandler;
-import org.ruhlendavis.mc.communitybridge.PermissionHandlerBPerms;
+import org.ruhlendavis.mc.communitybridge.PermissionHandlerBPermissions;
 import org.ruhlendavis.mc.communitybridge.PermissionHandlerGroupManager;
-import org.ruhlendavis.mc.communitybridge.PermissionHandlerPEX;
+import org.ruhlendavis.mc.communitybridge.PermissionHandlerPermissionsBukkit;
+import org.ruhlendavis.mc.communitybridge.PermissionHandlerPermissionsEx;
 import org.ruhlendavis.mc.utility.Log;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
@@ -165,7 +166,7 @@ public class Main extends JavaPlugin
        && this.getConfig().get("db-password").equals("password"))
     {
 			log.config("Using default config file.");
-			getServer().getPluginManager().disablePlugin(this);
+			Bukkit.getServer().getPluginManager().disablePlugin(this);
 		}
     else
     {
@@ -1836,8 +1837,9 @@ public class Main extends JavaPlugin
 
 	private void loadConfig()
 	{
+		// We'll remove the deprecated setting in six months. Remove On: 2012/May/13
 		// We do this first so that if log-level is set, it will override the
-		// deprecated setting 'show-config'
+		// deprecated setting 'show-config'.
 		show_config = this.getConfig().getBoolean("show-config");
 
 		if (show_config)
@@ -1858,23 +1860,39 @@ public class Main extends JavaPlugin
 		// TODO: Remove 'permissions_system' field when all permissions system
 		// related code has been moved to the PermissionHandler interface.
 		permissions_system = this.getConfig().getString("permissions-system");
-		
-		if (this.getConfig().getString("permissions-system").equalsIgnoreCase("PEX"))
+		try 
 		{
-			permissionHandler = new PermissionHandlerPEX();
+			if (this.getConfig().getString("permissions-system").equalsIgnoreCase("PEX"))
+			{
+				permissionHandler = new PermissionHandlerPermissionsEx();
+				log.config("Permissions System: PermissionsEx (PEX)");
+			}
+			else if (this.getConfig().getString("permissions-system").equalsIgnoreCase("bPerms"))
+			{
+				permissionHandler = new PermissionHandlerBPermissions();
+				log.config("Permissions System: bPermissions (bPerms)");
+			}
+			else if (this.getConfig().getString("permissions-system").equalsIgnoreCase("GroupManager"))
+			{
+				permissionHandler = new PermissionHandlerGroupManager();
+				log.config("Permissions System: GroupManager");
+			}
+			else if (this.getConfig().getString("permissions-system").equalsIgnoreCase("PermsBukkit"))
+			{
+				permissionHandler = new PermissionHandlerPermissionsBukkit();
+				log.config("Permissions System: PermissionsBukkit (PermsBukkit)");
+			}
+			else
+			{
+				log.severe("Unknown permissions system in config.yml. CommunityBridge disabled.");
+				disablePlugin();
+			}
 		}
-    else if (this.getConfig().getString("permissions-system").equalsIgnoreCase("bPerms"))
+		catch (IllegalStateException e)
 		{
-			permissionHandler = new PermissionHandlerBPerms(this);
-		}
-    else if (this.getConfig().getString("permissions-system").equalsIgnoreCase("GroupManager"))
-		{
-			// We need the plugin reference for GroupManager.
-			permissionHandler = new PermissionHandlerGroupManager(this);
-		}
-    else if (this.getConfig().getString("permissions-system").equalsIgnoreCase("PermsBukkit"))
-		{
-			
+			log.severe(e.getMessage());
+			log.severe("Disabling CommunityBridge.");
+			disablePlugin();
 		}
 		
 		// The new group synchronization section is handled here.
@@ -1886,7 +1904,7 @@ public class Main extends JavaPlugin
 		if (primary_group_synchronization_enabled)
 		{
 			// primary group IDs to ignore
-			List<String> defaultList = new ArrayList();
+			List<String> defaultList = new ArrayList<String>();
 			this.getConfig().addDefault("group-synchronization.primary-group.group-ids-to-ignore", defaultList);
 			primary_group_ids_to_ignore = this.getConfig().getStringList("group-synchronization.primary-group.group-ids-to-ignore");
 			log.config("Primary Group IDs to Ignore: "
