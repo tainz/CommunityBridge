@@ -24,6 +24,8 @@ import org.ruhlendavis.mc.communitybridge.PermissionHandlerGroupManager;
 import org.ruhlendavis.mc.communitybridge.PermissionHandlerPermissionsBukkit;
 import org.ruhlendavis.mc.communitybridge.PermissionHandlerPermissionsEx;
 import org.ruhlendavis.mc.utility.Log;
+import org.ruhlendavis.mc.utility.MinecraftTools;
+import org.ruhlendavis.utility.StringTools;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 public class Main extends JavaPlugin
@@ -146,7 +148,7 @@ public class Main extends JavaPlugin
 	public static String wallet_field;
 
 	public static Map<String, Object> groups;
-	
+
 	public static PermissionHandler permissionHandler;
 
 	@Override
@@ -154,7 +156,7 @@ public class Main extends JavaPlugin
   {
 		log = new Log(this.getLogger(), Level.CONFIG);
 		saveDefaultConfig();
-		
+
 		getServer().getPluginManager().registerEvents(new EventListener(), this);
 		getCommand("cbban").setExecutor(new Cmds());
 		getCommand("cbunban").setExecutor(new Cmds());
@@ -170,14 +172,17 @@ public class Main extends JavaPlugin
 		}
     else
     {
-			loadConfig();
+			if (loadConfig() == false)
+			{
+				return;
+			}
 
 			sql = new SQL(this.getConfig().get("db-host") + ":" + this.getConfig().get("db-port"),
 							      this.getConfig().get("db-database") + "",
 							      this.getConfig().get("db-username") + "",
 							      this.getConfig().get("db-password") + "");
 			sql.initialize();
-			
+
 			if (sql.checkConnection())
       {
 				if (analyzeConfiguration())
@@ -215,6 +220,9 @@ public class Main extends JavaPlugin
 	@Override
 	public void onDisable()
   {
+		// Cancel the tasks we'll restart them later
+		Bukkit.getServer().getScheduler().cancelTasks(this);
+		
 		if (sql != null)
     {
 			sql.close();
@@ -257,14 +265,32 @@ public class Main extends JavaPlugin
     }
 
 		log.config(String.format("Auto Sync Every: %d %s.", auto_sync_every, unit));
-		getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable()
-    {
-      @Override
-			public void run()
-      {
-				syncAll();
-			}
-		}, every, every);
+		// EXPIRABLE: ST2012-Dec-21: The else block and the if statement itself. The true block should stay
+		if (StringTools.compareVersion(Bukkit.getBukkitVersion().replace("R", ""), "1.4.5.1.0") > -1)
+		{
+			// As of MC 1.4.5.1.0, running tasks have changed.
+			Bukkit.getScheduler().runTaskTimerAsynchronously(this,
+																											new Runnable()
+																											{
+																												@Override
+																												public void run()
+																												{
+																													syncAll();
+																												}
+																											},
+																											every, every);
+		}
+		else
+		{
+			getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					syncAll();
+				}
+			}, every, every);
+		}
 	}
 
   private void startAutoReminder()
@@ -291,14 +317,33 @@ public class Main extends JavaPlugin
 
     log.config(String.format("Auto Remind Unregistered Every: %d %s.",
                            auto_remind_every, unit));
-    getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable()
-    {
-      @Override
-      public void run()
-      {
-        remindUnregistered();
-      }
-   	}, every, every);
+		// EXPIRABLE: ST2012-Dec-21: The else block and the if statement itself. The true block should stay
+		if (StringTools.compareVersion(Bukkit.getBukkitVersion().replace("R", ""), "1.4.5.1.0") > -1)
+		{
+			// As of MC 1.4.5.1.0, running tasks have changed.
+			Bukkit.getScheduler().runTaskTimerAsynchronously(this,
+																											new Runnable()
+																											{
+																												@Override
+																												public void run()
+																												{
+																													remindUnregistered();
+																												}
+																											},
+																											every, every);
+		}
+		else
+		{
+
+			getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					remindUnregistered();
+				}
+			}, every, every);
+		}
   }
 
 	private void ResetOnlineStatus()
@@ -433,10 +478,10 @@ public class Main extends JavaPlugin
 		}
 		return null;
 	}
-	
+
 	/**
 	 * A case insensitive check to see if a given group is in the group mapping.
-	 * 
+	 *
 	 * @param groupName String containing the group name to search for.
 	 * @return true if the group is in the mapping.
 	 */
@@ -452,7 +497,7 @@ public class Main extends JavaPlugin
 
 		return false;
 	}
-	
+
 	public static boolean setGroup(String groupName, Player player, boolean n)
   {
     try
@@ -527,7 +572,7 @@ public class Main extends JavaPlugin
 				 else
 				 {
 					 PermissionsEx.getUser(player).addGroup(groupName);
-					 
+
 					 if (n)
            {
              log.fine((new StringBuilder("Added ")).append(player.getName()).append(" to group ").append(groupName).toString());
@@ -575,10 +620,10 @@ public class Main extends JavaPlugin
 
 		 return false;
 	}
-	
+
 	/**
 	 * Returns a database group ID from a permissions group name
-	 * 
+	 *
 	 * @param groupName String containing group name to search for.
 	 * @return String containing database group ID or null if not found.
 	 */
@@ -591,12 +636,12 @@ public class Main extends JavaPlugin
 				return (String)entry.getKey();
 			}
 		}
-		
+
 		return null;
 	}
 	/**
 	 * Returns a permissions group name from a database group ID
-	 * 
+	 *
 	 * @param groupID  String containing group ID to search for.
 	 * @return String containing permissions group name or null if not found.
 	 */
@@ -609,14 +654,14 @@ public class Main extends JavaPlugin
 				return (String)entry.getValue();
 			}
 		}
-		
+
 		return null;
 	}
 
 	/**
 	 * Returns exact permissions group name from (presumably user entered)
 	 * permissions group name
-	 * 
+	 *
 	 * @param groupName  String containing group name to search for.
 	 * @return String containing group name or null if not found.
 	 */
@@ -629,11 +674,11 @@ public class Main extends JavaPlugin
 				return (String)value;
 			}
 		}
-		
-		return null;		
+
+		return null;
 	}
-	
-	
+
+
 	public static void syncAll() {
 		log.fine("Running Auto Sync");
 		for (Player play : Bukkit.getOnlinePlayers())
@@ -674,7 +719,7 @@ public class Main extends JavaPlugin
 	{
 		String groupID = "";
 		String groupName = "";
-				
+
 		try
 		{
 			int id = getUserId(p.getName());
@@ -693,7 +738,7 @@ public class Main extends JavaPlugin
               p.kickPlayer("You have been banned from the site.");
             }
 					}
-					
+
 					boolean requirements_met = true;
 
 					if (require_minposts)
@@ -710,7 +755,7 @@ public class Main extends JavaPlugin
               requirements_met = false;
             }
 					}
-					
+
 					if (primary_group_synchronization_enabled)
 					{
 						// Note: groups is a map <String, Object> so we need the cast.
@@ -750,7 +795,7 @@ public class Main extends JavaPlugin
 							}
 						}
 					}
-					
+
 					if (secondary_groups)
 					{
 						String extra_groups = res.getString(secondary_groups_id_field);
@@ -784,9 +829,9 @@ public class Main extends JavaPlugin
 								p.sendMessage(ChatColor.YELLOW + registered_message);
 							}
 
-							log.fine(p.getName() + " linked to Community User #"
-										 + id + ", Group: " + groupName);
 						}
+						log.fine(p.getName() + " linked to Community User #" + id
+																 + ", Group: " + groupName);
 					}
           else if (basic_tracking)
           {
@@ -1161,12 +1206,12 @@ public class Main extends JavaPlugin
               + time + " second"
               + (time >= 1 ? "s" : "");
     }
-		
+
 		if (elapsed.length() >= 60)
 		{
 			elapsed = elapsed.substring(0, 60);
 		}
-		
+
     return elapsed;
   }
 
@@ -1234,7 +1279,7 @@ public class Main extends JavaPlugin
 									       + "' WHERE " + multi_table_user_id_field + " = '" + u
 									       + "' AND " + multi_table_key_field + " = '"
 									       + currentxp_key_value + "'");
-					
+
 					if (!currentxp_formatted_key_value.isEmpty())
 					{
 						sql.updateQuery("UPDATE " + multi_table
@@ -1271,7 +1316,7 @@ public class Main extends JavaPlugin
 													 + lifeticks_formatted
 													 + "' WHERE " + multi_table_user_id_field + " = '" + u
 													 + "' AND " + multi_table_key_field + " = '"
-													 + lifeticks_formatted_key_value + "'");						
+													 + lifeticks_formatted_key_value + "'");
 					}
         }
 
@@ -1356,7 +1401,7 @@ public class Main extends JavaPlugin
 				if (currentxp_enabled)
         {
           SQLParts.add(Main.currentxp_field + " = '" + currentxp + "'");
-					
+
 					if (!currentxp_formatted_field.isEmpty())
 					{
 						SQLParts.add(Main.currentxp_formatted_field + " = '"
@@ -1377,7 +1422,7 @@ public class Main extends JavaPlugin
 				if (lifeticks_enabled)
         {
           SQLParts.add(Main.lifeticks_field + " = '" + lifeticks + "'");
-					
+
 					if (!lifeticks_formatted_field.isEmpty())
 					{
 						SQLParts.add(Main.lifeticks_formatted_field
@@ -1449,9 +1494,9 @@ public class Main extends JavaPlugin
 		}
 	}
 
-	/** 
+	/**
   * Check to see if a table exists.
-  * 
+  *
 	* @param tableName Name of the table to check
 	* @return Empty string if the check succeeds otherwise an error string
   */
@@ -1462,17 +1507,17 @@ public class Main extends JavaPlugin
 		String errorBase;
 		errorBase = "Error while checking '" + keyName
 						  + "' set to '" + columnName + "': ";
-		
+
 		try
 		{
 			result = sql.sqlQuery("SHOW COLUMNS FROM `" + tableName
 							              + "` LIKE '" + columnName + "'");
-			
+
 			if (result == null)
 			{}
 			else
 			{
-				
+
 				if (result.next())
 				{
 					return true;
@@ -1502,10 +1547,10 @@ public class Main extends JavaPlugin
 			return false;
 		}
 	}
-	
-	/** 
+
+	/**
   * Check to see if a table exists.
-  * 
+  *
 	* @param tableName Name of the table to check
 	* @return Empty string if the check succeeds otherwise an error string
   */
@@ -1515,16 +1560,16 @@ public class Main extends JavaPlugin
 		String errorBase;
 		errorBase = "Error while checking '" + keyName
 						  + "' set to '" + tableName + "': ";
-		
+
 		try
 		{
 			result = sql.sqlQuery("SHOW TABLES LIKE '" + tableName + "'");
-			
+
 			if (result == null)
 			{}
 			else
 			{
-				
+
 				if (result.next())
 				{
 					return true;
@@ -1554,10 +1599,10 @@ public class Main extends JavaPlugin
 			return false;
 		}
 	}
-	
-	/** 
+
+	/**
   * Analyze the configuration for potential problems.
-  * 
+  *
   * Checks for the existence of the specified tables and columns within those
 	* tables.
   */
@@ -1567,10 +1612,10 @@ public class Main extends JavaPlugin
 		Boolean userTableStatus;
 		Boolean multiTableStatus = true;
 		Boolean tempStatus;
-		
+
 		status = checkTable("users-table.table", users_table);
 		userTableStatus = status;
-		
+
 		if (status)
 		{
 			status = status & checkColumn("users-table.username", users_table,
@@ -1582,20 +1627,20 @@ public class Main extends JavaPlugin
 				status = status & checkColumn("user-table.secondary-groups-id-field",
 								                      users_table, secondary_groups_id_field);
 			}
-			
+
 			if (use_banned)
 			{
 				status = status & checkColumn("user-table.banned-field",
 								                      users_table, is_banned_field);
 			}
 		}
-		
+
 		if (groups_table_enabled)
 		{
 			tempStatus = checkTable("groups-table.table", groups_table);
-			
+
 			status = status & tempStatus;
-			
+
 			if (tempStatus)
 			{
 				status = status & checkColumn("groups-table.user-id-field",
@@ -1619,7 +1664,7 @@ public class Main extends JavaPlugin
 		{
 			tempStatus = checkTable("banlist-table.table", banlist_table);
 			status = status & tempStatus;
-			
+
 			if (tempStatus)
 			{
 				status = status & checkColumn("banlist-table.user-id-field",
@@ -1633,7 +1678,7 @@ public class Main extends JavaPlugin
 		{
 			multiTableStatus = checkTable("multi-table.table", multi_table);
 			status = status & multiTableStatus;
-			
+
 			if (multiTableStatus)
 			{
 				status = status & checkColumn("multi-table.field-user-id-field",
@@ -1650,13 +1695,13 @@ public class Main extends JavaPlugin
 				}
 			}
 		}
-		
+
 		if (require_avatar)
 		{
 			tempStatus = checkTable("profile-requirements.require-avatar-table",
 							                avatar_table);
 			status = status & tempStatus;
-			
+
 			if (tempStatus)
 			{
 				status = status
@@ -1667,13 +1712,13 @@ public class Main extends JavaPlugin
 								             avatar_table, avatar_field);
 			}
 		}
-		
+
 		if (require_minposts)
 		{
 			tempStatus = checkTable("profile-requirements.require-minposts-table",
 							                minposts_table);
 			status = status & tempStatus;
-			
+
 			if (tempStatus)
 			{
 				status = status
@@ -1684,7 +1729,7 @@ public class Main extends JavaPlugin
 								             minposts_table, minposts_field);
 			}
 		}
-		
+
 		if (basic_tracking)
 		{
 			if (multi_tables && multiTableStatus)
@@ -1696,13 +1741,13 @@ public class Main extends JavaPlugin
 				checkTrackingColumns(users_table);
 			}
 		}
-		
+
 		return status;
 	}
-	
-	/** 
+
+	/**
   * Check the basic tracking columns configuration
-  * 
+  *
 	* @param trackingTable Name of the table that the tracking columns reside on
 	*/
 	public static void checkTrackingColumns(String trackingTable)
@@ -1718,7 +1763,7 @@ public class Main extends JavaPlugin
 				log.severe("'online status' tracking disabled due to previous error.");
 			}
 		}
-		
+
 		if (lastonline_enabled)
 		{
 			if (checkColumn("basic-tracking.field-lastonline-field", trackingTable,
@@ -1730,9 +1775,9 @@ public class Main extends JavaPlugin
 			{
 				lastonline_enabled = false;
 				log.severe("'last online' tracking disabled due to previous error(s).");
-			}			
+			}
 		}
-		
+
 		if (gametime_enabled)
 		{
 			if (checkColumn("basic-tracking.field-gametime-field", trackingTable,
@@ -1744,9 +1789,9 @@ public class Main extends JavaPlugin
 			{
 				gametime_enabled = false;
 				log.severe("'game time' tracking disabled due to previous error(s).");
-			}			
+			}
 		}
-		
+
 		if (totalxp_enabled)
 		{
 			if (checkColumn("basic-tracking.field-totalxp-field", trackingTable,
@@ -1758,7 +1803,7 @@ public class Main extends JavaPlugin
 				log.severe("'total xp' tracking disabled due to previous error(s).");
 			}
 		}
-		
+
 		if (currentxp_enabled)
 		{
 			if (checkColumn("basic-tracking.field-currentxp-field", trackingTable,
@@ -1770,9 +1815,9 @@ public class Main extends JavaPlugin
 			{
 				currentxp_enabled = false;
 				log.severe("'current xp' tracking disabled due to previous error(s).");
-			}			
+			}
 		}
-		
+
 		if (level_enabled)
 		{
 			if (checkColumn("basic-tracking.field-level-field", trackingTable,
@@ -1784,7 +1829,7 @@ public class Main extends JavaPlugin
 				log.severe("'level' tracking disabled due to previous error(s).");
 			}
 		}
-		
+
 		if (health_enabled)
 		{
 			if (checkColumn("basic-tracking.field-health-field", trackingTable,
@@ -1794,9 +1839,9 @@ public class Main extends JavaPlugin
 			{
 				health_enabled = false;
 				log.severe("'health' tracking disabled due to previous error(s).");
-			}			
+			}
 		}
-		
+
 		if (lifeticks_enabled)
 		{
 			if (checkColumn("basic-tracking.field-lifeticks-field", trackingTable,
@@ -1808,9 +1853,9 @@ public class Main extends JavaPlugin
 			{
 				lifeticks_enabled = false;
 				log.severe("'lifeticks' tracking disabled due to previous error(s).");
-			}			
+			}
 		}
-		
+
 		if (wallet_enabled)
 		{
 			if (checkColumn("basic-tracking.field-wallet-field", trackingTable,
@@ -1820,9 +1865,9 @@ public class Main extends JavaPlugin
 			{
 				wallet_enabled = false;
 				log.severe("'wallet' tracking disabled due to previous error(s).");
-			}			
+			}
 		}
-		
+
     if ((onlinestatus_enabled || lastonline_enabled || gametime_enabled
 			 ||totalxp_enabled      || currentxp_enabled  || level_enabled
 			 ||health_enabled       || lifeticks_enabled  || wallet_enabled))
@@ -1833,9 +1878,9 @@ public class Main extends JavaPlugin
       log.severe("Basic tracking is enabled, but all individual trackers are"
                 +" disabled. Basic tracking is now turned off.");
     }
-	}	
+	}
 
-	private void loadConfig()
+	private boolean loadConfig()
 	{
 		// We'll remove the deprecated setting in six months. Remove On: 2012/May/13
 		// We do this first so that if log-level is set, it will override the
@@ -1846,7 +1891,7 @@ public class Main extends JavaPlugin
 		{
 			log.warning("The setting 'show-config' in config.yml is deprecated. Use log-level: config instead.");
 			log.setLevel(Level.CONFIG);
-		}			
+		}
 
 		// Either way, we should set the log level before doing anything else.
 		if (this.getConfig().getString("log-level") == null
@@ -1860,10 +1905,22 @@ public class Main extends JavaPlugin
 		// TODO: Remove 'permissions_system' field when all permissions system
 		// related code has been moved to the PermissionHandler interface.
 		permissions_system = this.getConfig().getString("permissions-system");
-		try 
+
+		try
 		{
 			if (this.getConfig().getString("permissions-system").equalsIgnoreCase("PEX"))
 			{
+				// EXPIRABLE: ST2012-Dec-21: Keep the code inside the if's block.
+				if (StringTools.compareVersion(Bukkit.getBukkitVersion().replace("R", ""), "1.4.5.1.0") > -1)
+				{
+					String pexVersion = MinecraftTools.getPluginVersion("PermissionsEx");
+					if (StringTools.compareVersion("1.19.5", pexVersion) == 1)
+					{
+						log.severe("This version of Minecraft is incompatible with PermissionsEx versions earlier than 1.19.5. Disabling CommunityBridge.");
+						disablePlugin();
+						return false;
+					}
+				}
 				permissionHandler = new PermissionHandlerPermissionsEx();
 				log.config("Permissions System: PermissionsEx (PEX)");
 			}
@@ -1886,6 +1943,7 @@ public class Main extends JavaPlugin
 			{
 				log.severe("Unknown permissions system in config.yml. CommunityBridge disabled.");
 				disablePlugin();
+				return false;
 			}
 		}
 		catch (IllegalStateException e)
@@ -1894,7 +1952,7 @@ public class Main extends JavaPlugin
 			log.severe("Disabling CommunityBridge.");
 			disablePlugin();
 		}
-		
+
 		// The new group synchronization section is handled here.
 		// Beginning with primary group.
 		primary_group_synchronization_enabled = this.getConfig().getBoolean("group-synchronization.primary-group.enabled", true);
@@ -1910,7 +1968,7 @@ public class Main extends JavaPlugin
 			log.config("Primary Group IDs to Ignore: "
 							 + primary_group_ids_to_ignore);
 		}
-		
+
 		show_primary_group = this.getConfig().getBoolean("show-primary-group");
 		basic_tracking = this.getConfig().getBoolean("enable-basic-tracking");
 		multi_tables = this.getConfig().getBoolean("multi-tables");
@@ -2041,13 +2099,14 @@ public class Main extends JavaPlugin
 			log.config("Tracking Life Ticks    : " + lifeticks_enabled);
 			log.config("Tracking Wallet        : " + wallet_enabled);
 		}
-		
+
 		groups = this.getConfig().getConfigurationSection("groups").getValues(true);
-		
+
 		// Note: groups is a map <String, Object> so we need the cast.
 		default_group = (String)groups.get(this.getConfig().getString("users-table.default-group"));
+		return true;
 	}
-	
+
 	public static boolean isOkayToSetPrimaryGroup(String groupID)
 	{
 		return primary_group_synchronization_enabled
