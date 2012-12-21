@@ -1869,7 +1869,7 @@ public class Main extends JavaPlugin
 			String pexVersion = MinecraftTools.getPluginVersion("PermissionsEx");
 			if (StringTools.compareVersion("1.19.5", pexVersion) == 1)
 			{
-				log.severe("PermissionsEx version 1.19.5 or later is required. Disabling CommunityBridge.");
+				log.severe("This version of Minecraft is incompatible with PermissionsEx versions earlier than 1.19.5. Disabling CommunityBridge.");
 				disablePlugin();
 				return false;
 			}
