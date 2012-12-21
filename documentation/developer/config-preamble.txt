@@ -1,0 +1,34 @@
+#
+# Community Bridge Configuration File
+#
+
+# Log level controls the degree of detail that is sent to the console/log
+# The possible settings are (in order of quietest to noisiest:
+#   info, config, fine, finer, finest, all
+# - During configuration, I recommend using 'config'.
+# - During normal operation, I recommend using 'info'.
+# - If you want to see the notifications that the synchronize and reminder
+#   notices have been sent, use 'fine'
+# - During troubleshooting of problems, set this to either finest or all.
+log-level: config
+
+# The permissions system (PEX, bPerms, GroupManager, PermsBukkit)
+permissions-system: GroupManager
+
+# Set the unit of measurement for sync and reminder scheduling. Options are:
+# ticks, seconds, minutes, or hours. Note that this applies to both
+# auto-sync-every and auto-remind-every.
+auto-every-unit: minutes
+
+# This is a timer that will check and sync all data with your database at a set
+# interval. Otherwise group and player stats will only be synchronized when
+# they join and leave the server.
+auto-sync: true
+
+# The interval for the auto-sync timer, this should be no less than
+# 15-20 minutes.
+auto-sync-every: 20
+
+# Some definitions:
+# - web-application: The forum, CMS, blogging app, etc. that you're using on
+#                    your website.

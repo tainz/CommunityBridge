@@ -1,0 +1,62 @@
+# Settings associated with linking a minecraft player with a web application's
+# user. As this feature is a prerequisite for all other features, it cannot
+# be disabled.
+player-user-linking:
+  # Set this to true if you want to require the player to confirm that they're
+  # the player that is registered on the web application by providing their
+  # web application password.
+  authentication-required: false
+
+  # Set these to true to inform players when they log in if they're linked to
+  # the web application. These correspond to the link-unregistered-player and
+  # link-registered-player messages in messages.yml.
+  notify-unregistered-player: true
+  notify-registered-player: true
+
+  # This is a timer that will notify unregistered users to register
+  auto-remind: true
+
+  # The interval for the auto-remind timer, this should be no less than
+  # 5-10 minutes. Note that this uses the units specified above in
+  # auto-every-unit.
+  auto-remind-every: 10
+
+  # If you want the player disconnected from the game if they haven't
+  # registered set this to true.
+  kick-unregistered: false
+
+  # This needs to be set to either same-name, same-table, multi-table, or
+  # multi-table-with-key.
+  # same-name: Use this option when you want the minecraft playername and the
+  # web application username to be the same.
+  # The remaining three options are for when you want the minecraft playername
+  # and web application username to be different.
+  # same-table: Use this option when the player's minecraft name on the same
+                table as the users table in its own column.
+  # multi-table: Use this option when the player's minecraft name is on a table
+  #              separate from the users table in its own column.
+  # multi-table-with-key: Use this option when the player's minecraft name is
+                          on a table separate from the users table that stores
+                          data in key-value pairs.
+  linking-mode: same-name
+  # Configuration for the table that the web application stores user information
+  # on.
+  users-table:
+    # The name of the table that the web application stores users on.
+    name: users_table
+    user-id-column: user_id
+    username-column: username
+  # Configuration for the table that the minecraft player name is stored on by
+  # the web application.
+  playername-table:
+    # Name of the table that contains the minecraft player name.
+    name: users_table
+    # Column containing the user's user id on the table containing the
+    #  minecraft player name.
+    user-id-column: user_id
+    playername-column: minecraft_playername
+    # These three are only used if the player's minecraft name is on a
+    # table that stores its data in a key-value pair.
+    playername-key: ''
+    key-column: ''
+    value-column: ''

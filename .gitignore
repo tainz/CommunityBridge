@@ -18,3 +18,8 @@ nb-configuration.xml
 /nbproject/build-impl.xml
 *.log
 *.aux
+/coverage
+/output
+*\.txt~
+*\.tex~
+*\.yml~
