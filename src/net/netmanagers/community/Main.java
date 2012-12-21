@@ -1866,12 +1866,15 @@ public class Main extends JavaPlugin
 
 		if (this.getConfig().getString("permissions-system").equalsIgnoreCase("PEX"))
 		{
-			String pexVersion = MinecraftTools.getPluginVersion("PermissionsEx");
-			if (StringTools.compareVersion("1.19.5", pexVersion) == 1)
+			if (StringTools.compareVersion(Bukkit.getBukkitVersion().replace("R", ""), "1.4.5.1.0") > -1)
 			{
-				log.severe("This version of Minecraft is incompatible with PermissionsEx versions earlier than 1.19.5. Disabling CommunityBridge.");
-				disablePlugin();
-				return false;
+				String pexVersion = MinecraftTools.getPluginVersion("PermissionsEx");
+				if (StringTools.compareVersion("1.19.5", pexVersion) == 1)
+				{
+					log.severe("This version of Minecraft is incompatible with PermissionsEx versions earlier than 1.19.5. Disabling CommunityBridge.");
+					disablePlugin();
+					return false;
+				}
 			}
 			permissionHandler = new PermissionHandlerPEX();
 		}

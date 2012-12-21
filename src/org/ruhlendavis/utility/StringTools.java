@@ -24,6 +24,8 @@ public final class StringTools
 	 */
 	public static int compareVersion(String leftVersion, String rightVersion)
 	{
+		leftVersion = leftVersion.replace("-", ".");
+		rightVersion = rightVersion.replace("-", ".");
 		String[] leftParts = leftVersion.split("\\.");
 		String[] rightParts = rightVersion.split("\\.");
 		int leftLength = leftParts.length;
@@ -47,7 +49,7 @@ public final class StringTools
 				return -1;
 			}
 		}
-		
+
 		// So far, they're equal, therefore the longer is the greater
 		if (leftLength > rightLength)
 		{
