@@ -262,14 +262,32 @@ public class Main extends JavaPlugin
     }
 
 		log.config(String.format("Auto Sync Every: %d %s.", auto_sync_every, unit));
-		getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable()
-    {
-      @Override
-			public void run()
-      {
-				syncAll();
-			}
-		}, every, every);
+		// EXPIRABLE: ST2012-Dec-21: The else block and the if statement itself. The true block should stay
+		if (StringTools.compareVersion(Bukkit.getBukkitVersion().replace("R", ""), "1.4.5.1.0") > -1)
+		{
+			// As of MC 1.4.5.1.0, running tasks have changed.
+			Bukkit.getScheduler().runTaskTimerAsynchronously(this,
+																											new Runnable()
+																											{
+																												@Override
+																												public void run()
+																												{
+																													syncAll();
+																												}
+																											},
+																											every, every);
+		}
+		else
+		{
+			getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					syncAll();
+				}
+			}, every, every);
+		}
 	}
 
   private void startAutoReminder()
@@ -296,14 +314,33 @@ public class Main extends JavaPlugin
 
     log.config(String.format("Auto Remind Unregistered Every: %d %s.",
                            auto_remind_every, unit));
-    getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable()
-    {
-      @Override
-      public void run()
-      {
-        remindUnregistered();
-      }
-   	}, every, every);
+		// EXPIRABLE: ST2012-Dec-21: The else block and the if statement itself. The true block should stay
+		if (StringTools.compareVersion(Bukkit.getBukkitVersion().replace("R", ""), "1.4.5.1.0") > -1)
+		{
+			// As of MC 1.4.5.1.0, running tasks have changed.
+			Bukkit.getScheduler().runTaskTimerAsynchronously(this,
+																											new Runnable()
+																											{
+																												@Override
+																												public void run()
+																												{
+																													remindUnregistered();
+																												}
+																											},
+																											every, every);
+		}
+		else
+		{
+
+			getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					remindUnregistered();
+				}
+			}, every, every);
+		}
   }
 
 	private void ResetOnlineStatus()
@@ -1870,6 +1907,7 @@ public class Main extends JavaPlugin
 		{
 			if (this.getConfig().getString("permissions-system").equalsIgnoreCase("PEX"))
 			{
+				// EXPIRABLE: ST2012-Dec-21: Keep the code inside the if's block.
 				if (StringTools.compareVersion(Bukkit.getBukkitVersion().replace("R", ""), "1.4.5.1.0") > -1)
 				{
 					String pexVersion = MinecraftTools.getPluginVersion("PermissionsEx");
