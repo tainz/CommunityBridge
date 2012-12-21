@@ -789,9 +789,9 @@ public class Main extends JavaPlugin
 								p.sendMessage(ChatColor.YELLOW + registered_message);
 							}
 
-							log.fine(p.getName() + " linked to Community User #"
-										 + id + ", Group: " + groupName);
 						}
+						log.fine(p.getName() + " linked to Community User #" + id
+																 + ", Group: " + groupName);
 					}
           else if (basic_tracking)
           {
