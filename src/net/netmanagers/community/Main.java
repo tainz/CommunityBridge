@@ -919,19 +919,20 @@ public final class Main extends JavaPlugin
 				}
         else
         {
+					if (firstsync)
+					{
+						p.sendMessage(ChatColor.RED + unregistered_message);
+						log.fine(p.getName() + "'s name not set or not registered on community site");
+					}
+					else
+					{
+						p.sendMessage(ChatColor.RED + unregistered_messagereminder);
+						log.fine(p.getName() + " issued unregistered reminder notice");
+					}
+
 					if (isOkayToSetPrimaryGroup(null))
 					{
 						setGroup(Main.default_group, p, true);
-						if (firstsync)
-						{
-							p.sendMessage(ChatColor.RED + unregistered_message);
-							log.fine(p.getName() + "'s name not set or not registered on community site");
-						}
-						else
-						{
-							p.sendMessage(ChatColor.RED + unregistered_messagereminder);
-							log.fine(p.getName() + " issued unregistered reminder notice");
-						}
 					}
 					else
 					{
