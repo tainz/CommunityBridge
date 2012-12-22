@@ -1982,17 +1982,6 @@ public final class Main extends JavaPlugin
 		{
 			if (this.getConfig().getString("permissions-system").equalsIgnoreCase("PEX"))
 			{
-				// EXPIRABLE: ST2012-Dec-21: Keep the code inside the if's block.
-				if (StringTools.compareVersion(Bukkit.getBukkitVersion().replace("R", ""), "1.4.5.1.0") > -1)
-				{
-					String pexVersion = MinecraftTools.getPluginVersion("PermissionsEx");
-					if (StringTools.compareVersion("1.19.5", pexVersion) == 1)
-					{
-						log.severe("This version of Minecraft is incompatible with PermissionsEx versions earlier than 1.19.5. Disabling CommunityBridge.");
-						disablePlugin();
-						return false;
-					}
-				}
 				permissionHandler = new PermissionHandlerPermissionsEx();
 				log.config("Permissions System: PermissionsEx (PEX)");
 			}
@@ -2023,6 +2012,7 @@ public final class Main extends JavaPlugin
 			log.severe(e.getMessage());
 			log.severe("Disabling CommunityBridge.");
 			disablePlugin();
+			return false;
 		}
 
 		// The new group synchronization section is handled here.
