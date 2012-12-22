@@ -13,8 +13,8 @@ import java.util.logging.Level;
 import net.netmanagers.api.SQL;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,17 +24,16 @@ import org.ruhlendavis.mc.communitybridge.PermissionHandlerGroupManager;
 import org.ruhlendavis.mc.communitybridge.PermissionHandlerPermissionsBukkit;
 import org.ruhlendavis.mc.communitybridge.PermissionHandlerPermissionsEx;
 import org.ruhlendavis.mc.utility.Log;
-import org.ruhlendavis.mc.utility.MinecraftTools;
 import org.ruhlendavis.utility.StringTools;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
-public class Main extends JavaPlugin
+public final class Main extends JavaPlugin
 {
 	@SuppressWarnings("NonConstantLogger")
+
 	public static Log log;
 	public static String thisPluginName = "CommunityBridge";
 	public static SQL sql;
-	public static FileConfiguration config;
 
 	public static boolean primary_group_synchronization_enabled;
 	public static List<String> primary_group_ids_to_ignore;
@@ -151,9 +150,12 @@ public class Main extends JavaPlugin
 
 	public static PermissionHandler permissionHandler;
 
+	private static Main instance = null;
+
 	@Override
 	public void onEnable()
   {
+		instance = this;
 		log = new Log(this.getLogger(), Level.CONFIG);
 		saveDefaultConfig();
 
@@ -222,13 +224,83 @@ public class Main extends JavaPlugin
   {
 		// Cancel the tasks we'll restart them later
 		Bukkit.getServer().getScheduler().cancelTasks(this);
-		
+
+		// Drop all of our listeners
+		HandlerList.unregisterAll(this);
+
 		if (sql != null)
     {
 			sql.close();
 		}
 
+		permissionHandler = null;
+
+		primary_group_ids_to_ignore = null;
+		groups = null;
+		auto_every_unit = null;
+		permissions_system = null;
+		users_table = null;
+		banlist_table = null;
+		groups_table = null;
+		multi_table = null;
+		avatar_table = null;
+		minposts_table = null;
+		avatar_user_field = null;
+		avatar_field = null;
+		avatar_message = null;
+		minposts_user_field = null;
+		minposts_field = null;
+		minposts_message = null;
+		banlist_user_id_field = null;
+		banlist_banned_id_field = null;
+		groups_user_id_field = null;
+		groups_group_id_field = null;
+		user_id_field = null;
+		user_name_field = null;
+		groups_id_field = null;
+		secondary_groups_id_field = null;
+		is_banned_field = null;
+		banned_users_group = null;
+		default_group = null;
+		multi_table_key_field = null;
+		multi_table_key_value = null;
+		multi_table_value_field = null;
+		multi_table_user_id_field = null;
+		registered_message = null;
+		unregistered_message = null;
+		unregistered_messagereminder = null;
+		onlinestatus_key_value = null;
+		onlinestatus_field = null;
+		onlinestatus_valueoffline = null;
+		onlinestatus_valueonline = null;
+		lastonline_key_value = null;
+		lastonline_field = null;
+		lastonline_formatted_key_value = null;
+		lastonline_formatted_field = null;
+		gametime_key_value = null;
+		gametime_field = null;
+		gametime_formatted_key_value = null;
+		gametime_formatted_field = null;
+		totalxp_key_value = null;
+		totalxp_field = null;
+		currentxp_key_value = null;
+		currentxp_formatted_key_value = null;
+		currentxp_field = null;
+		currentxp_formatted_field = null;
+		level_key_value = null;
+		level_field = null;
+		health_key_value = null;
+		health_field = null;
+		lifeticks_key_value = null;
+		lifeticks_formatted_key_value = null;
+		lifeticks_field = null;
+		lifeticks_formatted_field = null;
+		wallet_key_value = null;
+		wallet_field = null;
+
 		log.config("Disabled...");
+		log = null;
+		instance = null;
 	}
 
 	private static void disablePlugin()
@@ -1882,7 +1954,7 @@ public class Main extends JavaPlugin
 
 	private boolean loadConfig()
 	{
-		// We'll remove the deprecated setting in six months. Remove On: 2012/May/13
+		// EXPIRABLE: We'll remove the deprecated setting in six months. Remove On: 2012/May/13
 		// We do this first so that if log-level is set, it will override the
 		// deprecated setting 'show-config'.
 		show_config = this.getConfig().getBoolean("show-config");
