@@ -24,6 +24,11 @@ public final class StringTools
 	 */
 	public static int compareVersion(String leftVersion, String rightVersion)
 	{
+		if (leftVersion == null || rightVersion == null
+			||leftVersion.isEmpty() || rightVersion.isEmpty())
+		{
+			throw new IllegalArgumentException();
+		}
 		leftVersion = leftVersion.replace("-", ".");
 		rightVersion = rightVersion.replace("-", ".");
 		String[] leftParts = leftVersion.split("\\.");
