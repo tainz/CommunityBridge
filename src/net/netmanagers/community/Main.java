@@ -1,5 +1,6 @@
 package net.netmanagers.community;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,6 +19,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.mcstats.Metrics;
 import org.ruhlendavis.mc.communitybridge.PermissionHandler;
 import org.ruhlendavis.mc.communitybridge.PermissionHandlerBPermissions;
 import org.ruhlendavis.mc.communitybridge.PermissionHandlerGroupManager;
@@ -151,6 +153,7 @@ public final class Main extends JavaPlugin
 	public static PermissionHandler permissionHandler;
 
 	private static Main instance = null;
+	private static Metrics metrics = null;
 
 	@Override
 	public void onEnable()
@@ -174,6 +177,20 @@ public final class Main extends JavaPlugin
 		}
     else
     {
+			if (this.getConfig().getBoolean("plugin-metrics", true))
+			{
+				try
+				{
+					metrics = new Metrics(this);
+					metrics.start();
+					log.config("Plugin Metrics activated.");
+				}
+				catch (IOException e)
+				{
+					log.warning("Plugin Metrics submission failed.");
+					// We failed to submit the stats...but we don't care.
+				}
+			}
 			if (loadConfig() == false)
 			{
 				return;
@@ -222,6 +239,9 @@ public final class Main extends JavaPlugin
 	@Override
 	public void onDisable()
   {
+		// Toss the metrics object.
+		metrics = null;
+
 		// Cancel the tasks we'll restart them later
 		Bukkit.getServer().getScheduler().cancelTasks(this);
 

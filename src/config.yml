@@ -12,6 +12,11 @@
 # - During troubleshooting of problems, set this to either finest or all.
 log-level: config
 
+# Allow plugin metrics to start up for this plugin.
+# Disable for all plugins by editing the plugins/PluginMetrics/config.yml file.
+# They can be viewed at: http://mcstats.org
+plugin-metrics: true
+
 # The permissions system (PEX, bPerms, GroupManager)
 permissions-system: GroupManager
 
