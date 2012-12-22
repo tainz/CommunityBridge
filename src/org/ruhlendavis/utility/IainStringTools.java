@@ -7,12 +7,12 @@ package org.ruhlendavis.utility;
  *
  * @author Feaelin (Iain E. Davis) <iain@ruhlendavis.org>
  */
-public final class StringTools
+public final class IainStringTools
 {
 	/**
 	 *  Private constructor prevents instantiation of the class.
 	 */
-	private StringTools() {}
+	private IainStringTools() {}
 
 	/**
 	 * Returns:
@@ -22,7 +22,7 @@ public final class StringTools
 	 * @param leftVersion
 	 * @param rightVersion
 	 */
-	public static int compareVersion(String leftVersion, String rightVersion)
+	public static int compareVersion(String leftVersion, String rightVersion) throws IllegalArgumentException
 	{
 		if (leftVersion == null || rightVersion == null
 			||leftVersion.isEmpty() || rightVersion.isEmpty())

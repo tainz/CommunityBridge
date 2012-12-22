@@ -26,7 +26,7 @@ import org.ruhlendavis.mc.communitybridge.PermissionHandlerGroupManager;
 import org.ruhlendavis.mc.communitybridge.PermissionHandlerPermissionsBukkit;
 import org.ruhlendavis.mc.communitybridge.PermissionHandlerPermissionsEx;
 import org.ruhlendavis.mc.utility.Log;
-import org.ruhlendavis.utility.StringTools;
+import org.ruhlendavis.utility.IainStringTools;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 public final class Main extends JavaPlugin
@@ -358,7 +358,7 @@ public final class Main extends JavaPlugin
 
 		log.config(String.format("Auto Sync Every: %d %s.", auto_sync_every, unit));
 		// EXPIRABLE: ST2012-Dec-21: The else block and the if statement itself. The true block should stay
-		if (StringTools.compareVersion(Bukkit.getBukkitVersion().replace("R", ""), "1.4.5.1.0") > -1)
+		if (IainStringTools.compareVersion(Bukkit.getBukkitVersion().replace("R", ""), "1.4.5.1.0") > -1)
 		{
 			// As of MC 1.4.5.1.0, running tasks have changed.
 			Bukkit.getScheduler().runTaskTimerAsynchronously(this,
@@ -410,7 +410,7 @@ public final class Main extends JavaPlugin
     log.config(String.format("Auto Remind Unregistered Every: %d %s.",
                            auto_remind_every, unit));
 		// EXPIRABLE: ST2012-Dec-21: The else block and the if statement itself. The true block should stay
-		if (StringTools.compareVersion(Bukkit.getBukkitVersion().replace("R", ""), "1.4.5.1.0") > -1)
+		if (IainStringTools.compareVersion(Bukkit.getBukkitVersion().replace("R", ""), "1.4.5.1.0") > -1)
 		{
 			// As of MC 1.4.5.1.0, running tasks have changed.
 			Bukkit.getScheduler().runTaskTimerAsynchronously(this,
