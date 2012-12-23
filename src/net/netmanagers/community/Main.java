@@ -93,11 +93,6 @@ public final class Main extends JavaPlugin
 	public static String unregistered_message;
 	public static String unregistered_messagereminder;
 
-	public static String onlinestatus_key_value;
-	public static String onlinestatus_field;
-	public static String onlinestatus_valueoffline;
-	public static String onlinestatus_valueonline;
-
 	public static Map<String, Object> groups;
 
 	public static PermissionHandler permissionHandler;
@@ -238,10 +233,6 @@ public final class Main extends JavaPlugin
 		registered_message = null;
 		unregistered_message = null;
 		unregistered_messagereminder = null;
-		onlinestatus_key_value = null;
-		onlinestatus_field = null;
-		onlinestatus_valueoffline = null;
-		onlinestatus_valueonline = null;
 
 		log.config("Disabled...");
 		log = null;
@@ -373,16 +364,16 @@ public final class Main extends JavaPlugin
       {
 				if (multi_tables_use_key)
         {
-					sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + onlinestatus_valueoffline + "' WHERE " + multi_table_key_field + " = '" + onlinestatus_key_value + "'");
+					sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + config.onlinestatusValueOffline + "' WHERE " + multi_table_key_field + " = '" + config.onlinestatusKeyValue + "'");
 				}
         else
         {
-					sql.updateQuery("UPDATE " + multi_table + " SET " + onlinestatus_field + " = '" + onlinestatus_valueoffline + "' WHERE " + onlinestatus_field + " = '" + onlinestatus_valueonline + "'");
+					sql.updateQuery("UPDATE " + multi_table + " SET " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOffline + "' WHERE " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOnline + "'");
 				}
 			}
       else
       {
-				sql.updateQuery("UPDATE " + users_table + " SET " + onlinestatus_field + " = '" + onlinestatus_valueoffline + "'  WHERE " + onlinestatus_field + " = '" + onlinestatus_valueonline + "'");
+				sql.updateQuery("UPDATE " + users_table + " SET " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOffline + "'  WHERE " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOnline + "'");
 			}
 		}
 		catch (MalformedURLException e)
@@ -1023,8 +1014,8 @@ public final class Main extends JavaPlugin
 				// Check for each custom field in the database.
 				if (config.onlinestatusEnabled)
         {
-					checkDBSanity(u, onlinestatus_key_value);
-					sql.updateQuery("UPDATE "+Main.multi_table+" SET " + multi_table_value_field +" = '" + onlinestatus_valueonline + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + onlinestatus_key_value + "'");
+					checkDBSanity(u, config.onlinestatusKeyValue);
+					sql.updateQuery("UPDATE "+Main.multi_table+" SET " + multi_table_value_field +" = '" + config.onlinestatusValueOnline + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + config.onlinestatusKeyValue + "'");
 				}
 
 				if (config.lastonlineEnabled)
@@ -1102,7 +1093,7 @@ public final class Main extends JavaPlugin
 
 					if (config.onlinestatusEnabled)
           {
-            sql.updateQuery("UPDATE " + multi_table + " SET " + onlinestatus_field + " = '" + onlinestatus_valueonline + "' WHERE " + multi_table_user_id_field + " = '" + u + "'");
+            sql.updateQuery("UPDATE " + multi_table + " SET " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOnline + "' WHERE " + multi_table_user_id_field + " = '" + u + "'");
           }
 
 					if (config.lastonlineEnabled)
@@ -1116,7 +1107,7 @@ public final class Main extends JavaPlugin
 
 					if (config.onlinestatusEnabled)
           {
-            sql.updateQuery("UPDATE " + users_table + " SET " + onlinestatus_field + " = '" + onlinestatus_valueonline + "' WHERE " + user_id_field + " = '" + u + "'");
+            sql.updateQuery("UPDATE " + users_table + " SET " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOnline + "' WHERE " + user_id_field + " = '" + u + "'");
           }
 
 					if (config.lastonlineEnabled)
@@ -1285,7 +1276,7 @@ public final class Main extends JavaPlugin
 
 				if (config.onlinestatusEnabled)
         {
-          sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + onlinestatus_valueonline + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + onlinestatus_key_value + "'");
+          sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + config.onlinestatusValueOnline + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + config.onlinestatusKeyValue + "'");
         }
 
 				if (config.totalxpEnabled)
@@ -1411,7 +1402,7 @@ public final class Main extends JavaPlugin
 				LinkedList <String> SQLParts = new LinkedList<String>();
 				if (config.onlinestatusEnabled)
         {
-          SQLParts.add(Main.onlinestatus_field + " = '" + onlinestatus_valueonline + "'");
+          SQLParts.add(config.onlinestatusColumn + " = '" + config.onlinestatusValueOnline + "'");
         }
 
 				if (config.totalxpEnabled)
@@ -1776,7 +1767,7 @@ public final class Main extends JavaPlugin
 		if (config.onlinestatusEnabled)
 		{
 			if (checkColumn("basic-tracking.field-onlinestatus-field", trackingTable,
-							        onlinestatus_field))
+							        config.onlinestatusColumn))
 			{}
 			else
 			{
@@ -1997,11 +1988,6 @@ public final class Main extends JavaPlugin
 		multi_table_key_field = this.getConfig().getString("multi-table.field-key-field");
 		multi_table_key_value = this.getConfig().getString("multi-table.field-key-value");
 		multi_table_value_field = this.getConfig().getString("multi-table.field-value-field");
-
-		onlinestatus_key_value = this.getConfig().getString("basic-tracking.field-onlinestatus-key-value");
-		onlinestatus_field = this.getConfig().getString("basic-tracking.field-onlinestatus-field");
-		onlinestatus_valueonline = this.getConfig().getString("basic-tracking.field-onlinestatus-valueonline");
-		onlinestatus_valueoffline = this.getConfig().getString("basic-tracking.field-onlinestatus-valueoffline");
 
 		if (use_banned)
 		{

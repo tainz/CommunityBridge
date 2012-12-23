@@ -31,6 +31,10 @@ public class Configuration
 	public boolean statisticsTrackingEnabled;
 
 	public boolean onlinestatusEnabled;
+	public String onlinestatusColumn;
+	public String onlinestatusKeyValue;
+	public String onlinestatusValueOffline;
+	public String onlinestatusValueOnline;
 
 	public boolean lastonlineEnabled;
 	public String lastonlineColumn;
@@ -120,6 +124,10 @@ public class Configuration
 		statisticsTrackingEnabled = config.getBoolean("enable-basic-tracking", false);
 
 		onlinestatusEnabled = config.getBoolean("basic-tracking.field-onlinestatus-enabled", false);
+		onlinestatusKeyValue = config.getString("basic-tracking.field-onlinestatus-key-value", "");
+		onlinestatusColumn = config.getString("basic-tracking.field-onlinestatus-field", "");
+		onlinestatusValueOnline = config.getString("basic-tracking.field-onlinestatus-valueonline", "");
+		onlinestatusValueOffline = config.getString("basic-tracking.field-onlinestatus-valueoffline", "");
 
 		lastonlineEnabled = config.getBoolean("basic-tracking.field-lastonline-enabled", false);
 		lastonlineColumn = config.getString("basic-tracking.field-lastonline-field", "");
