@@ -35,6 +35,10 @@ public final class Main extends JavaPlugin
 	public static org.ruhlendavis.mc.communitybridge.Configuration config;
 	public static Log log;
 	public static SQL sql;
+	public static PermissionHandler permissionHandler;
+
+	private static Main instance = null;
+	private static Metrics metrics = null;
 
 	public static boolean multi_tables = false;
 	public static boolean multi_tables_use_key = false;
@@ -94,11 +98,6 @@ public final class Main extends JavaPlugin
 	public static String unregistered_messagereminder;
 
 	public static Map<String, Object> groups;
-
-	public static PermissionHandler permissionHandler;
-
-	private static Main instance = null;
-	private static Metrics metrics = null;
 
 	@Override
 	public void onEnable()
@@ -2019,10 +2018,6 @@ public final class Main extends JavaPlugin
 			log.config("Tracking Wallet        : " + config.walletEnabled);
 		}
 
-		groups = this.getConfig().getConfigurationSection("groups").getValues(true);
-
-		// Note: groups is a map <String, Object> so we need the cast.
-		default_group = (String)groups.get(this.getConfig().getString("users-table.default-group"));
 		return true;
 	}
 
