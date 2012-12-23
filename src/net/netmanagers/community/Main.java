@@ -98,11 +98,6 @@ public final class Main extends JavaPlugin
 	public static String onlinestatus_valueoffline;
 	public static String onlinestatus_valueonline;
 
-  public static String lastonline_key_value;
-	public static String lastonline_field;
-  public static String lastonline_formatted_key_value;
-	public static String lastonline_formatted_field;
-
 	public static Map<String, Object> groups;
 
 	public static PermissionHandler permissionHandler;
@@ -247,10 +242,6 @@ public final class Main extends JavaPlugin
 		onlinestatus_field = null;
 		onlinestatus_valueoffline = null;
 		onlinestatus_valueonline = null;
-		lastonline_key_value = null;
-		lastonline_field = null;
-		lastonline_formatted_key_value = null;
-		lastonline_formatted_field = null;
 
 		log.config("Disabled...");
 		log = null;
@@ -1038,12 +1029,12 @@ public final class Main extends JavaPlugin
 
 				if (config.lastonlineEnabled)
         {
-					checkDBSanity(u, lastonline_key_value);
+					checkDBSanity(u, config.lastonlineKeyValue);
 					sql.updateQuery("UPDATE " + Main.multi_table
 									       + " SET " + multi_table_value_field + " = '" + t
 									       + "' WHERE " + multi_table_user_id_field + " = '" + u
 									       + "' AND " + multi_table_key_field + " = '"
-									       + lastonline_key_value + "'");
+									       + config.lastonlineKeyValue + "'");
 				}
 
 				if (config.currentxpEnabled)
@@ -1116,7 +1107,7 @@ public final class Main extends JavaPlugin
 
 					if (config.lastonlineEnabled)
           {
-            sql.updateQuery("UPDATE " + multi_table + " SET " + lastonline_field + " = " + t + " WHERE " + multi_table_user_id_field + " = '" + u + "'");
+            sql.updateQuery("UPDATE " + multi_table + " SET " + config.lastonlineColumn + " = " + t + " WHERE " + multi_table_user_id_field + " = '" + u + "'");
           }
 				}
         else
@@ -1130,7 +1121,7 @@ public final class Main extends JavaPlugin
 
 					if (config.lastonlineEnabled)
           {
-            sql.updateQuery("UPDATE " + users_table + " SET " + lastonline_field + " = " + t +" WHERE " + user_id_field + " = '" + u + "'");
+            sql.updateQuery("UPDATE " + users_table + " SET " + config.lastonlineColumn + " = " + t +" WHERE " + user_id_field + " = '" + u + "'");
           }
 
 					if (!res.next())
@@ -1269,7 +1260,7 @@ public final class Main extends JavaPlugin
       {
 				if (config.lastonlineEnabled)
         {
-					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + lastonline_key_value + "'");
+					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + config.lastonlineKeyValue + "'");
 					if (res.next())
           {
             lastonline = res.getInt(multi_table_value_field);
@@ -1356,16 +1347,16 @@ public final class Main extends JavaPlugin
                          + " SET " + multi_table_value_field + " = '" + t
                          + "' WHERE " + multi_table_user_id_field + " = '" + u
                          + "' AND " + multi_table_key_field +" = '"
-                         + lastonline_key_value + "'");
+                         + config.lastonlineKeyValue + "'");
 
-          if (!lastonline_formatted_key_value.isEmpty())
+          if (!config.lastonlineFormattedKeyValue.isEmpty())
           {
             sql.updateQuery("UPDATE " + multi_table
                            + " SET " + multi_table_value_field + " = '"
                            + format.format(date)
                            + "' WHERE " + multi_table_user_id_field + " = '" + u
                            + "' AND " + multi_table_key_field + " = '"
-                           + lastonline_formatted_key_value + "'");
+                           + config.lastonlineFormattedKeyValue + "'");
           }
         }
 
@@ -1403,7 +1394,7 @@ public final class Main extends JavaPlugin
         {
 					if (config.lastonlineEnabled)
           {
-            lastonline = res.getInt(lastonline_field);
+            lastonline = res.getInt(config.lastonlineColumn);
           }
 
 					if (config.lastonlineEnabled && config.gametimeEnabled)
@@ -1474,11 +1465,11 @@ public final class Main extends JavaPlugin
 
 				if (config.lastonlineEnabled)
         {
-					SQLParts.add(Main.lastonline_field + " = '" + t + "'");
+					SQLParts.add(config.lastonlineColumn + " = '" + t + "'");
 
-          if (!lastonline_formatted_field.isEmpty())
+          if (!config.lastonlineFormattedColumn.isEmpty())
           {
-            SQLParts.add(Main.lastonline_formatted_field + " = '"
+            SQLParts.add(config.lastonlineFormattedColumn + " = '"
                         + format.format(date)
                         + "'");
           }
@@ -1797,9 +1788,9 @@ public final class Main extends JavaPlugin
 		if (config.lastonlineEnabled)
 		{
 			if (checkColumn("basic-tracking.field-lastonline-field", trackingTable,
-				              lastonline_field)
+				              config.lastonlineColumn)
 			 && checkColumn("basic-tracking.field-lastonline-formatted-field",
-							        trackingTable, lastonline_formatted_field))
+							        trackingTable, config.lastonlineFormattedColumn))
 			{}
 			else
 			{
@@ -2011,11 +2002,6 @@ public final class Main extends JavaPlugin
 		onlinestatus_field = this.getConfig().getString("basic-tracking.field-onlinestatus-field");
 		onlinestatus_valueonline = this.getConfig().getString("basic-tracking.field-onlinestatus-valueonline");
 		onlinestatus_valueoffline = this.getConfig().getString("basic-tracking.field-onlinestatus-valueoffline");
-
-		lastonline_key_value = this.getConfig().getString("basic-tracking.field-lastonline-key-value");
-		lastonline_field = this.getConfig().getString("basic-tracking.field-lastonline-field");
-		lastonline_formatted_key_value = this.getConfig().getString("basic-tracking.field-lastonline-formatted-key-value", "");
-		lastonline_formatted_field = this.getConfig().getString("basic-tracking.field-lastonline-formatted-field", "");
 
 		if (use_banned)
 		{

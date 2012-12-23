@@ -33,6 +33,10 @@ public class Configuration
 	public boolean onlinestatusEnabled;
 
 	public boolean lastonlineEnabled;
+	public String lastonlineColumn;
+	public String lastonlineFormattedColumn;
+  public String lastonlineKeyValue;
+  public String lastonlineFormattedKeyValue;
 
 	public boolean gametimeEnabled;
 	public String gametimeColumn;
@@ -118,6 +122,10 @@ public class Configuration
 		onlinestatusEnabled = config.getBoolean("basic-tracking.field-onlinestatus-enabled", false);
 
 		lastonlineEnabled = config.getBoolean("basic-tracking.field-lastonline-enabled", false);
+		lastonlineColumn = config.getString("basic-tracking.field-lastonline-field", "");
+		lastonlineFormattedColumn = config.getString("basic-tracking.field-lastonline-formatted-field", "");
+		lastonlineKeyValue = config.getString("basic-tracking.field-lastonline-key-value", "");
+		lastonlineFormattedKeyValue = config.getString("basic-tracking.field-lastonline-formatted-key-value", "");
 
 		gametimeEnabled = config.getBoolean("basic-tracking.field-gametime-enabled", false);
 		gametimeColumn = config.getString("basic-tracking.field-gametime-field", "");
