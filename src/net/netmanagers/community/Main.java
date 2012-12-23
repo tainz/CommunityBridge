@@ -75,49 +75,77 @@ public final class Main extends JavaPlugin
 		getCommand("cbsync").setExecutor(new Cmds());
 		getCommand("cbsyncall").setExecutor(new Cmds());
 
-    {
-			if (loadConfig() == false)
+		try
+		{
+			if (config.permissionsSystem.equalsIgnoreCase("PEX"))
 			{
-				return;
+				permissionHandler = new PermissionHandlerPermissionsEx();
+				log.config("Permissions System: PermissionsEx (PEX)");
 			}
+			else if (config.permissionsSystem.equalsIgnoreCase("bPerms"))
+			{
+				permissionHandler = new PermissionHandlerBPermissions();
+				log.config("Permissions System: bPermissions (bPerms)");
+			}
+			else if (config.permissionsSystem.equalsIgnoreCase("GroupManager"))
+			{
+				permissionHandler = new PermissionHandlerGroupManager();
+				log.config("Permissions System: GroupManager");
+			}
+			else if (config.permissionsSystem.equalsIgnoreCase("PermsBukkit"))
+			{
+				permissionHandler = new PermissionHandlerPermissionsBukkit();
+				log.config("Permissions System: PermissionsBukkit (PermsBukkit)");
+			}
+			else
+			{
+				log.severe("Unknown permissions system in config.yml. CommunityBridge disabled.");
+				disablePlugin();
+			}
+		}
+		catch (IllegalStateException e)
+		{
+			log.severe(e.getMessage());
+			log.severe("Disabling CommunityBridge.");
+			disablePlugin();
+		}
 
-			sql = new SQL(config.databaseHost + ":" + config.databasePort,
-							      config.databaseName + "",
-							      config.databaseUsername + "",
-							      config.databasePassword + "");
-			sql.initialize();
+		sql = new SQL(config.databaseHost + ":" + config.databasePort,
+									config.databaseName + "",
+									config.databaseUsername + "",
+									config.databasePassword + "");
+		sql.initialize();
 
-			if (sql.checkConnection())
-      {
-				if (analyzeConfiguration())
+		if (sql.checkConnection())
+		{
+			if (analyzeConfiguration())
+			{
+				if (config.statisticsTrackingEnabled && config.onlinestatusEnabled)
 				{
-					if (config.statisticsTrackingEnabled && config.onlinestatusEnabled)
-					{
-						ResetOnlineStatus();
-					}
-					syncAll();
-
-					if (config.auto_sync)
-					{
-						startSyncing();
-					}
-
-					if (config.auto_remind)
-					{
-						startAutoReminder();
-					}
-
-					log.config("Enabled!");
+					ResetOnlineStatus();
 				}
-		    else
-			  {
-					disablePlugin();
+				syncAll();
+
+				if (config.auto_sync)
+				{
+					startSyncing();
 				}
+
+				if (config.auto_remind)
+				{
+					startAutoReminder();
+				}
+
+				log.config("Enabled!");
 			}
 			else
 			{
 				disablePlugin();
 			}
+		}
+		else
+		{
+			disablePlugin();
 		}
 	}
 
@@ -1809,55 +1837,6 @@ public final class Main extends JavaPlugin
       log.severe("Basic tracking is enabled, but all individual trackers are"
                 +" disabled. Basic tracking is now turned off.");
     }
-	}
-
-	private boolean loadConfig()
-	{
-		try
-		{
-			if (config.permissionsSystem.equalsIgnoreCase("PEX"))
-			{
-				permissionHandler = new PermissionHandlerPermissionsEx();
-				log.config("Permissions System: PermissionsEx (PEX)");
-			}
-			else if (config.permissionsSystem.equalsIgnoreCase("bPerms"))
-			{
-				permissionHandler = new PermissionHandlerBPermissions();
-				log.config("Permissions System: bPermissions (bPerms)");
-			}
-			else if (config.permissionsSystem.equalsIgnoreCase("GroupManager"))
-			{
-				permissionHandler = new PermissionHandlerGroupManager();
-				log.config("Permissions System: GroupManager");
-			}
-			else if (config.permissionsSystem.equalsIgnoreCase("PermsBukkit"))
-			{
-				permissionHandler = new PermissionHandlerPermissionsBukkit();
-				log.config("Permissions System: PermissionsBukkit (PermsBukkit)");
-			}
-			else
-			{
-				log.severe("Unknown permissions system in config.yml. CommunityBridge disabled.");
-				disablePlugin();
-				return false;
-			}
-		}
-		catch (IllegalStateException e)
-		{
-			log.severe(e.getMessage());
-			log.severe("Disabling CommunityBridge.");
-			disablePlugin();
-			return false;
-		}
-
-		// The new group synchronization section is handled here.
-		// Beginning with primary group.
-
-		log.config("Kick Unregistered : " + config.kick_unregistered);
-		log.config("Require Avatar : " + config.require_avatar);
-		log.config("Min Posts : " + config.require_minposts);
-
-		return true;
 	}
 
 	public static boolean isOkayToSetPrimaryGroup(String groupID)

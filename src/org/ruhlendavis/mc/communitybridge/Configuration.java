@@ -309,7 +309,7 @@ public class Configuration
 
 	/**
 	 * Method for printing the configuration out to the logging system.
-	 * 
+	 *
 	 */
 	private void reportConfig()
 	{
@@ -319,6 +319,14 @@ public class Configuration
 		Main.log.config(  "Auto Remind :                          " + auto_remind);
 		Main.log.config(  "Multi Tables :                         " + multiTables);
 		Main.log.config(  "Primary Group Synchronization Enabled: "	+ groupSynchronizationPrimaryEnabled);
+		Main.log.config(  "Kick Unregistered :                    " + kick_unregistered);
+		Main.log.config(  "Require Avatar :                       " + require_avatar);
+		Main.log.config(  "Min Posts :                            " + require_minposts);
+
+		// The new group synchronization section is handled here.
+		// Beginning with primary group.
+
+
 
 		if (groupSynchronizationPrimaryEnabled)
 		{
