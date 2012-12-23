@@ -35,6 +35,10 @@ public class Configuration
 	public boolean lastonlineEnabled;
 
 	public boolean gametimeEnabled;
+	public String gametimeColumn;
+  public String gametimeFormattedColumn;
+  public String gametimeKeyValue;
+  public String gametimeFormattedKeyValue;
 
 	public boolean totalxpEnabled;
 	public String totalxpKeyValue;
@@ -116,6 +120,10 @@ public class Configuration
 		lastonlineEnabled = config.getBoolean("basic-tracking.field-lastonline-enabled", false);
 
 		gametimeEnabled = config.getBoolean("basic-tracking.field-gametime-enabled", false);
+		gametimeColumn = config.getString("basic-tracking.field-gametime-field", "");
+		gametimeFormattedColumn = config.getString("basic-tracking.field-gametime-formatted-field", "");
+		gametimeKeyValue = config.getString("basic-tracking.field-gametime-key-value", "");
+		gametimeFormattedKeyValue = config.getString("basic-tracking.field-gametime-formatted-key-value", "");
 
 		totalxpEnabled = config.getBoolean("basic-tracking.field-totalxp-enabled", false);
 		totalxpKeyValue = config.getString("basic-tracking.field-totalxp-key-value", "");

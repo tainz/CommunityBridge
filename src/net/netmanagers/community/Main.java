@@ -103,11 +103,6 @@ public final class Main extends JavaPlugin
   public static String lastonline_formatted_key_value;
 	public static String lastonline_formatted_field;
 
-  public static String gametime_key_value;
-	public static String gametime_field;
-  public static String gametime_formatted_key_value;
-  public static String gametime_formatted_field;
-
 	public static Map<String, Object> groups;
 
 	public static PermissionHandler permissionHandler;
@@ -256,10 +251,6 @@ public final class Main extends JavaPlugin
 		lastonline_field = null;
 		lastonline_formatted_key_value = null;
 		lastonline_formatted_field = null;
-		gametime_key_value = null;
-		gametime_field = null;
-		gametime_formatted_key_value = null;
-		gametime_formatted_field = null;
 
 		log.config("Disabled...");
 		log = null;
@@ -1287,7 +1278,7 @@ public final class Main extends JavaPlugin
 
 				if (config.lastonlineEnabled && config.gametimeEnabled)
         {
-					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + gametime_key_value + "'");
+					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + config.gametimeKeyValue + "'");
 
           if (res.next())
           {
@@ -1384,16 +1375,16 @@ public final class Main extends JavaPlugin
                          + " SET " + multi_table_value_field + " = '" + gametime
                          + "' WHERE " + multi_table_user_id_field + " = '" + u
                          + "' AND " + multi_table_key_field + " = '"
-                         + gametime_key_value + "'");
+                         + config.gametimeKeyValue + "'");
 
-          if (!gametime_formatted_key_value.isEmpty())
+          if (!config.gametimeFormattedKeyValue.isEmpty())
           {
             sql.updateQuery("UPDATE " + multi_table
                            + " SET " + multi_table_value_field + " = '"
                            + timeElapsed + "'"
                            + " WHERE " + multi_table_user_id_field + " = '" + u
                            + "' AND " + multi_table_key_field + " = '"
-                           + gametime_formatted_key_value + "'");
+                           + config.gametimeFormattedKeyValue + "'");
           }
         }
 			}
@@ -1417,7 +1408,7 @@ public final class Main extends JavaPlugin
 
 					if (config.lastonlineEnabled && config.gametimeEnabled)
           {
-						gametime = res.getInt(gametime_field);
+						gametime = res.getInt(config.gametimeColumn);
 						if (lastonline > 0)
             {
               gametime = gametime + (t - lastonline);
@@ -1471,11 +1462,11 @@ public final class Main extends JavaPlugin
 
 				if (config.gametimeEnabled)
         {
-					SQLParts.add(Main.gametime_field + " = '" + gametime + "'");
+					SQLParts.add(config.gametimeColumn + " = '" + gametime + "'");
 
-          if (!gametime_formatted_field.isEmpty())
+          if (!config.gametimeFormattedColumn.isEmpty())
           {
-            SQLParts.add(Main.gametime_formatted_field + " = '"
+            SQLParts.add(config.gametimeFormattedColumn + " = '"
                         + timeElapsed
                         + "'");
           }
@@ -1820,9 +1811,9 @@ public final class Main extends JavaPlugin
 		if (config.gametimeEnabled)
 		{
 			if (checkColumn("basic-tracking.field-gametime-field", trackingTable,
-						          gametime_field)
+						          config.gametimeColumn)
 			 && checkColumn("basic-tracking.field-gametime-formatted-field",
-							        trackingTable, gametime_formatted_field))
+							        trackingTable, config.gametimeFormattedColumn))
 			{}
 			else
 			{
@@ -2025,11 +2016,6 @@ public final class Main extends JavaPlugin
 		lastonline_field = this.getConfig().getString("basic-tracking.field-lastonline-field");
 		lastonline_formatted_key_value = this.getConfig().getString("basic-tracking.field-lastonline-formatted-key-value", "");
 		lastonline_formatted_field = this.getConfig().getString("basic-tracking.field-lastonline-formatted-field", "");
-
-		gametime_key_value = this.getConfig().getString("basic-tracking.field-gametime-key-value");
-		gametime_field = this.getConfig().getString("basic-tracking.field-gametime-field");
-		gametime_formatted_field = this.getConfig().getString("basic-tracking.field-gametime-formatted-field", "");
-		gametime_formatted_key_value = this.getConfig().getString("basic-tracking.field-gametime-formatted-key-value", "");
 
 		if (use_banned)
 		{
