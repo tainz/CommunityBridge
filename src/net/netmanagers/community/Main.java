@@ -119,9 +119,6 @@ public final class Main extends JavaPlugin
   public static String level_key_value;
 	public static String level_field;
 
-  public static String health_key_value;
-	public static String health_field;
-
 	public static Map<String, Object> groups;
 
 	public static PermissionHandler permissionHandler;
@@ -282,8 +279,6 @@ public final class Main extends JavaPlugin
 		currentxp_formatted_field = null;
 		level_key_value = null;
 		level_field = null;
-		health_key_value = null;
-		health_field = null;
 
 		log.config("Disabled...");
 		log = null;
@@ -1124,8 +1119,8 @@ public final class Main extends JavaPlugin
 
 				if (config.healthEnabled)
         {
-					checkDBSanity(u, health_key_value);
-					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '"+health_key_value+"'");
+					checkDBSanity(u, config.healthKeyValue);
+					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '"+config.healthKeyValue+"'");
 					if (res.next())
           {
             if (res.getInt(multi_table_value_field)>0)
@@ -1199,9 +1194,9 @@ public final class Main extends JavaPlugin
 
 					if (config.healthEnabled)
           {
-						if (res.getInt(health_field) > 0)
+						if (res.getInt(config.healthColumn) > 0)
             {
-              p.setHealth(res.getInt(health_field));
+              p.setHealth(res.getInt(config.healthColumn));
             }
 					}
 				}
@@ -1361,7 +1356,7 @@ public final class Main extends JavaPlugin
 
 				if (config.healthEnabled)
         {
-          sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + health + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + health_key_value + "'");
+          sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + health + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + config.healthKeyValue + "'");
         }
 
 				if (config.lifeticksEnabled)
@@ -1474,12 +1469,12 @@ public final class Main extends JavaPlugin
 
 				if (config.levelEnabled)
         {
-          SQLParts.add(Main.level_field + " = '" + level + "'");
+          SQLParts.add(level_field + " = '" + level + "'");
         }
 
 				if (config.healthEnabled)
         {
-          SQLParts.add(Main.health_field + " = '" + health + "'");
+          SQLParts.add(config.healthColumn + " = '" + health + "'");
         }
 
 				if (config.lifeticksEnabled)
@@ -1896,7 +1891,7 @@ public final class Main extends JavaPlugin
 		if (config.healthEnabled)
 		{
 			if (checkColumn("basic-tracking.field-health-field", trackingTable,
-						          health_field))
+						          config.healthColumn))
 			{}
 			else
 			{
@@ -2065,9 +2060,6 @@ public final class Main extends JavaPlugin
 
 		level_key_value = this.getConfig().getString("basic-tracking.field-level-key-value");
 		level_field = this.getConfig().getString("basic-tracking.field-level-field");
-
-		health_key_value = this.getConfig().getString("basic-tracking.field-health-key-value");
-		health_field = this.getConfig().getString("basic-tracking.field-health-field");
 
 		if (use_banned)
 		{
