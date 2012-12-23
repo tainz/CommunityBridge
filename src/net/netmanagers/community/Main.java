@@ -108,6 +108,7 @@ public final class Main extends JavaPlugin
 			log.severe(e.getMessage());
 			log.severe("Disabling CommunityBridge.");
 			disablePlugin();
+			return;
 		}
 
 		sql = new SQL(config.databaseHost + ":" + config.databasePort,
@@ -116,37 +117,36 @@ public final class Main extends JavaPlugin
 									config.databasePassword + "");
 		sql.initialize();
 
-		if (sql.checkConnection())
-		{
-			if (analyzeConfiguration())
-			{
-				if (config.statisticsTrackingEnabled && config.onlinestatusEnabled)
-				{
-					ResetOnlineStatus();
-				}
-				syncAll();
-
-				if (config.auto_sync)
-				{
-					startSyncing();
-				}
-
-				if (config.auto_remind)
-				{
-					startAutoReminder();
-				}
-
-				log.config("Enabled!");
-			}
-			else
-			{
-				disablePlugin();
-			}
-		}
-		else
+		if (sql.checkConnection() == false)
 		{
 			disablePlugin();
+			return;
 		}
+
+		if (config.analyzeConfiguration(sql) == false)
+		{
+			disablePlugin();
+			return;
+		}
+
+		if (config.statisticsTrackingEnabled && config.onlinestatusEnabled)
+		{
+			ResetOnlineStatus();
+		}
+
+		syncAll();
+
+		if (config.auto_sync)
+		{
+			startSyncing();
+		}
+
+		if (config.auto_remind)
+		{
+			startAutoReminder();
+		}
+
+		log.config("Enabled!");
 	}
 
 	@Override
@@ -175,7 +175,7 @@ public final class Main extends JavaPlugin
 
 	private static void disablePlugin()
   {
-		// TODO: Consider: className.Bukkit.getPluginManager().disablePlugin(className);
+		// TODO: Consider: Bukkit.getServer().getPluginManager().disablePlugin(this);
 		PluginManager pm = Bukkit.getServer().getPluginManager();
 		for (Plugin plugin : pm.getPlugins()) {
             if (plugin.getDescription().getName().equalsIgnoreCase(thisPluginName)) {
@@ -1438,405 +1438,6 @@ public final class Main extends JavaPlugin
 			log.severe("Broken Save Stats SQL Query, check your config.yml");
 			disablePlugin();
 		}
-	}
-
-	/**
-  * Check to see if a table exists.
-  *
-	* @param tableName Name of the table to check
-	* @return Empty string if the check succeeds otherwise an error string
-  */
-	public static Boolean checkColumn(String keyName, String tableName,
-					                          String columnName)
-	{
-		ResultSet result;
-		String errorBase;
-		errorBase = "Error while checking '" + keyName
-						  + "' set to '" + columnName + "': ";
-
-		try
-		{
-			result = sql.sqlQuery("SHOW COLUMNS FROM `" + tableName
-							              + "` LIKE '" + columnName + "'");
-
-			if (result == null)
-			{}
-			else
-			{
-
-				if (result.next())
-				{
-					return true;
-}
-				log.severe(errorBase + "Column does not exist.");
-			}
-			return false;
-		}
-		catch (SQLException e)
-		{
-			log.severe(errorBase + e.getMessage());
-			return false;
-		}
-		catch (MalformedURLException e)
-		{
-			log.severe(errorBase + e.getMessage());
-			return false;
-		}
-		catch (InstantiationException e)
-		{
-			log.severe(errorBase + e.getMessage());
-			return false;
-		}
-		catch (IllegalAccessException e)
-		{
-			log.severe(errorBase + e.getMessage());
-			return false;
-		}
-	}
-
-	/**
-  * Check to see if a table exists.
-  *
-	* @param tableName Name of the table to check
-	* @return Empty string if the check succeeds otherwise an error string
-  */
-	public static Boolean checkTable(String keyName, String tableName)
-	{
-		ResultSet result;
-		String errorBase;
-		errorBase = "Error while checking '" + keyName
-						  + "' set to '" + tableName + "': ";
-
-		try
-		{
-			result = sql.sqlQuery("SHOW TABLES LIKE '" + tableName + "'");
-
-			if (result == null)
-			{}
-			else
-			{
-
-				if (result.next())
-				{
-					return true;
-}
-				log.severe(errorBase + "Table does not exist.");
-			}
-			return false;
-		}
-		catch (SQLException e)
-		{
-			log.severe(errorBase + e.getMessage());
-			return false;
-		}
-		catch (MalformedURLException e)
-		{
-			log.severe(errorBase + e.getMessage());
-			return false;
-		}
-		catch (InstantiationException e)
-		{
-			log.severe(errorBase + e.getMessage());
-			return false;
-		}
-		catch (IllegalAccessException e)
-		{
-			log.severe(errorBase + e.getMessage());
-			return false;
-		}
-	}
-
-	/**
-  * Analyze the configuration for potential problems.
-  *
-  * Checks for the existence of the specified tables and columns within those
-	* tables.
-  */
-	public static Boolean analyzeConfiguration()
-	{
-		Boolean status;
-		Boolean userTableStatus;
-		Boolean multiTableStatus = true;
-		Boolean tempStatus;
-
-		status = checkTable("users-table.table", config.users_table);
-		userTableStatus = status;
-
-		if (status)
-		{
-			status = status & checkColumn("users-table.username",
-																		config.users_table,
-							                      config.user_name_field);
-			status = status & checkColumn("users-table.user-id-field",
-																		config.users_table,
-							                      config.user_id_field);
-			if (config.secondary_groups)
-			{
-				status = status & checkColumn("user-table.secondary-groups-id-field",
-								                      config.users_table,
-																			config.secondary_groups_id_field);
-			}
-
-			if (config.useBanned)
-			{
-				status = status & checkColumn("user-table.banned-field",
-								                      config.users_table,
-																			config.is_banned_field);
-			}
-		}
-
-		if (config.groups_table_enabled)
-		{
-			tempStatus = checkTable("groups-table.table", config.groups_table);
-
-			status = status & tempStatus;
-
-			if (tempStatus)
-			{
-				status = status & checkColumn("groups-table.user-id-field",
-								                      config.groups_table,
-																			config.groups_user_id_field);
-				status = status & checkColumn("groups-table.group-id-field",
-								                      config.groups_table,
-																			config.groups_group_id_field);
-			}
-		}
-		else
-		{
-			// We're not using groups table, so we check the group id designated
-			// by user-table keys.
-			if (status && config.groupSynchronizationPrimaryEnabled)
-			{
-				status = status & checkColumn("users-table.groups-id-field",
-								                      config.users_table,
-																			config.groups_id_field);
-			}
-		}
-
-		if (config.banlistTableEnabled)
-		{
-			tempStatus = checkTable("banlist-table.table", config.banlist_table);
-			status = status & tempStatus;
-
-			if (tempStatus)
-			{
-				status = status & checkColumn("banlist-table.user-id-field",
-								                      config.banlist_table,
-																			config.banlist_user_id_field);
-				//status = status & checkColumn("banlist-table.reason-field",
-				//				                      banlist_table, banlist_reason_field);
-			}
-		}
-
-		if (config.multiTables)
-		{
-			multiTableStatus = checkTable("multi-table.table", config.multi_table);
-			status = status & multiTableStatus;
-
-			if (multiTableStatus)
-			{
-				status = status & checkColumn("multi-table.field-user-id-field",
-								                      config.multi_table,
-																			config.multi_table_user_id_field);
-				if (config.multiTablesUseKey)
-				{
-					status = status & checkColumn("multi-table.field-key-field",
-									                      config.multi_table,
-																				config.multi_table_key_field);
-				}
-				else
-				{
-					status = status & checkColumn("multi-table.field-value-field",
-									                      config.multi_table,
-																				config.multi_table_value_field);
-				}
-			}
-		}
-
-		if (config.require_avatar)
-		{
-			tempStatus = checkTable("profile-requirements.require-avatar-table",
-							                config.avatar_table);
-			status = status & tempStatus;
-
-			if (tempStatus)
-			{
-				status = status
-							 & checkColumn("profile-requirements.require-avatar-users-id-field",
-								             config.avatar_table, config.avatar_user_field);
-				status = status
-							 & checkColumn("profile-requirements.require-avatar-field",
-								             config.avatar_table, config.avatar_field);
-			}
-		}
-
-		if (config.require_minposts)
-		{
-			tempStatus = checkTable("profile-requirements.require-minposts-table",
-							                config.minposts_table);
-			status = status & tempStatus;
-
-			if (tempStatus)
-			{
-				status = status
-							 & checkColumn("profile-requirements.require-minposts-user-id-field",
-								             config.minposts_table, config.minposts_user_field);
-				status = status
-							 & checkColumn("profile-requirements.require-minposts-user-id-field",
-								             config.minposts_table, config.minposts_field);
-			}
-		}
-
-		if (config.statisticsTrackingEnabled)
-		{
-			if (config.multiTables && multiTableStatus)
-			{
-				checkTrackingColumns(config.multi_table);
-			}
-			else if (userTableStatus)
-			{
-				checkTrackingColumns(config.users_table);
-			}
-		}
-
-		return status;
-	}
-
-	/**
-  * Check the basic tracking columns configuration
-  *
-	* @param trackingTable Name of the table that the tracking columns reside on
-	*/
-	public static void checkTrackingColumns(String trackingTable)
-	{
-		if (config.onlinestatusEnabled)
-		{
-			if (checkColumn("basic-tracking.field-onlinestatus-field", trackingTable,
-							        config.onlinestatusColumn))
-			{}
-			else
-			{
-				config.onlinestatusEnabled = false;
-				log.severe("'online status' tracking disabled due to previous error.");
-			}
-		}
-
-		if (config.lastonlineEnabled)
-		{
-			if (checkColumn("basic-tracking.field-lastonline-field", trackingTable,
-				              config.lastonlineColumn)
-			 && checkColumn("basic-tracking.field-lastonline-formatted-field",
-							        trackingTable, config.lastonlineFormattedColumn))
-			{}
-			else
-			{
-				config.lastonlineEnabled = false;
-				log.severe("'last online' tracking disabled due to previous error(s).");
-			}
-		}
-
-		if (config.gametimeEnabled)
-		{
-			if (checkColumn("basic-tracking.field-gametime-field", trackingTable,
-						          config.gametimeColumn)
-			 && checkColumn("basic-tracking.field-gametime-formatted-field",
-							        trackingTable, config.gametimeFormattedColumn))
-			{}
-			else
-			{
-				config.gametimeEnabled = false;
-				log.severe("'game time' tracking disabled due to previous error(s).");
-			}
-		}
-
-		if (config.totalxpEnabled)
-		{
-			if (checkColumn("basic-tracking.field-totalxp-field", trackingTable,
-						          config.totalxpColumn))
-			{}
-			else
-			{
-				config.totalxpEnabled = false;
-				log.severe("'total xp' tracking disabled due to previous error(s).");
-			}
-		}
-
-		if (config.currentxpEnabled)
-		{
-			if (checkColumn("basic-tracking.field-currentxp-field", trackingTable,
-						          config.currentxpColumn)
-			 && checkColumn("basic-tracking.field-currentxp-formatted-field",
-							        trackingTable, config.currentxpFormattedColumn))
-			{}
-			else
-			{
-				config.currentxpEnabled = false;
-				log.severe("'current xp' tracking disabled due to previous error(s).");
-			}
-		}
-
-		if (config.levelEnabled)
-		{
-			if (checkColumn("basic-tracking.field-level-field", trackingTable,
-						          config.levelColumn))
-			{}
-			else
-			{
-				config.levelEnabled = false;
-				log.severe("'level' tracking disabled due to previous error(s).");
-			}
-		}
-
-		if (config.healthEnabled)
-		{
-			if (checkColumn("basic-tracking.field-health-field", trackingTable,
-						          config.healthColumn))
-			{}
-			else
-			{
-				config.healthEnabled = false;
-				log.severe("'health' tracking disabled due to previous error(s).");
-			}
-		}
-
-		if (config.lifeticksEnabled)
-		{
-			if (checkColumn("basic-tracking.field-lifeticks-field", trackingTable,
-						          config.lifeticksColumn)
-			 && checkColumn("basic-tracking.field-lifeticks-formatted-field",
-							        trackingTable, config.lifeticksFormattedColumn))
-			{}
-			else
-			{
-				config.lifeticksEnabled = false;
-				log.severe("'lifeticks' tracking disabled due to previous error(s).");
-			}
-		}
-
-		if (config.walletEnabled)
-		{
-			if (checkColumn("basic-tracking.field-wallet-field", trackingTable,
-						          config.walletColumn))
-			{}
-			else
-			{
-				config.walletEnabled = false;
-				log.severe("'wallet' tracking disabled due to previous error(s).");
-			}
-		}
-
-    if ((config.onlinestatusEnabled || config.lastonlineEnabled
-			|| config.gametimeEnabled			|| config.totalxpEnabled
-			|| config.currentxpEnabled		|| config.levelEnabled
-			|| config.healthEnabled       || config.lifeticksEnabled
-			|| config.walletEnabled))
-		{}
-		else
-    {
-      config.statisticsTrackingEnabled = false;
-      log.severe("Basic tracking is enabled, but all individual trackers are"
-                +" disabled. Basic tracking is now turned off.");
-    }
 	}
 
 	public static boolean isOkayToSetPrimaryGroup(String groupID)
