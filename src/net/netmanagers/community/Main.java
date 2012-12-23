@@ -20,6 +20,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
+import org.ruhlendavis.mc.communitybridge.Configuration;
 import org.ruhlendavis.mc.communitybridge.PermissionHandler;
 import org.ruhlendavis.mc.communitybridge.PermissionHandlerBPermissions;
 import org.ruhlendavis.mc.communitybridge.PermissionHandlerGroupManager;
@@ -33,8 +34,9 @@ public final class Main extends JavaPlugin
 {
 	@SuppressWarnings("NonConstantLogger")
 
-	public static Log log;
 	public static String thisPluginName = "CommunityBridge";
+	public static org.ruhlendavis.mc.communitybridge.Configuration config;
+	public static Log log;
 	public static SQL sql;
 
 	public static boolean primary_group_synchronization_enabled;
@@ -160,7 +162,29 @@ public final class Main extends JavaPlugin
   {
 		instance = this;
 		log = new Log(this.getLogger(), Level.CONFIG);
-		saveDefaultConfig();
+		config = new org.ruhlendavis.mc.communitybridge.Configuration(this);
+
+		if (config.databaseUsername.equals("username")
+		 && config.databasePassword.equals("password"))
+		{
+			log.severe("You need to set configuration options in the config.yml.");
+			Bukkit.getServer().getPluginManager().disablePlugin(this);
+			return;
+		}
+
+		if (config.usePluginMetrics)
+		{
+			try
+			{
+				metrics = new Metrics(this);
+				metrics.start();
+				log.config("Plugin Metrics activated.");
+			}
+			catch (IOException e)
+			{
+				log.warning("Plugin Metrics submission failed.");
+			}
+		}
 
 		getServer().getPluginManager().registerEvents(new EventListener(), this);
 		getCommand("cbban").setExecutor(new Cmds());
@@ -169,37 +193,16 @@ public final class Main extends JavaPlugin
 		getCommand("cbsync").setExecutor(new Cmds());
 		getCommand("cbsyncall").setExecutor(new Cmds());
 
-		if (this.getConfig().get("db-username").equals("username")
-       && this.getConfig().get("db-password").equals("password"))
     {
-			log.config("Using default config file.");
-			Bukkit.getServer().getPluginManager().disablePlugin(this);
-		}
-    else
-    {
-			if (this.getConfig().getBoolean("plugin-metrics", true))
-			{
-				try
-				{
-					metrics = new Metrics(this);
-					metrics.start();
-					log.config("Plugin Metrics activated.");
-				}
-				catch (IOException e)
-				{
-					log.warning("Plugin Metrics submission failed.");
-					// We failed to submit the stats...but we don't care.
-				}
-			}
 			if (loadConfig() == false)
 			{
 				return;
 			}
 
-			sql = new SQL(this.getConfig().get("db-host") + ":" + this.getConfig().get("db-port"),
-							      this.getConfig().get("db-database") + "",
-							      this.getConfig().get("db-username") + "",
-							      this.getConfig().get("db-password") + "");
+			sql = new SQL(config.databaseHost + ":" + config.databasePort,
+							      config.databaseName + "",
+							      config.databaseUsername + "",
+							      config.databasePassword + "");
 			sql.initialize();
 
 			if (sql.checkConnection())
@@ -1975,48 +1978,24 @@ public final class Main extends JavaPlugin
 
 	private boolean loadConfig()
 	{
-		// EXPIRABLE: We'll remove the deprecated setting in six months. Remove On: 2012/May/13
-		// We do this first so that if log-level is set, it will override the
-		// deprecated setting 'show-config'.
-		show_config = this.getConfig().getBoolean("show-config");
-
-		if (show_config)
-		{
-			log.warning("The setting 'show-config' in config.yml is deprecated. Use log-level: config instead.");
-			log.setLevel(Level.CONFIG);
-		}
-
-		// Either way, we should set the log level before doing anything else.
-		if (this.getConfig().getString("log-level") == null
-			||this.getConfig().getString("log-level").isEmpty())
-		{}
-		else
-		{
-			log.setLevel(this.getConfig().getString("log-level"));
-		}
-
-		// TODO: Remove 'permissions_system' field when all permissions system
-		// related code has been moved to the PermissionHandler interface.
-		permissions_system = this.getConfig().getString("permissions-system");
-
 		try
 		{
-			if (this.getConfig().getString("permissions-system").equalsIgnoreCase("PEX"))
+			if (config.permissionsSystem.equalsIgnoreCase("PEX"))
 			{
 				permissionHandler = new PermissionHandlerPermissionsEx();
 				log.config("Permissions System: PermissionsEx (PEX)");
 			}
-			else if (this.getConfig().getString("permissions-system").equalsIgnoreCase("bPerms"))
+			else if (config.permissionsSystem.equalsIgnoreCase("bPerms"))
 			{
 				permissionHandler = new PermissionHandlerBPermissions();
 				log.config("Permissions System: bPermissions (bPerms)");
 			}
-			else if (this.getConfig().getString("permissions-system").equalsIgnoreCase("GroupManager"))
+			else if (config.permissionsSystem.equalsIgnoreCase("GroupManager"))
 			{
 				permissionHandler = new PermissionHandlerGroupManager();
 				log.config("Permissions System: GroupManager");
 			}
-			else if (this.getConfig().getString("permissions-system").equalsIgnoreCase("PermsBukkit"))
+			else if (config.permissionsSystem.equalsIgnoreCase("PermsBukkit"))
 			{
 				permissionHandler = new PermissionHandlerPermissionsBukkit();
 				log.config("Permissions System: PermissionsBukkit (PermsBukkit)");
