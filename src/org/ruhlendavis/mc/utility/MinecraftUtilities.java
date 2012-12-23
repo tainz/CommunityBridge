@@ -10,12 +10,12 @@ import org.bukkit.plugin.Plugin;
  *
  * @author Feaelin (Iain E. Davis) <iain@ruhlendavis.org>
  */
-public final class MinecraftTools
+public final class MinecraftUtilities
 {
 	/**
 	 *  Private constructor prevents instantiation of the class.
 	 */
-	private MinecraftTools() {}
+	private MinecraftUtilities() {}
 	/**
 	 * Given a pluginName string returns that plugin's version string.
 	 * @param String Name of the plugin

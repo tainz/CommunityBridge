@@ -3,8 +3,8 @@ package org.ruhlendavis.mc.communitybridge;
 import net.netmanagers.community.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
-import org.ruhlendavis.mc.utility.MinecraftTools;
-import org.ruhlendavis.utility.IainStringTools;
+import org.ruhlendavis.mc.utility.MinecraftUtilities;
+import org.ruhlendavis.utility.StringUtilities;
 import ru.tehkode.permissions.PermissionGroup;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
@@ -33,10 +33,10 @@ public class PermissionHandlerPermissionsEx implements PermissionHandler
 		}
 		String bukkitVersion = Bukkit.getBukkitVersion().replace("R", "");
 		// EXPIRABLE: ST2012-Dec-21: At some point we'll just make these requirements
-		if (IainStringTools.compareVersion(bukkitVersion, "1.4.5.1.0") > -1)
+		if (StringUtilities.compareVersion(bukkitVersion, "1.4.5.1.0") > -1)
 		{
-			String pexVersion = MinecraftTools.getPluginVersion("PermissionsEx");
-			if (IainStringTools.compareVersion("1.19.5", pexVersion) == 1)
+			String pexVersion = MinecraftUtilities.getPluginVersion("PermissionsEx");
+			if (StringUtilities.compareVersion("1.19.5", pexVersion) == 1)
 			{
 				throw new IllegalStateException("This version of Minecraft is incompatible with PermissionsEx versions earlier than 1.19.5. Disabling CommunityBridge.");
 			}

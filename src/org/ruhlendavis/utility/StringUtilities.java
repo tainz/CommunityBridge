@@ -1,18 +1,18 @@
 package org.ruhlendavis.utility;
 
 /**
- * A small collection of number related methods that don't belong anywhere else.
+ * A small collection of string related methods that don't belong anywhere else.
  *
  * By design, this class cannot be instantiated nor can it be sub-classed.
  *
  * @author Feaelin (Iain E. Davis) <iain@ruhlendavis.org>
  */
-public final class IainStringTools
+public final class StringUtilities
 {
 	/**
 	 *  Private constructor prevents instantiation of the class.
 	 */
-	private IainStringTools() {}
+	private StringUtilities() {}
 
 	/**
 	 * Returns:
