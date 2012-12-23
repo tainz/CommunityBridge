@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.ruhlendavis.mc.communitybridge;
 
 import java.util.ArrayList;
@@ -11,6 +7,7 @@ import java.util.logging.Level;
 import net.netmanagers.community.Main;
 
 /**
+ * Class for storing configuration information loaded from the yaml files.
  *
  * @author Feaelin (Iain E. Davis) <iain@ruhlendavis.org>
  */
@@ -135,12 +132,22 @@ public class Configuration
   public String walletKeyValue;
 	public String walletColumn;
 
+	/**
+	 * Constructor for the configuration class.
+	 *
+	 * @param Main The plugin object of this plugin.
+	 */
 	public Configuration(Main plugin)
 	{
 		loadConfig(plugin);
 		reportConfig();
 	}
 
+	/**
+	 * Loads the configuration information from the yaml file.
+	 *
+	 * @param Main The plugin object for this plugin.
+	 */
 	private void loadConfig(Main plugin)
 	{
 		plugin.saveDefaultConfig();
@@ -300,6 +307,10 @@ public class Configuration
 		walletKeyValue = config.getString("basic-tracking.field-wallet-key-value", "");
 	}
 
+	/**
+	 * Method for printing the configuration out to the logging system.
+	 * 
+	 */
 	private void reportConfig()
 	{
 		Main.log.config(  "Log level:                             " + logLevel);
