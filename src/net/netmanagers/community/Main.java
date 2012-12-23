@@ -5,10 +5,8 @@ import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import net.netmanagers.api.SQL;
@@ -20,7 +18,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
-import org.ruhlendavis.mc.communitybridge.Configuration;
 import org.ruhlendavis.mc.communitybridge.PermissionHandler;
 import org.ruhlendavis.mc.communitybridge.PermissionHandlerBPermissions;
 import org.ruhlendavis.mc.communitybridge.PermissionHandlerGroupManager;
@@ -39,16 +36,12 @@ public final class Main extends JavaPlugin
 	public static Log log;
 	public static SQL sql;
 
-	public static boolean primary_group_synchronization_enabled;
-	public static List<String> primary_group_ids_to_ignore;
-
 	public static boolean show_config = false;
 	public static boolean multi_tables = false;
 	public static boolean multi_tables_use_key = false;
 	public static boolean use_banned = false;
 	public static boolean banlist_table_enabled = false;
 	public static boolean groups_table_enabled = false;
-	public static boolean basic_tracking = false;
 
   public static boolean auto_sync = false;
   public static boolean auto_remind = false;
@@ -102,16 +95,6 @@ public final class Main extends JavaPlugin
 	public static String registered_message;
 	public static String unregistered_message;
 	public static String unregistered_messagereminder;
-
-	public static boolean onlinestatus_enabled = false;
-	public static boolean lastonline_enabled = false;
-	public static boolean gametime_enabled = false;
-	public static boolean totalxp_enabled = false;
-	public static boolean currentxp_enabled = false;
-	public static boolean level_enabled = false;
-	public static boolean health_enabled = false;
-	public static boolean lifeticks_enabled = false;
-	public static boolean wallet_enabled = false;
 
 	public static String onlinestatus_key_value;
 	public static String onlinestatus_field;
@@ -209,7 +192,7 @@ public final class Main extends JavaPlugin
       {
 				if (analyzeConfiguration())
 				{
-					if (basic_tracking && onlinestatus_enabled)
+					if (config.statisticsTrackingEnabled && config.onlinestatusEnabled)
 					{
 						ResetOnlineStatus();
 					}
@@ -258,7 +241,6 @@ public final class Main extends JavaPlugin
 
 		permissionHandler = null;
 
-		primary_group_ids_to_ignore = null;
 		groups = null;
 		auto_every_unit = null;
 		permissions_system = null;
@@ -851,7 +833,7 @@ public final class Main extends JavaPlugin
             }
 					}
 
-					if (primary_group_synchronization_enabled)
+					if (config.groupSynchronizationPrimaryEnabled)
 					{
 						// Note: groups is a map <String, Object> so we need the cast.
 						groupID = res.getString(groups_id_field);
@@ -908,7 +890,7 @@ public final class Main extends JavaPlugin
 
 					if (firstsync)
           {
-						if (basic_tracking)
+						if (config.statisticsTrackingEnabled)
             {
               Main.LoadTrackingStats(id, p);
             }
@@ -928,7 +910,7 @@ public final class Main extends JavaPlugin
 						log.fine(p.getName() + " linked to Community User #" + id
 																 + ", Group: " + groupName);
 					}
-          else if (basic_tracking)
+          else if (config.statisticsTrackingEnabled)
           {
 						UpdateTrackingStats(id, p);
 					}
@@ -1096,13 +1078,13 @@ public final class Main extends JavaPlugin
 			if (multi_tables && multi_tables_use_key)
       {
 				// Check for each custom field in the database.
-				if (onlinestatus_enabled)
+				if (config.onlinestatusEnabled)
         {
 					checkDBSanity(u, onlinestatus_key_value);
 					sql.updateQuery("UPDATE "+Main.multi_table+" SET " + multi_table_value_field +" = '" + onlinestatus_valueonline + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + onlinestatus_key_value + "'");
 				}
 
-				if (lastonline_enabled)
+				if (config.lastonlineEnabled)
         {
 					checkDBSanity(u, lastonline_key_value);
 					sql.updateQuery("UPDATE " + Main.multi_table
@@ -1112,7 +1094,7 @@ public final class Main extends JavaPlugin
 									       + lastonline_key_value + "'");
 				}
 
-				if (currentxp_enabled)
+				if (config.currentxpEnabled)
         {
 					checkDBSanity(u, currentxp_key_value);
 					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '"+currentxp_key_value+"'");
@@ -1122,7 +1104,7 @@ public final class Main extends JavaPlugin
           }
 				}
 
-				if (totalxp_enabled)
+				if (config.totalxpEnabled)
         {
 					checkDBSanity(u, totalxp_key_value);
 					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '"+totalxp_key_value+"'");
@@ -1132,7 +1114,7 @@ public final class Main extends JavaPlugin
           }
 				}
 
-				if (lifeticks_enabled)
+				if (config.lifeticksEnabled)
         {
 					checkDBSanity(u, lifeticks_key_value);
 					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '"+lifeticks_key_value+"'");
@@ -1145,7 +1127,7 @@ public final class Main extends JavaPlugin
           }
 				}
 
-				if (level_enabled)
+				if (config.levelEnabled)
         {
 					checkDBSanity(u, level_key_value);
 					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '"+level_key_value+"'");
@@ -1155,7 +1137,7 @@ public final class Main extends JavaPlugin
           }
 				}
 
-				if (health_enabled)
+				if (config.healthEnabled)
         {
 					checkDBSanity(u, health_key_value);
 					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '"+health_key_value+"'");
@@ -1175,12 +1157,12 @@ public final class Main extends JavaPlugin
         {
 					res = sql.sqlQuery("SELECT * FROM " + multi_table + " WHERE " + multi_table_value_field + " = '" + p.getName() + "'");
 
-					if (onlinestatus_enabled)
+					if (config.onlinestatusEnabled)
           {
             sql.updateQuery("UPDATE " + multi_table + " SET " + onlinestatus_field + " = '" + onlinestatus_valueonline + "' WHERE " + multi_table_user_id_field + " = '" + u + "'");
           }
 
-					if (lastonline_enabled)
+					if (config.lastonlineEnabled)
           {
             sql.updateQuery("UPDATE " + multi_table + " SET " + lastonline_field + " = " + t + " WHERE " + multi_table_user_id_field + " = '" + u + "'");
           }
@@ -1189,12 +1171,12 @@ public final class Main extends JavaPlugin
         {
 					res = sql.sqlQuery("SELECT * FROM " + users_table + " WHERE " + user_name_field + " = '" + p.getName() + "'");
 
-					if (onlinestatus_enabled)
+					if (config.onlinestatusEnabled)
           {
             sql.updateQuery("UPDATE " + users_table + " SET " + onlinestatus_field + " = '" + onlinestatus_valueonline + "' WHERE " + user_id_field + " = '" + u + "'");
           }
 
-					if (lastonline_enabled)
+					if (config.lastonlineEnabled)
           {
             sql.updateQuery("UPDATE " + users_table + " SET " + lastonline_field + " = " + t +" WHERE " + user_id_field + " = '" + u + "'");
           }
@@ -1207,17 +1189,17 @@ public final class Main extends JavaPlugin
 
 				if (res.next())
         {
-					if (currentxp_enabled)
+					if (config.currentxpEnabled)
           {
             p.setExp(res.getInt(currentxp_field));
           }
 
-					if (totalxp_enabled)
+					if (config.totalxpEnabled)
           {
             p.setTotalExperience(res.getInt(totalxp_field));
           }
 
-					if (lifeticks_enabled)
+					if (config.lifeticksEnabled)
           {
 						if (res.getInt(lifeticks_field) > 0)
             {
@@ -1225,12 +1207,12 @@ public final class Main extends JavaPlugin
             }
 					}
 
-					if (level_enabled)
+					if (config.levelEnabled)
           {
             p.setLevel(res.getInt(level_field));
           }
 
-					if (health_enabled)
+					if (config.healthEnabled)
           {
 						if (res.getInt(health_field) > 0)
             {
@@ -1333,7 +1315,7 @@ public final class Main extends JavaPlugin
 		try {
 			if (multi_tables && multi_tables_use_key)
       {
-				if (lastonline_enabled)
+				if (config.lastonlineEnabled)
         {
 					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + lastonline_key_value + "'");
 					if (res.next())
@@ -1342,7 +1324,7 @@ public final class Main extends JavaPlugin
           }
 				}
 
-				if (lastonline_enabled && gametime_enabled)
+				if (config.lastonlineEnabled && config.gametimeEnabled)
         {
 					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + gametime_key_value + "'");
 
@@ -1358,17 +1340,17 @@ public final class Main extends JavaPlugin
 					}
 				}
 
-				if (onlinestatus_enabled)
+				if (config.onlinestatusEnabled)
         {
           sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + onlinestatus_valueonline + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + onlinestatus_key_value + "'");
         }
 
-				if (totalxp_enabled)
+				if (config.totalxpEnabled)
         {
           sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + totalxp + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + totalxp_key_value + "'");
         }
 
-				if (currentxp_enabled)
+				if (config.currentxpEnabled)
         {
           sql.updateQuery("UPDATE " + multi_table
 									       + " SET " + multi_table_value_field + " = '" + currentxp
@@ -1387,17 +1369,17 @@ public final class Main extends JavaPlugin
 					}
         }
 
-				if (level_enabled)
+				if (config.levelEnabled)
         {
           sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + level + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + level_key_value + "'");
         }
 
-				if (health_enabled)
+				if (config.healthEnabled)
         {
           sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + health + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + health_key_value + "'");
         }
 
-				if (lifeticks_enabled)
+				if (config.lifeticksEnabled)
         {
           sql.updateQuery("UPDATE " + multi_table
 									       + " SET " + multi_table_value_field + " = '"
@@ -1416,7 +1398,7 @@ public final class Main extends JavaPlugin
 					}
         }
 
-				if (lastonline_enabled)
+				if (config.lastonlineEnabled)
         {
 					sql.updateQuery("UPDATE " + multi_table
                          + " SET " + multi_table_value_field + " = '" + t
@@ -1435,7 +1417,7 @@ public final class Main extends JavaPlugin
           }
         }
 
-				if (lastonline_enabled && gametime_enabled)
+				if (config.lastonlineEnabled && config.gametimeEnabled)
         {
 					sql.updateQuery("UPDATE " + multi_table
                          + " SET " + multi_table_value_field + " = '" + gametime
@@ -1467,12 +1449,12 @@ public final class Main extends JavaPlugin
 
 				if (res.next())
         {
-					if (lastonline_enabled)
+					if (config.lastonlineEnabled)
           {
             lastonline = res.getInt(lastonline_field);
           }
 
-					if (lastonline_enabled && gametime_enabled)
+					if (config.lastonlineEnabled && config.gametimeEnabled)
           {
 						gametime = res.getInt(gametime_field);
 						if (lastonline > 0)
@@ -1484,17 +1466,17 @@ public final class Main extends JavaPlugin
 				}
 
 				LinkedList <String> SQLParts = new LinkedList<String>();
-				if (onlinestatus_enabled)
+				if (config.onlinestatusEnabled)
         {
           SQLParts.add(Main.onlinestatus_field + " = '" + onlinestatus_valueonline + "'");
         }
 
-				if (totalxp_enabled)
+				if (config.totalxpEnabled)
         {
           SQLParts.add(Main.totalxp_field + " = '" + totalxp + "'");
         }
 
-				if (currentxp_enabled)
+				if (config.currentxpEnabled)
         {
           SQLParts.add(Main.currentxp_field + " = '" + currentxp + "'");
 
@@ -1505,17 +1487,17 @@ public final class Main extends JavaPlugin
 					}
         }
 
-				if (level_enabled)
+				if (config.levelEnabled)
         {
           SQLParts.add(Main.level_field + " = '" + level + "'");
         }
 
-				if (health_enabled)
+				if (config.healthEnabled)
         {
           SQLParts.add(Main.health_field + " = '" + health + "'");
         }
 
-				if (lifeticks_enabled)
+				if (config.lifeticksEnabled)
         {
           SQLParts.add(Main.lifeticks_field + " = '" + lifeticks + "'");
 
@@ -1526,7 +1508,7 @@ public final class Main extends JavaPlugin
 					}
         }
 
-				if (gametime_enabled)
+				if (config.gametimeEnabled)
         {
 					SQLParts.add(Main.gametime_field + " = '" + gametime + "'");
 
@@ -1538,7 +1520,7 @@ public final class Main extends JavaPlugin
           }
         }
 
-				if (lastonline_enabled)
+				if (config.lastonlineEnabled)
         {
 					SQLParts.add(Main.lastonline_field + " = '" + t + "'");
 
@@ -1749,7 +1731,7 @@ public final class Main extends JavaPlugin
 		{
 			// We're not using groups table, so we check the group id designated
 			// by user-table keys.
-			if (status && primary_group_synchronization_enabled)
+			if (status && config.groupSynchronizationPrimaryEnabled)
 			{
 				status = status & checkColumn("users-table.groups-id-field",
 								                      users_table, groups_id_field);
@@ -1826,7 +1808,7 @@ public final class Main extends JavaPlugin
 			}
 		}
 
-		if (basic_tracking)
+		if (config.statisticsTrackingEnabled)
 		{
 			if (multi_tables && multiTableStatus)
 			{
@@ -1848,19 +1830,19 @@ public final class Main extends JavaPlugin
 	*/
 	public static void checkTrackingColumns(String trackingTable)
 	{
-		if (onlinestatus_enabled)
+		if (config.onlinestatusEnabled)
 		{
 			if (checkColumn("basic-tracking.field-onlinestatus-field", trackingTable,
 							        onlinestatus_field))
 			{}
 			else
 			{
-				onlinestatus_enabled = false;
+				config.onlinestatusEnabled = false;
 				log.severe("'online status' tracking disabled due to previous error.");
 			}
 		}
 
-		if (lastonline_enabled)
+		if (config.lastonlineEnabled)
 		{
 			if (checkColumn("basic-tracking.field-lastonline-field", trackingTable,
 				              lastonline_field)
@@ -1869,12 +1851,12 @@ public final class Main extends JavaPlugin
 			{}
 			else
 			{
-				lastonline_enabled = false;
+				config.lastonlineEnabled = false;
 				log.severe("'last online' tracking disabled due to previous error(s).");
 			}
 		}
 
-		if (gametime_enabled)
+		if (config.gametimeEnabled)
 		{
 			if (checkColumn("basic-tracking.field-gametime-field", trackingTable,
 						          gametime_field)
@@ -1883,24 +1865,24 @@ public final class Main extends JavaPlugin
 			{}
 			else
 			{
-				gametime_enabled = false;
+				config.gametimeEnabled = false;
 				log.severe("'game time' tracking disabled due to previous error(s).");
 			}
 		}
 
-		if (totalxp_enabled)
+		if (config.totalxpEnabled)
 		{
 			if (checkColumn("basic-tracking.field-totalxp-field", trackingTable,
 						          totalxp_field))
 			{}
 			else
 			{
-				totalxp_enabled = false;
+				config.totalxpEnabled = false;
 				log.severe("'total xp' tracking disabled due to previous error(s).");
 			}
 		}
 
-		if (currentxp_enabled)
+		if (config.currentxpEnabled)
 		{
 			if (checkColumn("basic-tracking.field-currentxp-field", trackingTable,
 						          currentxp_field)
@@ -1909,36 +1891,36 @@ public final class Main extends JavaPlugin
 			{}
 			else
 			{
-				currentxp_enabled = false;
+				config.currentxpEnabled = false;
 				log.severe("'current xp' tracking disabled due to previous error(s).");
 			}
 		}
 
-		if (level_enabled)
+		if (config.levelEnabled)
 		{
 			if (checkColumn("basic-tracking.field-level-field", trackingTable,
 						          level_field))
 			{}
 			else
 			{
-				level_enabled = false;
+				config.levelEnabled = false;
 				log.severe("'level' tracking disabled due to previous error(s).");
 			}
 		}
 
-		if (health_enabled)
+		if (config.healthEnabled)
 		{
 			if (checkColumn("basic-tracking.field-health-field", trackingTable,
 						          health_field))
 			{}
 			else
 			{
-				health_enabled = false;
+				config.healthEnabled = false;
 				log.severe("'health' tracking disabled due to previous error(s).");
 			}
 		}
 
-		if (lifeticks_enabled)
+		if (config.lifeticksEnabled)
 		{
 			if (checkColumn("basic-tracking.field-lifeticks-field", trackingTable,
 						          lifeticks_field)
@@ -1947,30 +1929,32 @@ public final class Main extends JavaPlugin
 			{}
 			else
 			{
-				lifeticks_enabled = false;
+				config.lifeticksEnabled = false;
 				log.severe("'lifeticks' tracking disabled due to previous error(s).");
 			}
 		}
 
-		if (wallet_enabled)
+		if (config.walletEnabled)
 		{
 			if (checkColumn("basic-tracking.field-wallet-field", trackingTable,
 						          wallet_field))
 			{}
 			else
 			{
-				wallet_enabled = false;
+				config.walletEnabled = false;
 				log.severe("'wallet' tracking disabled due to previous error(s).");
 			}
 		}
 
-    if ((onlinestatus_enabled || lastonline_enabled || gametime_enabled
-			 ||totalxp_enabled      || currentxp_enabled  || level_enabled
-			 ||health_enabled       || lifeticks_enabled  || wallet_enabled))
+    if ((config.onlinestatusEnabled || config.lastonlineEnabled
+			|| config.gametimeEnabled			|| config.totalxpEnabled
+			|| config.currentxpEnabled		|| config.levelEnabled
+			|| config.healthEnabled       || config.lifeticksEnabled
+			|| config.walletEnabled))
 		{}
 		else
     {
-      basic_tracking = false;
+      config.statisticsTrackingEnabled = false;
       log.severe("Basic tracking is enabled, but all individual trackers are"
                 +" disabled. Basic tracking is now turned off.");
     }
@@ -2017,22 +2001,7 @@ public final class Main extends JavaPlugin
 
 		// The new group synchronization section is handled here.
 		// Beginning with primary group.
-		primary_group_synchronization_enabled = this.getConfig().getBoolean("group-synchronization.primary-group.enabled", true);
-
-		log.config("Primary Group Synchronization Enabled: "
-						 + primary_group_synchronization_enabled);
-		if (primary_group_synchronization_enabled)
-		{
-			// primary group IDs to ignore
-			List<String> defaultList = new ArrayList<String>();
-			this.getConfig().addDefault("group-synchronization.primary-group.group-ids-to-ignore", defaultList);
-			primary_group_ids_to_ignore = this.getConfig().getStringList("group-synchronization.primary-group.group-ids-to-ignore");
-			log.config("Primary Group IDs to Ignore: "
-							 + primary_group_ids_to_ignore);
-		}
-
 		show_primary_group = this.getConfig().getBoolean("show-primary-group");
-		basic_tracking = this.getConfig().getBoolean("enable-basic-tracking");
 		multi_tables = this.getConfig().getBoolean("multi-tables");
 		multi_tables_use_key = this.getConfig().getBoolean("multi-tables-use-key");
 		secondary_groups = this.getConfig().getBoolean("secondary-groups");
@@ -2086,47 +2055,38 @@ public final class Main extends JavaPlugin
 		multi_table_key_value = this.getConfig().getString("multi-table.field-key-value");
 		multi_table_value_field = this.getConfig().getString("multi-table.field-value-field");
 
-		onlinestatus_enabled = this.getConfig().getBoolean("basic-tracking.field-onlinestatus-enabled");
 		onlinestatus_key_value = this.getConfig().getString("basic-tracking.field-onlinestatus-key-value");
 		onlinestatus_field = this.getConfig().getString("basic-tracking.field-onlinestatus-field");
 		onlinestatus_valueonline = this.getConfig().getString("basic-tracking.field-onlinestatus-valueonline");
 		onlinestatus_valueoffline = this.getConfig().getString("basic-tracking.field-onlinestatus-valueoffline");
 
-		lastonline_enabled = this.getConfig().getBoolean("basic-tracking.field-lastonline-enabled");
 		lastonline_key_value = this.getConfig().getString("basic-tracking.field-lastonline-key-value");
 		lastonline_field = this.getConfig().getString("basic-tracking.field-lastonline-field");
 		lastonline_formatted_key_value = this.getConfig().getString("basic-tracking.field-lastonline-formatted-key-value", "");
 		lastonline_formatted_field = this.getConfig().getString("basic-tracking.field-lastonline-formatted-field", "");
 
-		wallet_enabled = this.getConfig().getBoolean("basic-tracking.field-wallet-enabled");
 		wallet_key_value = this.getConfig().getString("basic-tracking.field-wallet-key-value");
 		wallet_field = this.getConfig().getString("basic-tracking.field-wallet-field");
 
-		gametime_enabled = this.getConfig().getBoolean("basic-tracking.field-gametime-enabled");
 		gametime_key_value = this.getConfig().getString("basic-tracking.field-gametime-key-value");
 		gametime_field = this.getConfig().getString("basic-tracking.field-gametime-field");
 		gametime_formatted_field = this.getConfig().getString("basic-tracking.field-gametime-formatted-field", "");
 		gametime_formatted_key_value = this.getConfig().getString("basic-tracking.field-gametime-formatted-key-value", "");
 
-		totalxp_enabled = this.getConfig().getBoolean("basic-tracking.field-totalxp-enabled");
 		totalxp_key_value = this.getConfig().getString("basic-tracking.field-totalxp-key-value");
 		totalxp_field = this.getConfig().getString("basic-tracking.field-totalxp-field");
 
-		currentxp_enabled = this.getConfig().getBoolean("basic-tracking.field-currentxp-enabled");
 		currentxp_key_value = this.getConfig().getString("basic-tracking.field-currentxp-key-value");
 		currentxp_field = this.getConfig().getString("basic-tracking.field-currentxp-field");
 		currentxp_formatted_key_value = this.getConfig().getString("basic-tracking.field-currentxp-formatted-key-value", "");
 		currentxp_formatted_field = this.getConfig().getString("basic-tracking.field-currentxp-formatted-field", "");
 
-		level_enabled = this.getConfig().getBoolean("basic-tracking.field-level-enabled");
 		level_key_value = this.getConfig().getString("basic-tracking.field-level-key-value");
 		level_field = this.getConfig().getString("basic-tracking.field-level-field");
 
-		health_enabled = this.getConfig().getBoolean("basic-tracking.field-health-enabled");
 		health_key_value = this.getConfig().getString("basic-tracking.field-health-key-value");
 		health_field = this.getConfig().getString("basic-tracking.field-health-field");
 
-		lifeticks_enabled = this.getConfig().getBoolean("basic-tracking.field-lifeticks-enabled");
 		lifeticks_key_value = this.getConfig().getString("basic-tracking.field-lifeticks-key-value");
 		lifeticks_field = this.getConfig().getString("basic-tracking.field-lifeticks-field");
 		lifeticks_formatted_key_value = this.getConfig().getString("basic-tracking.field-lifeticks-formatted-key-value", "");
@@ -2145,21 +2105,21 @@ public final class Main extends JavaPlugin
 		log.config("Auto Remind :" + auto_remind);
 		log.config("Kick Unregistered : " + kick_unregistered);
 		log.config("Multi Tables : " + multi_tables);
-		log.config("Basic Tracking : " + basic_tracking);
+		log.config("Basic Tracking : " + config.statisticsTrackingEnabled);
 		log.config("Require Avatar : " + require_avatar);
 		log.config("Min Posts : " + require_minposts);
 
-		if (basic_tracking)
+		if (config.statisticsTrackingEnabled)
 		{
-			log.config("Tracking Online Status : " + onlinestatus_enabled);
-			log.config("Tracking Last Online   : " + lastonline_enabled);
-			log.config("Tracking Game Time     : " + gametime_enabled);
-			log.config("Tracking Total XP      : " + totalxp_enabled);
-			log.config("Tracking Current XP    : " + currentxp_enabled);
-			log.config("Tracking Level         : " + level_enabled);
-			log.config("Tracking Health        : " + health_enabled);
-			log.config("Tracking Life Ticks    : " + lifeticks_enabled);
-			log.config("Tracking Wallet        : " + wallet_enabled);
+			log.config("Tracking Online Status : " + config.onlinestatusEnabled);
+			log.config("Tracking Last Online   : " + config.lastonlineEnabled);
+			log.config("Tracking Game Time     : " + config.gametimeEnabled);
+			log.config("Tracking Total XP      : " + config.totalxpEnabled);
+			log.config("Tracking Current XP    : " + config.currentxpEnabled);
+			log.config("Tracking Level         : " + config.levelEnabled);
+			log.config("Tracking Health        : " + config.healthEnabled);
+			log.config("Tracking Life Ticks    : " + config.lifeticksEnabled);
+			log.config("Tracking Wallet        : " + config.walletEnabled);
 		}
 
 		groups = this.getConfig().getConfigurationSection("groups").getValues(true);
@@ -2171,7 +2131,7 @@ public final class Main extends JavaPlugin
 
 	public static boolean isOkayToSetPrimaryGroup(String groupID)
 	{
-		return primary_group_synchronization_enabled
-			  && (groupID == null || !primary_group_ids_to_ignore.contains(groupID));
+		return config.groupSynchronizationPrimaryEnabled
+			  && (groupID == null || !config.primaryGroupIDsToIgnore.contains(groupID));
 	}
 }

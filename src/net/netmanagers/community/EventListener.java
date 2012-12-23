@@ -1,7 +1,6 @@
 package net.netmanagers.community;
 
 import java.net.MalformedURLException;
-
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,20 +11,20 @@ public class EventListener implements Listener {
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		Player p = event.getPlayer();					
+		Player p = event.getPlayer();
 		Main.SyncPlayer(p, true);
 	}
-	
+
 	@EventHandler
-	public void onPlayerDisconnect(PlayerQuitEvent event) {						
-		
-		if (Main.basic_tracking) {			
-			Player p = event.getPlayer();			
-			int id = Main.getUserId(p.getName());			
+	public void onPlayerDisconnect(PlayerQuitEvent event) {
+
+		if (Main.config.statisticsTrackingEnabled) {
+			Player p = event.getPlayer();
+			int id = Main.getUserId(p.getName());
 			if(id > 0){
 				Main.UpdateTrackingStats(id, p);
-				
-				if(Main.onlinestatus_enabled){
+
+				if(Main.config.onlinestatusEnabled){
 					try {
 						if (Main.multi_tables && Main.multi_tables_use_key){
 							Main.sql.updateQuery("UPDATE " + Main.multi_table + " SET " + Main.multi_table_value_field + " = '" + Main.onlinestatus_valueoffline + "' WHERE " + Main.multi_table_user_id_field + " = '" + id + "' and " + Main.multi_table_key_field +" = '" + Main.onlinestatus_key_value + "'");
@@ -41,9 +40,9 @@ public class EventListener implements Listener {
 					} catch (IllegalAccessException e) {
 						Main.log.severe("Broken Set User Offline SQL Query, check your config.yml");
 						e.printStackTrace();
-					}					
+					}
 				}
 			}
-		}		
+		}
 	}
 }
