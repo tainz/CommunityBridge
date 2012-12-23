@@ -31,6 +31,12 @@ public class Configuration
 	public Map<String, Object> groups;
 	public String defaultGroup;
 
+	public boolean multiTables;
+	public boolean multiTablesUseKey;
+	public boolean useBanned;
+	public boolean banlistTableEnabled;
+	public boolean groups_table_enabled;
+
 	public boolean statisticsTrackingEnabled;
 
 	public boolean onlinestatusEnabled;
@@ -128,6 +134,14 @@ public class Configuration
 			defaultGroup = (String)groups.get(config.getString("users-table.default-group"));
 
 		}
+
+		multiTables = config.getBoolean("multi-tables", false);
+		multiTablesUseKey = config.getBoolean("multi-tables-use-key", false);
+		useBanned = config.getBoolean("use-banned-field", false);
+
+		banlistTableEnabled = config.getBoolean("banlist-table.enabled", false);
+
+		groups_table_enabled = config.getBoolean("groups-table.enabled", false);
 
 		statisticsTrackingEnabled = config.getBoolean("enable-basic-tracking", false);
 

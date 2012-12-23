@@ -35,16 +35,9 @@ public final class Main extends JavaPlugin
 	public static org.ruhlendavis.mc.communitybridge.Configuration config;
 	public static Log log;
 	public static SQL sql;
-	public static PermissionHandler permissionHandler;
-
 	private static Main instance = null;
 	private static Metrics metrics = null;
-
-	public static boolean multi_tables = false;
-	public static boolean multi_tables_use_key = false;
-	public static boolean use_banned = false;
-	public static boolean banlist_table_enabled = false;
-	public static boolean groups_table_enabled = false;
+	public static PermissionHandler permissionHandler;
 
   public static boolean auto_sync = false;
   public static boolean auto_remind = false;
@@ -354,9 +347,9 @@ public final class Main extends JavaPlugin
 	private void ResetOnlineStatus()
   {
 		try {
-			if (multi_tables)
+			if (config.multiTables)
       {
-				if (multi_tables_use_key)
+				if (config.multiTablesUseKey)
         {
 					sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + config.onlinestatusValueOffline + "' WHERE " + multi_table_key_field + " = '" + config.onlinestatusKeyValue + "'");
 				}
@@ -390,9 +383,9 @@ public final class Main extends JavaPlugin
 		try
     {
 			ResultSet res;
-			if (multi_tables)
+			if (config.multiTables)
       {
-				if (multi_tables_use_key)
+				if (config.multiTablesUseKey)
         {
           query = "SELECT * FROM " + multi_table
                   + " WHERE " + multi_table_key_field + " = '"
@@ -448,9 +441,9 @@ public final class Main extends JavaPlugin
 	public static ResultSet getOnlinePlayerInfo(String username) {
 		try {
 			ResultSet res;
-			if (multi_tables)
+			if (config.multiTables)
       {
-				if (multi_tables_use_key)
+				if (config.multiTablesUseKey)
         {
 					res = Main.sql.sqlQuery("SELECT * FROM " + multi_table + " WHERE " + multi_table_key_field + " = '" + multi_table_key_value + "' AND " + multi_table_value_field + " = '" + username + "'");
 				}
@@ -734,7 +727,7 @@ public final class Main extends JavaPlugin
 								                   + " WHERE " + user_id_field + " = '" + id + "'");
 				if (res.next())
         {
-					if (use_banned)
+					if (config.useBanned)
           {
 						boolean banned = res.getBoolean(is_banned_field);
 
@@ -767,7 +760,7 @@ public final class Main extends JavaPlugin
 						groupID = res.getString(groups_id_field);
 						groupName = (String)config.groups.get(groupID);
 
-						if (banlist_table_enabled)
+						if (config.banlistTableEnabled)
 						{
 							if (res.getString(groups_id_field).equalsIgnoreCase(banned_users_group))
 							{
@@ -1003,7 +996,7 @@ public final class Main extends JavaPlugin
 
 		try {
 			ResultSet res;
-			if (multi_tables && multi_tables_use_key)
+			if (config.multiTables && config.multiTablesUseKey)
       {
 				// Check for each custom field in the database.
 				if (config.onlinestatusEnabled)
@@ -1081,7 +1074,7 @@ public final class Main extends JavaPlugin
 			}
       else
       {
-				if (multi_tables)
+				if (config.multiTables)
         {
 					res = sql.sqlQuery("SELECT * FROM " + multi_table + " WHERE " + multi_table_value_field + " = '" + p.getName() + "'");
 
@@ -1241,7 +1234,7 @@ public final class Main extends JavaPlugin
 		ResultSet res;
 
 		try {
-			if (multi_tables && multi_tables_use_key)
+			if (config.multiTables && config.multiTablesUseKey)
       {
 				if (config.lastonlineEnabled)
         {
@@ -1366,7 +1359,7 @@ public final class Main extends JavaPlugin
 			}
       else
       {
-				if (multi_tables)
+				if (config.multiTables)
         {
 					res = Main.sql.sqlQuery("SELECT * FROM  "+ multi_table +" WHERE " + multi_table_user_id_field + " = '" + u + "'");
 				}
@@ -1470,7 +1463,7 @@ public final class Main extends JavaPlugin
 					SQLUpdates.append(s);
 				}
 
-				if (multi_tables)
+				if (config.multiTables)
         {
 					sql.updateQuery("UPDATE " + multi_table + " SET " + SQLUpdates + " WHERE " + multi_table_user_id_field + " = '" + u + "'");
 				}
@@ -1634,14 +1627,14 @@ public final class Main extends JavaPlugin
 								                      users_table, secondary_groups_id_field);
 			}
 
-			if (use_banned)
+			if (config.useBanned)
 			{
 				status = status & checkColumn("user-table.banned-field",
 								                      users_table, is_banned_field);
 			}
 		}
 
-		if (groups_table_enabled)
+		if (config.groups_table_enabled)
 		{
 			tempStatus = checkTable("groups-table.table", groups_table);
 
@@ -1666,7 +1659,7 @@ public final class Main extends JavaPlugin
 			}
 		}
 
-		if (banlist_table_enabled)
+		if (config.banlistTableEnabled)
 		{
 			tempStatus = checkTable("banlist-table.table", banlist_table);
 			status = status & tempStatus;
@@ -1680,7 +1673,7 @@ public final class Main extends JavaPlugin
 			}
 		}
 
-		if (multi_tables)
+		if (config.multiTables)
 		{
 			multiTableStatus = checkTable("multi-table.table", multi_table);
 			status = status & multiTableStatus;
@@ -1689,7 +1682,7 @@ public final class Main extends JavaPlugin
 			{
 				status = status & checkColumn("multi-table.field-user-id-field",
 								                      multi_table, multi_table_user_id_field);
-				if (multi_tables_use_key)
+				if (config.multiTablesUseKey)
 				{
 					status = status & checkColumn("multi-table.field-key-field",
 									                      multi_table, multi_table_key_field);
@@ -1738,7 +1731,7 @@ public final class Main extends JavaPlugin
 
 		if (config.statisticsTrackingEnabled)
 		{
-			if (multi_tables && multiTableStatus)
+			if (config.multiTables && multiTableStatus)
 			{
 				checkTrackingColumns(multi_table);
 			}
@@ -1930,10 +1923,7 @@ public final class Main extends JavaPlugin
 		// The new group synchronization section is handled here.
 		// Beginning with primary group.
 		show_primary_group = this.getConfig().getBoolean("show-primary-group");
-		multi_tables = this.getConfig().getBoolean("multi-tables");
-		multi_tables_use_key = this.getConfig().getBoolean("multi-tables-use-key");
 		secondary_groups = this.getConfig().getBoolean("secondary-groups");
-		use_banned = this.getConfig().getBoolean("use-banned-field");
 		kick_unregistered = this.getConfig().getBoolean("kick-unregistered");
 
 		auto_sync = this.getConfig().getBoolean("auto-sync");
@@ -1960,12 +1950,10 @@ public final class Main extends JavaPlugin
 		unregistered_message = this.getConfig().getString("unregistered-message");
 		unregistered_messagereminder = this.getConfig().getString("unregistered-messagereminder");
 
-		banlist_table_enabled = this.getConfig().getBoolean("banlist-table.enabled");
 		banlist_table = this.getConfig().getString("banlist-table.table");
 		banlist_user_id_field = this.getConfig().getString("banlist-table.user-id-field");
 		banlist_banned_id_field = this.getConfig().getString("banlist-table.user-id-field");
 
-		groups_table_enabled = this.getConfig().getBoolean("groups-table.enabled");
 		groups_table = this.getConfig().getString("groups-table.table");
 		groups_user_id_field = this.getConfig().getString("groups-table.user-id-field");
 		groups_group_id_field = this.getConfig().getString("groups-table.group-id-field");
@@ -1983,7 +1971,7 @@ public final class Main extends JavaPlugin
 		multi_table_key_value = this.getConfig().getString("multi-table.field-key-value");
 		multi_table_value_field = this.getConfig().getString("multi-table.field-value-field");
 
-		if (use_banned)
+		if (config.useBanned)
 		{
 			is_banned_field = this.getConfig().getString("users-table.banned-field");
 		}
@@ -1995,7 +1983,7 @@ public final class Main extends JavaPlugin
 		log.config("Auto Sync   : " + auto_sync);
 		log.config("Auto Remind :" + auto_remind);
 		log.config("Kick Unregistered : " + kick_unregistered);
-		log.config("Multi Tables : " + multi_tables);
+		log.config("Multi Tables : " + config.multiTables);
 		log.config("Basic Tracking : " + config.statisticsTrackingEnabled);
 		log.config("Require Avatar : " + require_avatar);
 		log.config("Min Posts : " + require_minposts);
