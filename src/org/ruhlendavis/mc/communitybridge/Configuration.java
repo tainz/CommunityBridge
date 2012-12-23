@@ -6,6 +6,7 @@ package org.ruhlendavis.mc.communitybridge;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import net.netmanagers.community.Main;
 
@@ -27,6 +28,8 @@ public class Configuration
 
 	public boolean groupSynchronizationPrimaryEnabled;
 	public List<String> primaryGroupIDsToIgnore;
+	public Map<String, Object> groups;
+	public String defaultGroup;
 
 	public boolean statisticsTrackingEnabled;
 
@@ -119,6 +122,11 @@ public class Configuration
 			List<String> defaultList = new ArrayList<String>();
 			config.addDefault("group-synchronization.primary-group.group-ids-to-ignore", defaultList);
 			primaryGroupIDsToIgnore = config.getStringList("group-synchronization.primary-group.group-ids-to-ignore");
+			groups = config.getConfigurationSection("groups").getValues(true);
+
+			// Note: groups is a map <String, Object> so we need the cast.
+			defaultGroup = (String)groups.get(config.getString("users-table.default-group"));
+
 		}
 
 		statisticsTrackingEnabled = config.getBoolean("enable-basic-tracking", false);

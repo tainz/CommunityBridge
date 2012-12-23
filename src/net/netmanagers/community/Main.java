@@ -85,7 +85,6 @@ public final class Main extends JavaPlugin
 	public static String is_banned_field;
 
 	public static String banned_users_group;
-	public static String default_group;
 	public static int minposts_required;
 
 	public static String multi_table_key_field;
@@ -96,8 +95,6 @@ public final class Main extends JavaPlugin
 	public static String registered_message;
 	public static String unregistered_message;
 	public static String unregistered_messagereminder;
-
-	public static Map<String, Object> groups;
 
 	@Override
 	public void onEnable()
@@ -200,7 +197,6 @@ public final class Main extends JavaPlugin
 
 		permissionHandler = null;
 
-		groups = null;
 		auto_every_unit = null;
 		users_table = null;
 		banlist_table = null;
@@ -224,7 +220,6 @@ public final class Main extends JavaPlugin
 		secondary_groups_id_field = null;
 		is_banned_field = null;
 		banned_users_group = null;
-		default_group = null;
 		multi_table_key_field = null;
 		multi_table_key_value = null;
 		multi_table_value_field = null;
@@ -497,7 +492,7 @@ public final class Main extends JavaPlugin
 	 */
 	public static boolean inGroupMap(String groupName)
 	{
-		for (Object value : groups.values())
+		for (Object value : config.groups.values())
 		{
 			if (((String)value).equalsIgnoreCase(groupName))
 			{
@@ -639,7 +634,7 @@ public final class Main extends JavaPlugin
 	 */
 	public static String getGroupID(String groupName)
 	{
-		for (Map.Entry<String, Object> entry : Main.groups.entrySet())
+		for (Map.Entry<String, Object> entry : config.groups.entrySet())
 		{
 			if (((String)entry.getValue()).equalsIgnoreCase(groupName))
 			{
@@ -657,7 +652,7 @@ public final class Main extends JavaPlugin
 	 */
 	public static String getGroupName(String groupID)
   {
-		for (Map.Entry<String, Object> entry : Main.groups.entrySet())
+		for (Map.Entry<String, Object> entry : config.groups.entrySet())
 		{
 			if (entry.getKey().equalsIgnoreCase(groupID))
 			{
@@ -677,7 +672,7 @@ public final class Main extends JavaPlugin
 	 */
 	public static String getGroupNameFull(String groupName)
 	{
-		for (Object value : groups.values())
+		for (Object value : config.groups.values())
 		{
 			if (((String)value).equalsIgnoreCase(groupName))
 			{
@@ -770,7 +765,7 @@ public final class Main extends JavaPlugin
 					{
 						// Note: groups is a map <String, Object> so we need the cast.
 						groupID = res.getString(groups_id_field);
-						groupName = (String)groups.get(groupID);
+						groupName = (String)config.groups.get(groupID);
 
 						if (banlist_table_enabled)
 						{
@@ -796,7 +791,7 @@ public final class Main extends JavaPlugin
 						{
 							if (isOkayToSetPrimaryGroup(groupID))
 							{
-								setGroup(default_group, p, firstsync);
+								setGroup(config.defaultGroup, p, firstsync);
 							}
 							else
 							{
@@ -815,7 +810,7 @@ public final class Main extends JavaPlugin
 							{
 								if (!g.isEmpty())
 								{
-									addGroup((String)groups.get(g), p, firstsync);
+									addGroup((String)config.groups.get(g), p, firstsync);
 								}
 							}
 						}
@@ -870,7 +865,7 @@ public final class Main extends JavaPlugin
 
 					if (isOkayToSetPrimaryGroup(null))
 					{
-						setGroup(Main.default_group, p, true);
+						setGroup(config.defaultGroup, p, true);
 					}
 					else
 					{
