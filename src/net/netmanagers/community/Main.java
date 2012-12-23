@@ -314,6 +314,8 @@ public final class Main extends JavaPlugin
         }
 	}
 
+	// EXPIRABLE: ST2012-12-21: When we remove the deprecated code, this can go away as well.
+	@SuppressWarnings("deprecation")
 	private void startSyncing()
   {
     long every = auto_sync_every; // Effectively defaulting to ticks.
@@ -353,7 +355,7 @@ public final class Main extends JavaPlugin
 		}
 		else
 		{
-			getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable()
+			Bukkit.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable()
 			{
 				@Override
 				public void run()
@@ -363,7 +365,9 @@ public final class Main extends JavaPlugin
 			}, every, every);
 		}
 	}
-
+	
+	// EXPIRABLE: When we remove the deprecated code, this can go away as well.
+	@SuppressWarnings("deprecation")
   private void startAutoReminder()
   {
     long every = auto_remind_every; // Effectively defaulting to ticks.
@@ -405,8 +409,7 @@ public final class Main extends JavaPlugin
 		}
 		else
 		{
-
-			getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable()
+			Bukkit.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable()
 			{
 				@Override
 				public void run()
