@@ -37,7 +37,12 @@ public class Configuration
 	public boolean currentxpEnabled;
 	public boolean levelEnabled;
 	public boolean healthEnabled;
+
 	public boolean lifeticksEnabled;
+	public String lifeticksColumn;
+	public String lifeticksFormattedColumn;
+  public String lifeticksKeyValue;
+	public String lifeticksFormattedKeyValue;
 
 	public boolean walletEnabled;
   public String walletKeyValue;
@@ -97,7 +102,13 @@ public class Configuration
 		currentxpEnabled = config.getBoolean("basic-tracking.field-currentxp-enabled", false);
 		levelEnabled = config.getBoolean("basic-tracking.field-level-enabled", false);
 		healthEnabled = config.getBoolean("basic-tracking.field-health-enabled", false);
+
 		lifeticksEnabled = config.getBoolean("basic-tracking.field-lifeticks-enabled", false);
+		lifeticksColumn = config.getString("basic-tracking.field-lifeticks-field", "");
+		lifeticksFormattedColumn = config.getString("basic-tracking.field-lifeticks-formatted-field", "");
+		lifeticksKeyValue = config.getString("basic-tracking.field-lifeticks-key-value", "");
+		lifeticksFormattedKeyValue = config.getString("basic-tracking.field-lifeticks-formatted-key-value", "");
+
 
 		walletEnabled = config.getBoolean("basic-tracking.field-wallet-enabled", false);
 		walletColumn = config.getString("basic-tracking.field-wallet-field", "");

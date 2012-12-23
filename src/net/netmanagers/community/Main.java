@@ -122,11 +122,6 @@ public final class Main extends JavaPlugin
   public static String health_key_value;
 	public static String health_field;
 
-  public static String lifeticks_key_value;
-	public static String lifeticks_formatted_key_value;
-	public static String lifeticks_field;
-	public static String lifeticks_formatted_field;
-
 	public static Map<String, Object> groups;
 
 	public static PermissionHandler permissionHandler;
@@ -289,10 +284,6 @@ public final class Main extends JavaPlugin
 		level_field = null;
 		health_key_value = null;
 		health_field = null;
-		lifeticks_key_value = null;
-		lifeticks_formatted_key_value = null;
-		lifeticks_field = null;
-		lifeticks_formatted_field = null;
 
 		log.config("Disabled...");
 		log = null;
@@ -1110,8 +1101,8 @@ public final class Main extends JavaPlugin
 
 				if (config.lifeticksEnabled)
         {
-					checkDBSanity(u, lifeticks_key_value);
-					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '"+lifeticks_key_value+"'");
+					checkDBSanity(u, config.lifeticksKeyValue);
+					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '"+ config.lifeticksKeyValue + "'");
 					if (res.next())
           {
             if (res.getInt(multi_table_value_field) > 0)
@@ -1195,9 +1186,9 @@ public final class Main extends JavaPlugin
 
 					if (config.lifeticksEnabled)
           {
-						if (res.getInt(lifeticks_field) > 0)
+						if (res.getInt(config.lifeticksColumn) > 0)
             {
-              p.setTicksLived(res.getInt(lifeticks_field));
+              p.setTicksLived(res.getInt(config.lifeticksColumn));
             }
 					}
 
@@ -1380,15 +1371,15 @@ public final class Main extends JavaPlugin
 									       + lifeticks
 									       + "' WHERE " + multi_table_user_id_field + " = '" + u
 									       + "' AND " + multi_table_key_field + " = '"
-									       + lifeticks_key_value + "'");
-					if (!lifeticks_formatted_key_value.isEmpty())
+									       + config.lifeticksKeyValue + "'");
+					if (!config.lifeticksFormattedKeyValue.isEmpty())
 					{
 						sql.updateQuery("UPDATE " + multi_table
 													 + " SET " + multi_table_value_field + " = '"
 													 + lifeticks_formatted
 													 + "' WHERE " + multi_table_user_id_field + " = '" + u
 													 + "' AND " + multi_table_key_field + " = '"
-													 + lifeticks_formatted_key_value + "'");
+													 + config.lifeticksFormattedKeyValue + "'");
 					}
         }
 
@@ -1493,11 +1484,11 @@ public final class Main extends JavaPlugin
 
 				if (config.lifeticksEnabled)
         {
-          SQLParts.add(Main.lifeticks_field + " = '" + lifeticks + "'");
+          SQLParts.add(config.lifeticksColumn + " = '" + lifeticks + "'");
 
-					if (!lifeticks_formatted_field.isEmpty())
+					if (!config.lifeticksFormattedColumn.isEmpty())
 					{
-						SQLParts.add(Main.lifeticks_formatted_field
+						SQLParts.add(config.lifeticksFormattedColumn
 										    + " = '" + lifeticks_formatted + "'");
 					}
         }
@@ -1917,9 +1908,9 @@ public final class Main extends JavaPlugin
 		if (config.lifeticksEnabled)
 		{
 			if (checkColumn("basic-tracking.field-lifeticks-field", trackingTable,
-						          lifeticks_field)
+						          config.lifeticksColumn)
 			 && checkColumn("basic-tracking.field-lifeticks-formatted-field",
-							        trackingTable, lifeticks_formatted_field))
+							        trackingTable, config.lifeticksFormattedColumn))
 			{}
 			else
 			{
@@ -2077,11 +2068,6 @@ public final class Main extends JavaPlugin
 
 		health_key_value = this.getConfig().getString("basic-tracking.field-health-key-value");
 		health_field = this.getConfig().getString("basic-tracking.field-health-field");
-
-		lifeticks_key_value = this.getConfig().getString("basic-tracking.field-lifeticks-key-value");
-		lifeticks_field = this.getConfig().getString("basic-tracking.field-lifeticks-field");
-		lifeticks_formatted_key_value = this.getConfig().getString("basic-tracking.field-lifeticks-formatted-key-value", "");
-		lifeticks_formatted_field = this.getConfig().getString("basic-tracking.field-lifeticks-formatted-field", "");
 
 		if (use_banned)
 		{
