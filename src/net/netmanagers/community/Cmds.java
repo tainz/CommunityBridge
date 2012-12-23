@@ -14,7 +14,7 @@ public class Cmds implements CommandExecutor
 {
 	/**
 	 * Handles all 'commands' entered via console or chat interface.
-	 * 
+	 *
 	 * @param sender      CommandSender object, either the player or console
 	 * @param command     Command object for the selected command
 	 * @param label       String, the actual alias that was typed
@@ -40,10 +40,10 @@ public class Cmds implements CommandExecutor
 								  "Insufficient arguments. Usage: /cbrank <playername> <group>",
 									ChatColor.RED, false);
 			}
-			
+
 			return true;
 		}
-		
+
 		Player p = null;
 
 		if (sender instanceof Player) {
@@ -82,7 +82,7 @@ public class Cmds implements CommandExecutor
 				}
 			} else if (label.equalsIgnoreCase("cbsync")) {
 				if (arguments.length == 0) {
-					Main.SyncPlayer(p, false);					
+					Main.SyncPlayer(p, false);
 				} else {
 					p.sendMessage(ChatColor.RED + "Incorrect usage: /cbsync");
 				}
@@ -93,12 +93,12 @@ public class Cmds implements CommandExecutor
 					try {
 						if (Bukkit.getPlayer(arguments[0]) != null) {
 							Player pl = Bukkit.getPlayer(arguments[0]);
-							Main.sql.updateQuery("UPDATE "+Main.users_table+" SET "+Main.is_banned_field+"='1' WHERE "+Main.user_id_field+"='" + Main.getUserId(pl.getName()) + "'");
+							Main.sql.updateQuery("UPDATE "+Main.config.users_table+" SET "+Main.config.is_banned_field+"='1' WHERE "+Main.config.user_id_field+"='" + Main.getUserId(pl.getName()) + "'");
 							pl.kickPlayer("You have been banned from the site.");
 							Main.log.info("Banning " + pl.getName() + " from the site");
 						} else {
 							OfflinePlayer pl = Bukkit.getOfflinePlayer(arguments[0]);
-							Main.sql.updateQuery("UPDATE "+Main.users_table+" SET "+Main.is_banned_field+"='1' WHERE "+Main.user_id_field+"='" + Main.getUserId(pl.getName()) + "'");
+							Main.sql.updateQuery("UPDATE "+Main.config.users_table+" SET "+Main.config.is_banned_field+"='1' WHERE "+Main.config.user_id_field+"='" + Main.getUserId(pl.getName()) + "'");
 							Main.log.info("Banning " + pl.getName() + " from the site");
 						}
 					} catch (MalformedURLException e) {
@@ -116,7 +116,7 @@ public class Cmds implements CommandExecutor
 				if (arguments.length == 1) {
 					try {
 						OfflinePlayer pl = Bukkit.getOfflinePlayer(arguments[0]);
-						Main.sql.updateQuery("UPDATE "+Main.users_table+" SET "+Main.is_banned_field+"='0' WHERE "+Main.user_id_field+"='" + Main.getUserId(pl.getName()) + "'");						
+						Main.sql.updateQuery("UPDATE "+Main.config.users_table+" SET "+Main.config.is_banned_field+"='0' WHERE "+Main.config.user_id_field+"='" + Main.getUserId(pl.getName()) + "'");
 						Main.log.info("Unbanning " + pl.getName() + " from the site");
 					} catch (MalformedURLException e) {
 						e.printStackTrace();
@@ -149,9 +149,9 @@ public class Cmds implements CommandExecutor
       if (Bukkit.getPlayer(victimString) == null)
       {
         OfflinePlayer victim = Bukkit.getOfflinePlayer(victimString);
-        query = "UPDATE " + Main.users_table +
-                " SET " + Main.is_banned_field + "='1'" +
-                " WHERE " + Main.user_id_field + "='" +
+        query = "UPDATE " + Main.config.users_table +
+                " SET " + Main.config.is_banned_field + "='1'" +
+                " WHERE " + Main.config.user_id_field + "='" +
                 Main.getUserId(victim.getName()) + "'";
         Main.log.finer(query);
         Main.sql.updateQuery(query);
@@ -161,9 +161,9 @@ public class Cmds implements CommandExecutor
       else
       {
         Player victim = Bukkit.getPlayer(victimString);
-        query = "UPDATE " + Main.users_table +
-                " SET " + Main.is_banned_field +"='1'" +
-                " WHERE " + Main.user_id_field + "='" +
+        query = "UPDATE " + Main.config.users_table +
+                " SET " + Main.config.is_banned_field +"='1'" +
+                " WHERE " + Main.config.user_id_field + "='" +
                 Main.getUserId(victim.getName()) + "'";
         Main.log.finer(query);
         Main.sql.updateQuery(query);
@@ -191,9 +191,9 @@ public class Cmds implements CommandExecutor
     try
     {
       OfflinePlayer victim = Bukkit.getOfflinePlayer(victimString);
-			String query = "UPDATE " + Main.users_table
-							     + " SET " + Main.is_banned_field + "='0'"
-							     + " WHERE " + Main.user_id_field + "='"
+			String query = "UPDATE " + Main.config.users_table
+							     + " SET " + Main.config.is_banned_field + "='0'"
+							     + " WHERE " + Main.config.user_id_field + "='"
 							     + Main.getUserId(victim.getName()) + "'";
 			Main.log.finer(query);
 			Main.sql.updateQuery(query);
@@ -213,10 +213,10 @@ public class Cmds implements CommandExecutor
       Main.log.severe("Error in unbanPlayer(): " + e.getMessage());
     }
   }
-	
+
 	/**
 	 * Change a player's 'rank', that is, group.
-	 * 
+	 *
 	 * @param sender         CommandSender object of the command initiator
 	 * @param playerArgument String containing the target player's name
 	 * @param groupArgument  String containing the destination group
@@ -231,7 +231,7 @@ public class Cmds implements CommandExecutor
 								ChatColor.RED, false);
 			return;
 		}
-		
+
 		String groupID = Main.getGroupID(groupName);
 
 		String playerName;
@@ -276,9 +276,9 @@ public class Cmds implements CommandExecutor
 
 		try
 		{
-			String query = "UPDATE " + Main.users_table
-									 + " SET " + Main.groups_id_field + "='" + groupID
-									 + "' WHERE " + Main.user_id_field + "='"
+			String query = "UPDATE " + Main.config.users_table
+									 + " SET " + Main.config.groups_id_field + "='" + groupID
+									 + "' WHERE " + Main.config.user_id_field + "='"
 									 + Main.getUserId(playerName) + "'";
 			Main.log.finer(query);
 			Main.sql.updateQuery(query);
@@ -290,7 +290,7 @@ public class Cmds implements CommandExecutor
 		catch (MalformedURLException e)
 		{
 			Main.log.severe("Error in rankPlayer(): " + e.getMessage());
-		} 
+		}
 		catch (InstantiationException e)
 		{
 			Main.log.severe("Error in rankPlayer(): " + e.getMessage());
@@ -301,9 +301,9 @@ public class Cmds implements CommandExecutor
 		}
 	}
 
-	/** 
+	/**
   * Send response message to player (if possible) AND to the console/log.
-  * 
+  *
 	* @param staff Target Player object or null
 	* @param message Message to send
 	* @param color ChatColor for message text, not used for console/log
@@ -320,13 +320,13 @@ public class Cmds implements CommandExecutor
 			staff.sendMessage(color + message);
 			name = staff.getName();
 		}
-		
+
 		Main.log.info(name + " " + message);
   }
-	
-	/** 
+
+	/**
   * Send response message to player (if possible) or to the console/log.
-  * 
+  *
 	* @param staff Target Player object or null
 	* @param message Message to send
 	* @param color ChatColor for message text, not used for console/log
@@ -343,9 +343,9 @@ public class Cmds implements CommandExecutor
 		}
 	}
 
-/** 
+/**
   * Send response message to player (if possible) AND to the console/log.
-  * 
+  *
 	* @param sender  CommandSender object for recipient
 	* @param message String containing the message to send
 	* @param color   ChatColor for message text, not used for console/log
@@ -357,7 +357,7 @@ public class Cmds implements CommandExecutor
 		{
 			sender.sendMessage(color + message);
 		}
-		
+
 		if (who)
 		{
 			message = "(" + sender.getName() + ") " + message;
@@ -365,10 +365,10 @@ public class Cmds implements CommandExecutor
 
 		Main.log.info(message);
   }
-	
-	/** 
+
+	/**
   * Send response message to player (if possible) or to the console/log.
-  * 
+  *
 	* @param sender  CommandSender object representing the recipient
 	* @param message String containing the message to send
 	* @param color   ChatColor for message text, not used for console/log

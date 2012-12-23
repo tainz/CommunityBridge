@@ -27,11 +27,11 @@ public class EventListener implements Listener {
 				if(Main.config.onlinestatusEnabled){
 					try {
 						if (Main.config.multiTables && Main.config.multiTablesUseKey){
-							Main.sql.updateQuery("UPDATE " + Main.multi_table + " SET " + Main.multi_table_value_field + " = '" + Main.config.onlinestatusValueOffline + "' WHERE " + Main.multi_table_user_id_field + " = '" + id + "' and " + Main.multi_table_key_field +" = '" + Main.config.onlinestatusKeyValue + "'");
+							Main.sql.updateQuery("UPDATE " + Main.config.multi_table + " SET " + Main.config.multi_table_value_field + " = '" + Main.config.onlinestatusValueOffline + "' WHERE " + Main.config.multi_table_user_id_field + " = '" + id + "' and " + Main.config.multi_table_key_field +" = '" + Main.config.onlinestatusKeyValue + "'");
 						}else if(Main.config.multiTables){
-							Main.sql.updateQuery("UPDATE " + Main.multi_table + " SET " + Main.config.onlinestatusColumn + " = '" + Main.config.onlinestatusValueOffline + "' WHERE " + Main.multi_table_user_id_field + " = '" + id + "'");
+							Main.sql.updateQuery("UPDATE " + Main.config.multi_table + " SET " + Main.config.onlinestatusColumn + " = '" + Main.config.onlinestatusValueOffline + "' WHERE " + Main.config.multi_table_user_id_field + " = '" + id + "'");
 						}else{
-							Main.sql.updateQuery("UPDATE " + Main.users_table + " SET " + Main.config.onlinestatusColumn + " = '" + Main.config.onlinestatusValueOnline + "' WHERE " + Main.user_id_field + " = '" + id + "'");
+							Main.sql.updateQuery("UPDATE " + Main.config.users_table + " SET " + Main.config.onlinestatusColumn + " = '" + Main.config.onlinestatusValueOnline + "' WHERE " + Main.config.user_id_field + " = '" + id + "'");
 						}
 					} catch (MalformedURLException e) {
 						e.printStackTrace();

@@ -39,50 +39,6 @@ public final class Main extends JavaPlugin
 	private static Metrics metrics = null;
 	public static PermissionHandler permissionHandler;
 
-  public static boolean secondary_groups = false;
-	public static boolean show_primary_group = false;
-	public static boolean kick_unregistered = false;
-	public static boolean require_avatar = false;
-	public static boolean require_minposts = false;
-
-	public static String users_table;
-	public static String banlist_table;
-	public static String groups_table;
-	public static String multi_table;
-	public static String avatar_table;
-	public static String minposts_table;
-
-	public static String avatar_user_field;
-	public static String avatar_field;
-	public static String avatar_message;
-	public static String minposts_user_field;
-	public static String minposts_field;
-	public static String minposts_message;
-
-	public static String banlist_user_id_field;
-	public static String banlist_banned_id_field;
-	public static String groups_user_id_field;
-	public static String groups_group_id_field;
-
-	public static String user_id_field;
-	public static String user_name_field;
-	public static String groups_id_field;
-	public static String secondary_groups_id_field;
-
-	public static String is_banned_field;
-
-	public static String banned_users_group;
-	public static int minposts_required;
-
-	public static String multi_table_key_field;
-	public static String multi_table_key_value;
-	public static String multi_table_value_field;
-	public static String multi_table_user_id_field;
-
-	public static String registered_message;
-	public static String unregistered_message;
-	public static String unregistered_messagereminder;
-
 	@Override
 	public void onEnable()
   {
@@ -183,36 +139,6 @@ public final class Main extends JavaPlugin
 		}
 
 		permissionHandler = null;
-
-		users_table = null;
-		banlist_table = null;
-		groups_table = null;
-		multi_table = null;
-		avatar_table = null;
-		minposts_table = null;
-		avatar_user_field = null;
-		avatar_field = null;
-		avatar_message = null;
-		minposts_user_field = null;
-		minposts_field = null;
-		minposts_message = null;
-		banlist_user_id_field = null;
-		banlist_banned_id_field = null;
-		groups_user_id_field = null;
-		groups_group_id_field = null;
-		user_id_field = null;
-		user_name_field = null;
-		groups_id_field = null;
-		secondary_groups_id_field = null;
-		is_banned_field = null;
-		banned_users_group = null;
-		multi_table_key_field = null;
-		multi_table_key_value = null;
-		multi_table_value_field = null;
-		multi_table_user_id_field = null;
-		registered_message = null;
-		unregistered_message = null;
-		unregistered_messagereminder = null;
 
 		log.config("Disabled...");
 		log = null;
@@ -344,16 +270,16 @@ public final class Main extends JavaPlugin
       {
 				if (config.multiTablesUseKey)
         {
-					sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + config.onlinestatusValueOffline + "' WHERE " + multi_table_key_field + " = '" + config.onlinestatusKeyValue + "'");
+					sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.multi_table_value_field + " = '" + config.onlinestatusValueOffline + "' WHERE " + config.multi_table_key_field + " = '" + config.onlinestatusKeyValue + "'");
 				}
         else
         {
-					sql.updateQuery("UPDATE " + multi_table + " SET " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOffline + "' WHERE " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOnline + "'");
+					sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOffline + "' WHERE " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOnline + "'");
 				}
 			}
       else
       {
-				sql.updateQuery("UPDATE " + users_table + " SET " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOffline + "'  WHERE " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOnline + "'");
+				sql.updateQuery("UPDATE " + config.users_table + " SET " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOffline + "'  WHERE " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOnline + "'");
 			}
 		}
 		catch (MalformedURLException e)
@@ -380,36 +306,36 @@ public final class Main extends JavaPlugin
       {
 				if (config.multiTablesUseKey)
         {
-          query = "SELECT * FROM " + multi_table
-                  + " WHERE " + multi_table_key_field + " = '"
-                  + multi_table_key_value
-                  + "' AND LOWER(" + multi_table_value_field + ") = LOWER('"
+          query = "SELECT * FROM " + config.multi_table
+                  + " WHERE " + config.multi_table_key_field + " = '"
+                  + config.multi_table_key_value
+                  + "' AND LOWER(" + config.multi_table_value_field + ") = LOWER('"
                   + username
-                  + "') ORDER BY " + multi_table_user_id_field + " DESC";
+                  + "') ORDER BY " + config.multi_table_user_id_field + " DESC";
         }
         else
         {
-          query = "SELECT * FROM  "+ multi_table
-                  + " WHERE LOWER(" + multi_table_value_field +
+          query = "SELECT * FROM  "+ config.multi_table
+                  + " WHERE LOWER(" + config.multi_table_value_field +
                   ") = LOWER('" + username
-                  + "') ORDER BY " + multi_table_user_id_field + " DESC";
+                  + "') ORDER BY " + config.multi_table_user_id_field + " DESC";
 				}
 				res = Main.sql.sqlQuery(query);
 				if (res.next())
         {
-          userId = res.getInt(multi_table_user_id_field);
+          userId = res.getInt(config.multi_table_user_id_field);
         }
 			}
       else
       {
-        query = "SELECT * FROM " + users_table
-                + " WHERE LOWER(" + user_name_field
+        query = "SELECT * FROM " + config.users_table
+                + " WHERE LOWER(" + config.user_name_field
                 + ") = LOWER('" + username
-                + "') ORDER BY " + user_id_field + " desc";
+                + "') ORDER BY " + config.user_id_field + " desc";
  				res = Main.sql.sqlQuery(query);
         if (res.next())
         {
-          userId = res.getInt(user_id_field);
+          userId = res.getInt(config.user_id_field);
         }
 			}
 			return userId;
@@ -438,16 +364,16 @@ public final class Main extends JavaPlugin
       {
 				if (config.multiTablesUseKey)
         {
-					res = Main.sql.sqlQuery("SELECT * FROM " + multi_table + " WHERE " + multi_table_key_field + " = '" + multi_table_key_value + "' AND " + multi_table_value_field + " = '" + username + "'");
+					res = Main.sql.sqlQuery("SELECT * FROM " + config.multi_table + " WHERE " + config.multi_table_key_field + " = '" + config.multi_table_key_value + "' AND " + config.multi_table_value_field + " = '" + username + "'");
 				}
         else
         {
-					res = Main.sql.sqlQuery("SELECT * FROM  "+ multi_table +" WHERE " + multi_table_value_field + " = '" + username + "'");
+					res = Main.sql.sqlQuery("SELECT * FROM  "+ config.multi_table +" WHERE " + config.multi_table_value_field + " = '" + username + "'");
 				}
 			}
       else
       {
-				res = Main.sql.sqlQuery("SELECT * FROM " + users_table + " WHERE " + user_name_field + " = '" + username + "'");
+				res = Main.sql.sqlQuery("SELECT * FROM " + config.users_table + " WHERE " + config.user_name_field + " = '" + username + "'");
 			}
 
 			if (res.next())
@@ -683,13 +609,13 @@ public final class Main extends JavaPlugin
     int id = getUserId(p.getName());
     if (id == 0)
     {
-      if (kick_unregistered)
+      if (config.kick_unregistered)
       {
-        p.kickPlayer(unregistered_message);
+        p.kickPlayer(config.unregistered_message);
       }
       else
       {
-        p.sendMessage(ChatColor.RED + unregistered_messagereminder);
+        p.sendMessage(ChatColor.RED + config.unregistered_messagereminder);
         log.fine(p.getName() + " issued unregistered reminder notice");
       }
     }
@@ -716,13 +642,13 @@ public final class Main extends JavaPlugin
 			int id = getUserId(p.getName());
 			if (id > 0)
       {
-				ResultSet res = sql.sqlQuery("SELECT * FROM " + users_table
-								                   + " WHERE " + user_id_field + " = '" + id + "'");
+				ResultSet res = sql.sqlQuery("SELECT * FROM " + config.users_table
+								                   + " WHERE " + config.user_id_field + " = '" + id + "'");
 				if (res.next())
         {
 					if (config.useBanned)
           {
-						boolean banned = res.getBoolean(is_banned_field);
+						boolean banned = res.getBoolean(config.is_banned_field);
 
 						if (banned)
             {
@@ -732,7 +658,7 @@ public final class Main extends JavaPlugin
 
 					boolean requirements_met = true;
 
-					if (require_minposts)
+					if (config.require_minposts)
           {
 						if (!checkMinPosts(id, p))
             {
@@ -740,7 +666,7 @@ public final class Main extends JavaPlugin
             }
 					}
 
-					if (require_avatar) {
+					if (config.require_avatar) {
 						if (!checkAvatar(id, p))
             {
               requirements_met = false;
@@ -750,12 +676,12 @@ public final class Main extends JavaPlugin
 					if (config.groupSynchronizationPrimaryEnabled)
 					{
 						// Note: groups is a map <String, Object> so we need the cast.
-						groupID = res.getString(groups_id_field);
+						groupID = res.getString(config.groups_id_field);
 						groupName = (String)config.groups.get(groupID);
 
 						if (config.banlistTableEnabled)
 						{
-							if (res.getString(groups_id_field).equalsIgnoreCase(banned_users_group))
+							if (res.getString(config.groups_id_field).equalsIgnoreCase(config.banned_users_group))
 							{
 								p.kickPlayer("You have been banned from the site.");
 							}
@@ -787,9 +713,9 @@ public final class Main extends JavaPlugin
 						}
 					}
 
-					if (secondary_groups)
+					if (config.secondary_groups)
 					{
-						String extra_groups = res.getString(secondary_groups_id_field);
+						String extra_groups = res.getString(config.secondary_groups_id_field);
 						if (extra_groups.length() > 0)
 						{
 							for(String g: extra_groups.split(","))
@@ -811,13 +737,13 @@ public final class Main extends JavaPlugin
 
 						if (isOkayToSetPrimaryGroup(groupID))
 						{
-							if (show_primary_group)
+							if (config.show_primary_group)
 							{
 								p.sendMessage(ChatColor.YELLOW + "Registered " + groupName + " Account.");
 							}
 							else
 							{
-								p.sendMessage(ChatColor.YELLOW + registered_message);
+								p.sendMessage(ChatColor.YELLOW + config.registered_message);
 							}
 
 						}
@@ -832,20 +758,20 @@ public final class Main extends JavaPlugin
 			}
       else
       {
-				if (kick_unregistered)
+				if (config.kick_unregistered)
         {
-					p.kickPlayer(unregistered_message);
+					p.kickPlayer(config.unregistered_message);
 				}
         else
         {
 					if (firstsync)
 					{
-						p.sendMessage(ChatColor.RED + unregistered_message);
+						p.sendMessage(ChatColor.RED + config.unregistered_message);
 						log.fine(p.getName() + "'s name not set or not registered on community site");
 					}
 					else
 					{
-						p.sendMessage(ChatColor.RED + unregistered_messagereminder);
+						p.sendMessage(ChatColor.RED + config.unregistered_messagereminder);
 						log.fine(p.getName() + " issued unregistered reminder notice");
 					}
 
@@ -879,10 +805,10 @@ public final class Main extends JavaPlugin
 		ResultSet res;
 		try
     {
-			res = sql.sqlQuery("SELECT 1 FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + keyval + "'");
+			res = sql.sqlQuery("SELECT 1 FROM " + config.multi_table + " WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '" + keyval + "'");
 			if (!res.next())
       {
-        sql.insertQuery("INSERT INTO " + multi_table + " (`"+multi_table_user_id_field+"`, `"+multi_table_key_field+"`, `"+multi_table_value_field+"`) VALUES ('" + u + "', '" + keyval + "', 0)");
+        sql.insertQuery("INSERT INTO " + config.multi_table + " (`"+config.multi_table_user_id_field+"`, `"+config.multi_table_key_field+"`, `"+config.multi_table_value_field+"`) VALUES ('" + u + "', '" + keyval + "', 0)");
       }
 
 		}
@@ -910,7 +836,7 @@ public final class Main extends JavaPlugin
 		ResultSet res;
 
 		try {
-			res = sql.sqlQuery("SELECT " + avatar_field + " FROM " + avatar_table + " WHERE " + avatar_user_field + " = '" + u + "'");
+			res = sql.sqlQuery("SELECT " + config.avatar_field + " FROM " + config.avatar_table + " WHERE " + config.avatar_user_field + " = '" + u + "'");
 			if (res == null)
       {
         return false;
@@ -918,7 +844,7 @@ public final class Main extends JavaPlugin
 
 			if (res.next())
       {
-        if (!res.getString(avatar_field).isEmpty())
+        if (!res.getString(config.avatar_field).isEmpty())
         {
           return true;
         }
@@ -935,7 +861,7 @@ public final class Main extends JavaPlugin
 			disablePlugin();
 		}
 
-		p.sendMessage(ChatColor.YELLOW + avatar_message);
+		p.sendMessage(ChatColor.YELLOW + config.avatar_message);
 		log.fine((new StringBuilder("Notice Issued to ")).append(p.getName()).append(" for not having profile avatar").toString());
 		return false;
 	}
@@ -944,7 +870,7 @@ public final class Main extends JavaPlugin
 		ResultSet res;
 
 		try {
-			res = sql.sqlQuery("SELECT " + minposts_field + " FROM " + minposts_table + " WHERE " + minposts_user_field + " = '" + u + "'");
+			res = sql.sqlQuery("SELECT " + config.minposts_field + " FROM " + config.minposts_table + " WHERE " + config.minposts_user_field + " = '" + u + "'");
 			if (res == null)
       {
         return false;
@@ -952,7 +878,7 @@ public final class Main extends JavaPlugin
 
 			if (res.next())
       {
-        if (res.getInt(minposts_field) >= minposts_required)
+        if (res.getInt(config.minposts_field) >= config.minposts_required)
         {
           return true;
         }
@@ -977,8 +903,8 @@ public final class Main extends JavaPlugin
 			log.severe("Broken Post Count SQL Query, check your config.yml");
 			disablePlugin();
 		}
-		p.sendMessage(ChatColor.YELLOW + minposts_message);
-		log.fine((new StringBuilder("Notice Issued to ")).append(p.getName()).append(" for having less than ").append(minposts_required).append(" posts").toString());
+		p.sendMessage(ChatColor.YELLOW + config.minposts_message);
+		log.fine((new StringBuilder("Notice Issued to ")).append(p.getName()).append(" for having less than ").append(config.minposts_required).append(" posts").toString());
 
 		return false;
 	}
@@ -995,48 +921,48 @@ public final class Main extends JavaPlugin
 				if (config.onlinestatusEnabled)
         {
 					checkDBSanity(u, config.onlinestatusKeyValue);
-					sql.updateQuery("UPDATE "+Main.multi_table+" SET " + multi_table_value_field +" = '" + config.onlinestatusValueOnline + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + config.onlinestatusKeyValue + "'");
+					sql.updateQuery("UPDATE "+config.multi_table+" SET " + config.multi_table_value_field +" = '" + config.onlinestatusValueOnline + "' WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '" + config.onlinestatusKeyValue + "'");
 				}
 
 				if (config.lastonlineEnabled)
         {
 					checkDBSanity(u, config.lastonlineKeyValue);
-					sql.updateQuery("UPDATE " + Main.multi_table
-									       + " SET " + multi_table_value_field + " = '" + t
-									       + "' WHERE " + multi_table_user_id_field + " = '" + u
-									       + "' AND " + multi_table_key_field + " = '"
+					sql.updateQuery("UPDATE " + config.multi_table
+									       + " SET " + config.multi_table_value_field + " = '" + t
+									       + "' WHERE " + config.multi_table_user_id_field + " = '" + u
+									       + "' AND " + config.multi_table_key_field + " = '"
 									       + config.lastonlineKeyValue + "'");
 				}
 
 				if (config.currentxpEnabled)
         {
 					checkDBSanity(u, config.currentxpKeyValue);
-					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '"+ config.currentxpKeyValue + "'");
+					res = sql.sqlQuery("SELECT " + config.multi_table_value_field + " FROM " + config.multi_table + " WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '"+ config.currentxpKeyValue + "'");
 					if (res.next())
           {
-            p.setExp(res.getInt(multi_table_value_field));
+            p.setExp(res.getInt(config.multi_table_value_field));
           }
 				}
 
 				if (config.totalxpEnabled)
         {
 					checkDBSanity(u, config.totalxpKeyValue);
-					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '"+ config.totalxpKeyValue + "'");
+					res = sql.sqlQuery("SELECT " + config.multi_table_value_field + " FROM " + config.multi_table + " WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '"+ config.totalxpKeyValue + "'");
 					if (res.next())
           {
-            p.setTotalExperience(res.getInt(multi_table_value_field));
+            p.setTotalExperience(res.getInt(config.multi_table_value_field));
           }
 				}
 
 				if (config.lifeticksEnabled)
         {
 					checkDBSanity(u, config.lifeticksKeyValue);
-					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '"+ config.lifeticksKeyValue + "'");
+					res = sql.sqlQuery("SELECT " + config.multi_table_value_field + " FROM " + config.multi_table + " WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '"+ config.lifeticksKeyValue + "'");
 					if (res.next())
           {
-            if (res.getInt(multi_table_value_field) > 0)
+            if (res.getInt(config.multi_table_value_field) > 0)
             {
-              p.setTicksLived(res.getInt(multi_table_value_field));
+              p.setTicksLived(res.getInt(config.multi_table_value_field));
             }
           }
 				}
@@ -1044,22 +970,22 @@ public final class Main extends JavaPlugin
 				if (config.levelEnabled)
         {
 					checkDBSanity(u, config.levelKeyValue);
-					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '"+ config.levelKeyValue+"'");
+					res = sql.sqlQuery("SELECT " + config.multi_table_value_field + " FROM " + config.multi_table + " WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '"+ config.levelKeyValue+"'");
 					if (res.next())
           {
-            p.setLevel(res.getInt(multi_table_value_field));
+            p.setLevel(res.getInt(config.multi_table_value_field));
           }
 				}
 
 				if (config.healthEnabled)
         {
 					checkDBSanity(u, config.healthKeyValue);
-					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '"+config.healthKeyValue+"'");
+					res = sql.sqlQuery("SELECT " + config.multi_table_value_field + " FROM " + config.multi_table + " WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '"+config.healthKeyValue+"'");
 					if (res.next())
           {
-            if (res.getInt(multi_table_value_field)>0)
+            if (res.getInt(config.multi_table_value_field)>0)
             {
-              p.setHealth(res.getInt(multi_table_value_field));
+              p.setHealth(res.getInt(config.multi_table_value_field));
             }
           }
 				}
@@ -1069,30 +995,30 @@ public final class Main extends JavaPlugin
       {
 				if (config.multiTables)
         {
-					res = sql.sqlQuery("SELECT * FROM " + multi_table + " WHERE " + multi_table_value_field + " = '" + p.getName() + "'");
+					res = sql.sqlQuery("SELECT * FROM " + config.multi_table + " WHERE " + config.multi_table_value_field + " = '" + p.getName() + "'");
 
 					if (config.onlinestatusEnabled)
           {
-            sql.updateQuery("UPDATE " + multi_table + " SET " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOnline + "' WHERE " + multi_table_user_id_field + " = '" + u + "'");
+            sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOnline + "' WHERE " + config.multi_table_user_id_field + " = '" + u + "'");
           }
 
 					if (config.lastonlineEnabled)
           {
-            sql.updateQuery("UPDATE " + multi_table + " SET " + config.lastonlineColumn + " = " + t + " WHERE " + multi_table_user_id_field + " = '" + u + "'");
+            sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.lastonlineColumn + " = " + t + " WHERE " + config.multi_table_user_id_field + " = '" + u + "'");
           }
 				}
         else
         {
-					res = sql.sqlQuery("SELECT * FROM " + users_table + " WHERE " + user_name_field + " = '" + p.getName() + "'");
+					res = sql.sqlQuery("SELECT * FROM " + config.users_table + " WHERE " + config.user_name_field + " = '" + p.getName() + "'");
 
 					if (config.onlinestatusEnabled)
           {
-            sql.updateQuery("UPDATE " + users_table + " SET " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOnline + "' WHERE " + user_id_field + " = '" + u + "'");
+            sql.updateQuery("UPDATE " + config.users_table + " SET " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOnline + "' WHERE " + config.user_id_field + " = '" + u + "'");
           }
 
 					if (config.lastonlineEnabled)
           {
-            sql.updateQuery("UPDATE " + users_table + " SET " + config.lastonlineColumn + " = " + t +" WHERE " + user_id_field + " = '" + u + "'");
+            sql.updateQuery("UPDATE " + config.users_table + " SET " + config.lastonlineColumn + " = " + t +" WHERE " + config.user_id_field + " = '" + u + "'");
           }
 
 					if (!res.next())
@@ -1231,20 +1157,20 @@ public final class Main extends JavaPlugin
       {
 				if (config.lastonlineEnabled)
         {
-					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + config.lastonlineKeyValue + "'");
+					res = sql.sqlQuery("SELECT " + config.multi_table_value_field + " FROM " + config.multi_table + " WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '" + config.lastonlineKeyValue + "'");
 					if (res.next())
           {
-            lastonline = res.getInt(multi_table_value_field);
+            lastonline = res.getInt(config.multi_table_value_field);
           }
 				}
 
 				if (config.lastonlineEnabled && config.gametimeEnabled)
         {
-					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + config.gametimeKeyValue + "'");
+					res = sql.sqlQuery("SELECT " + config.multi_table_value_field + " FROM " + config.multi_table + " WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '" + config.gametimeKeyValue + "'");
 
           if (res.next())
           {
-						gametime = res.getInt(multi_table_value_field);
+						gametime = res.getInt(config.multi_table_value_field);
 
 						if (lastonline > 0)
             {
@@ -1256,96 +1182,96 @@ public final class Main extends JavaPlugin
 
 				if (config.onlinestatusEnabled)
         {
-          sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + config.onlinestatusValueOnline + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + config.onlinestatusKeyValue + "'");
+          sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.multi_table_value_field + " = '" + config.onlinestatusValueOnline + "' WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '" + config.onlinestatusKeyValue + "'");
         }
 
 				if (config.totalxpEnabled)
         {
-          sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + totalxp + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + config.totalxpKeyValue + "'");
+          sql.updateQuery("UPDATE " + config.multi_table + " SET " +config.multi_table_value_field + " = '" + totalxp + "' WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '" + config.totalxpKeyValue + "'");
         }
 
 				if (config.currentxpEnabled)
         {
-          sql.updateQuery("UPDATE " + multi_table
-									       + " SET " + multi_table_value_field + " = '" + currentxp
-									       + "' WHERE " + multi_table_user_id_field + " = '" + u
-									       + "' AND " + multi_table_key_field + " = '"
+          sql.updateQuery("UPDATE " + config.multi_table
+									       + " SET " + config.multi_table_value_field + " = '" + currentxp
+									       + "' WHERE " + config.multi_table_user_id_field + " = '" + u
+									       + "' AND " + config.multi_table_key_field + " = '"
 									       + config.currentxpKeyValue + "'");
 
 					if (!config.currentxpFormattedKeyValue.isEmpty())
 					{
-						sql.updateQuery("UPDATE " + multi_table
-													 + " SET " + multi_table_value_field + " = '"
+						sql.updateQuery("UPDATE " + config.multi_table
+													 + " SET " + config.multi_table_value_field + " = '"
 													 + currentxp_formatted
-													 + "' WHERE " + multi_table_user_id_field + " = '" + u
-													 + "' AND " + multi_table_key_field + " = '"
+													 + "' WHERE " + config.multi_table_user_id_field + " = '" + u
+													 + "' AND " + config.multi_table_key_field + " = '"
 													 + config.currentxpFormattedKeyValue + "'");
 					}
         }
 
 				if (config.levelEnabled)
         {
-          sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + level + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + config.levelKeyValue + "'");
+          sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.multi_table_value_field + " = '" + level + "' WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '" + config.levelKeyValue + "'");
         }
 
 				if (config.healthEnabled)
         {
-          sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + health + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + config.healthKeyValue + "'");
+          sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.multi_table_value_field + " = '" + health + "' WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '" + config.healthKeyValue + "'");
         }
 
 				if (config.lifeticksEnabled)
         {
-          sql.updateQuery("UPDATE " + multi_table
-									       + " SET " + multi_table_value_field + " = '"
+          sql.updateQuery("UPDATE " + config.multi_table
+									       + " SET " + config.multi_table_value_field + " = '"
 									       + lifeticks
-									       + "' WHERE " + multi_table_user_id_field + " = '" + u
-									       + "' AND " + multi_table_key_field + " = '"
+									       + "' WHERE " + config.multi_table_user_id_field + " = '" + u
+									       + "' AND " + config.multi_table_key_field + " = '"
 									       + config.lifeticksKeyValue + "'");
 					if (!config.lifeticksFormattedKeyValue.isEmpty())
 					{
-						sql.updateQuery("UPDATE " + multi_table
-													 + " SET " + multi_table_value_field + " = '"
+						sql.updateQuery("UPDATE " + config.multi_table
+													 + " SET " + config.multi_table_value_field + " = '"
 													 + lifeticks_formatted
-													 + "' WHERE " + multi_table_user_id_field + " = '" + u
-													 + "' AND " + multi_table_key_field + " = '"
+													 + "' WHERE " + config.multi_table_user_id_field + " = '" + u
+													 + "' AND " + config.multi_table_key_field + " = '"
 													 + config.lifeticksFormattedKeyValue + "'");
 					}
         }
 
 				if (config.lastonlineEnabled)
         {
-					sql.updateQuery("UPDATE " + multi_table
-                         + " SET " + multi_table_value_field + " = '" + t
-                         + "' WHERE " + multi_table_user_id_field + " = '" + u
-                         + "' AND " + multi_table_key_field +" = '"
+					sql.updateQuery("UPDATE " + config.multi_table
+                         + " SET " + config.multi_table_value_field + " = '" + t
+                         + "' WHERE " + config.multi_table_user_id_field + " = '" + u
+                         + "' AND " + config.multi_table_key_field +" = '"
                          + config.lastonlineKeyValue + "'");
 
           if (!config.lastonlineFormattedKeyValue.isEmpty())
           {
-            sql.updateQuery("UPDATE " + multi_table
-                           + " SET " + multi_table_value_field + " = '"
+            sql.updateQuery("UPDATE " + config.multi_table
+                           + " SET " + config.multi_table_value_field + " = '"
                            + format.format(date)
-                           + "' WHERE " + multi_table_user_id_field + " = '" + u
-                           + "' AND " + multi_table_key_field + " = '"
+                           + "' WHERE " + config.multi_table_user_id_field + " = '" + u
+                           + "' AND " + config.multi_table_key_field + " = '"
                            + config.lastonlineFormattedKeyValue + "'");
           }
         }
 
 				if (config.lastonlineEnabled && config.gametimeEnabled)
         {
-					sql.updateQuery("UPDATE " + multi_table
-                         + " SET " + multi_table_value_field + " = '" + gametime
-                         + "' WHERE " + multi_table_user_id_field + " = '" + u
-                         + "' AND " + multi_table_key_field + " = '"
+					sql.updateQuery("UPDATE " + config.multi_table
+                         + " SET " + config.multi_table_value_field + " = '" + gametime
+                         + "' WHERE " + config.multi_table_user_id_field + " = '" + u
+                         + "' AND " + config.multi_table_key_field + " = '"
                          + config.gametimeKeyValue + "'");
 
           if (!config.gametimeFormattedKeyValue.isEmpty())
           {
-            sql.updateQuery("UPDATE " + multi_table
-                           + " SET " + multi_table_value_field + " = '"
+            sql.updateQuery("UPDATE " + config.multi_table
+                           + " SET " + config.multi_table_value_field + " = '"
                            + timeElapsed + "'"
-                           + " WHERE " + multi_table_user_id_field + " = '" + u
-                           + "' AND " + multi_table_key_field + " = '"
+                           + " WHERE " + config.multi_table_user_id_field + " = '" + u
+                           + "' AND " + config.multi_table_key_field + " = '"
                            + config.gametimeFormattedKeyValue + "'");
           }
         }
@@ -1354,11 +1280,11 @@ public final class Main extends JavaPlugin
       {
 				if (config.multiTables)
         {
-					res = Main.sql.sqlQuery("SELECT * FROM  "+ multi_table +" WHERE " + multi_table_user_id_field + " = '" + u + "'");
+					res = Main.sql.sqlQuery("SELECT * FROM  "+ config.multi_table +" WHERE " + config.multi_table_user_id_field + " = '" + u + "'");
 				}
         else
         {
-					res = Main.sql.sqlQuery("SELECT * FROM " + users_table + " WHERE " + user_id_field + " = '" + u + "'");
+					res = Main.sql.sqlQuery("SELECT * FROM " + config.users_table + " WHERE " + config.user_id_field + " = '" + u + "'");
 				}
 
 				if (res.next())
@@ -1458,11 +1384,11 @@ public final class Main extends JavaPlugin
 
 				if (config.multiTables)
         {
-					sql.updateQuery("UPDATE " + multi_table + " SET " + SQLUpdates + " WHERE " + multi_table_user_id_field + " = '" + u + "'");
+					sql.updateQuery("UPDATE " + config.multi_table + " SET " + SQLUpdates + " WHERE " + config.multi_table_user_id_field + " = '" + u + "'");
 				}
         else
         {
-					sql.updateQuery("UPDATE " + users_table + " SET " + SQLUpdates + " WHERE " + user_id_field + " = '" + u + "'");
+					sql.updateQuery("UPDATE " + config.users_table + " SET " + SQLUpdates + " WHERE " + config.user_id_field + " = '" + u + "'");
 				}
 			}
 		}
@@ -1605,40 +1531,46 @@ public final class Main extends JavaPlugin
 		Boolean multiTableStatus = true;
 		Boolean tempStatus;
 
-		status = checkTable("users-table.table", users_table);
+		status = checkTable("users-table.table", config.users_table);
 		userTableStatus = status;
 
 		if (status)
 		{
-			status = status & checkColumn("users-table.username", users_table,
-							                      user_name_field);
-			status = status & checkColumn("users-table.user-id-field", users_table,
-							                      user_id_field);
-			if (secondary_groups)
+			status = status & checkColumn("users-table.username",
+																		config.users_table,
+							                      config.user_name_field);
+			status = status & checkColumn("users-table.user-id-field",
+																		config.users_table,
+							                      config.user_id_field);
+			if (config.secondary_groups)
 			{
 				status = status & checkColumn("user-table.secondary-groups-id-field",
-								                      users_table, secondary_groups_id_field);
+								                      config.users_table,
+																			config.secondary_groups_id_field);
 			}
 
 			if (config.useBanned)
 			{
 				status = status & checkColumn("user-table.banned-field",
-								                      users_table, is_banned_field);
+								                      config.users_table,
+																			config.is_banned_field);
 			}
 		}
 
 		if (config.groups_table_enabled)
 		{
-			tempStatus = checkTable("groups-table.table", groups_table);
+			tempStatus = checkTable("groups-table.table", config.groups_table);
 
 			status = status & tempStatus;
 
 			if (tempStatus)
 			{
 				status = status & checkColumn("groups-table.user-id-field",
-								                      groups_table, groups_user_id_field);
+								                      config.groups_table,
+																			config.groups_user_id_field);
 				status = status & checkColumn("groups-table.group-id-field",
-								                      groups_table, groups_group_id_field);
+								                      config.groups_table,
+																			config.groups_group_id_field);
 			}
 		}
 		else
@@ -1648,19 +1580,21 @@ public final class Main extends JavaPlugin
 			if (status && config.groupSynchronizationPrimaryEnabled)
 			{
 				status = status & checkColumn("users-table.groups-id-field",
-								                      users_table, groups_id_field);
+								                      config.users_table,
+																			config.groups_id_field);
 			}
 		}
 
 		if (config.banlistTableEnabled)
 		{
-			tempStatus = checkTable("banlist-table.table", banlist_table);
+			tempStatus = checkTable("banlist-table.table", config.banlist_table);
 			status = status & tempStatus;
 
 			if (tempStatus)
 			{
 				status = status & checkColumn("banlist-table.user-id-field",
-								                      banlist_table, banlist_user_id_field);
+								                      config.banlist_table,
+																			config.banlist_user_id_field);
 				//status = status & checkColumn("banlist-table.reason-field",
 				//				                      banlist_table, banlist_reason_field);
 			}
@@ -1668,57 +1602,60 @@ public final class Main extends JavaPlugin
 
 		if (config.multiTables)
 		{
-			multiTableStatus = checkTable("multi-table.table", multi_table);
+			multiTableStatus = checkTable("multi-table.table", config.multi_table);
 			status = status & multiTableStatus;
 
 			if (multiTableStatus)
 			{
 				status = status & checkColumn("multi-table.field-user-id-field",
-								                      multi_table, multi_table_user_id_field);
+								                      config.multi_table,
+																			config.multi_table_user_id_field);
 				if (config.multiTablesUseKey)
 				{
 					status = status & checkColumn("multi-table.field-key-field",
-									                      multi_table, multi_table_key_field);
+									                      config.multi_table,
+																				config.multi_table_key_field);
 				}
 				else
 				{
 					status = status & checkColumn("multi-table.field-value-field",
-									                      multi_table, multi_table_value_field);
+									                      config.multi_table,
+																				config.multi_table_value_field);
 				}
 			}
 		}
 
-		if (require_avatar)
+		if (config.require_avatar)
 		{
 			tempStatus = checkTable("profile-requirements.require-avatar-table",
-							                avatar_table);
+							                config.avatar_table);
 			status = status & tempStatus;
 
 			if (tempStatus)
 			{
 				status = status
 							 & checkColumn("profile-requirements.require-avatar-users-id-field",
-								             avatar_table, avatar_user_field);
+								             config.avatar_table, config.avatar_user_field);
 				status = status
 							 & checkColumn("profile-requirements.require-avatar-field",
-								             avatar_table, avatar_field);
+								             config.avatar_table, config.avatar_field);
 			}
 		}
 
-		if (require_minposts)
+		if (config.require_minposts)
 		{
 			tempStatus = checkTable("profile-requirements.require-minposts-table",
-							                minposts_table);
+							                config.minposts_table);
 			status = status & tempStatus;
 
 			if (tempStatus)
 			{
 				status = status
 							 & checkColumn("profile-requirements.require-minposts-user-id-field",
-								             minposts_table, minposts_user_field);
+								             config.minposts_table, config.minposts_user_field);
 				status = status
 							 & checkColumn("profile-requirements.require-minposts-user-id-field",
-								             minposts_table, minposts_field);
+								             config.minposts_table, config.minposts_field);
 			}
 		}
 
@@ -1726,11 +1663,11 @@ public final class Main extends JavaPlugin
 		{
 			if (config.multiTables && multiTableStatus)
 			{
-				checkTrackingColumns(multi_table);
+				checkTrackingColumns(config.multi_table);
 			}
 			else if (userTableStatus)
 			{
-				checkTrackingColumns(users_table);
+				checkTrackingColumns(config.users_table);
 			}
 		}
 
@@ -1915,60 +1852,10 @@ public final class Main extends JavaPlugin
 
 		// The new group synchronization section is handled here.
 		// Beginning with primary group.
-		show_primary_group = this.getConfig().getBoolean("show-primary-group");
-		secondary_groups = this.getConfig().getBoolean("secondary-groups");
-		kick_unregistered = this.getConfig().getBoolean("kick-unregistered");
 
-		require_avatar = this.getConfig().getBoolean("profile-requirements.require-avatar");
-		avatar_table = this.getConfig().getString("profile-requirements.require-avatar-table");
-		avatar_user_field = this.getConfig().getString("profile-requirements.require-avatar-user-id-field");
-		avatar_field = this.getConfig().getString("profile-requirements.require-avatar-field");
-		avatar_message = this.getConfig().getString("profile-requirements.require-avatar-message");
-
-		require_minposts = this.getConfig().getBoolean("profile-requirements.require-minposts");
-		minposts_required =  this.getConfig().getInt("profile-requirements.require-minposts-count");
-		minposts_table = this.getConfig().getString("profile-requirements.require-minposts-table");
-		minposts_user_field = this.getConfig().getString("profile-requirements.require-minposts-user-id-field");
-		minposts_field = this.getConfig().getString("profile-requirements.require-minposts-field");
-		minposts_message = this.getConfig().getString("profile-requirements.require-minposts-message");
-
-		registered_message = this.getConfig().getString("registered-message");
-		unregistered_message = this.getConfig().getString("unregistered-message");
-		unregistered_messagereminder = this.getConfig().getString("unregistered-messagereminder");
-
-		banlist_table = this.getConfig().getString("banlist-table.table");
-		banlist_user_id_field = this.getConfig().getString("banlist-table.user-id-field");
-		banlist_banned_id_field = this.getConfig().getString("banlist-table.user-id-field");
-
-		groups_table = this.getConfig().getString("groups-table.table");
-		groups_user_id_field = this.getConfig().getString("groups-table.user-id-field");
-		groups_group_id_field = this.getConfig().getString("groups-table.group-id-field");
-
-		users_table = this.getConfig().getString("users-table.table");
-		user_id_field = this.getConfig().getString("users-table.user-id-field");
-		user_name_field = this.getConfig().getString("users-table.user-name-field");
-
-		groups_id_field = this.getConfig().getString("users-table.groups-id-field");
-		secondary_groups_id_field = this.getConfig().getString("users-table.secondary-groups-id-field");
-
-		multi_table = this.getConfig().getString("multi-table.table");
-		multi_table_user_id_field = this.getConfig().getString("multi-table.field-user-id-field");
-		multi_table_key_field = this.getConfig().getString("multi-table.field-key-field");
-		multi_table_key_value = this.getConfig().getString("multi-table.field-key-value");
-		multi_table_value_field = this.getConfig().getString("multi-table.field-value-field");
-
-		if (config.useBanned)
-		{
-			is_banned_field = this.getConfig().getString("users-table.banned-field");
-		}
-		else
-		{
-			banned_users_group = this.getConfig().getString("users-table.banned-users-group");
-		}
-
-		log.config("Kick Unregistered : " + kick_unregistered);
-		log.config("Require Avatar : " + require_avatar);
-		log.config("Min Posts : " + require_minposts);
+		log.config("Kick Unregistered : " + config.kick_unregistered);
+		log.config("Require Avatar : " + config.require_avatar);
+		log.config("Min Posts : " + config.require_minposts);
 
 		return true;
 	}

@@ -43,6 +43,50 @@ public class Configuration
 	public boolean banlistTableEnabled;
 	public boolean groups_table_enabled;
 
+  public boolean secondary_groups = false;
+	public boolean show_primary_group = false;
+	public boolean kick_unregistered = false;
+	public boolean require_avatar = false;
+	public boolean require_minposts = false;
+
+	public String users_table;
+	public String banlist_table;
+	public String groups_table;
+	public String multi_table;
+	public String avatar_table;
+	public String minposts_table;
+
+	public String avatar_user_field;
+	public String avatar_field;
+	public String avatar_message;
+	public String minposts_user_field;
+	public String minposts_field;
+	public String minposts_message;
+
+	public String banlist_user_id_field;
+	public String banlist_banned_id_field;
+	public String groups_user_id_field;
+	public String groups_group_id_field;
+
+	public String user_id_field;
+	public String user_name_field;
+	public String groups_id_field;
+	public String secondary_groups_id_field;
+
+	public String is_banned_field;
+
+	public String banned_users_group;
+	public int minposts_required;
+
+	public String multi_table_key_field;
+	public String multi_table_key_value;
+	public String multi_table_value_field;
+	public String multi_table_user_id_field;
+
+	public String registered_message;
+	public String unregistered_message;
+	public String unregistered_messagereminder;
+
 	public boolean statisticsTrackingEnabled;
 
 	public boolean onlinestatusEnabled;
@@ -155,6 +199,57 @@ public class Configuration
 		banlistTableEnabled = config.getBoolean("banlist-table.enabled", false);
 
 		groups_table_enabled = config.getBoolean("groups-table.enabled", false);
+
+		show_primary_group = config.getBoolean("show-primary-group", false);
+		secondary_groups = config.getBoolean("secondary-groups", false);
+		kick_unregistered = config.getBoolean("kick-unregistered", false);
+
+		require_avatar = config.getBoolean("profile-requirements.require-avatar", false);
+		avatar_table = config.getString("profile-requirements.require-avatar-table", "");
+		avatar_user_field = config.getString("profile-requirements.require-avatar-user-id-field", "");
+		avatar_field = config.getString("profile-requirements.require-avatar-field", "");
+		avatar_message = config.getString("profile-requirements.require-avatar-message", "");
+
+		require_minposts = config.getBoolean("profile-requirements.require-minposts", false);
+		minposts_required =  config.getInt("profile-requirements.require-minposts-count", 0);
+		minposts_table = config.getString("profile-requirements.require-minposts-table", "");
+		minposts_user_field = config.getString("profile-requirements.require-minposts-user-id-field", "");
+		minposts_field = config.getString("profile-requirements.require-minposts-field", "");
+		minposts_message = config.getString("profile-requirements.require-minposts-message", "");
+
+		registered_message = config.getString("registered-message", "");
+		unregistered_message = config.getString("unregistered-message", "");
+		unregistered_messagereminder = config.getString("unregistered-messagereminder", "");
+
+		banlist_table = config.getString("banlist-table.table", "");
+		banlist_user_id_field = config.getString("banlist-table.user-id-field", "");
+		banlist_banned_id_field = config.getString("banlist-table.user-id-field", "");
+
+		if (useBanned)
+		{
+			is_banned_field = config.getString("users-table.banned-field", "");
+		}
+		else
+		{
+			banned_users_group = config.getString("users-table.banned-users-group", "");
+		}
+
+		groups_table = config.getString("groups-table.table", "");
+		groups_user_id_field = config.getString("groups-table.user-id-field", "");
+		groups_group_id_field = config.getString("groups-table.group-id-field", "");
+
+		users_table = config.getString("users-table.table", "");
+		user_id_field = config.getString("users-table.user-id-field", "");
+		user_name_field = config.getString("users-table.user-name-field", "");
+
+		groups_id_field = config.getString("users-table.groups-id-field", "");
+		secondary_groups_id_field = config.getString("users-table.secondary-groups-id-field", "");
+
+		multi_table = config.getString("multi-table.table", "");
+		multi_table_user_id_field = config.getString("multi-table.field-user-id-field", "");
+		multi_table_key_field = config.getString("multi-table.field-key-field", "");
+		multi_table_key_value = config.getString("multi-table.field-key-value", "");
+		multi_table_value_field = config.getString("multi-table.field-value-field", "");
 
 		statisticsTrackingEnabled = config.getBoolean("enable-basic-tracking", false);
 
