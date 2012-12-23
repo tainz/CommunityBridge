@@ -29,11 +29,20 @@ public class Configuration
 	public List<String> primaryGroupIDsToIgnore;
 
 	public boolean statisticsTrackingEnabled;
+
 	public boolean onlinestatusEnabled;
+
 	public boolean lastonlineEnabled;
+
 	public boolean gametimeEnabled;
+
 	public boolean totalxpEnabled;
+
 	public boolean currentxpEnabled;
+  public String currentxpKeyValue;
+  public String currentxpFormattedKeyValue;
+	public String currentxpColumn;
+	public String currentxpFormattedColumn;
 
 	public boolean levelEnabled;
 	public String levelColumn;
@@ -101,7 +110,7 @@ public class Configuration
 		statisticsTrackingEnabled = config.getBoolean("enable-basic-tracking", false);
 
 		onlinestatusEnabled = config.getBoolean("basic-tracking.field-onlinestatus-enabled", false);
-		
+
 		lastonlineEnabled = config.getBoolean("basic-tracking.field-lastonline-enabled", false);
 
 		gametimeEnabled = config.getBoolean("basic-tracking.field-gametime-enabled", false);
@@ -109,6 +118,10 @@ public class Configuration
 		totalxpEnabled = config.getBoolean("basic-tracking.field-totalxp-enabled", false);
 
 		currentxpEnabled = config.getBoolean("basic-tracking.field-currentxp-enabled", false);
+		currentxpColumn = config.getString("basic-tracking.field-currentxp-field", "");
+		currentxpFormattedColumn = config.getString("basic-tracking.field-currentxp-formatted-field", "");
+		currentxpKeyValue = config.getString("basic-tracking.field-currentxp-key-value", "");
+		currentxpFormattedKeyValue = config.getString("basic-tracking.field-currentxp-formatted-key-value", "");
 
 		levelEnabled = config.getBoolean("basic-tracking.field-level-enabled", false);
 		levelColumn = config.getString("basic-tracking.field-level-field", "");

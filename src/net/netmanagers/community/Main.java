@@ -111,11 +111,6 @@ public final class Main extends JavaPlugin
 	public static String totalxp_key_value;
 	public static String totalxp_field;
 
-  public static String currentxp_key_value;
-  public static String currentxp_formatted_key_value;
-	public static String currentxp_field;
-	public static String currentxp_formatted_field;
-
 	public static Map<String, Object> groups;
 
 	public static PermissionHandler permissionHandler;
@@ -270,10 +265,6 @@ public final class Main extends JavaPlugin
 		gametime_formatted_field = null;
 		totalxp_key_value = null;
 		totalxp_field = null;
-		currentxp_key_value = null;
-		currentxp_formatted_key_value = null;
-		currentxp_field = null;
-		currentxp_formatted_field = null;
 
 		log.config("Disabled...");
 		log = null;
@@ -1071,8 +1062,8 @@ public final class Main extends JavaPlugin
 
 				if (config.currentxpEnabled)
         {
-					checkDBSanity(u, currentxp_key_value);
-					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '"+currentxp_key_value+"'");
+					checkDBSanity(u, config.currentxpKeyValue);
+					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '"+ config.currentxpKeyValue + "'");
 					if (res.next())
           {
             p.setExp(res.getInt(multi_table_value_field));
@@ -1166,7 +1157,7 @@ public final class Main extends JavaPlugin
         {
 					if (config.currentxpEnabled)
           {
-            p.setExp(res.getInt(currentxp_field));
+            p.setExp(res.getInt(config.currentxpColumn));
           }
 
 					if (config.totalxpEnabled)
@@ -1331,16 +1322,16 @@ public final class Main extends JavaPlugin
 									       + " SET " + multi_table_value_field + " = '" + currentxp
 									       + "' WHERE " + multi_table_user_id_field + " = '" + u
 									       + "' AND " + multi_table_key_field + " = '"
-									       + currentxp_key_value + "'");
+									       + config.currentxpKeyValue + "'");
 
-					if (!currentxp_formatted_key_value.isEmpty())
+					if (!config.currentxpFormattedKeyValue.isEmpty())
 					{
 						sql.updateQuery("UPDATE " + multi_table
 													 + " SET " + multi_table_value_field + " = '"
 													 + currentxp_formatted
 													 + "' WHERE " + multi_table_user_id_field + " = '" + u
 													 + "' AND " + multi_table_key_field + " = '"
-													 + currentxp_formatted_key_value + "'");
+													 + config.currentxpFormattedKeyValue + "'");
 					}
         }
 
@@ -1453,11 +1444,11 @@ public final class Main extends JavaPlugin
 
 				if (config.currentxpEnabled)
         {
-          SQLParts.add(Main.currentxp_field + " = '" + currentxp + "'");
+          SQLParts.add(config.currentxpColumn + " = '" + currentxp + "'");
 
-					if (!currentxp_formatted_field.isEmpty())
+					if (!config.currentxpFormattedColumn.isEmpty())
 					{
-						SQLParts.add(Main.currentxp_formatted_field + " = '"
+						SQLParts.add(config.currentxpFormattedColumn + " = '"
 										    + currentxp_formatted + "'");
 					}
         }
@@ -1860,9 +1851,9 @@ public final class Main extends JavaPlugin
 		if (config.currentxpEnabled)
 		{
 			if (checkColumn("basic-tracking.field-currentxp-field", trackingTable,
-						          currentxp_field)
+						          config.currentxpColumn)
 			 && checkColumn("basic-tracking.field-currentxp-formatted-field",
-							        trackingTable, currentxp_formatted_field))
+							        trackingTable, config.currentxpFormattedColumn))
 			{}
 			else
 			{
@@ -2047,11 +2038,6 @@ public final class Main extends JavaPlugin
 
 		totalxp_key_value = this.getConfig().getString("basic-tracking.field-totalxp-key-value");
 		totalxp_field = this.getConfig().getString("basic-tracking.field-totalxp-field");
-
-		currentxp_key_value = this.getConfig().getString("basic-tracking.field-currentxp-key-value");
-		currentxp_field = this.getConfig().getString("basic-tracking.field-currentxp-field");
-		currentxp_formatted_key_value = this.getConfig().getString("basic-tracking.field-currentxp-formatted-key-value", "");
-		currentxp_formatted_field = this.getConfig().getString("basic-tracking.field-currentxp-formatted-field", "");
 
 		if (use_banned)
 		{
