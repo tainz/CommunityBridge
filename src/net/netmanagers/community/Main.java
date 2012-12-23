@@ -39,12 +39,6 @@ public final class Main extends JavaPlugin
 	private static Metrics metrics = null;
 	public static PermissionHandler permissionHandler;
 
-  public static boolean auto_sync = false;
-  public static boolean auto_remind = false;
-  public static String auto_every_unit;
-	public static long auto_sync_every;
-	public static long auto_remind_every;
-
   public static boolean secondary_groups = false;
 	public static boolean show_primary_group = false;
 	public static boolean kick_unregistered = false;
@@ -147,12 +141,12 @@ public final class Main extends JavaPlugin
 					}
 					syncAll();
 
-					if (auto_sync)
+					if (config.auto_sync)
 					{
 						startSyncing();
 					}
 
-					if (auto_remind)
+					if (config.auto_remind)
 					{
 						startAutoReminder();
 					}
@@ -190,7 +184,6 @@ public final class Main extends JavaPlugin
 
 		permissionHandler = null;
 
-		auto_every_unit = null;
 		users_table = null;
 		banlist_table = null;
 		groups_table = null;
@@ -242,26 +235,26 @@ public final class Main extends JavaPlugin
 	@SuppressWarnings("deprecation")
 	private void startSyncing()
   {
-    long every = auto_sync_every; // Effectively defaulting to ticks.
+    long every = config.auto_sync_every; // Effectively defaulting to ticks.
     String unit = "ticks";
 
-    if (auto_every_unit.toLowerCase().startsWith("second"))
+    if (config.auto_every_unit.toLowerCase().startsWith("second"))
     {
-      every = auto_sync_every * 20; // 20 ticks per second.
+      every = config.auto_sync_every * 20; // 20 ticks per second.
       unit = "seconds";
     }
-    else if (auto_every_unit.toLowerCase().startsWith("minute"))
+    else if (config.auto_every_unit.toLowerCase().startsWith("minute"))
     {
-      every = auto_sync_every * 1200; // 20 ticks per second, 60 sec per minute
+      every = config.auto_sync_every * 1200; // 20 ticks per second, 60 sec per minute
       unit = "minutes";
     }
-    else if (auto_every_unit.toLowerCase().startsWith("hour"))
+    else if (config.auto_every_unit.toLowerCase().startsWith("hour"))
     {
-      every = auto_sync_every * 72000; // 20 ticks/s 60s/m, 60m/h
+      every = config.auto_sync_every * 72000; // 20 ticks/s 60s/m, 60m/h
       unit = "hours";
     }
 
-		log.config(String.format("Auto Sync Every: %d %s.", auto_sync_every, unit));
+		log.config(String.format("Auto Sync Every: %d %s.", config.auto_sync_every, unit));
 		// EXPIRABLE: ST2012-Dec-21: The else block and the if statement itself. The true block should stay
 		if (StringUtilities.compareVersion(Bukkit.getBukkitVersion().replace("R", ""), "1.4.5.1.0") > -1)
 		{
@@ -294,28 +287,28 @@ public final class Main extends JavaPlugin
 	@SuppressWarnings("deprecation")
   private void startAutoReminder()
   {
-    long every = auto_remind_every; // Effectively defaulting to ticks.
+    long every = config.auto_remind_every; // Effectively defaulting to ticks.
 
     String unit = "ticks";
 
-    if (auto_every_unit.toLowerCase().startsWith("second"))
+    if (config.auto_every_unit.toLowerCase().startsWith("second"))
     {
-      every = auto_remind_every * 20; // 20 ticks per second.
+      every = config.auto_remind_every * 20; // 20 ticks per second.
       unit = "seconds";
     }
-    else if (auto_every_unit.toLowerCase().startsWith("minute"))
+    else if (config.auto_every_unit.toLowerCase().startsWith("minute"))
     {
-      every = auto_remind_every * 1200; // 20 ticks per second, 60 sec/minute
+      every = config.auto_remind_every * 1200; // 20 ticks per second, 60 sec/minute
       unit = "minutes";
     }
-    else if (auto_every_unit.toLowerCase().startsWith("hour"))
+    else if (config.auto_every_unit.toLowerCase().startsWith("hour"))
     {
-      every = auto_remind_every * 72000; // 20 ticks/s 60s/m, 60m/h
+      every = config.auto_remind_every * 72000; // 20 ticks/s 60s/m, 60m/h
       unit = "hours";
     }
 
     log.config(String.format("Auto Remind Unregistered Every: %d %s.",
-                           auto_remind_every, unit));
+                           config.auto_remind_every, unit));
 		// EXPIRABLE: ST2012-Dec-21: The else block and the if statement itself. The true block should stay
 		if (StringUtilities.compareVersion(Bukkit.getBukkitVersion().replace("R", ""), "1.4.5.1.0") > -1)
 		{
@@ -1926,13 +1919,6 @@ public final class Main extends JavaPlugin
 		secondary_groups = this.getConfig().getBoolean("secondary-groups");
 		kick_unregistered = this.getConfig().getBoolean("kick-unregistered");
 
-		auto_sync = this.getConfig().getBoolean("auto-sync");
-		auto_remind = this.getConfig().getBoolean("auto-remind");
-		auto_every_unit = this.getConfig().getString("auto-every-unit", "ticks");
-
-		auto_sync_every = this.getConfig().getLong("auto-sync-every");
-		auto_remind_every = this.getConfig().getLong("auto-remind-every");
-
 		require_avatar = this.getConfig().getBoolean("profile-requirements.require-avatar");
 		avatar_table = this.getConfig().getString("profile-requirements.require-avatar-table");
 		avatar_user_field = this.getConfig().getString("profile-requirements.require-avatar-user-id-field");
@@ -1980,26 +1966,9 @@ public final class Main extends JavaPlugin
 			banned_users_group = this.getConfig().getString("users-table.banned-users-group");
 		}
 
-		log.config("Auto Sync   : " + auto_sync);
-		log.config("Auto Remind :" + auto_remind);
 		log.config("Kick Unregistered : " + kick_unregistered);
-		log.config("Multi Tables : " + config.multiTables);
-		log.config("Basic Tracking : " + config.statisticsTrackingEnabled);
 		log.config("Require Avatar : " + require_avatar);
 		log.config("Min Posts : " + require_minposts);
-
-		if (config.statisticsTrackingEnabled)
-		{
-			log.config("Tracking Online Status : " + config.onlinestatusEnabled);
-			log.config("Tracking Last Online   : " + config.lastonlineEnabled);
-			log.config("Tracking Game Time     : " + config.gametimeEnabled);
-			log.config("Tracking Total XP      : " + config.totalxpEnabled);
-			log.config("Tracking Current XP    : " + config.currentxpEnabled);
-			log.config("Tracking Level         : " + config.levelEnabled);
-			log.config("Tracking Health        : " + config.healthEnabled);
-			log.config("Tracking Life Ticks    : " + config.lifeticksEnabled);
-			log.config("Tracking Wallet        : " + config.walletEnabled);
-		}
 
 		return true;
 	}

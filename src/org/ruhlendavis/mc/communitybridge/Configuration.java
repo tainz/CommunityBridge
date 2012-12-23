@@ -26,6 +26,12 @@ public class Configuration
 	public String databasePassword;
 	public String permissionsSystem;
 
+  public boolean auto_sync;
+  public boolean auto_remind;
+  public String auto_every_unit;
+	public long auto_sync_every;
+	public long auto_remind_every;
+
 	public boolean groupSynchronizationPrimaryEnabled;
 	public List<String> primaryGroupIDsToIgnore;
 	public Map<String, Object> groups;
@@ -122,6 +128,13 @@ public class Configuration
 
 		permissionsSystem = config.getString("permissions-system", "");
 
+		auto_sync = config.getBoolean("auto-sync", false);
+		auto_remind = config.getBoolean("auto-remind", false);
+		auto_every_unit = config.getString("auto-every-unit", "ticks");
+
+		auto_sync_every = config.getLong("auto-sync-every", 24000L);
+		auto_remind_every = config.getLong("auto-remind-every", 12000L);
+
 		groupSynchronizationPrimaryEnabled = config.getBoolean("group-synchronization.primary-group.enabled", false);
 		if (groupSynchronizationPrimaryEnabled)
 		{
@@ -196,13 +209,28 @@ public class Configuration
 	{
 		Main.log.config(  "Log level:                             " + logLevel);
 		Main.log.config(  "Plugin metrics enabled:                " + usePluginMetrics);
-
-		Main.log.config(  "Primary Group Synchronization Enabled: "
-									+ groupSynchronizationPrimaryEnabled);
+		Main.log.config(  "Auto Sync   :                          " + auto_sync);
+		Main.log.config(  "Auto Remind :                          " + auto_remind);
+		Main.log.config(  "Multi Tables :                         " + multiTables);
+		Main.log.config(  "Primary Group Synchronization Enabled: "	+ groupSynchronizationPrimaryEnabled);
 
 		if (groupSynchronizationPrimaryEnabled)
 		{
 			Main.log.config("Primary Group IDs to Ignore:           " + primaryGroupIDsToIgnore);
+		}
+		Main.log.config(  "Basic Tracking :                       " + statisticsTrackingEnabled);
+
+		if (statisticsTrackingEnabled)
+		{
+			Main.log.config("Tracking Online Status :               " + onlinestatusEnabled);
+			Main.log.config("Tracking Last Online   :               " + lastonlineEnabled);
+			Main.log.config("Tracking Game Time     :               " + gametimeEnabled);
+			Main.log.config("Tracking Total XP      :               " + totalxpEnabled);
+			Main.log.config("Tracking Current XP    :               " + currentxpEnabled);
+			Main.log.config("Tracking Level         :               " + levelEnabled);
+			Main.log.config("Tracking Health        :               " + healthEnabled);
+			Main.log.config("Tracking Life Ticks    :               " + lifeticksEnabled);
+			Main.log.config("Tracking Wallet        :               " + walletEnabled);
 		}
 	}
 }
