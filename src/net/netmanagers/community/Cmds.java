@@ -1,7 +1,6 @@
 package net.netmanagers.community;
 
 import java.net.MalformedURLException;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;

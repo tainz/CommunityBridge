@@ -14,8 +14,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
 import org.ruhlendavis.mc.communitybridge.PermissionHandler;
@@ -50,7 +48,7 @@ public final class Main extends JavaPlugin
 		 && config.databasePassword.equals("password"))
 		{
 			log.severe("You need to set configuration options in the config.yml.");
-			Bukkit.getServer().getPluginManager().disablePlugin(this);
+			disablePlugin();
 			return;
 		}
 
@@ -101,6 +99,7 @@ public final class Main extends JavaPlugin
 			{
 				log.severe("Unknown permissions system in config.yml. CommunityBridge disabled.");
 				disablePlugin();
+				return;
 			}
 		}
 		catch (IllegalStateException e)
@@ -175,14 +174,7 @@ public final class Main extends JavaPlugin
 
 	private static void disablePlugin()
   {
-		// TODO: Consider: Bukkit.getServer().getPluginManager().disablePlugin(this);
-		PluginManager pm = Bukkit.getServer().getPluginManager();
-		for (Plugin plugin : pm.getPlugins()) {
-            if (plugin.getDescription().getName().equalsIgnoreCase(thisPluginName)) {
-        		pm.disablePlugin(plugin);
-                return;
-            }
-        }
+		Bukkit.getServer().getPluginManager().disablePlugin(instance);
 	}
 
 	// EXPIRABLE: ST2012-12-21: When we remove the deprecated code, this can go away as well.
