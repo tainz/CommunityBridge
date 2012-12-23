@@ -54,8 +54,6 @@ public final class Main extends JavaPlugin
 	public static boolean require_avatar = false;
 	public static boolean require_minposts = false;
 
-	public static String permissions_system;
-
 	public static String users_table;
 	public static String banlist_table;
 	public static String groups_table;
@@ -239,7 +237,6 @@ public final class Main extends JavaPlugin
 
 		groups = null;
 		auto_every_unit = null;
-		permissions_system = null;
 		users_table = null;
 		banlist_table = null;
 		groups_table = null;
@@ -365,7 +362,7 @@ public final class Main extends JavaPlugin
 			}, every, every);
 		}
 	}
-	
+
 	// EXPIRABLE: When we remove the deprecated code, this can go away as well.
 	@SuppressWarnings("deprecation")
   private void startAutoReminder()
@@ -425,7 +422,7 @@ public final class Main extends JavaPlugin
 		try {
 			if (multi_tables)
       {
-				if(multi_tables_use_key)
+				if (multi_tables_use_key)
         {
 					sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + onlinestatus_valueoffline + "' WHERE " + multi_table_key_field + " = '" + onlinestatus_key_value + "'");
 				}
@@ -519,7 +516,7 @@ public final class Main extends JavaPlugin
 			ResultSet res;
 			if (multi_tables)
       {
-				if(multi_tables_use_key)
+				if (multi_tables_use_key)
         {
 					res = Main.sql.sqlQuery("SELECT * FROM " + multi_table + " WHERE " + multi_table_key_field + " = '" + multi_table_key_value + "' AND " + multi_table_value_field + " = '" + username + "'");
 				}
@@ -576,7 +573,7 @@ public final class Main extends JavaPlugin
   {
     try
     {
-      if (permissions_system.equalsIgnoreCase("PEX"))
+      if (config.permissionsSystem.equalsIgnoreCase("PEX"))
       {
         if (permissionHandler.isMemberOfGroup(player.getName(), groupName))
         {}
@@ -590,7 +587,7 @@ public final class Main extends JavaPlugin
           return true;
         }
       }
-      else if (permissions_system.equalsIgnoreCase("bPerms"))
+      else if (config.permissionsSystem.equalsIgnoreCase("bPerms"))
 			{
 				String command = "world " + player.getWorld().getName();
 				log.finest("setGroup(): " + command);
@@ -608,7 +605,7 @@ public final class Main extends JavaPlugin
         }
         return true;
       }
-      else if (permissions_system.equalsIgnoreCase("GroupManager"))
+      else if (config.permissionsSystem.equalsIgnoreCase("GroupManager"))
       {
         Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "manuadd " + player.getName() + " " + groupName);
         if (n)
@@ -617,7 +614,7 @@ public final class Main extends JavaPlugin
         }
         return true;
       }
-      else if (permissions_system.equalsIgnoreCase("PermsBukkit"))
+      else if (config.permissionsSystem.equalsIgnoreCase("PermsBukkit"))
       {
         String cmd = "permissions player setgroup " + player.getName() + " " + groupName;
         Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), cmd);
@@ -639,7 +636,7 @@ public final class Main extends JavaPlugin
 	{
 		 try
 		 {
-			 if (permissions_system.equalsIgnoreCase("PEX"))
+			 if (config.permissionsSystem.equalsIgnoreCase("PEX"))
 			 {
 	       if (permissionHandler.isMemberOfGroup(player.getName(), groupName))
 		     {}
@@ -656,30 +653,30 @@ public final class Main extends JavaPlugin
 			 }
        else
 			 {
-				 if(permissions_system.equalsIgnoreCase("bPerms"))
+				 if (config.permissionsSystem.equalsIgnoreCase("bPerms"))
 				 {
 					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), (new StringBuilder("world ")).append(player.getWorld().getName()).toString());
 					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), (new StringBuilder("user ")).append(player.getName()).toString());
 					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), (new StringBuilder("user addgroup ")).append(groupName).toString());
-					 if(n)
+					 if (n)
            {
              log.fine((new StringBuilder("Added ")).append(player.getName()).append(" to group ").append(groupName).toString());
            }
 					 return true;
 				 }
-				 if(permissions_system.equalsIgnoreCase("GroupManager"))
+				 if (config.permissionsSystem.equalsIgnoreCase("GroupManager"))
 				 {
 					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "manuadd " + player.getName() + " " + groupName);
-					 if(n)
+					 if (n)
            {
              log.fine((new StringBuilder("Adding ")).append(player.getName()).append(" to group ").append(groupName).toString());
            }
 					 return true;
 				 }
-				 if(permissions_system.equalsIgnoreCase("PermsBukkit"))
+				 if (config.permissionsSystem.equalsIgnoreCase("PermsBukkit"))
 				 {
 					 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "permissions player addgroup " + player.getName() + " " + groupName);
-					 if(n)
+					 if (n)
            {
              log.fine((new StringBuilder("Adding ")).append(player.getName()).append(" to group ").append(groupName).toString());
            }
@@ -817,7 +814,7 @@ public final class Main extends JavaPlugin
 
 					if (require_minposts)
           {
-						if(!checkMinPosts(id, p))
+						if (!checkMinPosts(id, p))
             {
               requirements_met = false;
             }
@@ -877,7 +874,7 @@ public final class Main extends JavaPlugin
 						{
 							for(String g: extra_groups.split(","))
 							{
-								if(!g.isEmpty())
+								if (!g.isEmpty())
 								{
 									addGroup((String)groups.get(g), p, firstsync);
 								}
@@ -1035,7 +1032,7 @@ public final class Main extends JavaPlugin
 
 			if (res.next())
       {
-        if(res.getInt(minposts_field) >= minposts_required)
+        if (res.getInt(minposts_field) >= minposts_required)
         {
           return true;
         }
@@ -1095,7 +1092,7 @@ public final class Main extends JavaPlugin
         {
 					checkDBSanity(u, currentxp_key_value);
 					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '"+currentxp_key_value+"'");
-					if(res.next())
+					if (res.next())
           {
             p.setExp(res.getInt(multi_table_value_field));
           }
@@ -1105,7 +1102,7 @@ public final class Main extends JavaPlugin
         {
 					checkDBSanity(u, totalxp_key_value);
 					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '"+totalxp_key_value+"'");
-					if(res.next())
+					if (res.next())
           {
             p.setTotalExperience(res.getInt(multi_table_value_field));
           }
@@ -1128,7 +1125,7 @@ public final class Main extends JavaPlugin
         {
 					checkDBSanity(u, level_key_value);
 					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '"+level_key_value+"'");
-					if(res.next())
+					if (res.next())
           {
             p.setLevel(res.getInt(multi_table_value_field));
           }
@@ -1140,7 +1137,7 @@ public final class Main extends JavaPlugin
 					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '"+health_key_value+"'");
 					if (res.next())
           {
-            if(res.getInt(multi_table_value_field)>0)
+            if (res.getInt(multi_table_value_field)>0)
             {
               p.setHealth(res.getInt(multi_table_value_field));
             }
@@ -1532,7 +1529,7 @@ public final class Main extends JavaPlugin
 				StringBuilder SQLUpdates = new StringBuilder();
 				for(String s: SQLParts)
         {
-					if(!SQLUpdates.toString().isEmpty())
+					if (!SQLUpdates.toString().isEmpty())
           {
             SQLUpdates.append(", ");
           }
