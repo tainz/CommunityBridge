@@ -116,9 +116,6 @@ public final class Main extends JavaPlugin
 	public static String currentxp_field;
 	public static String currentxp_formatted_field;
 
-  public static String level_key_value;
-	public static String level_field;
-
 	public static Map<String, Object> groups;
 
 	public static PermissionHandler permissionHandler;
@@ -277,8 +274,6 @@ public final class Main extends JavaPlugin
 		currentxp_formatted_key_value = null;
 		currentxp_field = null;
 		currentxp_formatted_field = null;
-		level_key_value = null;
-		level_field = null;
 
 		log.config("Disabled...");
 		log = null;
@@ -1109,8 +1104,8 @@ public final class Main extends JavaPlugin
 
 				if (config.levelEnabled)
         {
-					checkDBSanity(u, level_key_value);
-					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '"+level_key_value+"'");
+					checkDBSanity(u, config.levelKeyValue);
+					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '"+ config.levelKeyValue+"'");
 					if (res.next())
           {
             p.setLevel(res.getInt(multi_table_value_field));
@@ -1189,7 +1184,7 @@ public final class Main extends JavaPlugin
 
 					if (config.levelEnabled)
           {
-            p.setLevel(res.getInt(level_field));
+            p.setLevel(res.getInt(config.levelColumn));
           }
 
 					if (config.healthEnabled)
@@ -1351,7 +1346,7 @@ public final class Main extends JavaPlugin
 
 				if (config.levelEnabled)
         {
-          sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + level + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + level_key_value + "'");
+          sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + level + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + config.levelKeyValue + "'");
         }
 
 				if (config.healthEnabled)
@@ -1469,7 +1464,7 @@ public final class Main extends JavaPlugin
 
 				if (config.levelEnabled)
         {
-          SQLParts.add(level_field + " = '" + level + "'");
+          SQLParts.add(config.levelColumn + " = '" + level + "'");
         }
 
 				if (config.healthEnabled)
@@ -1879,7 +1874,7 @@ public final class Main extends JavaPlugin
 		if (config.levelEnabled)
 		{
 			if (checkColumn("basic-tracking.field-level-field", trackingTable,
-						          level_field))
+						          config.levelColumn))
 			{}
 			else
 			{
@@ -2057,9 +2052,6 @@ public final class Main extends JavaPlugin
 		currentxp_field = this.getConfig().getString("basic-tracking.field-currentxp-field");
 		currentxp_formatted_key_value = this.getConfig().getString("basic-tracking.field-currentxp-formatted-key-value", "");
 		currentxp_formatted_field = this.getConfig().getString("basic-tracking.field-currentxp-formatted-field", "");
-
-		level_key_value = this.getConfig().getString("basic-tracking.field-level-key-value");
-		level_field = this.getConfig().getString("basic-tracking.field-level-field");
 
 		if (use_banned)
 		{

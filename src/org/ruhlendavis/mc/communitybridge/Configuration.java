@@ -18,7 +18,6 @@ public class Configuration
 	public String logLevel;
 	public boolean usePluginMetrics;
 
-
 	public String databaseHost;
 	public String databasePort;
 	public String databaseName;
@@ -35,7 +34,10 @@ public class Configuration
 	public boolean gametimeEnabled;
 	public boolean totalxpEnabled;
 	public boolean currentxpEnabled;
+
 	public boolean levelEnabled;
+	public String levelColumn;
+  public String levelKeyValue;
 
 	public boolean healthEnabled;
 	public String healthColumn;
@@ -99,11 +101,18 @@ public class Configuration
 		statisticsTrackingEnabled = config.getBoolean("enable-basic-tracking", false);
 
 		onlinestatusEnabled = config.getBoolean("basic-tracking.field-onlinestatus-enabled", false);
+		
 		lastonlineEnabled = config.getBoolean("basic-tracking.field-lastonline-enabled", false);
+
 		gametimeEnabled = config.getBoolean("basic-tracking.field-gametime-enabled", false);
+
 		totalxpEnabled = config.getBoolean("basic-tracking.field-totalxp-enabled", false);
+
 		currentxpEnabled = config.getBoolean("basic-tracking.field-currentxp-enabled", false);
+
 		levelEnabled = config.getBoolean("basic-tracking.field-level-enabled", false);
+		levelColumn = config.getString("basic-tracking.field-level-field", "");
+		levelKeyValue = config.getString("basic-tracking.field-level-key-value", "");
 
 		healthEnabled = config.getBoolean("basic-tracking.field-health-enabled", false);
 		healthColumn = config.getString("basic-tracking.field-health-field", "");
