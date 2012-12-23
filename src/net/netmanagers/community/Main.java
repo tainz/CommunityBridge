@@ -108,9 +108,6 @@ public final class Main extends JavaPlugin
   public static String gametime_formatted_key_value;
   public static String gametime_formatted_field;
 
-	public static String totalxp_key_value;
-	public static String totalxp_field;
-
 	public static Map<String, Object> groups;
 
 	public static PermissionHandler permissionHandler;
@@ -263,8 +260,6 @@ public final class Main extends JavaPlugin
 		gametime_field = null;
 		gametime_formatted_key_value = null;
 		gametime_formatted_field = null;
-		totalxp_key_value = null;
-		totalxp_field = null;
 
 		log.config("Disabled...");
 		log = null;
@@ -1072,8 +1067,8 @@ public final class Main extends JavaPlugin
 
 				if (config.totalxpEnabled)
         {
-					checkDBSanity(u, totalxp_key_value);
-					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '"+totalxp_key_value+"'");
+					checkDBSanity(u, config.totalxpKeyValue);
+					res = sql.sqlQuery("SELECT " + multi_table_value_field + " FROM " + multi_table + " WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '"+ config.totalxpKeyValue + "'");
 					if (res.next())
           {
             p.setTotalExperience(res.getInt(multi_table_value_field));
@@ -1162,7 +1157,7 @@ public final class Main extends JavaPlugin
 
 					if (config.totalxpEnabled)
           {
-            p.setTotalExperience(res.getInt(totalxp_field));
+            p.setTotalExperience(res.getInt(config.totalxpColumn));
           }
 
 					if (config.lifeticksEnabled)
@@ -1313,7 +1308,7 @@ public final class Main extends JavaPlugin
 
 				if (config.totalxpEnabled)
         {
-          sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + totalxp + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + totalxp_key_value + "'");
+          sql.updateQuery("UPDATE " + multi_table + " SET " + multi_table_value_field + " = '" + totalxp + "' WHERE " + multi_table_user_id_field + " = '" + u + "' and " + multi_table_key_field +" = '" + config.totalxpKeyValue + "'");
         }
 
 				if (config.currentxpEnabled)
@@ -1439,7 +1434,7 @@ public final class Main extends JavaPlugin
 
 				if (config.totalxpEnabled)
         {
-          SQLParts.add(Main.totalxp_field + " = '" + totalxp + "'");
+          SQLParts.add(config.totalxpColumn + " = '" + totalxp + "'");
         }
 
 				if (config.currentxpEnabled)
@@ -1839,7 +1834,7 @@ public final class Main extends JavaPlugin
 		if (config.totalxpEnabled)
 		{
 			if (checkColumn("basic-tracking.field-totalxp-field", trackingTable,
-						          totalxp_field))
+						          config.totalxpColumn))
 			{}
 			else
 			{
@@ -2035,9 +2030,6 @@ public final class Main extends JavaPlugin
 		gametime_field = this.getConfig().getString("basic-tracking.field-gametime-field");
 		gametime_formatted_field = this.getConfig().getString("basic-tracking.field-gametime-formatted-field", "");
 		gametime_formatted_key_value = this.getConfig().getString("basic-tracking.field-gametime-formatted-key-value", "");
-
-		totalxp_key_value = this.getConfig().getString("basic-tracking.field-totalxp-key-value");
-		totalxp_field = this.getConfig().getString("basic-tracking.field-totalxp-field");
 
 		if (use_banned)
 		{

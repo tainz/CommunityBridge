@@ -37,6 +37,8 @@ public class Configuration
 	public boolean gametimeEnabled;
 
 	public boolean totalxpEnabled;
+	public String totalxpKeyValue;
+	public String totalxpColumn;
 
 	public boolean currentxpEnabled;
   public String currentxpKeyValue;
@@ -116,6 +118,8 @@ public class Configuration
 		gametimeEnabled = config.getBoolean("basic-tracking.field-gametime-enabled", false);
 
 		totalxpEnabled = config.getBoolean("basic-tracking.field-totalxp-enabled", false);
+		totalxpKeyValue = config.getString("basic-tracking.field-totalxp-key-value", "");
+		totalxpColumn = config.getString("basic-tracking.field-totalxp-field", "");
 
 		currentxpEnabled = config.getBoolean("basic-tracking.field-currentxp-enabled", false);
 		currentxpColumn = config.getString("basic-tracking.field-currentxp-field", "");
