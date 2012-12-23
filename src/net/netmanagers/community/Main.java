@@ -36,7 +36,6 @@ public final class Main extends JavaPlugin
 	public static Log log;
 	public static SQL sql;
 
-	public static boolean show_config = false;
 	public static boolean multi_tables = false;
 	public static boolean multi_tables_use_key = false;
 	public static boolean use_banned = false;
@@ -129,9 +128,6 @@ public final class Main extends JavaPlugin
 	public static String lifeticks_formatted_key_value;
 	public static String lifeticks_field;
 	public static String lifeticks_formatted_field;
-
-  public static String wallet_key_value;
-	public static String wallet_field;
 
 	public static Map<String, Object> groups;
 
@@ -300,8 +296,6 @@ public final class Main extends JavaPlugin
 		lifeticks_formatted_key_value = null;
 		lifeticks_field = null;
 		lifeticks_formatted_field = null;
-		wallet_key_value = null;
-		wallet_field = null;
 
 		log.config("Disabled...");
 		log = null;
@@ -1937,7 +1931,7 @@ public final class Main extends JavaPlugin
 		if (config.walletEnabled)
 		{
 			if (checkColumn("basic-tracking.field-wallet-field", trackingTable,
-						          wallet_field))
+						          config.walletColumn))
 			{}
 			else
 			{
@@ -2064,9 +2058,6 @@ public final class Main extends JavaPlugin
 		lastonline_field = this.getConfig().getString("basic-tracking.field-lastonline-field");
 		lastonline_formatted_key_value = this.getConfig().getString("basic-tracking.field-lastonline-formatted-key-value", "");
 		lastonline_formatted_field = this.getConfig().getString("basic-tracking.field-lastonline-formatted-field", "");
-
-		wallet_key_value = this.getConfig().getString("basic-tracking.field-wallet-key-value");
-		wallet_field = this.getConfig().getString("basic-tracking.field-wallet-field");
 
 		gametime_key_value = this.getConfig().getString("basic-tracking.field-gametime-key-value");
 		gametime_field = this.getConfig().getString("basic-tracking.field-gametime-field");

@@ -16,6 +16,8 @@ import net.netmanagers.community.Main;
 public class Configuration
 {
 	public String logLevel;
+	public boolean usePluginMetrics;
+
 
 	public String databaseHost;
 	public String databasePort;
@@ -36,9 +38,10 @@ public class Configuration
 	public boolean levelEnabled;
 	public boolean healthEnabled;
 	public boolean lifeticksEnabled;
-	public boolean walletEnabled;
 
-	public boolean usePluginMetrics;
+	public boolean walletEnabled;
+  public String walletKeyValue;
+	public String walletColumn;
 
 	public Configuration(Main plugin)
 	{
@@ -50,49 +53,55 @@ public class Configuration
 	{
 		plugin.saveDefaultConfig();
 
+		org.bukkit.configuration.file.FileConfiguration config;
+		config = plugin.getConfig();
+
 		// EXPIRABLE: We'll remove the deprecated setting in six months. Remove On: 2013/May/13
 		// We do this first so that if log-level is set, it will override the
 		// deprecated setting 'show-config'.
-		if (plugin.getConfig().getBoolean("show-config", false))
+		if (config.getBoolean("show-config", false))
 		{
 			Main.log.warning("The setting 'show-config' in config.yml is deprecated. Use log-level: config instead.");
 			Main.log.setLevel(Level.CONFIG);
 		}
 
 		// Either way, we should set the log level before doing anything else.
-		logLevel = plugin.getConfig().getString("log-level", "config");
+		logLevel = config.getString("log-level", "config");
 		Main.log.setLevel(logLevel);
 
-		usePluginMetrics = plugin.getConfig().getBoolean("plugin-metrics", true);
+		usePluginMetrics = config.getBoolean("plugin-metrics", true);
 
 		// Database Section
-		databaseHost = plugin.getConfig().getString("db-host", "database hostname unknown");
-		databasePort = plugin.getConfig().getString("db-port", "database port unknown");
-		databaseName = plugin.getConfig().getString("db-database", "database name unknown");
-		databaseUsername = plugin.getConfig().getString("db-username", "database username unknown");
-    databasePassword = plugin.getConfig().getString("db-password", "database password unknown");
+		databaseHost = config.getString("db-host", "");
+		databasePort = config.getString("db-port", "");
+		databaseName = config.getString("db-database", "");
+		databaseUsername = config.getString("db-username", "");
+    databasePassword = config.getString("db-password", "");
 
-		permissionsSystem = plugin.getConfig().getString("permissions-system", "unknown");
+		permissionsSystem = config.getString("permissions-system", "");
 
-		groupSynchronizationPrimaryEnabled = plugin.getConfig().getBoolean("group-synchronization.primary-group.enabled", false);
+		groupSynchronizationPrimaryEnabled = config.getBoolean("group-synchronization.primary-group.enabled", false);
 		if (groupSynchronizationPrimaryEnabled)
 		{
 			List<String> defaultList = new ArrayList<String>();
-			plugin.getConfig().addDefault("group-synchronization.primary-group.group-ids-to-ignore", defaultList);
-			primaryGroupIDsToIgnore = plugin.getConfig().getStringList("group-synchronization.primary-group.group-ids-to-ignore");
+			config.addDefault("group-synchronization.primary-group.group-ids-to-ignore", defaultList);
+			primaryGroupIDsToIgnore = config.getStringList("group-synchronization.primary-group.group-ids-to-ignore");
 		}
 
-		statisticsTrackingEnabled = plugin.getConfig().getBoolean("enable-basic-tracking", false);
+		statisticsTrackingEnabled = config.getBoolean("enable-basic-tracking", false);
 
-		onlinestatusEnabled = plugin.getConfig().getBoolean("basic-tracking.field-onlinestatus-enabled", false);
-		lastonlineEnabled = plugin.getConfig().getBoolean("basic-tracking.field-lastonline-enabled", false);
-		gametimeEnabled = plugin.getConfig().getBoolean("basic-tracking.field-gametime-enabled", false);
-		totalxpEnabled = plugin.getConfig().getBoolean("basic-tracking.field-totalxp-enabled", false);
-		currentxpEnabled = plugin.getConfig().getBoolean("basic-tracking.field-currentxp-enabled", false);
-		levelEnabled = plugin.getConfig().getBoolean("basic-tracking.field-level-enabled", false);
-		healthEnabled = plugin.getConfig().getBoolean("basic-tracking.field-health-enabled", false);
-		lifeticksEnabled = plugin.getConfig().getBoolean("basic-tracking.field-lifeticks-enabled", false);
-		walletEnabled = plugin.getConfig().getBoolean("basic-tracking.field-wallet-enabled", false);
+		onlinestatusEnabled = config.getBoolean("basic-tracking.field-onlinestatus-enabled", false);
+		lastonlineEnabled = config.getBoolean("basic-tracking.field-lastonline-enabled", false);
+		gametimeEnabled = config.getBoolean("basic-tracking.field-gametime-enabled", false);
+		totalxpEnabled = config.getBoolean("basic-tracking.field-totalxp-enabled", false);
+		currentxpEnabled = config.getBoolean("basic-tracking.field-currentxp-enabled", false);
+		levelEnabled = config.getBoolean("basic-tracking.field-level-enabled", false);
+		healthEnabled = config.getBoolean("basic-tracking.field-health-enabled", false);
+		lifeticksEnabled = config.getBoolean("basic-tracking.field-lifeticks-enabled", false);
+
+		walletEnabled = config.getBoolean("basic-tracking.field-wallet-enabled", false);
+		walletColumn = config.getString("basic-tracking.field-wallet-field", "");
+		walletKeyValue = config.getString("basic-tracking.field-wallet-key-value", "");
 	}
 
 	private void reportConfig()
