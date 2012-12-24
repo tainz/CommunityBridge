@@ -632,6 +632,7 @@ public final class Main extends JavaPlugin
       if (config.kick_unregistered)
       {
         p.kickPlayer(config.unregistered_message);
+				log.info(p.getName() + " kicked because they are not registered.");
       }
       else
       {
@@ -781,6 +782,7 @@ public final class Main extends JavaPlugin
 				if (config.kick_unregistered)
         {
 					p.kickPlayer(config.unregistered_message);
+					log.info(p.getName() + " kicked because they are not registered.");
 				}
         else
         {
