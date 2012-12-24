@@ -17,8 +17,8 @@ log-level: config
 # They can be viewed at: http://mcstats.org
 plugin-metrics: true
 
-# The permissions system (PEX, bPerms, GroupManager)
-permissions-system: GroupManager
+# The permissions system (PEX, bPerms, GroupManager, PermsBukkit)
+permissions-system: PEX
 
 # Please ensure if you run your minecraft server on a remote host
 # that your MySQL server allows REMOTE connections.
