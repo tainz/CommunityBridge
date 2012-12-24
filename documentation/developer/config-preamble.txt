@@ -12,9 +12,6 @@
 # - During troubleshooting of problems, set this to either finest or all.
 log-level: config
 
-# The permissions system (PEX, bPerms, GroupManager, PermsBukkit)
-permissions-system: GroupManager
-
 # Set the unit of measurement for sync and reminder scheduling. Options are:
 # ticks, seconds, minutes, or hours. Note that this applies to both
 # auto-sync-every and auto-remind-every.

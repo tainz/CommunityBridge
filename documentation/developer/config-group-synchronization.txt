@@ -10,7 +10,11 @@ group-synchronization:
 
     # Notify player that they've been placed in a primary group.
     notify-player: false
-    
+
+    # The permissions system (PEX, bPerms, GroupManager, PermsBukkit, Vault)
+    permissions-system: GroupManager
+
+
     # Set this to true if your permissions system uses primary groups.
     permissions-system-uses-primary-group: false
 
