@@ -729,33 +729,33 @@ public class Configuration
 	 */
 	private void reportConfig()
 	{
-		Main.log.config(  "Log level:                             " + logLevel);
-		Main.log.config(  "Plugin metrics enabled:                " + usePluginMetrics);
-		Main.log.config(  "Auto Sync   :                          " + auto_sync);
-		Main.log.config(  "Auto Remind :                          " + auto_remind);
-		Main.log.config(  "Multi Tables :                         " + multiTables);
+		Main.log.config(  "Log level                            : " + logLevel);
+		Main.log.config(  "Plugin metrics enabled               : " + usePluginMetrics);
+		Main.log.config(  "Auto Sync                            : " + auto_sync);
+		Main.log.config(  "Auto Remind                          : " + auto_remind);
+		Main.log.config(  "Multi Tables                         : " + multiTables);
 		Main.log.config(  "Primary Group Synchronization Enabled: "	+ groupSynchronizationPrimaryEnabled);
-		Main.log.config(  "Kick Unregistered :                    " + kick_unregistered);
-		Main.log.config(  "Require Avatar :                       " + require_avatar);
-		Main.log.config(  "Min Posts :                            " + require_minposts);
+		Main.log.config(  "Kick Unregistered                    : " + kick_unregistered);
+		Main.log.config(  "Require Avatar                       : " + require_avatar);
+		Main.log.config(  "Min Posts                            : " + require_minposts);
 
 		if (groupSynchronizationPrimaryEnabled)
 		{
-			Main.log.config("Primary Group IDs to Ignore:           " + primaryGroupIDsToIgnore);
+			Main.log.config("Primary Group IDs to Ignore          : " + primaryGroupIDsToIgnore);
 		}
-		Main.log.config(  "Basic Tracking :                       " + statisticsTrackingEnabled);
+		Main.log.config(  "Statistics Tracking                  : " + statisticsTrackingEnabled);
 
 		if (statisticsTrackingEnabled)
 		{
-			Main.log.config("Tracking Online Status :               " + onlinestatusEnabled);
-			Main.log.config("Tracking Last Online   :               " + lastonlineEnabled);
-			Main.log.config("Tracking Game Time     :               " + gametimeEnabled);
-			Main.log.config("Tracking Total XP      :               " + totalxpEnabled);
-			Main.log.config("Tracking Current XP    :               " + currentxpEnabled);
-			Main.log.config("Tracking Level         :               " + levelEnabled);
-			Main.log.config("Tracking Health        :               " + healthEnabled);
-			Main.log.config("Tracking Life Ticks    :               " + lifeticksEnabled);
-			Main.log.config("Tracking Wallet        :               " + walletEnabled);
+			Main.log.config("Tracking Online Status               : " + onlinestatusEnabled);
+			Main.log.config("Tracking Last Online                 : " + lastonlineEnabled);
+			Main.log.config("Tracking Game Time                   : " + gametimeEnabled);
+			Main.log.config("Tracking Total XP                    : " + totalxpEnabled);
+			Main.log.config("Tracking Current XP                  : " + currentxpEnabled);
+			Main.log.config("Tracking Level                       : " + levelEnabled);
+			Main.log.config("Tracking Health                      : " + healthEnabled);
+			Main.log.config("Tracking Life Ticks                  : " + lifeticksEnabled);
+			Main.log.config("Tracking Wallet                      : " + walletEnabled);
 		}
 	}
 }
