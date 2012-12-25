@@ -2,11 +2,6 @@
 # user. As this feature is a prerequisite for all other features, it cannot
 # be disabled.
 player-user-linking:
-  # Set this to true if you want to require the player to confirm that they're
-  # the player that is registered on the web application by providing their
-  # web application password.
-  authentication-required: false
-
   # Set these to true to inform players when they log in if they're linked to
   # the web application. These correspond to the link-unregistered-player and
   # link-registered-player messages in messages.yml.
@@ -40,7 +35,7 @@ player-user-linking:
   # you need to add a custom field or column to your web application's database,
   # and provide that table and column information here.
   
-  # The name of the table which contains the columns specified below:
+  # The name of the table which contains the columns:
   table-name: ''
   
   # Column on the table that contains the user ID. Typically something like

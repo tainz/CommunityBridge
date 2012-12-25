@@ -1,0 +1,5 @@
+  # Set this to true if you want to require the player to confirm that they're
+  # the player that is registered on the web application by providing their
+  # web application password.
+  authentication-required: false
+
