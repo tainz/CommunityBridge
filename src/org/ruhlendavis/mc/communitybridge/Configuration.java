@@ -141,7 +141,6 @@ public class Configuration
 	public boolean walletEnabled;
   public String walletKeyValue;
 	public String walletColumn;
-	private YamlConfiguration FileConfiguration;
 
 	/**
 	 * Constructor for the configuration class.
