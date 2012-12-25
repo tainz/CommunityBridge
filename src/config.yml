@@ -24,12 +24,38 @@ plugin-metrics: true
 auto-every-unit: minutes
 
 # This is a timer that will check and sync all data with your database at a set
-# interval
+# interval. Otherwise group and player statistics will only be synchronized when
+# they join and leave the server.
 auto-sync: true
 
 # The interval for the auto-sync timer, this should not be set any lower than
 # 20 minutes.
 auto-sync-every: 20
+
+#                             Database Settings
+# -----------------------------------------------------------------------------
+# Please ensure if you run your Minecraft server on a remote host
+# that your MySQL server allows REMOTE connections. This WILL NOT WORK unless
+# your MySQL server is configured to allow connections from the machine that
+# your Minecraft server is running on. If you don't know what that means, consult
+# your hosting provider on how to configure your MySQL server correctly.
+# All of this information should be the same server and database used by your
+# web-application...
+database:
+  # Hostname for your MySQL Server
+  hostname: localhost
+
+  # MySQL Port
+  port: 3306
+
+  # Database Name
+  name: databasename
+
+  # Database Username
+  username: username
+
+  # Database Password
+  password: password
 
 #                             Player Linking Settings
 # -----------------------------------------------------------------------------
@@ -39,24 +65,6 @@ auto-sync-every: 20
 
 # The permissions system (PEX, bPerms, GroupManager, PermsBukkit)
 permissions-system: PEX
-
-# Please ensure if you run your minecraft server on a remote host
-# that your MySQL server allows REMOTE connections.
-#
-# Hostname for your MySQL Server
-db-host: localhost
-
-# MySQL Port
-db-port: 3306
-
-# Database Name
-db-database: databasename
-
-# Database Username
-db-username: username
-
-# Database Password
-db-password: password
 
 # If set to true it will show a message to the user that they have been placed
 # into a group

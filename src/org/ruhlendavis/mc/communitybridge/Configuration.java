@@ -590,6 +590,13 @@ public class Configuration
 		autoEveryUnit = config.getString("auto-every-unit", "ticks");
 		autoSync = config.getBoolean("auto-sync", false);
 		autoSyncEvery = config.getLong("auto-sync-every", 24000L);
+
+		// Database Section
+		databaseHost = config.getString("database.hostname", "");
+		databasePort = config.getString("database.port", "");
+		databaseName = config.getString("database.name", "");
+		databaseUsername = config.getString("database.username", "");
+    databasePassword = config.getString("database.password", "");
 	}
 
 	/**
@@ -603,13 +610,6 @@ public class Configuration
 
 		FileConfiguration config;
 		config = plugin.getConfig();
-
-		// Database Section
-		databaseHost = config.getString("db-host", "");
-		databasePort = config.getString("db-port", "");
-		databaseName = config.getString("db-database", "");
-		databaseUsername = config.getString("db-username", "");
-    databasePassword = config.getString("db-password", "");
 
 		permissionsSystem = config.getString("permissions-system", "");
 
