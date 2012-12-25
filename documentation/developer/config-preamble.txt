@@ -18,7 +18,7 @@ log-level: config
 auto-every-unit: minutes
 
 # This is a timer that will check and sync all data with your database at a set
-# interval. Otherwise group and player stats will only be synchronized when
+# interval. Otherwise group and player statistics will only be synchronized when
 # they join and leave the server.
 auto-sync: true
 
