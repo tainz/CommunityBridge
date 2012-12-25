@@ -22,25 +22,30 @@ import org.bukkit.configuration.file.YamlConfiguration;
  */
 public class Configuration
 {
-	// Instance variables associated with the new configuration
-	public String logLevel;
 	public Map<String, String> messages = new HashMap();
 
-	// Instance variables associated with the old configuration
+	// General Section
+	public String logLevel;
 	public boolean usePluginMetrics;
+  public String autoEveryUnit;
+  public boolean autoSync;
+	public long autoSyncEvery;
 
+	// Database Section
 	public String databaseHost;
 	public String databasePort;
 	public String databaseName;
 	public String databaseUsername;
 	public String databasePassword;
-	public String permissionsSystem;
 
-  public boolean autoSync;
-  public boolean auto_remind;
-  public String autoEveryUnit;
-	public long autoSyncEvery;
-	public long auto_remind_every;
+	// Linking Section
+  public boolean linkingAutoRemind;
+	public long linkingAutoEvery;
+	public boolean linkingNotifyRegistered;
+	public boolean linkingNotifyUnregistered;
+
+	// Instance variables associated with the old configuration
+	public String permissionsSystem;
 
 	public boolean groupSynchronizationPrimaryEnabled;
 	public List<String> primaryGroupIDsToIgnore;
@@ -55,7 +60,7 @@ public class Configuration
 
   public boolean secondary_groups = false;
 	public boolean show_primary_group = false;
-	public boolean kick_unregistered = false;
+	public boolean linkingKickUnregistered = false;
 	public boolean require_avatar = false;
 	public boolean require_minposts = false;
 
@@ -92,10 +97,6 @@ public class Configuration
 	public String multi_table_key_value;
 	public String multi_table_value_field;
 	public String multi_table_user_id_field;
-
-	public String registered_message;
-	public String unregistered_message;
-	public String unregistered_messagereminder;
 
 	public boolean statisticsTrackingEnabled;
 
@@ -597,6 +598,13 @@ public class Configuration
 		databaseName = config.getString("database.name", "");
 		databaseUsername = config.getString("database.username", "");
     databasePassword = config.getString("database.password", "");
+
+		// Linking Section
+		linkingKickUnregistered = config.getBoolean("player-user-linking.kick-unregistered", false);
+		linkingAutoRemind = config.getBoolean("player-user-linking.auto-remind", false);
+		linkingAutoEvery = config.getLong("player-user-linking.auto-remind-every", 12000L);
+		linkingNotifyRegistered = config.getBoolean("player-user-linking.notify-registered-player", true);
+		linkingNotifyUnregistered = config.getBoolean("player-user-linking.notify-registered-player", true);
 	}
 
 	/**
@@ -612,10 +620,6 @@ public class Configuration
 		config = plugin.getConfig();
 
 		permissionsSystem = config.getString("permissions-system", "");
-
-		auto_remind = config.getBoolean("auto-remind", false);
-
-		auto_remind_every = config.getLong("auto-remind-every", 12000L);
 
 		groupSynchronizationPrimaryEnabled = config.getBoolean("group-synchronization.primary-group.enabled", false);
 		if (groupSynchronizationPrimaryEnabled)
@@ -640,7 +644,6 @@ public class Configuration
 
 		show_primary_group = config.getBoolean("show-primary-group", false);
 		secondary_groups = config.getBoolean("secondary-groups", false);
-		kick_unregistered = config.getBoolean("kick-unregistered", false);
 
 		require_avatar = config.getBoolean("profile-requirements.require-avatar", false);
 		avatar_table = config.getString("profile-requirements.require-avatar-table", "");
@@ -654,10 +657,6 @@ public class Configuration
 		minposts_user_field = config.getString("profile-requirements.require-minposts-user-id-field", "");
 		minposts_field = config.getString("profile-requirements.require-minposts-field", "");
 		minposts_message = config.getString("profile-requirements.require-minposts-message", "");
-
-		registered_message = config.getString("registered-message", "");
-		unregistered_message = config.getString("unregistered-message", "");
-		unregistered_messagereminder = config.getString("unregistered-messagereminder", "");
 
 		banlist_table = config.getString("banlist-table.table", "");
 		banlist_user_id_field = config.getString("banlist-table.user-id-field", "");
@@ -795,10 +794,10 @@ public class Configuration
 		Main.log.config(  "Log level                            : " + logLevel);
 		Main.log.config(  "Plugin metrics enabled               : " + usePluginMetrics);
 		Main.log.config(  "Auto Sync                            : " + autoSync);
-		Main.log.config(  "Auto Remind                          : " + auto_remind);
+		Main.log.config(  "Auto Remind                          : " + linkingAutoRemind);
 		Main.log.config(  "Multi Tables                         : " + multiTables);
 		Main.log.config(  "Primary Group Synchronization Enabled: "	+ groupSynchronizationPrimaryEnabled);
-		Main.log.config(  "Kick Unregistered                    : " + kick_unregistered);
+		Main.log.config(  "Kick Unregistered                    : " + linkingKickUnregistered);
 		Main.log.config(  "Require Avatar                       : " + require_avatar);
 		Main.log.config(  "Min Posts                            : " + require_minposts);
 

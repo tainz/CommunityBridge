@@ -140,7 +140,7 @@ public final class Main extends JavaPlugin
 			startSyncing();
 		}
 
-		if (config.auto_remind)
+		if (config.linkingAutoRemind)
 		{
 			startAutoReminder();
 		}
@@ -233,28 +233,28 @@ public final class Main extends JavaPlugin
 	@SuppressWarnings("deprecation")
   private void startAutoReminder()
   {
-    long every = config.auto_remind_every; // Effectively defaulting to ticks.
+    long every = config.linkingAutoEvery; // Effectively defaulting to ticks.
 
     String unit = "ticks";
 
     if (config.autoEveryUnit.toLowerCase().startsWith("second"))
     {
-      every = config.auto_remind_every * 20; // 20 ticks per second.
+      every = config.linkingAutoEvery * 20; // 20 ticks per second.
       unit = "seconds";
     }
     else if (config.autoEveryUnit.toLowerCase().startsWith("minute"))
     {
-      every = config.auto_remind_every * 1200; // 20 ticks per second, 60 sec/minute
+      every = config.linkingAutoEvery * 1200; // 20 ticks per second, 60 sec/minute
       unit = "minutes";
     }
     else if (config.autoEveryUnit.toLowerCase().startsWith("hour"))
     {
-      every = config.auto_remind_every * 72000; // 20 ticks/s 60s/m, 60m/h
+      every = config.linkingAutoEvery * 72000; // 20 ticks/s 60s/m, 60m/h
       unit = "hours";
     }
 
     log.config(String.format("Auto Remind Unregistered Every: %d %s.",
-                           config.auto_remind_every, unit));
+                           config.linkingAutoEvery, unit));
 		// EXPIRABLE: ST2012-Dec-21: The else block and the if statement itself. The true block should stay
 		if (StringUtilities.compareVersion(Bukkit.getBukkitVersion().replace("R", ""), "1.4.5.1.0") > -1)
 		{
@@ -629,14 +629,14 @@ public final class Main extends JavaPlugin
     int id = getUserId(p.getName());
     if (id == 0)
     {
-      if (config.kick_unregistered)
+      if (config.linkingKickUnregistered)
       {
-        p.kickPlayer(config.unregistered_message);
+        p.kickPlayer(config.messages.get("link-unregistered-player"));
 				log.info(p.getName() + " kicked because they are not registered.");
       }
       else
       {
-        p.sendMessage(ChatColor.RED + config.unregistered_messagereminder);
+        p.sendMessage(ChatColor.RED + config.messages.get("link-unregistered-reminder"));
         log.fine(p.getName() + " issued unregistered reminder notice");
       }
     }
@@ -756,17 +756,19 @@ public final class Main extends JavaPlugin
               Main.LoadTrackingStats(id, p);
             }
 
-						if (isOkayToSetPrimaryGroup(groupID))
+						if (config.linkingNotifyRegistered)
 						{
-							if (config.show_primary_group)
+							if (isOkayToSetPrimaryGroup(groupID))
 							{
-								p.sendMessage(ChatColor.YELLOW + "Registered " + groupName + " Account.");
+								String message = config.messages.get("link-registered-player-group");
+								message = message.replace("~GROUPNAME~", groupName);
+								p.sendMessage(ChatColor.YELLOW + message);
 							}
 							else
 							{
-								p.sendMessage(ChatColor.YELLOW + config.registered_message);
+								String message = config.messages.get("link-registered-player");
+								p.sendMessage(ChatColor.YELLOW + message);
 							}
-
 						}
 						log.fine(p.getName() + " linked to Community User #" + id
 																 + ", Group: " + groupName);
@@ -779,21 +781,24 @@ public final class Main extends JavaPlugin
 			}
       else
       {
-				if (config.kick_unregistered)
+				if (config.linkingKickUnregistered)
         {
-					p.kickPlayer(config.unregistered_message);
+					p.kickPlayer(config.messages.get("link-unregistered-player"));
 					log.info(p.getName() + " kicked because they are not registered.");
 				}
         else
         {
 					if (firstsync)
 					{
-						p.sendMessage(ChatColor.RED + config.unregistered_message);
+						if (config.linkingNotifyUnregistered)
+						{
+							p.sendMessage(ChatColor.RED + config.messages.get("link-unregistered-player"));
+						}
 						log.fine(p.getName() + "'s name not set or not registered on community site");
 					}
 					else
 					{
-						p.sendMessage(ChatColor.RED + config.unregistered_messagereminder);
+						p.sendMessage(ChatColor.RED + config.messages.get("link-unregistered-reminder"));
 						log.fine(p.getName() + " issued unregistered reminder notice");
 					}
 
