@@ -1,11 +1,8 @@
-#
-# Community Bridge Configuration File
-#
+#                  Community Bridge Configuration File
+# -----------------------------------------------------------------------------
 
-#NEW
-
-
-#OLD
+#                             General Settings
+# -----------------------------------------------------------------------------
 # Log level controls the degree of detail that is sent to the console/log
 # The possible settings are (in order of quietest to noisiest:
 #   info, config, fine, finer, finest, all
@@ -20,6 +17,25 @@ log-level: config
 # Disable for all plugins by editing the plugins/PluginMetrics/config.yml file.
 # They can be viewed at: http://mcstats.org
 plugin-metrics: true
+
+# Set the unit of measurement for sync and reminder scheduling. Options are:
+# ticks, seconds, minutes, or hours. Note that this applies to both
+# auto-sync-every and auto-remind-every.
+auto-every-unit: minutes
+
+# This is a timer that will check and sync all data with your database at a set
+# interval
+auto-sync: true
+
+# The interval for the auto-sync timer, this should not be set any lower than
+# 20 minutes.
+auto-sync-every: 20
+
+#                             Player Linking Settings
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
+#OLD
 
 # The permissions system (PEX, bPerms, GroupManager, PermsBukkit)
 permissions-system: PEX
@@ -100,18 +116,6 @@ groups-table:
 # If you have a second group level and want to make use of it
 secondary-groups: false
 
-# This is a timer that will check and sync all data with your database at a set
-# interval
-auto-sync: true
-
-# Set the unit of measurement for sync and reminder scheduling. Options are:
-# ticks, seconds, minutes, or hours. Note that this applies to both
-# auto-sync-every and auto-remind-every.
-auto-every-unit: minutes
-
-# The interval for the auto-sync timer, this should be no less than
-# 15-20 minutes.
-auto-sync-every: 20
 
 # This is a timer that will notify unregistered users more frequently to
 # register

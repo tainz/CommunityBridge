@@ -23,10 +23,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
 public class Configuration
 {
 	// Instance variables associated with the new configuration
+	public String logLevel;
 	public Map<String, String> messages = new HashMap();
 
 	// Instance variables associated with the old configuration
-	public String logLevel;
 	public boolean usePluginMetrics;
 
 	public String databaseHost;
@@ -36,10 +36,10 @@ public class Configuration
 	public String databasePassword;
 	public String permissionsSystem;
 
-  public boolean auto_sync;
+  public boolean autoSync;
   public boolean auto_remind;
-  public String auto_every_unit;
-	public long auto_sync_every;
+  public String autoEveryUnit;
+	public long autoSyncEvery;
 	public long auto_remind_every;
 
 	public boolean groupSynchronizationPrimaryEnabled;
@@ -152,7 +152,6 @@ public class Configuration
 	 */
 	public Configuration(Main plugin)
 	{
-		loadOldConfig(plugin);
 		loadConfig(plugin);
 		loadMessages(plugin);
 		reportConfig();
@@ -581,7 +580,16 @@ public class Configuration
 		FileConfiguration config;
 		config = plugin.getConfig();
 
+		logLevel = config.getString("log-level", "config");
+		// We do this here so that the rest of the config methods can use the
+		// logger with the level set as the user likes it.
+		Main.log.setLevel(logLevel);
+		Main.log.finest("Loading new configuration.");
 
+		usePluginMetrics = config.getBoolean("plugin-metrics", true);
+		autoEveryUnit = config.getString("auto-every-unit", "ticks");
+		autoSync = config.getBoolean("auto-sync", false);
+		autoSyncEvery = config.getLong("auto-sync-every", 24000L);
 	}
 
 	/**
@@ -596,21 +604,6 @@ public class Configuration
 		FileConfiguration config;
 		config = plugin.getConfig();
 
-		// EXPIRABLE: We'll remove the deprecated setting in six months. Remove On: 2013/May/13
-		// We do this first so that if log-level is set, it will override the
-		// deprecated setting 'show-config'.
-		if (config.getBoolean("show-config", false))
-		{
-			Main.log.warning("The setting 'show-config' in config.yml is deprecated. Use log-level: config instead.");
-			Main.log.setLevel(Level.CONFIG);
-		}
-
-		// Either way, we should set the log level before doing anything else.
-		logLevel = config.getString("log-level", "config");
-		Main.log.setLevel(logLevel);
-
-		usePluginMetrics = config.getBoolean("plugin-metrics", true);
-
 		// Database Section
 		databaseHost = config.getString("db-host", "");
 		databasePort = config.getString("db-port", "");
@@ -620,11 +613,8 @@ public class Configuration
 
 		permissionsSystem = config.getString("permissions-system", "");
 
-		auto_sync = config.getBoolean("auto-sync", false);
 		auto_remind = config.getBoolean("auto-remind", false);
-		auto_every_unit = config.getString("auto-every-unit", "ticks");
 
-		auto_sync_every = config.getLong("auto-sync-every", 24000L);
 		auto_remind_every = config.getLong("auto-remind-every", 12000L);
 
 		groupSynchronizationPrimaryEnabled = config.getBoolean("group-synchronization.primary-group.enabled", false);
@@ -804,7 +794,7 @@ public class Configuration
 	{
 		Main.log.config(  "Log level                            : " + logLevel);
 		Main.log.config(  "Plugin metrics enabled               : " + usePluginMetrics);
-		Main.log.config(  "Auto Sync                            : " + auto_sync);
+		Main.log.config(  "Auto Sync                            : " + autoSync);
 		Main.log.config(  "Auto Remind                          : " + auto_remind);
 		Main.log.config(  "Multi Tables                         : " + multiTables);
 		Main.log.config(  "Primary Group Synchronization Enabled: "	+ groupSynchronizationPrimaryEnabled);

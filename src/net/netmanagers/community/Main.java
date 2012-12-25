@@ -135,7 +135,7 @@ public final class Main extends JavaPlugin
 
 		syncAll();
 
-		if (config.auto_sync)
+		if (config.autoSync)
 		{
 			startSyncing();
 		}
@@ -181,26 +181,26 @@ public final class Main extends JavaPlugin
 	@SuppressWarnings("deprecation")
 	private void startSyncing()
   {
-    long every = config.auto_sync_every; // Effectively defaulting to ticks.
+    long every = config.autoSyncEvery; // Effectively defaulting to ticks.
     String unit = "ticks";
 
-    if (config.auto_every_unit.toLowerCase().startsWith("second"))
+    if (config.autoEveryUnit.toLowerCase().startsWith("second"))
     {
-      every = config.auto_sync_every * 20; // 20 ticks per second.
+      every = config.autoSyncEvery * 20; // 20 ticks per second.
       unit = "seconds";
     }
-    else if (config.auto_every_unit.toLowerCase().startsWith("minute"))
+    else if (config.autoEveryUnit.toLowerCase().startsWith("minute"))
     {
-      every = config.auto_sync_every * 1200; // 20 ticks per second, 60 sec per minute
+      every = config.autoSyncEvery * 1200; // 20 ticks per second, 60 sec per minute
       unit = "minutes";
     }
-    else if (config.auto_every_unit.toLowerCase().startsWith("hour"))
+    else if (config.autoEveryUnit.toLowerCase().startsWith("hour"))
     {
-      every = config.auto_sync_every * 72000; // 20 ticks/s 60s/m, 60m/h
+      every = config.autoSyncEvery * 72000; // 20 ticks/s 60s/m, 60m/h
       unit = "hours";
     }
 
-		log.config(String.format("Auto Sync Every: %d %s.", config.auto_sync_every, unit));
+		log.config(String.format("Auto Sync Every: %d %s.", config.autoSyncEvery, unit));
 		// EXPIRABLE: ST2012-Dec-21: The else block and the if statement itself. The true block should stay
 		if (StringUtilities.compareVersion(Bukkit.getBukkitVersion().replace("R", ""), "1.4.5.1.0") > -1)
 		{
@@ -237,17 +237,17 @@ public final class Main extends JavaPlugin
 
     String unit = "ticks";
 
-    if (config.auto_every_unit.toLowerCase().startsWith("second"))
+    if (config.autoEveryUnit.toLowerCase().startsWith("second"))
     {
       every = config.auto_remind_every * 20; // 20 ticks per second.
       unit = "seconds";
     }
-    else if (config.auto_every_unit.toLowerCase().startsWith("minute"))
+    else if (config.autoEveryUnit.toLowerCase().startsWith("minute"))
     {
       every = config.auto_remind_every * 1200; // 20 ticks per second, 60 sec/minute
       unit = "minutes";
     }
-    else if (config.auto_every_unit.toLowerCase().startsWith("hour"))
+    else if (config.autoEveryUnit.toLowerCase().startsWith("hour"))
     {
       every = config.auto_remind_every * 72000; // 20 ticks/s 60s/m, 60m/h
       unit = "hours";

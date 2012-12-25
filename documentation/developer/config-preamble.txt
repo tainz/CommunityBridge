@@ -1,7 +1,8 @@
-#
-# Community Bridge Configuration File
-#
+#                  Community Bridge Configuration File
+# -----------------------------------------------------------------------------
 
+#                             General Settings
+# -----------------------------------------------------------------------------
 # Log level controls the degree of detail that is sent to the console/log
 # The possible settings are (in order of quietest to noisiest:
 #   info, config, fine, finer, finest, all
@@ -12,20 +13,21 @@
 # - During troubleshooting of problems, set this to either finest or all.
 log-level: config
 
+# Allow plugin metrics to start up for this plugin.
+# Disable for all plugins by editing the plugins/PluginMetrics/config.yml file.
+# They can be viewed at: http://mcstats.org
+plugin-metrics: true
+
 # Set the unit of measurement for sync and reminder scheduling. Options are:
 # ticks, seconds, minutes, or hours. Note that this applies to both
 # auto-sync-every and auto-remind-every.
 auto-every-unit: minutes
 
 # This is a timer that will check and sync all data with your database at a set
-# interval. Otherwise group and player statistics will only be synchronized when
-# they join and leave the server.
+# interval
 auto-sync: true
 
-# The interval for the auto-sync timer, this should be no less than
-# 15-20 minutes.
+# The interval for the auto-sync timer, this should not be set any lower than
+# 20 minutes.
 auto-sync-every: 20
 
-# Some definitions:
-# - web-application: The forum, CMS, blogging app, etc. that you're using on
-#                    your website.
