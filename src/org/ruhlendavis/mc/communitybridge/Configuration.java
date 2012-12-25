@@ -22,7 +22,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
  */
 public class Configuration
 {
+	// Instance variables associated with the new configuration
 	public Map<String, String> messages = new HashMap();
+
+	// Instance variables associated with the old configuration
 	public String logLevel;
 	public boolean usePluginMetrics;
 
@@ -149,6 +152,7 @@ public class Configuration
 	 */
 	public Configuration(Main plugin)
 	{
+		loadOldConfig(plugin);
 		loadConfig(plugin);
 		loadMessages(plugin);
 		reportConfig();
@@ -574,8 +578,22 @@ public class Configuration
 	private void loadConfig(Main plugin)
 	{
 		plugin.saveDefaultConfig();
+		FileConfiguration config;
+		config = plugin.getConfig();
 
-		org.bukkit.configuration.file.FileConfiguration config;
+
+	}
+
+	/**
+	 * Loads the configuration information from the yaml file.
+	 *
+	 * @param Main The plugin object for this plugin.
+	 */
+	private void loadOldConfig(Main plugin)
+	{
+		plugin.saveDefaultConfig();
+
+		FileConfiguration config;
 		config = plugin.getConfig();
 
 		// EXPIRABLE: We'll remove the deprecated setting in six months. Remove On: 2013/May/13

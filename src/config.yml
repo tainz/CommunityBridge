@@ -2,6 +2,10 @@
 # Community Bridge Configuration File
 #
 
+#NEW
+
+
+#OLD
 # Log level controls the degree of detail that is sent to the console/log
 # The possible settings are (in order of quietest to noisiest:
 #   info, config, fine, finer, finest, all
