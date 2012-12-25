@@ -1,14 +1,19 @@
 package org.ruhlendavis.mc.communitybridge;
 
+import java.io.File;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import net.netmanagers.api.SQL;
 import net.netmanagers.community.Main;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
  * Class for storing configuration information loaded from the yaml files.
@@ -17,6 +22,7 @@ import net.netmanagers.community.Main;
  */
 public class Configuration
 {
+	public Map<String, String> messages = new HashMap();
 	public String logLevel;
 	public boolean usePluginMetrics;
 
@@ -135,6 +141,7 @@ public class Configuration
 	public boolean walletEnabled;
   public String walletKeyValue;
 	public String walletColumn;
+	private YamlConfiguration FileConfiguration;
 
 	/**
 	 * Constructor for the configuration class.
@@ -144,6 +151,7 @@ public class Configuration
 	public Configuration(Main plugin)
 	{
 		loadConfig(plugin);
+		loadMessages(plugin);
 		reportConfig();
 	}
 
@@ -721,6 +729,54 @@ public class Configuration
 		walletEnabled = config.getBoolean("basic-tracking.field-wallet-enabled", false);
 		walletColumn = config.getString("basic-tracking.field-wallet-field", "");
 		walletKeyValue = config.getString("basic-tracking.field-wallet-key-value", "");
+	}
+
+	/**
+	 * Loads the messages from the message file.
+	 *
+	 * @param Main This plugin's plugin object.
+	 */
+	private void loadMessages(Main plugin)
+	{
+		final String messageFilename = "messages.yml";
+		File messagesFile;
+		FileConfiguration messagesConfig;
+		InputStream defaultMessagesStream;
+		Map<String, Object> values;
+
+		messagesFile = new File(plugin.getDataFolder(), messageFilename);
+
+		// Make sure the file is there, if not copy the default one.
+		if (messagesFile.exists())
+		{}
+		else
+		{
+			plugin.saveResource("messages.yml", false);
+			messagesFile = new File(plugin.getDataFolder(), messageFilename);
+		}
+
+		messagesConfig = YamlConfiguration.loadConfiguration(messagesFile);
+
+		// Look for defaults in the jar
+		defaultMessagesStream = plugin.getResource(messageFilename);
+		if (defaultMessagesStream == null)
+		{}
+		else
+		{
+			YamlConfiguration defaultMessagesConfig;
+			defaultMessagesConfig = YamlConfiguration.loadConfiguration(defaultMessagesStream);
+		}
+
+		// Read the key-value pairs from the configuration
+		values = messagesConfig.getValues(false);
+
+		messages.clear();
+		// Store them in our own HashMap.
+		for (Map.Entry<String, Object> entry : values.entrySet())
+		{
+			// TODO: Perform any non-situation specific string replacements here.
+			messages.put(entry.getKey(), (String)entry.getValue());
+		}
 	}
 
 	/**
