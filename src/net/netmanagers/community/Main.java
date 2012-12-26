@@ -122,7 +122,7 @@ public final class Main extends JavaPlugin
 			return;
 		}
 
-		if (config.analyzeConfiguration(sql) == false)
+		if (config.analyzeConfigurationOld(sql) == false)
 		{
 			disablePlugin();
 			return;

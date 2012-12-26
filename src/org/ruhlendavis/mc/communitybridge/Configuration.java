@@ -44,6 +44,14 @@ public class Configuration
 	public boolean linkingNotifyRegistered;
 	public boolean linkingNotifyUnregistered;
 
+	public boolean linkingUsesKey;
+	public String linkingTableName;
+	public String linkingUserIDColumn;
+	public String linkingPlayerNameColumn;
+	public String linkingKeyName;
+	public String linkingKeyColumn;
+	public String linkingValueColumn;
+
 	// Instance variables associated with the old configuration
 	public String permissionsSystem;
 
@@ -167,7 +175,46 @@ public class Configuration
 	 * @param SQL SQL query object.
 	 * @return boolean True if the configuration is okay.
 	 */
-	public boolean analyzeConfiguration(SQL sql)
+	public boolean analyzeConfiguration(Configuration config, SQL sql)
+	{
+		boolean status;
+
+		// Linking table section.
+		status = checkTable(sql, "player-user-linking.table-name", linkingTableName);
+		if (status)
+		{
+			status = checkColumn(sql, "player-user-linking.user-id-column", linkingTableName, linkingUserIDColumn);
+			if (config.linkingUsesKey)
+			{
+				boolean temp;
+				temp = checkColumn(sql, "player-user-linking.key-column", linkingTableName , linkingKeyColumn);
+				if (temp)
+				{
+					checkKeyColumnForKey(sql, "player-user-linking.key-name", linkingTableName, linkingKeyColumn,	linkingKeyName);
+				}
+
+				status = status & temp;
+				status = status & checkColumn(sql, "player-user-linking.value-column", linkingTableName, linkingValueColumn);
+			}
+			else
+			{
+				status = status & checkColumn(sql, "player-user-linking.playername-column", linkingTableName, linkingPlayerNameColumn);
+			}
+		}
+
+		return status;
+	}
+
+	/**
+	 * Analyze the configuration for potential problems.
+	 *
+	 * Checks for the existence of the specified tables and columns within those
+	 * tables.
+	 *
+	 * @param SQL SQL query object.
+	 * @return boolean True if the configuration is okay.
+	 */
+	public boolean analyzeConfigurationOld(SQL sql)
 	{
 		boolean status;
 		boolean userTableStatus;
@@ -371,6 +418,43 @@ public class Configuration
 		{
 			Main.log.severe(errorBase + e.getMessage());
 			return false;
+		}
+	}
+
+	private void checkKeyColumnForKey(SQL sql, String yamlKeyName,
+																		String tableName,	String keyColumn,
+																		String keyName)
+	{
+		String errorBase = "Error while checking " + yamlKeyName + ": ";
+		String query = "SELECT COUNT(*) FROM `" + tableName + "` "
+						     + "WHERE `" + keyColumn + "` = '" + keyName + "'";
+
+		try
+		{
+			ResultSet result = sql.sqlQuery(query);
+
+			if (result.getInt(0) == 0)
+			{
+				Main.log.warning("There are no rows containing " + keyName
+								       + " in the " + keyColumn + " column, on the "
+								       + tableName + " table.");
+			}
+		}
+		catch (SQLException e)
+		{
+			Main.log.severe(errorBase + e.getMessage());
+		}
+		catch (MalformedURLException e)
+		{
+			Main.log.severe(errorBase + e.getMessage());
+		}
+		catch (InstantiationException e)
+		{
+			Main.log.severe(errorBase + e.getMessage());
+		}
+		catch (IllegalAccessException e)
+		{
+			Main.log.severe(errorBase + e.getMessage());
 		}
 	}
 
@@ -605,6 +689,15 @@ public class Configuration
 		linkingAutoEvery = config.getLong("player-user-linking.auto-remind-every", 12000L);
 		linkingNotifyRegistered = config.getBoolean("player-user-linking.notify-registered-player", true);
 		linkingNotifyUnregistered = config.getBoolean("player-user-linking.notify-registered-player", true);
+
+		linkingUsesKey = config.getBoolean("player-user-linking.uses-key", false);
+		linkingTableName = config.getString("player-user-linking.table-name", "");
+		linkingUserIDColumn = config.getString("player-user-linking.user-id-column", "");
+		linkingPlayerNameColumn = config.getString("player-user-linking.playername-column", "");
+
+		linkingKeyName = config.getString("player-user-linking.key-name", "");
+		linkingKeyColumn = config.getString("player-user-linking.key-column", "");
+		linkingValueColumn = config.getString("player-user-linking.value-column", "");
 	}
 
 	/**

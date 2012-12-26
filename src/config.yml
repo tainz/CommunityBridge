@@ -106,7 +106,7 @@ player-user-linking:
 
   # If the player name is stored in a key-value pair of columns instead of
   # its own column, set this to true:
-  linking-uses-key: false
+  uses-key: false
 
   # If you set 'linking-uses-key' to false, then set this to the column that
   # the playername is stored in. Otherwise, leave it empty.
