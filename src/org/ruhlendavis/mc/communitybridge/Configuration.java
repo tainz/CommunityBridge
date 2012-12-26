@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import net.netmanagers.api.SQL;
 import net.netmanagers.community.Main;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.ruhlendavis.mc.utility.Log;
 
 /**
  * Class for storing configuration information loaded from the yaml files.
@@ -22,6 +22,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
  */
 public class Configuration
 {
+	private Log log;
 	public Map<String, String> messages = new HashMap();
 
 	// General Section
@@ -159,9 +160,11 @@ public class Configuration
 	 *
 	 * @param Main The plugin object of this plugin.
 	 */
-	public Configuration(Main plugin)
+	public Configuration(Main plugin, Log log)
 	{
+		this.log = log;
 		loadConfig(plugin);
+		loadOldConfig(plugin);
 		loadMessages(plugin);
 		reportConfig();
 	}
@@ -395,28 +398,28 @@ public class Configuration
 				{
 					return true;
 				}
-				Main.log.severe(errorBase + "Column does not exist.");
+				log.severe(errorBase + "Column does not exist.");
 			}
 			return false;
 		}
 		catch (SQLException e)
 		{
-			Main.log.severe(errorBase + e.getMessage());
+			log.severe(errorBase + e.getMessage());
 			return false;
 		}
 		catch (MalformedURLException e)
 		{
-			Main.log.severe(errorBase + e.getMessage());
+			log.severe(errorBase + e.getMessage());
 			return false;
 		}
 		catch (InstantiationException e)
 		{
-			Main.log.severe(errorBase + e.getMessage());
+			log.severe(errorBase + e.getMessage());
 			return false;
 		}
 		catch (IllegalAccessException e)
 		{
-			Main.log.severe(errorBase + e.getMessage());
+			log.severe(errorBase + e.getMessage());
 			return false;
 		}
 	}
@@ -435,26 +438,26 @@ public class Configuration
 
 			if (result.getInt(0) == 0)
 			{
-				Main.log.warning("There are no rows containing " + keyName
+				log.warning("There are no rows containing " + keyName
 								       + " in the " + keyColumn + " column, on the "
 								       + tableName + " table.");
 			}
 		}
 		catch (SQLException e)
 		{
-			Main.log.severe(errorBase + e.getMessage());
+			log.severe(errorBase + e.getMessage());
 		}
 		catch (MalformedURLException e)
 		{
-			Main.log.severe(errorBase + e.getMessage());
+			log.severe(errorBase + e.getMessage());
 		}
 		catch (InstantiationException e)
 		{
-			Main.log.severe(errorBase + e.getMessage());
+			log.severe(errorBase + e.getMessage());
 		}
 		catch (IllegalAccessException e)
 		{
-			Main.log.severe(errorBase + e.getMessage());
+			log.severe(errorBase + e.getMessage());
 		}
 	}
 
@@ -492,28 +495,28 @@ public class Configuration
 				{
 					return true;
 }
-				Main.log.severe(errorBase + "Table does not exist.");
+				log.severe(errorBase + "Table does not exist.");
 			}
 			return false;
 		}
 		catch (SQLException e)
 		{
-			Main.log.severe(errorBase + e.getMessage());
+			log.severe(errorBase + e.getMessage());
 			return false;
 		}
 		catch (MalformedURLException e)
 		{
-			Main.log.severe(errorBase + e.getMessage());
+			log.severe(errorBase + e.getMessage());
 			return false;
 		}
 		catch (InstantiationException e)
 		{
-			Main.log.severe(errorBase + e.getMessage());
+			log.severe(errorBase + e.getMessage());
 			return false;
 		}
 		catch (IllegalAccessException e)
 		{
-			Main.log.severe(errorBase + e.getMessage());
+			log.severe(errorBase + e.getMessage());
 			return false;
 		}
 	}
@@ -534,7 +537,7 @@ public class Configuration
 			else
 			{
 				onlinestatusEnabled = false;
-				Main.log.severe("'online status' tracking disabled due to previous error.");
+				log.severe("'online status' tracking disabled due to previous error.");
 			}
 		}
 
@@ -548,7 +551,7 @@ public class Configuration
 			else
 			{
 				lastonlineEnabled = false;
-				Main.log.severe("'last online' tracking disabled due to previous error(s).");
+				log.severe("'last online' tracking disabled due to previous error(s).");
 			}
 		}
 
@@ -562,7 +565,7 @@ public class Configuration
 			else
 			{
 				gametimeEnabled = false;
-				Main.log.severe("'game time' tracking disabled due to previous error(s).");
+				log.severe("'game time' tracking disabled due to previous error(s).");
 			}
 		}
 
@@ -574,7 +577,7 @@ public class Configuration
 			else
 			{
 				totalxpEnabled = false;
-				Main.log.severe("'total xp' tracking disabled due to previous error(s).");
+				log.severe("'total xp' tracking disabled due to previous error(s).");
 			}
 		}
 
@@ -588,7 +591,7 @@ public class Configuration
 			else
 			{
 				currentxpEnabled = false;
-				Main.log.severe("'current xp' tracking disabled due to previous error(s).");
+				log.severe("'current xp' tracking disabled due to previous error(s).");
 			}
 		}
 
@@ -600,7 +603,7 @@ public class Configuration
 			else
 			{
 				levelEnabled = false;
-				Main.log.severe("'level' tracking disabled due to previous error(s).");
+				log.severe("'level' tracking disabled due to previous error(s).");
 			}
 		}
 
@@ -612,7 +615,7 @@ public class Configuration
 			else
 			{
 				healthEnabled = false;
-				Main.log.severe("'health' tracking disabled due to previous error(s).");
+				log.severe("'health' tracking disabled due to previous error(s).");
 			}
 		}
 
@@ -626,7 +629,7 @@ public class Configuration
 			else
 			{
 				lifeticksEnabled = false;
-				Main.log.severe("'lifeticks' tracking disabled due to previous error(s).");
+				log.severe("'lifeticks' tracking disabled due to previous error(s).");
 			}
 		}
 
@@ -638,7 +641,7 @@ public class Configuration
 			else
 			{
 				walletEnabled = false;
-				Main.log.severe("'wallet' tracking disabled due to previous error(s).");
+				log.severe("'wallet' tracking disabled due to previous error(s).");
 			}
 		}
 
@@ -649,7 +652,7 @@ public class Configuration
 		else
     {
       statisticsTrackingEnabled = false;
-      Main.log.severe("Basic tracking is enabled, but all individual trackers are"
+      log.severe("Basic tracking is enabled, but all individual trackers are"
                 +" disabled. Basic tracking is now turned off.");
     }
 	}
@@ -668,8 +671,8 @@ public class Configuration
 		logLevel = config.getString("log-level", "config");
 		// We do this here so that the rest of the config methods can use the
 		// logger with the level set as the user likes it.
-		Main.log.setLevel(logLevel);
-		Main.log.finest("Loading new configuration.");
+		log.setLevel(logLevel);
+		log.finest("Loading new configuration.");
 
 		usePluginMetrics = config.getBoolean("plugin-metrics", true);
 		autoEveryUnit = config.getString("auto-every-unit", "ticks");
@@ -884,33 +887,35 @@ public class Configuration
 	 */
 	private void reportConfig()
 	{
-		Main.log.config(  "Log level                            : " + logLevel);
-		Main.log.config(  "Plugin metrics enabled               : " + usePluginMetrics);
-		Main.log.config(  "Auto Sync                            : " + autoSync);
-		Main.log.config(  "Auto Remind                          : " + linkingAutoRemind);
-		Main.log.config(  "Multi Tables                         : " + multiTables);
-		Main.log.config(  "Primary Group Synchronization Enabled: "	+ groupSynchronizationPrimaryEnabled);
-		Main.log.config(  "Kick Unregistered                    : " + linkingKickUnregistered);
-		Main.log.config(  "Require Avatar                       : " + require_avatar);
-		Main.log.config(  "Min Posts                            : " + require_minposts);
+
+		// Old System
+		log.config(  "Log level                            : " + logLevel);
+		log.config(  "Plugin metrics enabled               : " + usePluginMetrics);
+		log.config(  "Auto Sync                            : " + autoSync);
+		log.config(  "Auto Remind                          : " + linkingAutoRemind);
+		log.config(  "Multi Tables                         : " + multiTables);
+		log.config(  "Primary Group Synchronization Enabled: "	+ groupSynchronizationPrimaryEnabled);
+		log.config(  "Kick Unregistered                    : " + linkingKickUnregistered);
+		log.config(  "Require Avatar                       : " + require_avatar);
+		log.config(  "Min Posts                            : " + require_minposts);
 
 		if (groupSynchronizationPrimaryEnabled)
 		{
-			Main.log.config("Primary Group IDs to Ignore          : " + primaryGroupIDsToIgnore);
+			log.config("Primary Group IDs to Ignore          : " + primaryGroupIDsToIgnore);
 		}
-		Main.log.config(  "Statistics Tracking                  : " + statisticsTrackingEnabled);
+		log.config(  "Statistics Tracking                  : " + statisticsTrackingEnabled);
 
 		if (statisticsTrackingEnabled)
 		{
-			Main.log.config("Tracking Online Status               : " + onlinestatusEnabled);
-			Main.log.config("Tracking Last Online                 : " + lastonlineEnabled);
-			Main.log.config("Tracking Game Time                   : " + gametimeEnabled);
-			Main.log.config("Tracking Total XP                    : " + totalxpEnabled);
-			Main.log.config("Tracking Current XP                  : " + currentxpEnabled);
-			Main.log.config("Tracking Level                       : " + levelEnabled);
-			Main.log.config("Tracking Health                      : " + healthEnabled);
-			Main.log.config("Tracking Life Ticks                  : " + lifeticksEnabled);
-			Main.log.config("Tracking Wallet                      : " + walletEnabled);
+			log.config("Tracking Online Status               : " + onlinestatusEnabled);
+			log.config("Tracking Last Online                 : " + lastonlineEnabled);
+			log.config("Tracking Game Time                   : " + gametimeEnabled);
+			log.config("Tracking Total XP                    : " + totalxpEnabled);
+			log.config("Tracking Current XP                  : " + currentxpEnabled);
+			log.config("Tracking Level                       : " + levelEnabled);
+			log.config("Tracking Health                      : " + healthEnabled);
+			log.config("Tracking Life Ticks                  : " + lifeticksEnabled);
+			log.config("Tracking Wallet                      : " + walletEnabled);
 		}
 	}
 }
