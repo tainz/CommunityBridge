@@ -130,7 +130,7 @@ public final class Main extends JavaPlugin
 
 		if (config.statisticsTrackingEnabled && config.onlinestatusEnabled)
 		{
-			ResetOnlineStatus();
+			resetOnlineStatus();
 		}
 
 		syncAll();
@@ -283,7 +283,7 @@ public final class Main extends JavaPlugin
 		}
   }
 
-	private void ResetOnlineStatus()
+	private void resetOnlineStatus()
   {
 		try {
 			if (config.multiTables)
@@ -620,11 +620,11 @@ public final class Main extends JavaPlugin
 		log.fine("Running Auto Sync");
 		for (Player play : Bukkit.getOnlinePlayers())
     {
-			SyncPlayer(play, false);
+			syncPlayer(play, false);
 		}
 	}
 
-  public static void RemindPlayer(Player p)
+  public static void remindPlayer(Player p)
   {
     int id = getUserId(p.getName());
     if (id == 0)
@@ -648,12 +648,12 @@ public final class Main extends JavaPlugin
 
     for (Player play : Bukkit.getOnlinePlayers())
     {
-      RemindPlayer(play);
+      remindPlayer(play);
     }
 
   }
 
-	public static void SyncPlayer(Player p, boolean firstsync)
+	public static void syncPlayer(Player p, boolean firstsync)
 	{
 		String groupID = "";
 		String groupName = "";
@@ -753,7 +753,7 @@ public final class Main extends JavaPlugin
           {
 						if (config.statisticsTrackingEnabled)
             {
-              Main.LoadTrackingStats(id, p);
+              Main.loadStatistics(id, p);
             }
 
 						if (config.linkingNotifyRegistered)
@@ -775,7 +775,7 @@ public final class Main extends JavaPlugin
 					}
           else if (config.statisticsTrackingEnabled)
           {
-						UpdateTrackingStats(id, p);
+						updateStatistics(id, p);
 					}
 				}
 			}
@@ -936,7 +936,7 @@ public final class Main extends JavaPlugin
 		return false;
 	}
 
-	public static void LoadTrackingStats(int u, Player p){
+	public static void loadStatistics(int u, Player p){
 
 		int t = (int) (System.currentTimeMillis() / 1000L);
 
@@ -1161,7 +1161,7 @@ public final class Main extends JavaPlugin
   }
 
 
-	public static void UpdateTrackingStats(int u, Player p)
+	public static void updateStatistics(int u, Player p)
   {
 		float currentxp = p.getExp();
 		String currentxp_formatted = ((int)(currentxp * 100)) + "%";

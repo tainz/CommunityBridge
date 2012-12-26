@@ -81,7 +81,7 @@ public class Cmds implements CommandExecutor
 				}
 			} else if (label.equalsIgnoreCase("cbsync")) {
 				if (arguments.length == 0) {
-					Main.SyncPlayer(p, false);
+					Main.syncPlayer(p, false);
 				} else {
 					p.sendMessage(ChatColor.RED + "Incorrect usage: /cbsync");
 				}

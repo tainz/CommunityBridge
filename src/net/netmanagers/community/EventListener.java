@@ -12,7 +12,7 @@ public class EventListener implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player p = event.getPlayer();
-		Main.SyncPlayer(p, true);
+		Main.syncPlayer(p, true);
 	}
 
 	@EventHandler
@@ -22,7 +22,7 @@ public class EventListener implements Listener {
 			Player p = event.getPlayer();
 			int id = Main.getUserId(p.getName());
 			if(id > 0){
-				Main.UpdateTrackingStats(id, p);
+				Main.updateStatistics(id, p);
 
 				if(Main.config.onlinestatusEnabled){
 					try {
