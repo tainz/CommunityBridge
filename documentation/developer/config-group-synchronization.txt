@@ -4,38 +4,36 @@ group-synchronization:
   # is false, the rest of this section is ignored.
   enabled: false
   
-  # This subsection contains settings for primary group synchronization.
+  # This subsection contains settings for primary group synchronization. If your
+  # web application has an equivalent to a PRIMARY group, you can enable this
+  # feature. Do not enable this feature if your web application only has
+  # "multiple" group functionality.
   primary:
     enabled: false
 
     # Notify player that they've been placed in a primary group.
     notify-player: false
 
-    # The permissions system (PEX, bPerms, GroupManager, PermsBukkit, Vault)
-    permissions-system: GroupManager
+    # The table that contains the primary group ID.
+    table-name:
 
+    # The column on the table that contains the user ID.
+    user-id-column:
 
-    # Set this to true if your permissions system uses primary groups.
-    permissions-system-uses-primary-group: false
+    # If the primary group is stored in a key-value pair, set this to true.
+    uses-key: false
 
-    # This subsection contains details about how the web-application stores
-    # its primary group information.
-    group-table:
-      # Set this to true if your web application uses primary groups or its
-      # equivalent.
-      enabled: false
-      
-      # Set this to the name of the table that the users' primary group is
-      # stored on.
-      name: primary_group_table
-      
-      # On the table where primary group information is stored, the user_id
-      # column/field
-      user-id-column: user_id_on_primary_group_table
-      
-      # On the table where primary group information is stored, the primary
-      # group column/field
-      group-column: group_id_on_primary_group_table
+    # If you set uses-key to false, then set this to the column that the group
+    # ID is in on the table. Otherwise, this is ignored.
+    group-id-column:
+
+    # If you set uses-key to true, then set the following three settings:
+    # Key name for the key-value pair.
+    key-name:
+    # Column that the key name is in
+    key-column:
+    # Column that the value is in
+    value-column:
   secondary:
     enabled: false
 
