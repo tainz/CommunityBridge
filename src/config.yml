@@ -121,27 +121,6 @@ player-user-linking:
 # -----------------------------------------------------------------------------
 #OLD
 
-# This is a timer that will notify unregistered users more frequently to
-# register
-auto-remind: true
-
-# The interval for the auto-remind timer, this should be no less than
-# 5-10 minutes.
-auto-remind-every: 10
-
-# This message is displayed when show-primary-group is false to registered users
-registered-message: Registered Account, Linked to Server Forums
-
-# This is shown to users when they connect that arn't registered
-unregistered-message: Unregistered Account - Please Register at YOURFORUMURL for full access
-
-# This is shown when auto-sync runs to remind a user to register
-unregistered-messagereminder: Just a reminder to visit YOURFORUMURL and register today!
-
-# When true this will not allow un-registered players onto the server, and show
-# the unregistered-message in the form of a kick
-kick-unregistered: false
-
 # The permissions system (PEX, bPerms, GroupManager, PermsBukkit)
 permissions-system: PEX
 
