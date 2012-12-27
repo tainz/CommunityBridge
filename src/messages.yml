@@ -1,3 +1,5 @@
+#                             Player Linking Messages
+# -----------------------------------------------------------------------------
 link-registered-player: Registered Account, Linked to Forums.
 link-registered-player-group: Registered Account, Linked to Forums. You have been place in the ~GROUPNAME~ group.
 link-unregistered-player: Unregistered Account - Please register at ~APPURL~ for full access

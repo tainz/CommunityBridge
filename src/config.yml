@@ -37,8 +37,8 @@ auto-sync-every: 20
 # Please ensure if you run your Minecraft server on a remote host
 # that your MySQL server allows REMOTE connections. This WILL NOT WORK unless
 # your MySQL server is configured to allow connections from the machine that
-# your Minecraft server is running on. If you don't know what that means, consult
-# your hosting provider on how to configure your MySQL server correctly.
+# your Minecraft server is running on. If you don't know what that means,
+# consult your hosting provider on how to configure your MySQL server correctly.
 # All of this information should be the same server and database used by your
 # web-application...
 database:
@@ -98,11 +98,11 @@ player-user-linking:
   # and provide that table and column information here.
 
   # The name of the table which contains the columns:
-  table-name: ''
+  table-name:
 
   # Column on the table that contains the user ID. Typically something like
   # user_id or member_id
-  user-id-column: ''
+  user-id-column:
 
   # If the player name is stored in a key-value pair of columns instead of
   # its own column, set this to true:
@@ -110,13 +110,13 @@ player-user-linking:
 
   # If you set 'linking-uses-key' to false, then set this to the column that
   # the playername is stored in. Otherwise, leave it empty.
-  playername-column: ''
+  playername-column:
 
   # If you set 'linking-uses-key' to true, then set the key column, value column,
   # and the key-name here. Otherwise, leave these fields empty.
-  key-name: ''
-  key-column: ''
-  value-column: ''
+  key-name:
+  key-column:
+  value-column:
 
 # -----------------------------------------------------------------------------
 #OLD

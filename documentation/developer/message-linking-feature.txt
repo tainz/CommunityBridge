@@ -1,4 +1,6 @@
-# Replace APPURL with your web application's website url.
-link-unregistered-player: Unregistered Account - Please register at APPURL for full access
+#                             Player Linking Messages
+# -----------------------------------------------------------------------------
 link-registered-player: Registered Account, Linked to Forums.
-link-unregistered-reminder: Just a reminder to visit APPURL and register today!
+link-registered-player-group: Registered Account, Linked to Forums. You have been place in the ~GROUPNAME~ group.
+link-unregistered-player: Unregistered Account - Please register at ~APPURL~ for full access
+link-unregistered-reminder: Just a reminder to visit ~APPURL~ and register today!

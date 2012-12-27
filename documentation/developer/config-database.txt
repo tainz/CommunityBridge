@@ -1,22 +1,25 @@
+#                             Database Settings
+# -----------------------------------------------------------------------------
 # Please ensure if you run your Minecraft server on a remote host
 # that your MySQL server allows REMOTE connections. This WILL NOT WORK unless
 # your MySQL server is configured to allow connections from the machine that
-# your Minecraft server is running on. If you don't know what that means, consult
-# your hosting provider on how to configure your MySQL server correctly.
+# your Minecraft server is running on. If you don't know what that means,
+# consult your hosting provider on how to configure your MySQL server correctly.
 # All of this information should be the same server and database used by your
 # web-application...
 database:
   # Hostname for your MySQL Server
   hostname: localhost
-  
+
   # MySQL Port
   port: 3306
-  
+
   # Database Name
   name: databasename
-  
+
   # Database Username
   username: username
-  
+
   # Database Password
   password: password
+

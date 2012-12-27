@@ -62,7 +62,13 @@
   \verbatiminput{config-preamble.txt}
 
   \clearpage
-  \subsection{Proposed config.yml Database Section}
+  \section{Database Handling}
+  The config.yml section contains the hostname, port, database name, username,
+  and password. It should correctly notify the server owner if the database
+  information is incorrect or correct.
+  
+  \clearpage
+  \subsection{config.yml Database Section}
   \verbatiminput{config-database.txt}
 
   \clearpage
@@ -73,51 +79,80 @@
     web application's database.
     \item Correctly identify a player as being registered--identifying the
     correct user.
-    \item {\bf (NYI)} If authentication is off {\bf DO NOT} force authentication.
-    \item {\bf (NYI)} If authentication is on, handle a valid authentication by...
-    \item {\bf (NYI)} If authentication is on, respond to an failed authentication attempt by...
+    \item If kick-unregistered is turned on, kick unregistered players.
   \end{itemize}
 
   Possible Configurations (order of complexity):
   \begin{itemize}
     \item Minecraft playername and web application username are required to be
-      the same. Required information: users table, user id column, username
-      column. Configuration Name: same\_name.
+      the same. Required information: users table, user id column,
+      username/playername column.
     \item Minecraft playername and web application username can be different;
       the Minecraft playername is in a separate column on the users table.
-      Required information: users table, user id column, minecraft playername
-      column. Configuration Name: diff\_name\_same\_table.
+      Required information: users table, user id column, username/playername
+      column.
     \item Minecraft playername and web application username can be different;
       the Minecraft playername is on a different table in its own column
       (frequently, this is because it is implemented through a custom profile
       field in the web application). Required information: tablename, user id
-      column, minecraft playername column.
-      Configuration Name: diff\_name\_diff\_table
+      column, username/playername column.
     \item Minecraft playername and web application username can be different;
       the Minecraft playername is on a different table that data is stored in
       the key-value format. Required information: tablename, user id column,
       key column, value column, data key name.
-      Configuration Name: diff\_name\_diff\_table\_keyed
   \end{itemize}
+
+  Fortunately, the overall result is the first three possible configurations
+  require the same information. Only when the minecraft playername is stored in
+  a key-value pair do we need different information.
+  
   \clearpage
   
-  \subsection{Proposed config.yml Section}
+  \subsection{config.yml Section for Linking Feature}
   \verbatiminput{config-linking-feature.txt}
   
-  \subsection{Proposed messages.yml section}
+  \subsection{messages.yml Section for Linking Feature}
   Messages related to the linking feature in the messages.yml.
   \verbatiminput{message-linking-feature.txt}
 
   \clearpage
   \section{Authentication}
+  \begin{itemize}
+      \item {\bf (NYI)} If authentication is off {\bf DO NOT} force authentication.
+    \item {\bf (NYI)} If authentication is on, handle a valid authentication by...
+    \item {\bf (NYI)} If authentication is on, respond to an failed authentication attempt by...
+\end{itemize}
   \subsection{Proposed config.yml Section}
   \verbatiminput{config-authentication-feature.txt}
   \clearpage
   \section{Group Synchronization}
-Many web systems have a notion of a ``primary'' group. However, very few of the
-permissions plugins do. This is not a problem when the synchronization is
-``Forums override Minecraft'', but it presents a difficulty the other direction,
-``Minecraft override Forums''.
+  Many web applications have a notion of a primary group. In fact, some only
+  allow a member to have membership in a single group.
+
+  On the other hand, permissions systems appear to rarely have a notion of a
+  primary group. In addition, they frequently have per-world settings, so the
+  world name must be included any operations with a permissions system.
+
+  Possible configuration types for a ``primary'' group includes:
+  \begin{itemize}
+   \item A ``primary'' group\_id stored on a table alongside a user\_id. Required
+    information includes: table\_name, user\_id column, group\_id column.
+   \item A ``primary'' group\_id stored in a key-value pair. Required information
+    includes: table\_name, user\_id column, key column, value column, data key name
+  \end{itemize}
+
+  Possible configuration types for ``secondary'' group includes:
+  \begin{itemize}
+   \item A list of ``secondary'' group IDs stored in a single field alongside a
+    user\_id. Required information includes: table\_name, user\_id column,
+    group\_ids column, group\_id delimiter.
+   \item A junction table to create the many-to-many relationship between
+    user IDs and group IDs. Required information includes: table\_name, user\_id
+    column, group\_id column.
+   \item A series of key-value pairs on a key-value table. Required information
+    includes: table\_name, user\_id column, key volumn, value column, data key name
+  \end{itemize}
+
 
 	\clearpage
   \subsection{Proposed config.yml Section}
