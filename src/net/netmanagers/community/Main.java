@@ -21,6 +21,7 @@ import org.ruhlendavis.mc.communitybridge.PermissionHandlerBPermissions;
 import org.ruhlendavis.mc.communitybridge.PermissionHandlerGroupManager;
 import org.ruhlendavis.mc.communitybridge.PermissionHandlerPermissionsBukkit;
 import org.ruhlendavis.mc.communitybridge.PermissionHandlerPermissionsEx;
+import org.ruhlendavis.mc.communitybridge.WebApplication;
 import org.ruhlendavis.mc.utility.Log;
 import org.ruhlendavis.utility.StringUtilities;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
@@ -35,6 +36,7 @@ public final class Main extends JavaPlugin
 	public static SQL sql;
 	private static Main instance = null;
 	private static Metrics metrics = null;
+	public static WebApplication webapp = null;
 	public static PermissionHandler permissionHandler;
 
 	@Override
@@ -58,7 +60,7 @@ public final class Main extends JavaPlugin
 			{
 				metrics = new Metrics(this);
 				metrics.start();
-				log.config("Plugin Metrics activated.");
+				log.fine("Plugin Metrics activated.");
 			}
 			catch (IOException e)
 			{
@@ -122,12 +124,14 @@ public final class Main extends JavaPlugin
 			return;
 		}
 
-		if (config.analyzeConfigurationOld(sql) == false)
+		if (config.analyzeConfiguration(sql) == false)
 		{
 			disablePlugin();
 			return;
 		}
 
+		webapp = new WebApplication(config, sql, log);
+		log.fine("Webapp created.");
 		if (config.statisticsTrackingEnabled && config.onlinestatusEnabled)
 		{
 			resetOnlineStatus();
@@ -317,65 +321,8 @@ public final class Main extends JavaPlugin
 
 	public static int getUserId(String username)
 	{
-		int userId = 0;
-    String query;
-		try
-    {
-			ResultSet res;
-			if (config.multiTables)
-      {
-				if (config.multiTablesUseKey)
-        {
-          query = "SELECT * FROM " + config.multi_table
-                  + " WHERE " + config.multi_table_key_field + " = '"
-                  + config.multi_table_key_value
-                  + "' AND LOWER(" + config.multi_table_value_field + ") = LOWER('"
-                  + username
-                  + "') ORDER BY " + config.multi_table_user_id_field + " DESC";
-        }
-        else
-        {
-          query = "SELECT * FROM  "+ config.multi_table
-                  + " WHERE LOWER(" + config.multi_table_value_field +
-                  ") = LOWER('" + username
-                  + "') ORDER BY " + config.multi_table_user_id_field + " DESC";
-				}
-				res = Main.sql.sqlQuery(query);
-				if (res.next())
-        {
-          userId = res.getInt(config.multi_table_user_id_field);
-        }
-			}
-      else
-      {
-        query = "SELECT * FROM " + config.users_table
-                + " WHERE LOWER(" + config.user_name_field
-                + ") = LOWER('" + username
-                + "') ORDER BY " + config.user_id_field + " desc";
- 				res = Main.sql.sqlQuery(query);
-        if (res.next())
-        {
-          userId = res.getInt(config.user_id_field);
-        }
-			}
-			return userId;
-		} catch (MalformedURLException e) {
-
-		} catch (InstantiationException e) {
-
-		} catch (IllegalAccessException e) {
-
-		}
-    catch (SQLException e)
-    {
-			log.severe("Error in getUserId():" + e.getMessage());
-			log.severe("Broken User ID SQL Query, check your config.yml");
-			disablePlugin();
-		}
-
-		return userId;
+		return webapp.getUserIDint(username);
 	}
-
 
 	public static ResultSet getOnlinePlayerInfo(String username) {
 		try {

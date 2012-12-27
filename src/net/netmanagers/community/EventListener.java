@@ -12,6 +12,7 @@ public class EventListener implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player p = event.getPlayer();
+		Main.webapp.onJoinQuery(p.getName());
 		Main.syncPlayer(p, true);
 	}
 
