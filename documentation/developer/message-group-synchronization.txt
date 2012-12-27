@@ -1,1 +1,2 @@
-group-synchronization-primary-notify-player: You have been placed in the primary group '%GROUP%'.
+group-synchronization-primary-notify-player: You have been placed in the primary group '~GROUP~'.
+group-synchronization-multiple-notify-player: You have been placed in the following groups: ~GROUPS~.

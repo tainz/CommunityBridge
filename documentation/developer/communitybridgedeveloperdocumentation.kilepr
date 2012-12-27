@@ -26,6 +26,16 @@ Indentation Mode=normal
 Mode=
 ReadWrite=true
 
+[document-settings,item:config-group-synchronization.txt]
+Bookmarks=
+Encoding=UTF-8
+FoldedColumns=
+FoldedLines=
+Highlighting=None
+Indentation Mode=normal
+Mode=
+ReadWrite=true
+
 [document-settings,item:config-linking-feature.txt]
 Bookmarks=
 Encoding=UTF-8
@@ -49,11 +59,21 @@ ReadWrite=true
 [document-settings,item:developer documentation.tex]
 Bookmarks=
 Encoding=UTF-8
-FoldedColumns=
-FoldedLines=
+FoldedColumns=0,2,2,2,2,2,2
+FoldedLines=38,45,76,85,119,136,144
 Highlighting=LaTeX
 Indentation Mode=normal
 Mode=LaTeX
+ReadWrite=true
+
+[document-settings,item:message-group-synchronization.txt]
+Bookmarks=
+Encoding=UTF-8
+FoldedColumns=
+FoldedLines=
+Highlighting=None
+Indentation Mode=normal
+Mode=
 ReadWrite=true
 
 [document-settings,item:message-linking-feature.txt]
@@ -88,20 +108,20 @@ order=-1
 
 [item:config-database.txt]
 archive=true
-column=0
+column=25
 encoding=UTF-8
 highlight=None
-line=7
+line=10
 mode=
-open=true
+open=false
 order=2
 
 [item:config-group-synchronization.txt]
 archive=true
-column=185102960
-encoding=
-highlight=
-line=0
+column=0
+encoding=UTF-8
+highlight=None
+line=155
 mode=
 open=false
 order=-1
@@ -111,37 +131,37 @@ archive=true
 column=0
 encoding=UTF-8
 highlight=None
-line=57
+line=0
 mode=
-open=true
+open=false
 order=3
 
 [item:config-preamble.txt]
 archive=true
-column=57
+column=0
 encoding=UTF-8
 highlight=None
-line=20
+line=34
 mode=
-open=true
+open=false
 order=1
 
 [item:developer documentation.tex]
 archive=true
-column=14
+column=0
 encoding=UTF-8
 highlight=LaTeX
-line=60
+line=26
 mode=LaTeX
-open=true
+open=false
 order=0
 
 [item:message-group-synchronization.txt]
 archive=true
-column=137416908
-encoding=
-highlight=
-line=0
+column=0
+encoding=UTF-8
+highlight=None
+line=2
 mode=
 open=false
 order=-1
@@ -151,37 +171,49 @@ archive=true
 column=0
 encoding=UTF-8
 highlight=None
-line=4
+line=6
 mode=
 open=false
 order=-1
 
 [view-settings,view=0,item:config-database.txt]
+CursorColumn=25
+CursorLine=10
+JumpList=
+ViMarks=
+
+[view-settings,view=0,item:config-group-synchronization.txt]
 CursorColumn=0
-CursorLine=7
+CursorLine=155
 JumpList=
 ViMarks=
 
 [view-settings,view=0,item:config-linking-feature.txt]
 CursorColumn=0
-CursorLine=57
+CursorLine=0
 JumpList=
 ViMarks=
 
 [view-settings,view=0,item:config-preamble.txt]
-CursorColumn=57
-CursorLine=20
+CursorColumn=0
+CursorLine=34
 JumpList=
 ViMarks=
 
 [view-settings,view=0,item:developer documentation.tex]
-CursorColumn=14
-CursorLine=60
+CursorColumn=0
+CursorLine=26
+JumpList=
+ViMarks=
+
+[view-settings,view=0,item:message-group-synchronization.txt]
+CursorColumn=0
+CursorLine=2
 JumpList=
 ViMarks=
 
 [view-settings,view=0,item:message-linking-feature.txt]
 CursorColumn=0
-CursorLine=4
+CursorLine=6
 JumpList=
 ViMarks=

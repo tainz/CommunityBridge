@@ -24,7 +24,7 @@ group-synchronization:
     uses-key: false
 
     # If you set uses-key to false, then set this to the column that the group
-    # ID is in on the table. Otherwise, this is ignored.
+    # ID is in on the table. Otherwise, this setting is ignored.
     group-id-column:
 
     # If you set uses-key to true, then set the following three settings:
@@ -34,33 +34,122 @@ group-synchronization:
     key-column:
     # Column that the value is in
     value-column:
-  secondary:
+
+    # ***** PRIMARY Group Rules *****
+    # This subsection is where you tell Community Bridge how you want it to
+    # synchronize the primary groups. These settings can be per-world or apply
+    # to all worlds (which could be only one world). If you have only one world
+    # or you want one or more synchronization rules to apply to all worlds,
+    # place those rules in 'all-worlds'. Otherwise, place rules under a section
+    # label with the same name as the Minecraft world name.
+    
+    # * webapp-id is the group IDs that the web application uses.
+    #   Often, these are numbers, but not always. It is recommended, but not
+    #   required, to set up a rule for each possible web application group ID.
+    # * permissions-group is the name of the permissions group that the
+    #   group ID should be synchronized with.
+    # * direction controls which way the synchronization occurs. Possible
+    #   options are:
+    #   - webapp: Assigns web application user to the specified group ID, based
+    #             on the permissions group name.
+    #   - minecraft: Assigns the Minecraft player to the specified permissions
+    #                group, based on the web application group ID.
+    groups:
+      all-worlds:
+        1:
+          webapp-id: 15
+          permissions-group: groupname
+          direction: webapp
+        2:
+          webapp-id: 5
+          permissions-group: groupname
+          direction: minecraft
+#     myworld1:
+#       1:
+#         webapp-id: 15
+#         permissions-name: groupname
+#         direction: webapp
+#     myworld2:
+#       1:
+#         webapp-id: 15
+#         permissions-name: groupname
+#         direction: webapp
+  # This subsection contains settings for multiple (secondary) group
+  # synchronization. Some web applications will have this either addition to
+  # or instead of, primary groups. Do not enable this if your web application
+  # does not have a technique for handling multiple groups.
+  multiple:
     enabled: false
+    
+    # Notify player that they've been placed in groups.
+    notify-player: false
 
-    # This subsection contains details about how the web-application stores
-    # secondary groups.
-    group-table:
-      # Set this to true if your web application uses secondary groups or its
-      # equivalent.
-      enabled: false
+    # The table that contains the columns.
+    table-name:
 
-      # Set this to the name of the table that the users' secondary group is
-      # stored on.
-      name: secondary_group_table
+    # The column on the table that contains the user ID.
+    user-id-column:
 
-      # On the table where primary group information is stored, the user_id
-      # column/field
-      user-id-column: user_id_on_secondary_group_table
+    # There are three ways of storing group information supported.
+    # 1) delimited: The group IDs are all in the same column, separated by a
+    #    comma or some other delimiter.
+    # 2) junction: The group IDs are on a special table (a junction table) that
+    #    contains user_ids and group_ids.
+    # 3) key-value: The group IDs are stored in key-value pairs on a key-value
+    #    pair table.
+    # This setting tells CommunityBridge which technique your web application
+    # uses. Choose either: delimited, junction, or key-value.
+    storage-technique:
 
-      # On the table where primary group information is stored, the primary
-      # group column/field
-      group-column: group_id_on_secondary_group_table
-  groups:
-      '1':
-        direction: webapp
-        group: groupname
-        world: worldname
-      '2':
-        direction: minecraft
-        group: groupname
-        world: worldname
+    # If your web application uses 'delimited' or 'junction', enter the column
+    # that contains the group IDs here:
+    group-id-column:
+
+    # If your web application uses 'key-value', enter the following three
+    # settings:
+    # Key name for the key-value pair.
+    key-name:
+    # Column that the key name is in
+    key-column:
+    # Column that the value is in
+    value-column:
+    
+    # ***** MULTIPLE/SECONDARY Group Rules *****
+    # This subsection is where you tell Community Bridge how you want it to
+    # synchronize the groups. These settings can be per-world or apply
+    # to all worlds (which could be only one world). If you have only one world
+    # or you want one or more synchronization rules to apply to all worlds,
+    # place those rules in 'all-worlds'. Otherwise, place rules under a section
+    # label with the same name as the Minecraft world name.
+
+    # * webapp-id is the group IDs that the web application uses.
+    #   Often, these are numbers, but not always. It is recommended, but not
+    #   required, to set up a rule for each possible web application group ID.
+    # * permissions-group is the name of the permissions group that the
+    #   group ID should be synchronized with.
+    # * direction controls which way the synchronization occurs. Possible
+    #   options are:
+    #   - webapp: Assigns web application user to the specified group ID, based
+    #             on the permissions group name.
+    #   - minecraft: Assigns the Minecraft player to the specified permissions
+    #                group, based on the web application group ID.
+    groups:
+      all-worlds:
+        1:
+          webapp-id: 15
+          permissions-group: groupname
+          direction: webapp
+        2:
+          webapp-id: 5
+          permissions-group: groupname
+          direction: minecraft
+#     myworld1:
+#       1:
+#         webapp-id: 15
+#         permissions-name: groupname
+#         direction: webapp
+#     myworld2:
+#       1:
+#         webapp-id: 15
+#         permissions-name: groupname
+#         direction: webapp
