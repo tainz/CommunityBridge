@@ -44,6 +44,7 @@ public class Configuration
 	public long linkingAutoEvery;
 	public boolean linkingNotifyRegistered;
 	public boolean linkingNotifyUnregistered;
+	public boolean linkingKickUnregistered;
 
 	public boolean linkingUsesKey;
 	public String linkingTableName;
@@ -69,7 +70,6 @@ public class Configuration
 
   public boolean secondary_groups = false;
 	public boolean show_primary_group = false;
-	public boolean linkingKickUnregistered = false;
 	public boolean require_avatar = false;
 	public boolean require_minposts = false;
 
@@ -178,7 +178,7 @@ public class Configuration
 	 * @param SQL SQL query object.
 	 * @return boolean True if the configuration is okay.
 	 */
-	public boolean analyzeConfiguration(Configuration config, SQL sql)
+	public boolean analyzeConfiguration(SQL sql)
 	{
 		boolean status;
 
@@ -187,7 +187,7 @@ public class Configuration
 		if (status)
 		{
 			status = checkColumn(sql, "player-user-linking.user-id-column", linkingTableName, linkingUserIDColumn);
-			if (config.linkingUsesKey)
+			if (linkingUsesKey)
 			{
 				boolean temp;
 				temp = checkColumn(sql, "player-user-linking.key-column", linkingTableName , linkingKeyColumn);
@@ -887,15 +887,47 @@ public class Configuration
 	 */
 	private void reportConfig()
 	{
-
-		// Old System
+		// General Section
 		log.config(  "Log level                            : " + logLevel);
 		log.config(  "Plugin metrics enabled               : " + usePluginMetrics);
 		log.config(  "Auto Sync                            : " + autoSync);
-		log.config(  "Auto Remind                          : " + linkingAutoRemind);
+		if (autoSync)
+		{
+			log.config("Autosync every                       : " + autoSyncEvery + " " + autoEveryUnit);
+		}
+
+		// Database Section
+		log.config(  "Database hostname                    : " + databaseHost);
+		log.config(  "Database port                        : " + databasePort);
+		log.config(  "Database name                        : " + databaseName);
+		log.config(  "Database username                    : " + databaseUsername);
+
+		// Linking Section
+		log.config(  "Linking auto reminder                : " + linkingAutoRemind);
+		if (linkingAutoRemind)
+		{
+			log.config("Linking auto reminder every          : " + linkingAutoEvery + " " + autoEveryUnit);
+		}
+		log.config(  "Linking notify registered            : " + linkingNotifyRegistered);
+		log.config(  "Linking notify unregistered          : " + linkingNotifyUnregistered);
+		log.config(  "Linking kick unnregistered           : " + linkingKickUnregistered);
+		log.config(  "Linking uses key-value pair          : " + linkingUsesKey);
+		log.config(  "Linking table name                   : " + linkingTableName);
+		log.config(  "Linking user ID column               : " + linkingUserIDColumn);
+		if (linkingUsesKey)
+		{
+			log.config("Linking key-value pair key name      : " + linkingKeyName);
+			log.config("Linking key-value pair key column    : " + linkingKeyColumn);
+			log.config("Linking key-value pair value column  : " + linkingValueColumn);
+		}
+		else
+		{
+			log.config("Linking player name column           : " + linkingPlayerNameColumn);
+		}
+
+		// Old System
 		log.config(  "Multi Tables                         : " + multiTables);
 		log.config(  "Primary Group Synchronization Enabled: "	+ groupSynchronizationPrimaryEnabled);
-		log.config(  "Kick Unregistered                    : " + linkingKickUnregistered);
 		log.config(  "Require Avatar                       : " + require_avatar);
 		log.config(  "Min Posts                            : " + require_minposts);
 

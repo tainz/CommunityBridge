@@ -42,7 +42,7 @@ public final class Main extends JavaPlugin
   {
 		instance = this;
 		log = new Log(this.getLogger(), Level.CONFIG);
-		config = new org.ruhlendavis.mc.communitybridge.Configuration(this);
+		config = new org.ruhlendavis.mc.communitybridge.Configuration(this, log);
 
 		if (config.databaseUsername.equals("username")
 		 && config.databasePassword.equals("password"))
