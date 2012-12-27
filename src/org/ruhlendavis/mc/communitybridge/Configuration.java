@@ -721,8 +721,6 @@ public class Configuration
 		// Group Synchronization: Primary
 		groupSynchronizationMultipleEnabled = config.getBoolean("group-synchronization.multiple.enabled", false);
 
-
-		
 		// These are calculated from settings above.
 		groupSynchronizationEnabled = groupSynchronizationPrimaryEnabled && groupSynchronizationMultipleEnabled;
 		permissionsSystemRequired = groupSynchronizationEnabled;

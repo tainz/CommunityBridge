@@ -75,7 +75,8 @@ public final class Main extends JavaPlugin
 		getCommand("cbsync").setExecutor(new Cmds());
 		getCommand("cbsyncall").setExecutor(new Cmds());
 
-		if (config.groupSynchronizationEnabled)
+		// If a feature requires a permissions system we load it up here.
+		if (config.permissionsSystemRequired)
 		{
 			try
 			{
