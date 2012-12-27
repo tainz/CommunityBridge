@@ -75,41 +75,44 @@ public final class Main extends JavaPlugin
 		getCommand("cbsync").setExecutor(new Cmds());
 		getCommand("cbsyncall").setExecutor(new Cmds());
 
-		try
+		if (config.groupSynchronizationEnabled)
 		{
-			if (config.permissionsSystem.equalsIgnoreCase("PEX"))
+			try
 			{
-				permissionHandler = new PermissionHandlerPermissionsEx();
-				log.config("Permissions System: PermissionsEx (PEX)");
+				if (config.permissionsSystem.equalsIgnoreCase("PEX"))
+				{
+					permissionHandler = new PermissionHandlerPermissionsEx();
+					log.config("Permissions System: PermissionsEx (PEX)");
+				}
+				else if (config.permissionsSystem.equalsIgnoreCase("bPerms"))
+				{
+					permissionHandler = new PermissionHandlerBPermissions();
+					log.config("Permissions System: bPermissions (bPerms)");
+				}
+				else if (config.permissionsSystem.equalsIgnoreCase("GroupManager"))
+				{
+					permissionHandler = new PermissionHandlerGroupManager();
+					log.config("Permissions System: GroupManager");
+				}
+				else if (config.permissionsSystem.equalsIgnoreCase("PermsBukkit"))
+				{
+					permissionHandler = new PermissionHandlerPermissionsBukkit();
+					log.config("Permissions System: PermissionsBukkit (PermsBukkit)");
+				}
+				else
+				{
+					log.severe("Unknown permissions system in config.yml. CommunityBridge disabled.");
+					disablePlugin();
+					return;
+				}
 			}
-			else if (config.permissionsSystem.equalsIgnoreCase("bPerms"))
+			catch (IllegalStateException e)
 			{
-				permissionHandler = new PermissionHandlerBPermissions();
-				log.config("Permissions System: bPermissions (bPerms)");
-			}
-			else if (config.permissionsSystem.equalsIgnoreCase("GroupManager"))
-			{
-				permissionHandler = new PermissionHandlerGroupManager();
-				log.config("Permissions System: GroupManager");
-			}
-			else if (config.permissionsSystem.equalsIgnoreCase("PermsBukkit"))
-			{
-				permissionHandler = new PermissionHandlerPermissionsBukkit();
-				log.config("Permissions System: PermissionsBukkit (PermsBukkit)");
-			}
-			else
-			{
-				log.severe("Unknown permissions system in config.yml. CommunityBridge disabled.");
+				log.severe(e.getMessage());
+				log.severe("Disabling CommunityBridge.");
 				disablePlugin();
 				return;
 			}
-		}
-		catch (IllegalStateException e)
-		{
-			log.severe(e.getMessage());
-			log.severe("Disabling CommunityBridge.");
-			disablePlugin();
-			return;
 		}
 
 		sql = new SQL(config.databaseHost + ":" + config.databasePort,

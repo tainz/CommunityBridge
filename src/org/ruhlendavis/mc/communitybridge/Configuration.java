@@ -57,8 +57,17 @@ public class Configuration
 	public String linkingKeyColumn;
 	public String linkingValueColumn;
 
-	// Instance variables associated with the old configuration
+	// Group Synchronization: Primary
 	public boolean groupSynchronizationPrimaryEnabled;
+
+	// Group Synchronization: Multiple
+	public boolean groupSynchronizationMultipleEnabled;
+
+	// These are not in the config.yml. They are calculated.
+	public boolean permissionsSystemRequired;
+	public boolean groupSynchronizationEnabled;
+
+	// Instance variables associated with the old configuration
 	public List<String> primaryGroupIDsToIgnore;
 	public Map<String, Object> groups;
 	public String defaultGroup;
@@ -705,6 +714,18 @@ public class Configuration
 		linkingKeyName = config.getString("player-user-linking.key-name", "");
 		linkingKeyColumn = config.getString("player-user-linking.key-column", "");
 		linkingValueColumn = config.getString("player-user-linking.value-column", "");
+
+			// Group Synchronization: Primary
+		groupSynchronizationPrimaryEnabled = config.getBoolean("group-synchronization.primary.enabled", false);
+
+		// Group Synchronization: Primary
+		groupSynchronizationMultipleEnabled = config.getBoolean("group-synchronization.multiple.enabled", false);
+
+
+		
+		// These are calculated from settings above.
+		groupSynchronizationEnabled = groupSynchronizationPrimaryEnabled && groupSynchronizationMultipleEnabled;
+		permissionsSystemRequired = groupSynchronizationEnabled;
 	}
 
 	/**
@@ -719,7 +740,6 @@ public class Configuration
 		FileConfiguration config;
 		config = plugin.getConfig();
 
-		groupSynchronizationPrimaryEnabled = config.getBoolean("group-synchronization.primary-group.enabled", false);
 		if (groupSynchronizationPrimaryEnabled)
 		{
 			List<String> defaultList = new ArrayList<String>();
@@ -927,10 +947,10 @@ public class Configuration
 		{
 			log.config("Linking player name column           : " + linkingPlayerNameColumn);
 		}
+		log.config(  "Primary group synchronization        : " + groupSynchronizationPrimaryEnabled);
 
 		// Old System
 		log.config(  "Multi Tables                         : " + multiTables);
-		log.config(  "Primary Group Synchronization Enabled: "	+ groupSynchronizationPrimaryEnabled);
 		log.config(  "Require Avatar                       : " + require_avatar);
 		log.config(  "Min Posts                            : " + require_minposts);
 

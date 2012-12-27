@@ -1,9 +1,7 @@
+#                             Group Synchronization Settings
+# -----------------------------------------------------------------------------
 # Settings to control group synchronization features.
 group-synchronization:
-  # Set this to true to use any of the group synchronization features. If this
-  # is false, the rest of this section is ignored.
-  enabled: false
-  
   # This subsection contains settings for primary group synchronization. If your
   # web application has an equivalent to a PRIMARY group, you can enable this
   # feature. Do not enable this feature if your web application only has

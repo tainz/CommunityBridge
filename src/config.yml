@@ -124,6 +124,15 @@ player-user-linking:
   key-column:
   value-column:
 
+#                             Group Synchronization Settings
+# -----------------------------------------------------------------------------
+# Settings to control group synchronization features.
+group-synchronization:
+  primary:
+    enabled: false
+  multiple:
+    enabled: false
+
 # -----------------------------------------------------------------------------
 #OLD
 
