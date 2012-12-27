@@ -4,3 +4,8 @@ link-registered-player: Registered Account, Linked to Forums.
 link-registered-player-group: Registered Account, Linked to Forums. You have been place in the ~GROUPNAME~ group.
 link-unregistered-player: Unregistered Account - Please register at ~APPURL~ for full access
 link-unregistered-reminder: Just a reminder to visit ~APPURL~ and register today!
+
+#                            Group Synchronization Messages
+# -----------------------------------------------------------------------------
+group-synchronization-primary-notify-player: You have been placed in the primary group ~GROUP~.
+group-synchronization-multiple-notify-player: 'You have been placed in the following groups: ~GROUPS~.'

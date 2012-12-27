@@ -879,16 +879,6 @@ public class Configuration
 
 		messagesConfig = YamlConfiguration.loadConfiguration(messagesFile);
 
-		// Look for defaults in the jar
-		defaultMessagesStream = plugin.getResource(messageFilename);
-		if (defaultMessagesStream == null)
-		{}
-		else
-		{
-			YamlConfiguration defaultMessagesConfig;
-			defaultMessagesConfig = YamlConfiguration.loadConfiguration(defaultMessagesStream);
-		}
-
 		// Read the key-value pairs from the configuration
 		values = messagesConfig.getValues(false);
 
