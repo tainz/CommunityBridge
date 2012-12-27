@@ -32,6 +32,12 @@ auto-sync: true
 # 20 minutes.
 auto-sync-every: 20
 
+# The permissions system you're using. A permissions system is required for the
+# following features:
+# * Group Synchronization (both primary and secondary)
+# Current Options are: PEX, bPerms, GroupManager, PermsBukkit
+permissions-system: PEX
+
 #                             Database Settings
 # -----------------------------------------------------------------------------
 # Please ensure if you run your Minecraft server on a remote host
@@ -120,9 +126,6 @@ player-user-linking:
 
 # -----------------------------------------------------------------------------
 #OLD
-
-# The permissions system (PEX, bPerms, GroupManager, PermsBukkit)
-permissions-system: PEX
 
 # If set to true it will show a message to the user that they have been placed
 # into a group

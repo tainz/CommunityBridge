@@ -28,6 +28,9 @@ public class Configuration
 	// General Section
 	public String logLevel;
 	public boolean usePluginMetrics;
+
+	public String permissionsSystem;
+
   public String autoEveryUnit;
   public boolean autoSync;
 	public long autoSyncEvery;
@@ -55,8 +58,6 @@ public class Configuration
 	public String linkingValueColumn;
 
 	// Instance variables associated with the old configuration
-	public String permissionsSystem;
-
 	public boolean groupSynchronizationPrimaryEnabled;
 	public List<String> primaryGroupIDsToIgnore;
 	public Map<String, Object> groups;
@@ -675,6 +676,9 @@ public class Configuration
 		log.finest("Loading new configuration.");
 
 		usePluginMetrics = config.getBoolean("plugin-metrics", true);
+
+		permissionsSystem = config.getString("permissions-system", "");
+
 		autoEveryUnit = config.getString("auto-every-unit", "ticks");
 		autoSync = config.getBoolean("auto-sync", false);
 		autoSyncEvery = config.getLong("auto-sync-every", 24000L);
@@ -714,8 +718,6 @@ public class Configuration
 
 		FileConfiguration config;
 		config = plugin.getConfig();
-
-		permissionsSystem = config.getString("permissions-system", "");
 
 		groupSynchronizationPrimaryEnabled = config.getBoolean("group-synchronization.primary-group.enabled", false);
 		if (groupSynchronizationPrimaryEnabled)
@@ -890,6 +892,7 @@ public class Configuration
 		// General Section
 		log.config(  "Log level                            : " + logLevel);
 		log.config(  "Plugin metrics enabled               : " + usePluginMetrics);
+		log.config(  "Permissions System                   : " + permissionsSystem);
 		log.config(  "Auto Sync                            : " + autoSync);
 		if (autoSync)
 		{
