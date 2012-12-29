@@ -65,7 +65,7 @@ public class Configuration
 	public boolean groupSyncPrimaryEnabled;
 
 	// Group Synchronization: Multiple
-	public boolean groupSyncMultipleEnabled;
+	public boolean groupSyncSecondaryEnabled;
 	public boolean groupSyncPrimaryNotifyPlayer;
 	public boolean groupSyncPrimaryUsesKey;
 	public String groupSyncPrimaryTableName;
@@ -731,7 +731,7 @@ public class Configuration
 		linkingKeyColumn = config.getString("player-user-linking.key-column", "");
 		linkingValueColumn = config.getString("player-user-linking.value-column", "");
 
-			// Group Synchronization: Primary
+		// Group Synchronization: Primary
 		groupSyncPrimaryEnabled = config.getBoolean("group-synchronization.primary.enabled", false);
 		if (groupSyncPrimaryEnabled)
 		{
@@ -805,11 +805,11 @@ public class Configuration
 			}
 		}
 
-		// Group Synchronization: Primary
-		groupSyncMultipleEnabled = config.getBoolean("group-synchronization.multiple.enabled", false);
+		// Group Synchronization: Secondary
+		groupSyncSecondaryEnabled = config.getBoolean("group-synchronization.secondary.enabled", false);
 
 		// These are calculated from settings above.
-		groupSyncEnabled = groupSyncPrimaryEnabled && groupSyncMultipleEnabled;
+		groupSyncEnabled = groupSyncPrimaryEnabled && groupSyncSecondaryEnabled;
 		permissionsSystemRequired = groupSyncEnabled;
 	}
 

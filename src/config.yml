@@ -202,7 +202,7 @@ group-synchronization:
     #    direction: minecraft
     #    world: spawnworld
     group-rules:
-  multiple:
+  secondary:
     enabled: false
 
 # -----------------------------------------------------------------------------
