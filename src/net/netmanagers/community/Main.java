@@ -645,7 +645,7 @@ public final class Main extends JavaPlugin
             }
 					}
 
-					if (config.groupSynchronizationPrimaryEnabled)
+					if (config.groupSyncPrimaryEnabled)
 					{
 						// Note: groups is a map <String, Object> so we need the cast.
 						groupID = res.getString(config.groups_id_field);
@@ -1392,7 +1392,7 @@ public final class Main extends JavaPlugin
 
 	public static boolean isOkayToSetPrimaryGroup(String groupID)
 	{
-		return config.groupSynchronizationPrimaryEnabled
+		return config.groupSyncPrimaryEnabled
 			  && (groupID == null || !config.primaryGroupIDsToIgnore.contains(groupID));
 	}
 }

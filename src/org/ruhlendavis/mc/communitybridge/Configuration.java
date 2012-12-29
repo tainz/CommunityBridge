@@ -58,14 +58,14 @@ public class Configuration
 	public String linkingValueColumn;
 
 	// Group Synchronization: Primary
-	public boolean groupSynchronizationPrimaryEnabled;
+	public boolean groupSyncPrimaryEnabled;
 
 	// Group Synchronization: Multiple
-	public boolean groupSynchronizationMultipleEnabled;
+	public boolean groupSyncMultipleEnabled;
 
 	// These are not in the config.yml. They are calculated.
 	public boolean permissionsSystemRequired;
-	public boolean groupSynchronizationEnabled;
+	public boolean groupSyncEnabled;
 
 	// Instance variables associated with the old configuration
 	public List<String> primaryGroupIDsToIgnore;
@@ -280,7 +280,7 @@ public class Configuration
 		{
 			// We're not using groups table, so we check the group id designated
 			// by user-table keys.
-			if (status && groupSynchronizationPrimaryEnabled)
+			if (status && groupSyncPrimaryEnabled)
 			{
 				status = status & checkColumn(sql, "users-table.groups-id-field",
 								                      users_table,
@@ -716,14 +716,14 @@ public class Configuration
 		linkingValueColumn = config.getString("player-user-linking.value-column", "");
 
 			// Group Synchronization: Primary
-		groupSynchronizationPrimaryEnabled = config.getBoolean("group-synchronization.primary.enabled", false);
+		groupSyncPrimaryEnabled = config.getBoolean("group-synchronization.primary.enabled", false);
 
 		// Group Synchronization: Primary
-		groupSynchronizationMultipleEnabled = config.getBoolean("group-synchronization.multiple.enabled", false);
+		groupSyncMultipleEnabled = config.getBoolean("group-synchronization.multiple.enabled", false);
 
 		// These are calculated from settings above.
-		groupSynchronizationEnabled = groupSynchronizationPrimaryEnabled && groupSynchronizationMultipleEnabled;
-		permissionsSystemRequired = groupSynchronizationEnabled;
+		groupSyncEnabled = groupSyncPrimaryEnabled && groupSyncMultipleEnabled;
+		permissionsSystemRequired = groupSyncEnabled;
 	}
 
 	/**
@@ -738,7 +738,7 @@ public class Configuration
 		FileConfiguration config;
 		config = plugin.getConfig();
 
-		if (groupSynchronizationPrimaryEnabled)
+		if (groupSyncPrimaryEnabled)
 		{
 			List<String> defaultList = new ArrayList<String>();
 			config.addDefault("group-synchronization.primary-group.group-ids-to-ignore", defaultList);
@@ -935,14 +935,14 @@ public class Configuration
 		{
 			log.config("Linking player name column           : " + linkingPlayerNameColumn);
 		}
-		log.config(  "Primary group synchronization        : " + groupSynchronizationPrimaryEnabled);
+		log.config(  "Primary group synchronization        : " + groupSyncPrimaryEnabled);
 
 		// Old System
 		log.config(  "Multi Tables                         : " + multiTables);
 		log.config(  "Require Avatar                       : " + require_avatar);
 		log.config(  "Min Posts                            : " + require_minposts);
 
-		if (groupSynchronizationPrimaryEnabled)
+		if (groupSyncPrimaryEnabled)
 		{
 			log.config("Primary Group IDs to Ignore          : " + primaryGroupIDsToIgnore);
 		}
