@@ -3,40 +3,41 @@
 
 #                             General Settings
 # -----------------------------------------------------------------------------
-# Log level controls the degree of detail that is sent to the console/log
-# The possible settings are (in order of quietest to noisiest:
-#   info, config, fine, finer, finest, all
-# - During configuration, I recommend using 'config'.
-# - During normal operation, I recommend using 'info'.
-# - If you want to see the notifications that the synchronize and reminder
-#   notices have been sent, use 'fine'
-# - During troubleshooting of problems, set this to either finest or all.
-log-level: config
+general:
+  # Log level controls the degree of detail that is sent to the console/log
+  # The possible settings are (in order of quietest to noisiest:
+  #   info, config, fine, finer, finest, all
+  # - During configuration, I recommend using 'config'.
+  # - During normal operation, I recommend using 'info'.
+  # - If you want to see the notifications that the synchronize and reminder
+  #   notices have been sent, use 'fine'
+  # - During troubleshooting of problems, set this to either finest or all.
+  log-level: config
 
-# Allow plugin metrics to start up for this plugin.
-# Disable for all plugins by editing the plugins/PluginMetrics/config.yml file.
-# They can be viewed at: http://mcstats.org
-plugin-metrics: true
+  # Allow plugin metrics to start up for this plugin.
+  # Disable for all plugins by editing the plugins/PluginMetrics/config.yml file.
+  # They can be viewed at: http://mcstats.org
+  plugin-metrics: true
 
-# Set the unit of measurement for sync and reminder scheduling. Options are:
-# ticks, seconds, minutes, or hours. Note that this applies to both
-# auto-sync-every and auto-remind-every.
-auto-every-unit: minutes
+  # Set the unit of measurement for sync and reminder scheduling. Options are:
+  # ticks, seconds, minutes, or hours. Note that this applies to both
+  # auto-sync-every and auto-remind-every.
+  auto-every-unit: minutes
 
-# This is a timer that will check and sync all data with your database at a set
-# interval. Otherwise group and player statistics will only be synchronized when
-# they join and leave the server.
-auto-sync: true
+  # This is a timer that will check and sync all data with your database at a set
+  # interval. Otherwise group and player statistics will only be synchronized when
+  # they join and leave the server.
+  auto-sync: true
 
-# The interval for the auto-sync timer, this should not be set any lower than
-# 20 minutes.
-auto-sync-every: 20
+  # The interval for the auto-sync timer, this should not be set any lower than
+  # 20 minutes.
+  auto-sync-every: 20
 
-# The permissions system you're using. A permissions system is required for the
-# following features:
-# * Group Synchronization (both primary and secondary)
-# Current Options are: PEX, bPerms, GroupManager, PermsBukkit
-permissions-system: PEX
+  # The permissions system you're using. A permissions system is required for the
+  # following features:
+  # * Group Synchronization (both primary and secondary)
+  # Current Options are: PEX, bPerms, GroupManager, PermsBukkit
+  permissions-system: PEX
 
 #                             Database Settings
 # -----------------------------------------------------------------------------
@@ -158,18 +159,6 @@ banlist-table:
     table: phpbb_banlist
     user-id-field: ban_userid
     reason-field: ban_reason
-
-# Eventually, all settings related to group synchronization will reside here.
-group-synchronization:
-  primary-group:
-    enabled: true
-    # If a user's group ID on the web application side is on this list, it
-    # won't be synchronized. Example: ['1','2','3','115']. [] is an empty list.
-    group-ids-to-ignore: []
-
-    # If a player's group name is on this list the web application group won't
-    # be synchronized over it. (NOT YET IMPLEMENTED)
-    group-names-to-ignore: []
 
 # Groups in Separate Table (Such as PHPBB)
 groups-table:

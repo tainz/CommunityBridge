@@ -684,13 +684,13 @@ public class Configuration
 		log.setLevel(logLevel);
 		log.finest("Loading new configuration.");
 
-		usePluginMetrics = config.getBoolean("plugin-metrics", true);
+		usePluginMetrics = config.getBoolean("general.plugin-metrics", true);
 
-		permissionsSystem = config.getString("permissions-system", "");
+		permissionsSystem = config.getString("general.permissions-system", "");
 
-		autoEveryUnit = config.getString("auto-every-unit", "ticks");
-		autoSync = config.getBoolean("auto-sync", false);
-		autoSyncEvery = config.getLong("auto-sync-every", 24000L);
+		autoEveryUnit = config.getString("general.auto-every-unit", "ticks");
+		autoSync = config.getBoolean("general.auto-sync", false);
+		autoSyncEvery = config.getLong("general.auto-sync-every", 24000L);
 
 		// Database Section
 		databaseHost = config.getString("database.hostname", "");
