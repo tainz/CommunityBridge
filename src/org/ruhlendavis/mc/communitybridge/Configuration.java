@@ -63,9 +63,6 @@ public class Configuration
 
 	// Group Synchronization: Primary
 	public boolean groupSyncPrimaryEnabled;
-
-	// Group Synchronization: Multiple
-	public boolean groupSyncSecondaryEnabled;
 	public boolean groupSyncPrimaryNotifyPlayer;
 	public boolean groupSyncPrimaryUsesKey;
 	public String groupSyncPrimaryTableName;
@@ -76,6 +73,9 @@ public class Configuration
 	public String groupSyncPrimaryValueColumn;
 	public Map<String, GroupRule> groupSyncPrimaryWebappRules = new HashMap();
 	public Map<String, GroupRule> groupSyncPrimaryMinecraftRules = new HashMap();
+
+	// Group Synchronization: Secondary
+	public boolean groupSyncSecondaryEnabled;
 
 	// These are not in the config.yml. They are calculated.
 	public boolean permissionsSystemRequired;
