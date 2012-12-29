@@ -913,6 +913,8 @@ public class Configuration
 			log.config("Autosync every                       : " + autoSyncEvery + " " + autoEveryUnit);
 		}
 
+		log.config(  "Application url                      : " + applicationURL);
+		
 		// Database Section
 		log.config(  "Database hostname                    : " + databaseHost);
 		log.config(  "Database port                        : " + databasePort);
@@ -948,10 +950,6 @@ public class Configuration
 		log.config(  "Require Avatar                       : " + require_avatar);
 		log.config(  "Min Posts                            : " + require_minposts);
 
-		if (groupSyncPrimaryEnabled)
-		{
-			log.config("Primary Group IDs to Ignore          : " + primaryGroupIDsToIgnore);
-		}
 		log.config(  "Statistics Tracking                  : " + statisticsTrackingEnabled);
 
 		if (statisticsTrackingEnabled)
