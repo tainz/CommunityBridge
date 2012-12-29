@@ -825,6 +825,7 @@ public class Configuration
 		FileConfiguration config;
 		config = plugin.getConfig();
 
+		// TODO: Remove this chunk after primary group synchronization is implemented.
 		if (groupSyncPrimaryEnabled)
 		{
 			List<String> defaultList = new ArrayList<String>();
