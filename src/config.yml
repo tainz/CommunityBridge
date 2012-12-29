@@ -37,7 +37,11 @@ general:
   # following features:
   # * Group Synchronization (both primary and secondary)
   # Current Options are: PEX, bPerms, GroupManager, PermsBukkit
-  permissions-system: PEX
+  permissions-system:
+
+  # If ~APPURL~ appears in a message in messages.yml, it will be replaced with
+  # this:
+  application-url:
 
 #                             Database Settings
 # -----------------------------------------------------------------------------

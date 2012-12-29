@@ -35,6 +35,8 @@ public class Configuration
   public boolean autoSync;
 	public long autoSyncEvery;
 
+	public String applicationURL;
+
 	// Database Section
 	public String databaseHost;
 	public String databasePort;
@@ -692,6 +694,8 @@ public class Configuration
 		autoSync = config.getBoolean("general.auto-sync", false);
 		autoSyncEvery = config.getLong("general.auto-sync-every", 24000L);
 
+		applicationURL = config.getString("general.application-url", "http://www.example.org/");
+
 		// Database Section
 		databaseHost = config.getString("database.hostname", "");
 		databasePort = config.getString("database.port", "");
@@ -886,8 +890,10 @@ public class Configuration
 		// Store them in our own HashMap.
 		for (Map.Entry<String, Object> entry : values.entrySet())
 		{
-			// TODO: Perform any non-situation specific string replacements here.
-			messages.put(entry.getKey(), (String)entry.getValue());
+			String message = (String)entry.getValue();
+			message = message.replace("~APPURL~", applicationURL);
+
+			messages.put(entry.getKey(), message);
 		}
 	}
 
