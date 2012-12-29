@@ -692,7 +692,7 @@ public class Configuration
 		FileConfiguration config;
 		config = plugin.getConfig();
 
-		logLevel = config.getString("log-level", "config");
+		logLevel = config.getString("general.log-level", "config");
 		// We do this here so that the rest of the config methods can use the
 		// logger with the level set as the user likes it.
 		log.setLevel(logLevel);
