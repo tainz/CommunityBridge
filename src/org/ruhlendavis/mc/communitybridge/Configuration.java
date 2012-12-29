@@ -9,8 +9,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.netmanagers.api.SQL;
 import net.netmanagers.community.Main;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.ruhlendavis.mc.utility.Log;
@@ -64,6 +66,16 @@ public class Configuration
 
 	// Group Synchronization: Multiple
 	public boolean groupSyncMultipleEnabled;
+	public boolean groupSyncPrimaryNotifyPlayer;
+	public boolean groupSyncPrimaryUsesKey;
+	public String groupSyncPrimaryTableName;
+	public String groupSyncPrimaryUserIDColumn;
+	public String groupSyncPrimaryGroupIDColumn;
+	public String groupSyncPrimaryKeyName;
+	public String groupSyncPrimaryKeyColumn;
+	public String groupSyncPrimaryValueColumn;
+	public Map<String, GroupRule> groupSyncPrimaryWebappRules = new HashMap();
+	public Map<String, GroupRule> groupSyncPrimaryMinecraftRules = new HashMap();
 
 	// These are not in the config.yml. They are calculated.
 	public boolean permissionsSystemRequired;
@@ -721,6 +733,77 @@ public class Configuration
 
 			// Group Synchronization: Primary
 		groupSyncPrimaryEnabled = config.getBoolean("group-synchronization.primary.enabled", false);
+		if (groupSyncPrimaryEnabled)
+		{
+			groupSyncPrimaryNotifyPlayer = config.getBoolean("group-synchronization.primary.notify-player", false);
+			groupSyncPrimaryTableName = config.getString("group-synchronization.primary.table-name", "");
+			groupSyncPrimaryUserIDColumn = config.getString("group-synchronization.primary.user-id-column", "");
+
+			groupSyncPrimaryUsesKey = config.getBoolean("group-synchronization.primary.uses-key", false);
+			if (groupSyncPrimaryUsesKey)
+			{
+				groupSyncPrimaryKeyName = config.getString("group-synchronization.primary.key-name", "");
+				groupSyncPrimaryKeyColumn = config.getString("group-synchronization.primary.key-column", "");
+				groupSyncPrimaryValueColumn = config.getString("group-synchronization.primary.value-column", "");
+			}
+			else
+			{
+				groupSyncPrimaryGroupIDColumn = config.getString("group-synchronization.primary.group-id-column", "");
+			}
+
+			ConfigurationSection groupRules = config.getConfigurationSection("group-synchronization.primary.group-rules");
+			if (groupRules == null)
+			{
+				log.warning("Primary group synchronization is turned on, but there are no rules defined.");
+			}
+			else
+			{
+				Set<String> rules = groupRules.getKeys(false);
+
+				for (String ruleNumber : rules)
+				{
+					String ruleSectionPath = "group-synchronization.primary.group-rules." + ruleNumber + ".";
+
+					GroupRule rule = new GroupRule();
+					rule.groupID = config.getString(ruleSectionPath + "webapp-id", "");
+					if (rule.groupID.isEmpty())
+					{
+						log.warning("Ignoring primary group rule #" + ruleNumber + ": missing web application group ID.");
+						continue;
+					}
+					rule.groupName = config.getString(ruleSectionPath + "permissions-group", "");
+					if (rule.groupName.isEmpty())
+					{
+						log.warning("Ignoring primary group rule #" + ruleNumber + ": missing permissions group name.");
+						continue;
+					}
+
+					rule.allWorlds = config.getBoolean(ruleSectionPath + "all-worlds", false);
+					if (rule.allWorlds)
+					{}
+					else
+					{
+						rule.world = config.getString(ruleSectionPath + "world", "");
+					}
+
+					if (config.getString(ruleSectionPath + "direction", "").equalsIgnoreCase("minecraft"))
+					{
+						rule.direction = GroupRuleDirection.MINECRAFT;
+						groupSyncPrimaryMinecraftRules.put(rule.groupID, rule);
+					}
+					else if (config.getString(ruleSectionPath + "direction", "").equalsIgnoreCase("webapp"))
+					{
+						rule.direction = GroupRuleDirection.WEBAPP;
+						groupSyncPrimaryWebappRules.put(rule.groupName, rule);
+					}
+					else
+					{
+						log.warning("Ignoring primary group rule #" + ruleNumber + ": invalid direction.");
+						continue;
+					}
+				}
+			}
+		}
 
 		// Group Synchronization: Primary
 		groupSyncMultipleEnabled = config.getBoolean("group-synchronization.multiple.enabled", false);
@@ -904,46 +987,65 @@ public class Configuration
 	private void reportConfig()
 	{
 		// General Section
-		log.config(  "Log level                            : " + logLevel);
-		log.config(  "Plugin metrics enabled               : " + usePluginMetrics);
-		log.config(  "Permissions System                   : " + permissionsSystem);
-		log.config(  "Auto Sync                            : " + autoSync);
+		log.config(    "Log level                            : " + logLevel);
+		log.config(    "Plugin metrics enabled               : " + usePluginMetrics);
+		log.config(    "Permissions System                   : " + permissionsSystem);
+		log.config(    "Auto Sync                            : " + autoSync);
 		if (autoSync)
 		{
-			log.config("Autosync every                       : " + autoSyncEvery + " " + autoEveryUnit);
+			log.config(  "Autosync every                       : " + autoSyncEvery + " " + autoEveryUnit);
 		}
 
-		log.config(  "Application url                      : " + applicationURL);
-		
+		log.config(    "Application url                      : " + applicationURL);
+
 		// Database Section
-		log.config(  "Database hostname                    : " + databaseHost);
-		log.config(  "Database port                        : " + databasePort);
-		log.config(  "Database name                        : " + databaseName);
-		log.config(  "Database username                    : " + databaseUsername);
+		log.config(    "Database hostname                    : " + databaseHost);
+		log.config(    "Database port                        : " + databasePort);
+		log.config(    "Database name                        : " + databaseName);
+		log.config(    "Database username                    : " + databaseUsername);
 
 		// Linking Section
-		log.config(  "Linking auto reminder                : " + linkingAutoRemind);
+		log.config(    "Linking auto reminder                : " + linkingAutoRemind);
 		if (linkingAutoRemind)
 		{
-			log.config("Linking auto reminder every          : " + linkingAutoEvery + " " + autoEveryUnit);
+			log.config(  "Linking auto reminder every          : " + linkingAutoEvery + " " + autoEveryUnit);
 		}
-		log.config(  "Linking notify registered            : " + linkingNotifyRegistered);
-		log.config(  "Linking notify unregistered          : " + linkingNotifyUnregistered);
-		log.config(  "Linking kick unnregistered           : " + linkingKickUnregistered);
-		log.config(  "Linking uses key-value pair          : " + linkingUsesKey);
-		log.config(  "Linking table name                   : " + linkingTableName);
-		log.config(  "Linking user ID column               : " + linkingUserIDColumn);
+		log.config(    "Linking notify registered            : " + linkingNotifyRegistered);
+		log.config(    "Linking notify unregistered          : " + linkingNotifyUnregistered);
+		log.config(    "Linking kick unnregistered           : " + linkingKickUnregistered);
+		log.config(    "Linking uses key-value pair          : " + linkingUsesKey);
+		log.config(    "Linking table name                   : " + linkingTableName);
+		log.config(    "Linking user ID column               : " + linkingUserIDColumn);
 		if (linkingUsesKey)
 		{
-			log.config("Linking key-value pair key name      : " + linkingKeyName);
-			log.config("Linking key-value pair key column    : " + linkingKeyColumn);
-			log.config("Linking key-value pair value column  : " + linkingValueColumn);
+			log.config(  "Linking key-value pair key name      : " + linkingKeyName);
+			log.config(  "Linking key-value pair key column    : " + linkingKeyColumn);
+			log.config(  "Linking key-value pair value column  : " + linkingValueColumn);
 		}
 		else
 		{
-			log.config("Linking player name column           : " + linkingPlayerNameColumn);
+			log.config(  "Linking player name column           : " + linkingPlayerNameColumn);
 		}
-		log.config(  "Primary group synchronization        : " + groupSyncPrimaryEnabled);
+
+		log.config(    "Primary group synchronization        : " + groupSyncPrimaryEnabled);
+		if (groupSyncPrimaryEnabled)
+		{
+			log.config(  "Primary group sync notify player     : " + groupSyncPrimaryNotifyPlayer);
+			log.config(  "Primary group sync table name        : " + groupSyncPrimaryTableName);
+			log.config(  "Primary group sync user ID column    : " + groupSyncPrimaryUserIDColumn);
+			log.config(  "Primary group sync uses key          : " + groupSyncPrimaryUsesKey);
+			if (groupSyncPrimaryUsesKey)
+			{
+				log.config("Primary group sync key name          : " + groupSyncPrimaryKeyName);
+				log.config("Primary group sync key column        : " + groupSyncPrimaryKeyColumn);
+				log.config("Primary group sync value column      : " + groupSyncPrimaryValueColumn);
+			}
+			else
+			{
+				log.config("Primary group sync group ID column   : " + groupSyncPrimaryGroupIDColumn);
+			}
+			log.config(  "Primary group sync rule count        : " + (groupSyncPrimaryWebappRules.size() + groupSyncPrimaryMinecraftRules.size()));
+		}
 
 		// Old System
 		log.config(  "Multi Tables                         : " + multiTables);
