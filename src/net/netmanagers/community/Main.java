@@ -1,5 +1,6 @@
 package net.netmanagers.community;
 
+import org.ruhlendavis.mc.communitybridge.PlayerListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
@@ -68,7 +69,7 @@ public final class Main extends JavaPlugin
 			}
 		}
 
-		getServer().getPluginManager().registerEvents(new EventListener(), this);
+		getServer().getPluginManager().registerEvents(new PlayerListener(), this);
 		getCommand("cbban").setExecutor(new Cmds());
 		getCommand("cbunban").setExecutor(new Cmds());
 		getCommand("cbrank").setExecutor(new Cmds());
