@@ -7,5 +7,5 @@ link-unregistered-reminder: Just a reminder to visit ~APPURL~ and register today
 
 #                            Group Synchronization Messages
 # -----------------------------------------------------------------------------
-group-synchronization-primary-notify-player: You have been placed in the primary group ~GROUP~.
-group-synchronization-multiple-notify-player: 'You have been placed in the following groups: ~GROUPS~.'
+group-synchronization-primary-notify-player: You have been placed in the primary group ~GROUPNAME~.
+group-synchronization-multiple-notify-player: 'You have been placed in the following groups: ~GROUPNAMES~.'

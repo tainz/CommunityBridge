@@ -22,4 +22,3 @@ database:
 
   # Database Password
   password: password
-

@@ -183,19 +183,26 @@ group-synchronization:
     #   system supports it, CommunityBridge will apply the group membership for
     #   every world it knows about.
     # EXAMPLES:
+    # Users in forum group ID 15 are added to the guest permissions group.
     #  1:
     #    webapp-id: 15
     #    permissions-group: guest
     #    direction: minecraft
+    # Users in forum group ID 5 are added to the builder permissions group.
     #  2:
     #    webapp-id: 5
     #    permissions-group: builder
     #    direction: minecraft
+    # Players in the moderator permissions group are added to the moderator
+    # forum group ID 7. If the permissions system supports it, the permission
+    # will be applied to every world that Community Bridge knows about.
     #  3:
     #    webapp-id: 7
-    #    permissions-group: griefer
+    #    permissions-group: moderator
     #    direction: webapp
     #    all-worlds: true
+    # Players in the forum group ID are added to the spawnworldnobuild permissions
+    # group
     #  4:
     #    webapp-id: 10
     #    permissions-group: spawnworldnobuild
