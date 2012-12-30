@@ -54,11 +54,20 @@ public class WebApplication
 		return Integer.parseInt(playerUserIDs.get(playerName));
 	}
 
+	public boolean isPlayerRegistered(String playerName)
+	{
+		return !(getUserID(playerName) == null || getUserID(playerName).isEmpty());
+	}
+
 	/**
 	 * Performs the database query that should be done when a player joins.
 	 *
 	 */
-	public void onJoinQuery(String playerName)
+	/**
+	 * Performs the database query that should be done when a player joins.
+	 * @param String containing the player's name.
+	 */
+	public void onPreLogin(String playerName)
 	{
 		final String errorBase = "Error during WebApplication.onJoin(): ";
 		String query;
@@ -115,5 +124,16 @@ public class WebApplication
 		{
 			log.severe(errorBase + error.getMessage());
 		}
+	} // onJoin()
+
+	/**
+	 * Performs operations when a player quits.
+	 *
+	 * @param String containing the player's name.
+	 */
+	public void onQuit(String playerName)
+	{
+		// Only keep user IDs for connected players on hand.
+		playerUserIDs.remove(playerName);
 	}
-}
+} // WebApplication class

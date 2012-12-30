@@ -69,7 +69,6 @@ public final class Main extends JavaPlugin
 			}
 		}
 
-		getServer().getPluginManager().registerEvents(new PlayerListener(), this);
 		getCommand("cbban").setExecutor(new Cmds());
 		getCommand("cbunban").setExecutor(new Cmds());
 		getCommand("cbrank").setExecutor(new Cmds());
@@ -137,6 +136,7 @@ public final class Main extends JavaPlugin
 
 		webapp = new WebApplication(config, sql, log);
 		log.fine("Webapp created.");
+		getServer().getPluginManager().registerEvents(new PlayerListener(log, config, webapp), this);
 		if (config.statisticsTrackingEnabled && config.onlinestatusEnabled)
 		{
 			resetOnlineStatus();
@@ -733,35 +733,27 @@ public final class Main extends JavaPlugin
 			}
       else
       {
-				if (config.linkingKickUnregistered)
-        {
-					p.kickPlayer(config.messages.get("link-unregistered-player"));
-					log.info(p.getName() + " kicked because they are not registered.");
+				if (firstsync)
+				{
+					if (config.linkingNotifyUnregistered)
+					{
+						p.sendMessage(ChatColor.RED + config.messages.get("link-unregistered-player"));
+					}
+					log.fine(p.getName() + "'s name not set or not registered on community site");
 				}
-        else
-        {
-					if (firstsync)
-					{
-						if (config.linkingNotifyUnregistered)
-						{
-							p.sendMessage(ChatColor.RED + config.messages.get("link-unregistered-player"));
-						}
-						log.fine(p.getName() + "'s name not set or not registered on community site");
-					}
-					else
-					{
-						p.sendMessage(ChatColor.RED + config.messages.get("link-unregistered-reminder"));
-						log.fine(p.getName() + " issued unregistered reminder notice");
-					}
+				else
+				{
+					p.sendMessage(ChatColor.RED + config.messages.get("link-unregistered-reminder"));
+					log.fine(p.getName() + " issued unregistered reminder notice");
+				}
 
-					if (isOkayToSetPrimaryGroup(null))
-					{
-						setGroup(config.defaultGroup, p, true);
-					}
-					else
-					{
-						log.finer(p.getName() + "'s  primary group not set to default due to config.");
-					}
+				if (isOkayToSetPrimaryGroup(null))
+				{
+					setGroup(config.defaultGroup, p, true);
+				}
+				else
+				{
+					log.finer(p.getName() + "'s  primary group not set to default due to config.");
 				}
 			}
 		} catch (MalformedURLException e) {
