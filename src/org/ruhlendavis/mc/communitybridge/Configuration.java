@@ -720,7 +720,7 @@ public class Configuration
 		linkingAutoRemind = config.getBoolean("player-user-linking.auto-remind", false);
 		linkingAutoEvery = config.getLong("player-user-linking.auto-remind-every", 12000L);
 		linkingNotifyRegistered = config.getBoolean("player-user-linking.notify-registered-player", true);
-		linkingNotifyUnregistered = config.getBoolean("player-user-linking.notify-registered-player", true);
+		linkingNotifyUnregistered = config.getBoolean("player-user-linking.notify-unregistered-player", true);
 
 		linkingUsesKey = config.getBoolean("player-user-linking.uses-key", false);
 		linkingTableName = config.getString("player-user-linking.table-name", "");
