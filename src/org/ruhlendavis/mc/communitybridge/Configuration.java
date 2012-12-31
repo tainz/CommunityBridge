@@ -1013,7 +1013,7 @@ public class Configuration
 		}
 		log.config(    "Linking notify registered            : " + linkingNotifyRegistered);
 		log.config(    "Linking notify unregistered          : " + linkingNotifyUnregistered);
-		log.config(    "Linking kick unnregistered           : " + linkingKickUnregistered);
+		log.config(    "Linking kick unregistered            : " + linkingKickUnregistered);
 		log.config(    "Linking uses key-value pair          : " + linkingUsesKey);
 		log.config(    "Linking table name                   : " + linkingTableName);
 		log.config(    "Linking user ID column               : " + linkingUserIDColumn);
