@@ -1,6 +1,5 @@
 package net.netmanagers.community;
 
-import org.ruhlendavis.mc.communitybridge.PlayerListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
@@ -22,6 +21,7 @@ import org.ruhlendavis.mc.communitybridge.PermissionHandlerBPermissions;
 import org.ruhlendavis.mc.communitybridge.PermissionHandlerGroupManager;
 import org.ruhlendavis.mc.communitybridge.PermissionHandlerPermissionsBukkit;
 import org.ruhlendavis.mc.communitybridge.PermissionHandlerPermissionsEx;
+import org.ruhlendavis.mc.communitybridge.PlayerListener;
 import org.ruhlendavis.mc.communitybridge.WebApplication;
 import org.ruhlendavis.mc.utility.Log;
 import org.ruhlendavis.utility.StringUtilities;
