@@ -49,7 +49,6 @@ public class PlayerListener implements Listener
 		{
 			if (config.linkingKickUnregistered)
 			{
-				log.info(playerName + " kicked because they are not registered.");
 				event.setKickMessage(config.messages.get("link-unregistered-player"));
 				event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST);
 			} // if config.linkingKickUnregistered
