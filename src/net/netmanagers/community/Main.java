@@ -40,6 +40,10 @@ public final class Main extends JavaPlugin
 	public static WebApplication webapp = null;
 	public static PermissionHandler permissionHandler;
 
+	/**
+	 * Handles all the set up for the plugin.
+	 *
+	 */
 	@Override
 	public void onEnable()
   {
@@ -55,6 +59,28 @@ public final class Main extends JavaPlugin
 			return;
 		}
 
+		sql = new SQL(config.databaseHost + ":" + config.databasePort,
+									config.databaseName + "",
+									config.databaseUsername + "",
+									config.databasePassword + "");
+		sql.initialize();
+
+		if (sql.checkConnection() == false)
+		{
+			disablePlugin();
+			return;
+		}
+
+		if (config.analyzeConfiguration(sql) == false)
+		{
+			disablePlugin();
+			return;
+		}
+
+		webapp = new WebApplication(config, sql, log);
+
+		getServer().getPluginManager().registerEvents(new PlayerListener(log, config, webapp), this);
+
 		if (config.usePluginMetrics)
 		{
 			try
@@ -69,6 +95,12 @@ public final class Main extends JavaPlugin
 			}
 		}
 
+		if (config.linkingAutoRemind)
+		{
+			reminderStart();
+		}
+
+		// *** OLD boundary
 		getCommand("cbban").setExecutor(new Cmds());
 		getCommand("cbunban").setExecutor(new Cmds());
 		getCommand("cbrank").setExecutor(new Cmds());
@@ -116,27 +148,6 @@ public final class Main extends JavaPlugin
 			}
 		}
 
-		sql = new SQL(config.databaseHost + ":" + config.databasePort,
-									config.databaseName + "",
-									config.databaseUsername + "",
-									config.databasePassword + "");
-		sql.initialize();
-
-		if (sql.checkConnection() == false)
-		{
-			disablePlugin();
-			return;
-		}
-
-		if (config.analyzeConfiguration(sql) == false)
-		{
-			disablePlugin();
-			return;
-		}
-
-		webapp = new WebApplication(config, sql, log);
-		log.fine("Webapp created.");
-		getServer().getPluginManager().registerEvents(new PlayerListener(log, config, webapp), this);
 		if (config.statisticsTrackingEnabled && config.onlinestatusEnabled)
 		{
 			resetOnlineStatus();
@@ -149,14 +160,13 @@ public final class Main extends JavaPlugin
 			startSyncing();
 		}
 
-		if (config.linkingAutoRemind)
-		{
-			startAutoReminder();
-		}
-
 		log.config("Enabled!");
 	}
 
+	/**
+	 * Handles any clean up that needs done when the plugin is disabled.
+	 *
+	 */
 	@Override
 	public void onDisable()
   {
@@ -175,16 +185,114 @@ public final class Main extends JavaPlugin
 		}
 
 		permissionHandler = null;
-
+		webapp = null;
 		log.config("Disabled...");
 		log = null;
 		instance = null;
 	}
 
+	/**
+	 * Disables the plugin.
+	 *
+	 */
 	private static void disablePlugin()
   {
 		Bukkit.getServer().getPluginManager().disablePlugin(instance);
 	}
+
+	/**
+	 * Called by onEnable() if the auto reminder to register is turned on, this
+	 * method starts up the reminder task.
+	 *
+	 */
+	// EXPIRABLE: When we remove the deprecated code, this can go away as well.
+	@SuppressWarnings("deprecation")
+	private void reminderStart()
+  {
+    long every = config.linkingAutoEvery; // Effectively defaulting to ticks.
+
+    if (config.autoEveryUnit.toLowerCase().startsWith("second"))
+    {
+      every = config.linkingAutoEvery * 20; // 20 ticks per second.
+    }
+    else if (config.autoEveryUnit.toLowerCase().startsWith("minute"))
+    {
+      every = config.linkingAutoEvery * 1200; // 20 ticks per second, 60 sec/minute
+    }
+    else if (config.autoEveryUnit.toLowerCase().startsWith("hour"))
+    {
+      every = config.linkingAutoEvery * 72000; // 20 ticks/s 60s/m, 60m/h
+    }
+
+		// EXPIRABLE: ST2012-Dec-21: The else block and the if statement itself. The true block should stay
+		if (StringUtilities.compareVersion(Bukkit.getBukkitVersion().replace("R", ""), "1.4.5.1.0") > -1)
+		{
+			// As of MC 1.4.5.1.0, running tasks have changed.
+			Bukkit.getScheduler().runTaskTimerAsynchronously(this,
+																											new Runnable()
+																											{
+																												@Override
+																												public void run()
+																												{
+																													remindUnregisteredPlayers();
+																												}
+																											},
+																											every, every);
+		}
+		else
+		{
+			Bukkit.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					remindUnregisteredPlayers();
+				}
+			}, every, every);
+		}
+		log.fine("Auto reminder started.");
+  }
+
+	/**
+	 * Reminds a single player to register if they are not registered.
+	 * If linking-kick-unregistered is turned on, an unregistered player will
+	 * be kicked.
+	 *
+	 * @param Player The player to remind.
+	 */
+  private void remindPlayer(Player player)
+  {
+		String playerName = player.getName();
+		String id = webapp.getUserID(playerName);
+    if (id == null || id.isEmpty())
+    {
+      if (config.linkingKickUnregistered)
+      {
+        player.kickPlayer(config.messages.get("link-unregistered-player"));
+				log.info(playerName + " kicked because they are not registered.");
+      }
+      else
+      {
+        player.sendMessage(ChatColor.RED + config.messages.get("link-unregistered-reminder"));
+        log.fine(playerName + " issued unregistered reminder notice");
+      }
+    }
+  }
+
+	/**
+	 * Calls remindPlayer() for all connected players. Called by the reminder
+	 * task.
+	 */
+  private void remindUnregisteredPlayers()
+  {
+    log.fine("Running Auto UnRegistered Auto Reminder");
+
+    for (Player player : Bukkit.getOnlinePlayers())
+    {
+      remindPlayer(player);
+    }
+
+  }
 
 	// EXPIRABLE: ST2012-12-21: When we remove the deprecated code, this can go away as well.
 	@SuppressWarnings("deprecation")
@@ -237,60 +345,6 @@ public final class Main extends JavaPlugin
 			}, every, every);
 		}
 	}
-
-	// EXPIRABLE: When we remove the deprecated code, this can go away as well.
-	@SuppressWarnings("deprecation")
-  private void startAutoReminder()
-  {
-    long every = config.linkingAutoEvery; // Effectively defaulting to ticks.
-
-    String unit = "ticks";
-
-    if (config.autoEveryUnit.toLowerCase().startsWith("second"))
-    {
-      every = config.linkingAutoEvery * 20; // 20 ticks per second.
-      unit = "seconds";
-    }
-    else if (config.autoEveryUnit.toLowerCase().startsWith("minute"))
-    {
-      every = config.linkingAutoEvery * 1200; // 20 ticks per second, 60 sec/minute
-      unit = "minutes";
-    }
-    else if (config.autoEveryUnit.toLowerCase().startsWith("hour"))
-    {
-      every = config.linkingAutoEvery * 72000; // 20 ticks/s 60s/m, 60m/h
-      unit = "hours";
-    }
-
-    log.config(String.format("Auto Remind Unregistered Every: %d %s.",
-                           config.linkingAutoEvery, unit));
-		// EXPIRABLE: ST2012-Dec-21: The else block and the if statement itself. The true block should stay
-		if (StringUtilities.compareVersion(Bukkit.getBukkitVersion().replace("R", ""), "1.4.5.1.0") > -1)
-		{
-			// As of MC 1.4.5.1.0, running tasks have changed.
-			Bukkit.getScheduler().runTaskTimerAsynchronously(this,
-																											new Runnable()
-																											{
-																												@Override
-																												public void run()
-																												{
-																													remindUnregistered();
-																												}
-																											},
-																											every, every);
-		}
-		else
-		{
-			Bukkit.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					remindUnregistered();
-				}
-			}, every, every);
-		}
-  }
 
 	private void resetOnlineStatus()
   {
@@ -574,35 +628,6 @@ public final class Main extends JavaPlugin
 			syncPlayer(play, false);
 		}
 	}
-
-  public static void remindPlayer(Player p)
-  {
-    int id = getUserId(p.getName());
-    if (id == 0)
-    {
-      if (config.linkingKickUnregistered)
-      {
-        p.kickPlayer(config.messages.get("link-unregistered-player"));
-				log.info(p.getName() + " kicked because they are not registered.");
-      }
-      else
-      {
-        p.sendMessage(ChatColor.RED + config.messages.get("link-unregistered-reminder"));
-        log.fine(p.getName() + " issued unregistered reminder notice");
-      }
-    }
-  }
-
-  public static void remindUnregistered()
-  {
-    log.fine("Running Auto UnRegistered Auto Reminder");
-
-    for (Player play : Bukkit.getOnlinePlayers())
-    {
-      remindPlayer(play);
-    }
-
-  }
 
 	public static void syncPlayer(Player p, boolean firstsync)
 	{
