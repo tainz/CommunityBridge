@@ -567,7 +567,6 @@ public final class Main extends JavaPlugin
 		return null;
 	}
 
-
 	public static void syncAll() {
 		log.fine("Running Auto Sync");
 		for (Player play : Bukkit.getOnlinePlayers())
@@ -716,14 +715,7 @@ public final class Main extends JavaPlugin
 								message = message.replace("~GROUPNAME~", groupName);
 								p.sendMessage(ChatColor.YELLOW + message);
 							}
-							else
-							{
-								String message = config.messages.get("link-registered-player");
-								p.sendMessage(ChatColor.YELLOW + message);
-							}
 						}
-						log.fine(p.getName() + " linked to Community User #" + id
-																 + ", Group: " + groupName);
 					}
           else if (config.statisticsTrackingEnabled)
           {

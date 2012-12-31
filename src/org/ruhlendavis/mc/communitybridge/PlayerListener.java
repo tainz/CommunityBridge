@@ -1,7 +1,6 @@
 package org.ruhlendavis.mc.communitybridge;
 
-import java.net.MalformedURLException;
-import net.netmanagers.community.Main;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,8 +18,9 @@ public class PlayerListener implements Listener
 	/**
 	 * Constructor
 	 *
-	 * @param Configuration The configuration object passed in from onEnable()
-	 * @param WebApplication The web application object passed in from onEnable()
+	 * @param Log The log object passed in from onEnable().
+	 * @param Configuration The configuration object passed in from onEnable().
+	 * @param WebApplication The web application object passed in from onEnable().
 	 */
 	public PlayerListener(Log log, Configuration config, WebApplication webapp)
 	{
@@ -31,6 +31,8 @@ public class PlayerListener implements Listener
 
 	/**
 	 * This method is called by CraftBukkit as the player connects to the server.
+	 * We perform the initial linking here so that we can reject the login if
+	 * linking-kick-unregistered is turned on.
 	 *
 	 * @param AsyncPlayerPreLoginEvent The event object (see CraftBukkit API).
 	 */
@@ -40,7 +42,9 @@ public class PlayerListener implements Listener
 		String playerName = event.getName();
 		webapp.onPreLogin(playerName);
 		if (webapp.isPlayerRegistered(playerName))
-		{}
+		{
+			log.fine(playerName + " linked to web application user ID #" + webapp.getUserID(playerName) + ".");
+		}
 		else
 		{
 			if (config.linkingKickUnregistered)
@@ -60,8 +64,24 @@ public class PlayerListener implements Listener
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event)
 	{
-		Player p = event.getPlayer();
-		Main.syncPlayer(p, true);
+		Player player = event.getPlayer();
+		String playerName = event.getPlayer().getName();
+		if (webapp.isPlayerRegistered(playerName))
+		{
+			if (config.linkingNotifyRegistered)
+			{
+				String message = config.messages.get("link-registered-player");
+				player.sendMessage(ChatColor.GREEN + message);
+			}
+		}
+		else
+		{
+			if (config.linkingNotifyUnregistered)
+			{
+				String message = config.messages.get("link-unregistered-player");
+				player.sendMessage(ChatColor.RED + message);
+			} // if config.linkingNotifyUnregistered
+		} // if isPlayerRegistered
 	}
 
 	/**
@@ -75,46 +95,47 @@ public class PlayerListener implements Listener
 		Player player = event.getPlayer();
 
 		webapp.onQuit(player.getName());
+	} // onPlayerQuit
+} // PlayerListener class
 
-		if (config.statisticsTrackingEnabled)
-		{
-			int id = Main.getUserId(player.getName());
-			if (id > 0)
-			{
-				Main.updateStatistics(id, player);
 
-				if (config.onlinestatusEnabled)
-				{
-					try
-					{
-						if (config.multiTables && config.multiTablesUseKey)
-						{
-							Main.sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.multi_table_value_field + " = '" + config.onlinestatusValueOffline + "' WHERE " + config.multi_table_user_id_field + " = '" + id + "' and " + config.multi_table_key_field +" = '" + config.onlinestatusKeyValue + "'");
-						}
-						else if(config.multiTables)
-						{
-							Main.sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOffline + "' WHERE " + config.multi_table_user_id_field + " = '" + id + "'");
-						}
-						else
-						{
-							Main.sql.updateQuery("UPDATE " + config.users_table + " SET " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOnline + "' WHERE " + config.user_id_field + " = '" + id + "'");
-						}
-					}
-					catch (MalformedURLException e)
-					{
-						e.printStackTrace();
-					}
-					catch (InstantiationException e)
-					{
-						e.printStackTrace();
-					}
-					catch (IllegalAccessException e)
-					{
-						Main.log.severe("Broken Set User Offline SQL Query, check your config.yml");
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-	}
-}
+//		if (config.statisticsTrackingEnabled)
+//		{
+//			int id = Main.getUserId(player.getName());
+//			if (id > 0)
+//			{
+//				Main.updateStatistics(id, player);
+//
+//				if (config.onlinestatusEnabled)
+//				{
+//					try
+//					{
+//						if (config.multiTables && config.multiTablesUseKey)
+//						{
+//							Main.sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.multi_table_value_field + " = '" + config.onlinestatusValueOffline + "' WHERE " + config.multi_table_user_id_field + " = '" + id + "' and " + config.multi_table_key_field +" = '" + config.onlinestatusKeyValue + "'");
+//						}
+//						else if(config.multiTables)
+//						{
+//							Main.sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOffline + "' WHERE " + config.multi_table_user_id_field + " = '" + id + "'");
+//						}
+//						else
+//						{
+//							Main.sql.updateQuery("UPDATE " + config.users_table + " SET " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOnline + "' WHERE " + config.user_id_field + " = '" + id + "'");
+//						}
+//					}
+//					catch (MalformedURLException e)
+//					{
+//						e.printStackTrace();
+//					}
+//					catch (InstantiationException e)
+//					{
+//						e.printStackTrace();
+//					}
+//					catch (IllegalAccessException e)
+//					{
+//						Main.log.severe("Broken Set User Offline SQL Query, check your config.yml");
+//						e.printStackTrace();
+//					}
+//				}
+//			}
+//		}
