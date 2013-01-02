@@ -10,9 +10,26 @@
 <project name="CommunityBridge" default="default" basedir=".">
     <description>Builds, tests, and runs the project CommunityBridge.</description>
     <import file="nbproject/build-impl.xml"/>
-	<target name="-post-jar">
-		<copy file="${dist.jar}" flatten="true" todir="..\..\TestServer\plugins" />
-	</target>
+		<target name="-pre-compile">
+			<buildnumber file="build.number"/>
+			<replaceregexp byline="false">
+				<regexp pattern="version: (\d*\.\d*\.\d*)"/>
+				<substitution expression="version: '\1 #${build.number}'"/>
+				<fileset dir="src/">
+					<include name="plugin.yml"/>
+				</fileset>
+			</replaceregexp>
+		</target>
+		<target name="-post-jar">
+			<copy file="${dist.jar}" flatten="true" todir="..\..\TestServer\plugins" />
+			<replaceregexp byline="false">
+				<regexp pattern="version: '(\d*\.\d*\.\d*) #\d*'"/>
+				<substitution expression="version: \1"/>
+				<fileset dir="src/">
+					<include name="plugin.yml"/>
+				</fileset>
+			</replaceregexp>
+		</target>
 
     <!--
 
