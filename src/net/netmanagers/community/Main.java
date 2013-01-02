@@ -1,5 +1,6 @@
 package net.netmanagers.community;
 
+import org.ruhlendavis.mc.communitybridge.CBCommandExecutor;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
@@ -100,12 +101,13 @@ public final class Main extends JavaPlugin
 			reminderStart();
 		}
 
+		getCommand("cbban").setExecutor(new CBCommandExecutor(config, log));
+		getCommand("cbunban").setExecutor(new CBCommandExecutor(config, log));
+		getCommand("cbrank").setExecutor(new CBCommandExecutor(config, log));
+		getCommand("cbsync").setExecutor(new CBCommandExecutor(config, log));
+		getCommand("cbsyncall").setExecutor(new CBCommandExecutor(config, log));
+
 		// *** OLD boundary
-		getCommand("cbban").setExecutor(new Cmds());
-		getCommand("cbunban").setExecutor(new Cmds());
-		getCommand("cbrank").setExecutor(new Cmds());
-		getCommand("cbsync").setExecutor(new Cmds());
-		getCommand("cbsyncall").setExecutor(new Cmds());
 
 		// If a feature requires a permissions system we load it up here.
 		if (config.permissionsSystemRequired)

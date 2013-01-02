@@ -1,6 +1,7 @@
-package net.netmanagers.community;
+package org.ruhlendavis.mc.communitybridge;
 
 import java.net.MalformedURLException;
+import net.netmanagers.community.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -8,9 +9,29 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.ruhlendavis.mc.utility.Log;
 
-public class Cmds implements CommandExecutor
+/**
+ * Class which handles command events.
+ *
+ * @author Feaelin (Iain E. Davis) <iain@ruhlendavis.org>
+ */
+public class CBCommandExecutor implements CommandExecutor
 {
+	private Configuration config;
+	private Log log;
+
+	/**
+	 * Constructor
+	 * @param Configuration The configuration object, passed in by onEnable().
+	 * @param Log The log object, passed in by onEnable().
+	 */
+	public CBCommandExecutor(Configuration config, Log log)
+	{
+		this.config = config;
+		this.log = log;
+	}
+
 	/**
 	 * Handles all 'commands' entered via console or chat interface.
 	 *
@@ -35,9 +56,7 @@ public class Cmds implements CommandExecutor
 			}
 			else
 			{
-				sendOrLog(sender,
-								  "Insufficient arguments. Usage: /cbrank <playername> <group>",
-									ChatColor.RED, false);
+				sendOrLog(sender, "Insufficient arguments. Usage: /cbrank <playername> <group>", ChatColor.RED, false);
 			}
 
 			return true;
