@@ -179,6 +179,7 @@ public final class Main extends JavaPlugin
 		webapp = null;
 		log.config("Disabled...");
 		log = null;
+		config = null;
 		instance = null;
 	}
 
