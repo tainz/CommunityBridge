@@ -52,10 +52,9 @@ public class CBCommandExecutor implements CommandExecutor
 			if (arguments.length > 1)
 			{
 				sendOrLog(sender, "Too many arguments. Usage: /cbreload [filename]", ChatColor.RED, false);
-				return true;
 			}
 
-			sendOrLog(sender, "Reloading CommunityBridge configuration.", ChatColor.GREEN, false);
+			sendAndLog(sender, "Reloading CommunityBridge configuration.", ChatColor.GREEN, true);
 
 			String error;
 			if (arguments.length == 1)
@@ -78,6 +77,13 @@ public class CBCommandExecutor implements CommandExecutor
 			{
 				sendOrLog(sender, error, ChatColor.RED, false);
 			}
+			return true;
+		}
+
+		if (CommunityBridge.isActive() == false)
+		{
+			sendOrLog(sender, "CommunityBridge is NOT active. Only the cbreload command is available.", ChatColor.RED, false);
+			return true;
 		}
 		else if (label.equalsIgnoreCase("cbrank"))
 		{

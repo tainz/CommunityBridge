@@ -984,11 +984,9 @@ public class Configuration
 	{
 		if (filename == null || filename.isEmpty() || filename.equals("config.yml"))
 		{
+			plugin.deactivate();
 			load();
-			if (plugin.enableSQL(true) == false)
-			{
-				return "SQL connection failure during reload.";
-			}
+			plugin.activate();
 			return null;
 		}
 
@@ -996,13 +994,9 @@ public class Configuration
 
 		if (configFile.exists())
 		{
+			plugin.deactivate();
 			loadSettings(YamlConfiguration.loadConfiguration(configFile));
-
-			if (plugin.enableSQL(true) == false)
-			{
-				return "SQL connection failure during reload.";
-			}
-
+			plugin.activate();
 			return null;
 		}
 		else
@@ -1015,7 +1009,7 @@ public class Configuration
 	 * Method for printing the configuration out to the logging system.
 	 *
 	 */
-	public void report()
+	public final void report()
 	{
 		// General Section
 		log.config(    "Log level                            : " + logLevel);

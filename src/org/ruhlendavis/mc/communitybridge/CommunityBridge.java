@@ -20,11 +20,27 @@ import org.ruhlendavis.mc.utility.Log;
 import org.ruhlendavis.utility.StringUtilities;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
+/**
+ * Main plugin class
+ *
+ * During a normal startup, first CraftBukkit calls the onEnable method,
+ * which in turn calls activate(). If, however, the configuration has a
+ * problem, instead of disabling the plugin, which would disable the
+ * configuration reload command, we "deactivate" instead. This leaves the
+ * plugin "enabled" in the eyes of CraftBukkit so that the reload can be
+ * used, but "disabled" in reality to prevent things from going wrong when
+ * the configuration is broken. Correspondingly, during a configuration
+ * reload, first deactivate() is called if necessary, the new configuration
+ * is loaded, and then activate() is called.
+ *
+ * @author Iain E. Davis <iain@ruhlendavis.org>
+ */
+
 public final class CommunityBridge extends JavaPlugin
 {
-	@SuppressWarnings("NonConstantLogger")
-
+	private static boolean active;
 	public static Configuration config;
+	@SuppressWarnings("NonConstantLogger")
 	public static Log log;
 	public static SQL sql;
 	private static CommunityBridge instance = null;
@@ -43,23 +59,39 @@ public final class CommunityBridge extends JavaPlugin
 		log = new Log(this.getLogger(), Level.CONFIG);
 		config = new Configuration(this, log);
 
+		getCommand("cbban").setExecutor(new CBCommandExecutor(config, log));
+		getCommand("cbunban").setExecutor(new CBCommandExecutor(config, log));
+		getCommand("cbrank").setExecutor(new CBCommandExecutor(config, log));
+		getCommand("cbreload").setExecutor(new CBCommandExecutor(config, log));
+		getCommand("cbsync").setExecutor(new CBCommandExecutor(config, log));
+		getCommand("cbsyncall").setExecutor(new CBCommandExecutor(config, log));
+
+		activate();
+
+		if (CommunityBridge.isActive())
+		{
+			log.info("CommunityBridge is now active.");
+		}
+	}
+
+	/**
+	 * Handles all the setup to be done during activation.
+	 */
+	public void activate()
+	{
 		if (config.databaseUsername.equals("username")
 		 && config.databasePassword.equals("password"))
 		{
 			log.severe("You need to set configuration options in the config.yml.");
-			disablePlugin();
+			deactivate();
 			return;
 		}
 
 		if (enableSQL(false) == false)
 		{
-			disablePlugin();
+			deactivate();
 			return;
 		}
-
-		webapp = new WebApplication(config, sql, log);
-
-		getServer().getPluginManager().registerEvents(new PlayerListener(log, config, webapp), this);
 
 		if (config.usePluginMetrics)
 		{
@@ -75,19 +107,13 @@ public final class CommunityBridge extends JavaPlugin
 			}
 		}
 
+		webapp = new WebApplication(config, sql, log);
+		getServer().getPluginManager().registerEvents(new PlayerListener(log, config, webapp), this);
+
 		if (config.linkingAutoRemind)
 		{
 			reminderStart();
 		}
-
-		getCommand("cbban").setExecutor(new CBCommandExecutor(config, log));
-		getCommand("cbunban").setExecutor(new CBCommandExecutor(config, log));
-		getCommand("cbrank").setExecutor(new CBCommandExecutor(config, log));
-		getCommand("cbreload").setExecutor(new CBCommandExecutor(config, log));
-		getCommand("cbsync").setExecutor(new CBCommandExecutor(config, log));
-		getCommand("cbsyncall").setExecutor(new CBCommandExecutor(config, log));
-
-		// *** OLD boundary
 
 		// If a feature requires a permissions system we load it up here.
 		if (config.permissionsSystemRequired)
@@ -116,19 +142,21 @@ public final class CommunityBridge extends JavaPlugin
 				}
 				else
 				{
-					log.severe("Unknown permissions system in config.yml. CommunityBridge disabled.");
-					disablePlugin();
+					log.severe("Unknown permissions system in config.yml. CommunityBridge deactivated.");
+					deactivate();
 					return;
 				}
 			}
 			catch (IllegalStateException e)
 			{
 				log.severe(e.getMessage());
-				log.severe("Disabling CommunityBridge.");
-				disablePlugin();
+				log.severe("Deactivating CommunityBridge.");
+				deactivate();
 				return;
 			}
 		}
+
+		// *** OLD boundary
 
 		if (config.statisticsTrackingEnabled && config.onlinestatusEnabled)
 		{
@@ -142,36 +170,68 @@ public final class CommunityBridge extends JavaPlugin
 			startSyncing();
 		}
 
-		log.config("Enabled!");
+		active = true;
+		log.finest("CommunityBridge activated.");
 	}
 
 	/**
 	 * Handles any clean up that needs done when the plugin is disabled.
-	 *
 	 */
 	@Override
 	public void onDisable()
   {
-		// Toss the metrics object.
-		metrics = null;
+		deactivate();
 
-		// Cancel the tasks we'll restart them later
+		getCommand("cbban").setExecutor(null);
+		getCommand("cbunban").setExecutor(null);
+		getCommand("cbrank").setExecutor(null);
+		getCommand("cbreload").setExecutor(null);
+		getCommand("cbsync").setExecutor(null);
+		getCommand("cbsyncall").setExecutor(null);
+
+		config = null;
+
+		log.config("Disabled...");
+		log = null;
+		instance = null;
+	}
+
+	/**
+	 * Handles any clean up that needs to be done when the plugin is deactivated.
+	 */
+	public void deactivate()
+	{
+		active = false;
+
+		// Cancel the tasks: autoRemind and autoSync
 		Bukkit.getServer().getScheduler().cancelTasks(this);
+
+		permissionHandler = null;
 
 		// Drop all of our listeners
 		HandlerList.unregisterAll(this);
 
+		webapp = null;
+
+		if (metrics != null)
+		{
+			metrics = null;
+		}
+
 		if (sql != null)
     {
 			sql.close();
+			sql = null;
 		}
+		log.finest("CommunityBridge deactivated.");
+	}
 
-		permissionHandler = null;
-		webapp = null;
-		log.config("Disabled...");
-		log = null;
-		config = null;
-		instance = null;
+	/**
+	 * Returns true if the plugin is active.
+	 */
+	public static boolean isActive()
+	{
+		return active;
 	}
 
 	/**
