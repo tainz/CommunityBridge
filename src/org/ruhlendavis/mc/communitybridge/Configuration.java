@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.netmanagers.api.SQL;
-import net.netmanagers.community.Main;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -23,7 +22,7 @@ import org.ruhlendavis.mc.utility.Log;
  */
 public class Configuration
 {
-	private Main plugin;
+	private CommunityBridge plugin;
 	private Log log;
 	public Map<String, String> messages = new HashMap();
 
@@ -182,9 +181,9 @@ public class Configuration
 	/**
 	 * Constructor for the configuration class.
 	 *
-	 * @param Main The plugin object of this plugin.
+	 * @param CommunityBridge The plugin object of this plugin.
 	 */
-	public Configuration(Main plugin, Log log)
+	public Configuration(CommunityBridge plugin, Log log)
 	{
 		this.plugin = plugin;
 		this.log = log;
@@ -685,7 +684,7 @@ public class Configuration
 	/**
 	 * Loads the configuration information from the yaml file.
 	 *
-	 * @param Main The plugin object for this plugin.
+	 * @param CommunityBridge The plugin object for this plugin.
 	 */
 	private void load()
 	{
@@ -818,7 +817,7 @@ public class Configuration
 	/**
 	 * Loads the configuration information from the yaml file.
 	 *
-	 * @param Main The plugin object for this plugin.
+	 * @param CommunityBridge The plugin object for this plugin.
 	 */
 	private void loadOldConfig()
 	{
@@ -945,7 +944,7 @@ public class Configuration
 	/**
 	 * Loads the messages from the message file.
 	 *
-	 * @param Main This plugin's plugin object.
+	 * @param CommunityBridge This plugin's plugin object.
 	 */
 	private void loadMessages()
 	{

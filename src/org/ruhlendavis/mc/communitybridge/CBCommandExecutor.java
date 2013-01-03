@@ -1,7 +1,6 @@
 package org.ruhlendavis.mc.communitybridge;
 
 import java.net.MalformedURLException;
-import net.netmanagers.community.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -122,7 +121,7 @@ public class CBCommandExecutor implements CommandExecutor
 			} else if (label.equalsIgnoreCase("cbsyncall")) {
 				if (p.hasPermission("communitybridge.cbsyncall")) {
 					if (arguments.length == 0) {
-						Main.syncAll();
+						CommunityBridge.syncAll();
 						p.sendMessage(ChatColor.GREEN + "Everyone has been synced");
 					} else {
 						p.sendMessage(ChatColor.RED + "Incorrect usage: /cbsyncall");
@@ -132,7 +131,7 @@ public class CBCommandExecutor implements CommandExecutor
 				}
 			} else if (label.equalsIgnoreCase("cbsync")) {
 				if (arguments.length == 0) {
-					Main.syncPlayer(p, false);
+					CommunityBridge.syncPlayer(p, false);
 				} else {
 					p.sendMessage(ChatColor.RED + "Incorrect usage: /cbsync");
 				}
@@ -143,13 +142,13 @@ public class CBCommandExecutor implements CommandExecutor
 					try {
 						if (Bukkit.getPlayer(arguments[0]) != null) {
 							Player pl = Bukkit.getPlayer(arguments[0]);
-							Main.sql.updateQuery("UPDATE "+Main.config.users_table+" SET "+Main.config.is_banned_field+"='1' WHERE "+Main.config.user_id_field+"='" + Main.getUserId(pl.getName()) + "'");
+							CommunityBridge.sql.updateQuery("UPDATE "+CommunityBridge.config.users_table+" SET "+CommunityBridge.config.is_banned_field+"='1' WHERE "+CommunityBridge.config.user_id_field+"='" + CommunityBridge.getUserId(pl.getName()) + "'");
 							pl.kickPlayer("You have been banned from the site.");
-							Main.log.info("Banning " + pl.getName() + " from the site");
+							CommunityBridge.log.info("Banning " + pl.getName() + " from the site");
 						} else {
 							OfflinePlayer pl = Bukkit.getOfflinePlayer(arguments[0]);
-							Main.sql.updateQuery("UPDATE "+Main.config.users_table+" SET "+Main.config.is_banned_field+"='1' WHERE "+Main.config.user_id_field+"='" + Main.getUserId(pl.getName()) + "'");
-							Main.log.info("Banning " + pl.getName() + " from the site");
+							CommunityBridge.sql.updateQuery("UPDATE "+CommunityBridge.config.users_table+" SET "+CommunityBridge.config.is_banned_field+"='1' WHERE "+CommunityBridge.config.user_id_field+"='" + CommunityBridge.getUserId(pl.getName()) + "'");
+							CommunityBridge.log.info("Banning " + pl.getName() + " from the site");
 						}
 					} catch (MalformedURLException e) {
 						e.printStackTrace();
@@ -159,15 +158,15 @@ public class CBCommandExecutor implements CommandExecutor
 						e.printStackTrace();
 					}
 				} else {
-					Main.log.info("Incorrect usage: /cbban <username>");
+					CommunityBridge.log.info("Incorrect usage: /cbban <username>");
 				}
 			}
 			if (label.equalsIgnoreCase("cbunban")) {
 				if (arguments.length == 1) {
 					try {
 						OfflinePlayer pl = Bukkit.getOfflinePlayer(arguments[0]);
-						Main.sql.updateQuery("UPDATE "+Main.config.users_table+" SET "+Main.config.is_banned_field+"='0' WHERE "+Main.config.user_id_field+"='" + Main.getUserId(pl.getName()) + "'");
-						Main.log.info("Unbanning " + pl.getName() + " from the site");
+						CommunityBridge.sql.updateQuery("UPDATE "+CommunityBridge.config.users_table+" SET "+CommunityBridge.config.is_banned_field+"='0' WHERE "+CommunityBridge.config.user_id_field+"='" + CommunityBridge.getUserId(pl.getName()) + "'");
+						CommunityBridge.log.info("Unbanning " + pl.getName() + " from the site");
 					} catch (MalformedURLException e) {
 						e.printStackTrace();
 					} catch (InstantiationException e) {
@@ -176,15 +175,15 @@ public class CBCommandExecutor implements CommandExecutor
 						e.printStackTrace();
 					}
 				} else {
-					Main.log.info("Incorrect usage: /cbunban <username>");
+					CommunityBridge.log.info("Incorrect usage: /cbunban <username>");
 				}
 			}
 			if (label.equalsIgnoreCase("cbsyncall")) {
 				if (arguments.length == 0) {
-					Main.syncAll();
-					Main.log.info("Everyone has been synced");
+					CommunityBridge.syncAll();
+					CommunityBridge.log.info("Everyone has been synced");
 				} else {
-					Main.log.info("Incorrect usage: /cbsyncall");
+					CommunityBridge.log.info("Incorrect usage: /cbsyncall");
 				}
 			}
 		}
@@ -199,24 +198,24 @@ public class CBCommandExecutor implements CommandExecutor
       if (Bukkit.getPlayer(victimString) == null)
       {
         OfflinePlayer victim = Bukkit.getOfflinePlayer(victimString);
-        query = "UPDATE " + Main.config.users_table +
-                " SET " + Main.config.is_banned_field + "='1'" +
-                " WHERE " + Main.config.user_id_field + "='" +
-                Main.getUserId(victim.getName()) + "'";
-        Main.log.finer(query);
-        Main.sql.updateQuery(query);
+        query = "UPDATE " + CommunityBridge.config.users_table +
+                " SET " + CommunityBridge.config.is_banned_field + "='1'" +
+                " WHERE " + CommunityBridge.config.user_id_field + "='" +
+                CommunityBridge.getUserId(victim.getName()) + "'";
+        CommunityBridge.log.finer(query);
+        CommunityBridge.sql.updateQuery(query);
 				sendAndLog(staff, "banned " + victim.getName() + " from the site.",
 								  ChatColor.RED);
       }
       else
       {
         Player victim = Bukkit.getPlayer(victimString);
-        query = "UPDATE " + Main.config.users_table +
-                " SET " + Main.config.is_banned_field +"='1'" +
-                " WHERE " + Main.config.user_id_field + "='" +
-                Main.getUserId(victim.getName()) + "'";
-        Main.log.finer(query);
-        Main.sql.updateQuery(query);
+        query = "UPDATE " + CommunityBridge.config.users_table +
+                " SET " + CommunityBridge.config.is_banned_field +"='1'" +
+                " WHERE " + CommunityBridge.config.user_id_field + "='" +
+                CommunityBridge.getUserId(victim.getName()) + "'";
+        CommunityBridge.log.finer(query);
+        CommunityBridge.sql.updateQuery(query);
         victim.kickPlayer("You have been banned from the site.");
 				sendAndLog(staff, "banned " + victim.getName() + " from the site",
 								   ChatColor.RED);
@@ -224,15 +223,15 @@ public class CBCommandExecutor implements CommandExecutor
     }
 		catch (MalformedURLException e)
 		{
-      Main.log.severe("Error in banPlayer(): " + e.getMessage());
+      CommunityBridge.log.severe("Error in banPlayer(): " + e.getMessage());
     }
 		catch (InstantiationException e)
 		{
-      Main.log.severe("Error in banPlayer(): " + e.getMessage());
+      CommunityBridge.log.severe("Error in banPlayer(): " + e.getMessage());
     }
 		catch (IllegalAccessException e)
 		{
-      Main.log.severe("Error in banPlayer(): " + e.getMessage());
+      CommunityBridge.log.severe("Error in banPlayer(): " + e.getMessage());
     }
   }
 
@@ -241,26 +240,26 @@ public class CBCommandExecutor implements CommandExecutor
     try
     {
       OfflinePlayer victim = Bukkit.getOfflinePlayer(victimString);
-			String query = "UPDATE " + Main.config.users_table
-							     + " SET " + Main.config.is_banned_field + "='0'"
-							     + " WHERE " + Main.config.user_id_field + "='"
-							     + Main.getUserId(victim.getName()) + "'";
-			Main.log.finer(query);
-			Main.sql.updateQuery(query);
+			String query = "UPDATE " + CommunityBridge.config.users_table
+							     + " SET " + CommunityBridge.config.is_banned_field + "='0'"
+							     + " WHERE " + CommunityBridge.config.user_id_field + "='"
+							     + CommunityBridge.getUserId(victim.getName()) + "'";
+			CommunityBridge.log.finer(query);
+			CommunityBridge.sql.updateQuery(query);
 							sendAndLog(staff, "unbanned " + victim.getName() + " from the site",
 							   ChatColor.RED);
     }
 		catch (MalformedURLException e)
 		{
-      Main.log.severe("Error in unbanPlayer(): " + e.getMessage());
+      CommunityBridge.log.severe("Error in unbanPlayer(): " + e.getMessage());
     }
 		catch (InstantiationException e)
 		{
-      Main.log.severe("Error in unbanPlayer(): " + e.getMessage());
+      CommunityBridge.log.severe("Error in unbanPlayer(): " + e.getMessage());
     }
 		catch (IllegalAccessException e)
 		{
-      Main.log.severe("Error in unbanPlayer(): " + e.getMessage());
+      CommunityBridge.log.severe("Error in unbanPlayer(): " + e.getMessage());
     }
   }
 
@@ -274,7 +273,7 @@ public class CBCommandExecutor implements CommandExecutor
 	private void rankPlayer(CommandSender sender, String playerArgument,
 					                String groupArgument)
 	{
-		String groupName = Main.getGroupNameFull(groupArgument);
+		String groupName = CommunityBridge.getGroupNameFull(groupArgument);
 		if (groupName == null)
 		{
 			sendOrLog(sender, "Could not find the group mapping for '" + groupArgument + "'.",
@@ -282,7 +281,7 @@ public class CBCommandExecutor implements CommandExecutor
 			return;
 		}
 
-		String groupID = Main.getGroupID(groupName);
+		String groupID = CommunityBridge.getGroupID(groupName);
 
 		String playerName;
 		Player player = Bukkit.getPlayerExact(playerArgument);
@@ -296,7 +295,7 @@ public class CBCommandExecutor implements CommandExecutor
 			playerName = player.getName();
 		}
 
-		if (Main.permissionHandler.isMemberOfGroup(playerName, groupName))
+		if (CommunityBridge.permissionHandler.isMemberOfGroup(playerName, groupName))
 		{
 			sendOrLog(sender, "'" + playerName + "' is already member of group '"
 							        + groupArgument + "'.",
@@ -308,7 +307,7 @@ public class CBCommandExecutor implements CommandExecutor
 		{}
 		else
 		{
-			if (Main.setGroup(groupName, player, false))
+			if (CommunityBridge.setGroup(groupName, player, false))
 			{
 				player.sendMessage(ChatColor.GREEN + "You have been set to a "
 												 + groupName + ".");
@@ -326,12 +325,12 @@ public class CBCommandExecutor implements CommandExecutor
 
 		try
 		{
-			String query = "UPDATE " + Main.config.users_table
-									 + " SET " + Main.config.groups_id_field + "='" + groupID
-									 + "' WHERE " + Main.config.user_id_field + "='"
-									 + Main.getUserId(playerName) + "'";
-			Main.log.finer(query);
-			Main.sql.updateQuery(query);
+			String query = "UPDATE " + CommunityBridge.config.users_table
+									 + " SET " + CommunityBridge.config.groups_id_field + "='" + groupID
+									 + "' WHERE " + CommunityBridge.config.user_id_field + "='"
+									 + CommunityBridge.getUserId(playerName) + "'";
+			CommunityBridge.log.finer(query);
+			CommunityBridge.sql.updateQuery(query);
 			sendAndLog(sender, "Changed group for " + playerName
 											 + " to '" + groupArgument
 											 + "' in the application database.",
@@ -339,15 +338,15 @@ public class CBCommandExecutor implements CommandExecutor
 		}
 		catch (MalformedURLException e)
 		{
-			Main.log.severe("Error in rankPlayer(): " + e.getMessage());
+			CommunityBridge.log.severe("Error in rankPlayer(): " + e.getMessage());
 		}
 		catch (InstantiationException e)
 		{
-			Main.log.severe("Error in rankPlayer(): " + e.getMessage());
+			CommunityBridge.log.severe("Error in rankPlayer(): " + e.getMessage());
 		}
 		catch (IllegalAccessException e)
 		{
-			Main.log.severe("Error in rankPlayer(): " + e.getMessage());
+			CommunityBridge.log.severe("Error in rankPlayer(): " + e.getMessage());
 		}
 	}
 

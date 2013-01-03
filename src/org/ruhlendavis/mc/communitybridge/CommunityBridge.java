@@ -1,6 +1,5 @@
-package net.netmanagers.community;
+package org.ruhlendavis.mc.communitybridge;
 
-import org.ruhlendavis.mc.communitybridge.CBCommandExecutor;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
@@ -17,18 +16,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
-import org.ruhlendavis.mc.communitybridge.PermissionHandler;
-import org.ruhlendavis.mc.communitybridge.PermissionHandlerBPermissions;
-import org.ruhlendavis.mc.communitybridge.PermissionHandlerGroupManager;
-import org.ruhlendavis.mc.communitybridge.PermissionHandlerPermissionsBukkit;
-import org.ruhlendavis.mc.communitybridge.PermissionHandlerPermissionsEx;
-import org.ruhlendavis.mc.communitybridge.PlayerListener;
-import org.ruhlendavis.mc.communitybridge.WebApplication;
 import org.ruhlendavis.mc.utility.Log;
 import org.ruhlendavis.utility.StringUtilities;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
-public final class Main extends JavaPlugin
+public final class CommunityBridge extends JavaPlugin
 {
 	@SuppressWarnings("NonConstantLogger")
 
@@ -36,7 +28,7 @@ public final class Main extends JavaPlugin
 	public static org.ruhlendavis.mc.communitybridge.Configuration config;
 	public static Log log;
 	public static SQL sql;
-	private static Main instance = null;
+	private static CommunityBridge instance = null;
 	private static Metrics metrics = null;
 	public static WebApplication webapp = null;
 	public static PermissionHandler permissionHandler;
@@ -382,16 +374,16 @@ public final class Main extends JavaPlugin
       {
 				if (config.multiTablesUseKey)
         {
-					res = Main.sql.sqlQuery("SELECT * FROM " + config.multi_table + " WHERE " + config.multi_table_key_field + " = '" + config.multi_table_key_value + "' AND " + config.multi_table_value_field + " = '" + username + "'");
+					res = CommunityBridge.sql.sqlQuery("SELECT * FROM " + config.multi_table + " WHERE " + config.multi_table_key_field + " = '" + config.multi_table_key_value + "' AND " + config.multi_table_value_field + " = '" + username + "'");
 				}
         else
         {
-					res = Main.sql.sqlQuery("SELECT * FROM  "+ config.multi_table +" WHERE " + config.multi_table_value_field + " = '" + username + "'");
+					res = CommunityBridge.sql.sqlQuery("SELECT * FROM  "+ config.multi_table +" WHERE " + config.multi_table_value_field + " = '" + username + "'");
 				}
 			}
       else
       {
-				res = Main.sql.sqlQuery("SELECT * FROM " + config.users_table + " WHERE " + config.user_name_field + " = '" + username + "'");
+				res = CommunityBridge.sql.sqlQuery("SELECT * FROM " + config.users_table + " WHERE " + config.user_name_field + " = '" + username + "'");
 			}
 
 			if (res.next())
@@ -721,7 +713,7 @@ public final class Main extends JavaPlugin
           {
 						if (config.statisticsTrackingEnabled)
             {
-              Main.loadStatistics(id, p);
+              CommunityBridge.loadStatistics(id, p);
             }
 
 						if (config.linkingNotifyRegistered)
@@ -1260,11 +1252,11 @@ public final class Main extends JavaPlugin
       {
 				if (config.multiTables)
         {
-					res = Main.sql.sqlQuery("SELECT * FROM  "+ config.multi_table +" WHERE " + config.multi_table_user_id_field + " = '" + u + "'");
+					res = CommunityBridge.sql.sqlQuery("SELECT * FROM  "+ config.multi_table +" WHERE " + config.multi_table_user_id_field + " = '" + u + "'");
 				}
         else
         {
-					res = Main.sql.sqlQuery("SELECT * FROM " + config.users_table + " WHERE " + config.user_id_field + " = '" + u + "'");
+					res = CommunityBridge.sql.sqlQuery("SELECT * FROM " + config.users_table + " WHERE " + config.user_id_field + " = '" + u + "'");
 				}
 
 				if (res.next())

@@ -1,6 +1,5 @@
 package org.ruhlendavis.mc.communitybridge;
 
-import net.netmanagers.community.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.ruhlendavis.mc.utility.MinecraftUtilities;
@@ -130,7 +129,7 @@ public class PermissionHandlerPermissionsEx implements PermissionHandler
 		}
 		catch (Error e)
 		{
-			Main.log.severe(e.getMessage());
+			CommunityBridge.log.severe(e.getMessage());
 		}
 
 		return false;

@@ -1,7 +1,5 @@
 package net.netmanagers.api;
 
-import net.netmanagers.api.DatabaseHandler;
-
 import java.net.MalformedURLException;
 import java.sql.Connection;
 import java.sql.ResultSet;

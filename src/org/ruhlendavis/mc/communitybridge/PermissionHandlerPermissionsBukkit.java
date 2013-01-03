@@ -5,13 +5,11 @@ import com.platymuus.bukkit.permissions.PermissionsPlugin;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Implements the PermissionHandler interface for PermissionsEx.
- * 
+ *
  * @author Feaelin
  */
 public class PermissionHandlerPermissionsBukkit implements PermissionHandler
@@ -19,7 +17,7 @@ public class PermissionHandlerPermissionsBukkit implements PermissionHandler
 	private static PermissionsPlugin permissions;
 
 	/**
-	 * 
+	 *
 	 * @throws IllegalStateException When PermissionsBukkit is not present or not enabled.
 	 */
 	public PermissionHandlerPermissionsBukkit() throws IllegalStateException
@@ -38,15 +36,15 @@ public class PermissionHandlerPermissionsBukkit implements PermissionHandler
 			}
 		}
 	}
-	
+
 	/**
 	 * This is here to simplify unit testing. Bypasses the normal constructor so
 	 * unit tests can mock objects as appropriate.
-	 * 
+	 *
 	 * @param pIn PermissionPlugin object
 	 * @throws IllegalStateException Doesn't actually throw, but required for signature matching.
 	 */
-	
+
 	public PermissionHandlerPermissionsBukkit(PermissionsPlugin pIn) throws IllegalStateException
 	{
 		permissions = pIn;
@@ -54,7 +52,7 @@ public class PermissionHandlerPermissionsBukkit implements PermissionHandler
 
 	/**
 	 * Adds a player to a group.
-	 * 
+	 *
 	 * @param playerName String containing the player's name.
 	 * @param groupName  String containing the group's name.
 	 * @return True if the add succeeded, false if it failed for any reason.
@@ -69,7 +67,7 @@ public class PermissionHandlerPermissionsBukkit implements PermissionHandler
 
 	/**
 	 * Retrieves an array of group names for the player.
-	 * 
+	 *
 	 * @param playerName String containing the name of the player.
 	 * @return An String array containing the group names.
 	 */
@@ -77,7 +75,7 @@ public class PermissionHandlerPermissionsBukkit implements PermissionHandler
 	public String[] getGroups(String playerName)
 	{
 		List<String> groupNames = new ArrayList<String>();
-		
+
 		for (Group group : permissions.getAllGroups())
 		{
 			groupNames.add(group.getName());
@@ -88,7 +86,7 @@ public class PermissionHandlerPermissionsBukkit implements PermissionHandler
 
 	/**
 	 * Retrieves the player's primary group.
-	 * 
+	 *
 	 * @param playerName String containing name of the player to look up.
 	 * @return String containing the name of the player's primary group or null if the player is not found or does not have a primary group.
 	 */
@@ -101,37 +99,37 @@ public class PermissionHandlerPermissionsBukkit implements PermissionHandler
 		{
 			return null;
 		}
-		
+
 		return permissions.getPlayerInfo(playerName).getGroups().get(0).getName();
 	}
-	
+
  /**
 	 * Asks permissions system if a player is the member of a given group.
-	 * 
+	 *
 	 * @param groupName String containing name of group to check
-	 * @param player    String containing name of player to check 
+	 * @param player    String containing name of player to check
 	 * @return boolean which is true if the the player is a member of the group
 	 */
 	@Override
 	public boolean isMemberOfGroup(String playerName, String groupName)
 	{
 		Group group = permissions.getGroup(groupName);
-		
+
 		if (group == null)
 		{
 			return false;
 		}
-		
+
 		return group.getPlayers().contains(playerName.toLowerCase());
 	}
 
 	/**
 	 * Determines whether a player has a group has their primary group.
-	 * 
+	 *
 	 * @param playerName String containing the player's name
 	 * @param groupName  String containing the group's name
 	 * @return True if the group is the player's primary group.
-	 */	
+	 */
 	@Override
 	public boolean isPrimaryGroup(String playerName, String groupName)
 	{
@@ -141,7 +139,7 @@ public class PermissionHandlerPermissionsBukkit implements PermissionHandler
 
 	/**
 	 * Removes a player from a group.
-	 * 
+	 *
 	 * @param playerName String containing the name of the player.
 	 * @param groupName  String containing the name of the group.
 	 * @return True if the removal succeeded, false if it failed for any reason.
@@ -156,7 +154,7 @@ public class PermissionHandlerPermissionsBukkit implements PermissionHandler
 
 	/**
 	 * Sets a player's primary group. PermissionsBukkit doesn't have a primary group, so this calls AddToGroup.
-	 * 
+	 *
 	 * @param playerName String containing player's name to set
 	 * @param groupName  String containing group name to set player's primary group to.
 	 * @return true if the set succeeded, false if it failed for any reason.
