@@ -48,7 +48,39 @@ public class CBCommandExecutor implements CommandExecutor
 		// This models how I think each command should be handled. Note that if
 		// you're looking for permissions, that is handled entirely by the
 		// Bukkit via settings in plugin.yml
-		if (label.equalsIgnoreCase("cbrank"))
+		if (label.equalsIgnoreCase("cbreload"))
+		{
+			if (arguments.length > 1)
+			{
+				sendOrLog(sender, "Too many arguments. Usage: /cbreload [filename]", ChatColor.RED, false);
+				return true;
+			}
+
+			sendOrLog(sender, "Reloading CommunityBridge configuration.", ChatColor.GREEN, false);
+
+			String error;
+			if (arguments.length == 1)
+			{
+				// reload using the specified file.
+				error = config.reload(arguments[0]);
+			}
+			else
+			{
+				// reload using the config.yml file.
+				error = config.reload(null);
+			}
+
+			if (error == null)
+			{
+				sendOrLog(sender, "Reload succeeded.", ChatColor.GREEN, false);
+				config.report();
+			}
+			else
+			{
+				sendOrLog(sender, error, ChatColor.RED, false);
+			}
+		}
+		else if (label.equalsIgnoreCase("cbrank"))
 		{
 			if (arguments.length == 2)
 			{
@@ -339,7 +371,7 @@ public class CBCommandExecutor implements CommandExecutor
 			name = staff.getName();
 		}
 
-		Main.log.info(name + " " + message);
+		log.info(name + " " + message);
   }
 
 	/**
@@ -353,7 +385,7 @@ public class CBCommandExecutor implements CommandExecutor
   {
     if (staff == null)
     {
-      Main.log.info("Console " + message);
+			log.info("Console " + message);
 		}
     else
     {
@@ -381,7 +413,7 @@ public class CBCommandExecutor implements CommandExecutor
 			message = "(" + sender.getName() + ") " + message;
 		}
 
-		Main.log.info(message);
+		log.info(message);
   }
 
 	/**
@@ -405,7 +437,7 @@ public class CBCommandExecutor implements CommandExecutor
 			{
 				message = "(" + sender.getName() + ") " + message;
 			}
-      Main.log.info(message);
+      log.info(message);
 		}
 	}
 }

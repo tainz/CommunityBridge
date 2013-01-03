@@ -24,8 +24,8 @@ public class WebApplication
 	public WebApplication(Configuration config, SQL sql, Log log)
 	{
 		this.config = config;
-		this.sql = sql;
 		this.log = log;
+		setSQL(sql);
 	}
 
 	/**
@@ -135,5 +135,15 @@ public class WebApplication
 	{
 		// Only keep user IDs for connected players on hand.
 		playerUserIDs.remove(playerName);
+	}
+
+	/**
+	 * Sets the SQL object. Typically used during a reload.
+	 *
+	 * @param SQL SQL object to set.
+	 */
+	public final void setSQL(SQL sql)
+	{
+		this.sql = sql;
 	}
 } // WebApplication class

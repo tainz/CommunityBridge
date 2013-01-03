@@ -27,6 +27,11 @@ commands:
     #usage: "§cIncorrect usage, use: /cbrank <username> <rank>"
     permission: communitybridge.cbrank
     permission-message: "§cYou do not have access to that command."
+  cbreload:
+    description: Reloads CommunityBridge's configuration from disk.
+    #usage: "§cIncorrect usage, use: /cbrank [filename]"
+    permission: communitybridge.cbreload
+    permission-message: "§cYou do not have access to that command."
   cbsync:
     description: Syncs to the forum.
     #usage: "§cIncorrect usage, use: /cbsync"
@@ -44,6 +49,7 @@ permissions:
     children:
       communitybridge.cbban: true
       communitybridge.cbrank: true
+      communitybridge.cbreload: true
       communitybridge.cbsync: true
       communitybridge.cbsyncall: true
       communitybridge.cbunban: true
@@ -55,6 +61,9 @@ permissions:
     default: op
   communitybridge.cbrank:
     description: Allows use of the /cbrank command.
+    default: op
+  communitybridge.cbreload:
+    description: Allows use of the /cbreload command.
     default: op
   communitybridge.cbsync:
     description: Allows use of the /cbsync command.

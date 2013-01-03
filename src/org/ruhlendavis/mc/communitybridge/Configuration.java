@@ -1,7 +1,6 @@
 package org.ruhlendavis.mc.communitybridge;
 
 import java.io.File;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,6 +23,7 @@ import org.ruhlendavis.mc.utility.Log;
  */
 public class Configuration
 {
+	private Main plugin;
 	private Log log;
 	public Map<String, String> messages = new HashMap();
 
@@ -186,11 +186,12 @@ public class Configuration
 	 */
 	public Configuration(Main plugin, Log log)
 	{
+		this.plugin = plugin;
 		this.log = log;
-		loadConfig(plugin);
-		loadOldConfig(plugin);
-		loadMessages(plugin);
-		reportConfig();
+		load();
+		loadOldConfig();
+		loadMessages();
+		report();
 	}
 
 	/**
@@ -686,17 +687,18 @@ public class Configuration
 	 *
 	 * @param Main The plugin object for this plugin.
 	 */
-	private void loadConfig(Main plugin)
+	private void load()
 	{
 		plugin.saveDefaultConfig();
-		FileConfiguration config;
-		config = plugin.getConfig();
+		loadSettings(plugin.getConfig());
+	}
 
+	private void loadSettings(FileConfiguration config)
+	{
 		logLevel = config.getString("general.log-level", "config");
 		// We do this here so that the rest of the config methods can use the
 		// logger with the level set as the user likes it.
 		log.setLevel(logLevel);
-		log.finest("Loading new configuration.");
 
 		usePluginMetrics = config.getBoolean("general.plugin-metrics", true);
 
@@ -818,12 +820,11 @@ public class Configuration
 	 *
 	 * @param Main The plugin object for this plugin.
 	 */
-	private void loadOldConfig(Main plugin)
+	private void loadOldConfig()
 	{
 		plugin.saveDefaultConfig();
 
-		FileConfiguration config;
-		config = plugin.getConfig();
+		FileConfiguration config = plugin.getConfig();
 
 		// TODO: Remove this chunk after primary group synchronization is implemented.
 		if (groupSyncPrimaryEnabled)
@@ -946,12 +947,11 @@ public class Configuration
 	 *
 	 * @param Main This plugin's plugin object.
 	 */
-	private void loadMessages(Main plugin)
+	private void loadMessages()
 	{
 		final String messageFilename = "messages.yml";
 		File messagesFile;
 		FileConfiguration messagesConfig;
-		InputStream defaultMessagesStream;
 		Map<String, Object> values;
 
 		messagesFile = new File(plugin.getDataFolder(), messageFilename);
@@ -981,11 +981,42 @@ public class Configuration
 		}
 	}
 
+	public String reload(String filename)
+	{
+		if (filename == null || filename.isEmpty() || filename.equals("config.yml"))
+		{
+			load();
+			if (plugin.enableSQL(true) == false)
+			{
+				return "SQL connection failure during reload.";
+			}
+			return null;
+		}
+
+		File configFile = new File(plugin.getDataFolder(), filename);
+
+		if (configFile.exists())
+		{
+			loadSettings(YamlConfiguration.loadConfiguration(configFile));
+
+			if (plugin.enableSQL(true) == false)
+			{
+				return "SQL connection failure during reload.";
+			}
+
+			return null;
+		}
+		else
+		{
+			return "Specified file does not exist. Reload canceled.";
+		}
+	}
+
 	/**
 	 * Method for printing the configuration out to the logging system.
 	 *
 	 */
-	private void reportConfig()
+	public void report()
 	{
 		// General Section
 		log.config(    "Log level                            : " + logLevel);

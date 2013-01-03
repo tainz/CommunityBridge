@@ -60,19 +60,7 @@ public final class Main extends JavaPlugin
 			return;
 		}
 
-		sql = new SQL(config.databaseHost + ":" + config.databasePort,
-									config.databaseName + "",
-									config.databaseUsername + "",
-									config.databasePassword + "");
-		sql.initialize();
-
-		if (sql.checkConnection() == false)
-		{
-			disablePlugin();
-			return;
-		}
-
-		if (config.analyzeConfiguration(sql) == false)
+		if (enableSQL(false) == false)
 		{
 			disablePlugin();
 			return;
@@ -104,6 +92,7 @@ public final class Main extends JavaPlugin
 		getCommand("cbban").setExecutor(new CBCommandExecutor(config, log));
 		getCommand("cbunban").setExecutor(new CBCommandExecutor(config, log));
 		getCommand("cbrank").setExecutor(new CBCommandExecutor(config, log));
+		getCommand("cbreload").setExecutor(new CBCommandExecutor(config, log));
 		getCommand("cbsync").setExecutor(new CBCommandExecutor(config, log));
 		getCommand("cbsyncall").setExecutor(new CBCommandExecutor(config, log));
 
@@ -1406,5 +1395,41 @@ public final class Main extends JavaPlugin
 	{
 		return config.groupSyncPrimaryEnabled
 			  && (groupID == null || !config.primaryGroupIDsToIgnore.contains(groupID));
+	}
+
+	/**
+	 * (Re)Starts up the SQL connection to the web application.
+	 *
+	 * @return boolean False if the connection fails for any reason.
+	 */
+	public boolean enableSQL(boolean reload)
+	{
+		if (reload)
+		{
+			sql.close();
+		}
+
+		sql = new SQL(config.databaseHost + ":" + config.databasePort,
+									config.databaseName + "",
+									config.databaseUsername + "",
+									config.databasePassword + "");
+		sql.initialize();
+
+		if (sql.checkConnection() == false)
+		{
+			return false;
+		}
+
+		if (reload)
+		{
+			webapp.setSQL(sql);
+		}
+
+		if (config.analyzeConfiguration(sql) == false)
+		{
+			return false;
+		}
+
+		return true;
 	}
 }
