@@ -24,8 +24,7 @@ public final class CommunityBridge extends JavaPlugin
 {
 	@SuppressWarnings("NonConstantLogger")
 
-	public static String thisPluginName = "CommunityBridge";
-	public static org.ruhlendavis.mc.communitybridge.Configuration config;
+	public static Configuration config;
 	public static Log log;
 	public static SQL sql;
 	private static CommunityBridge instance = null;
@@ -42,7 +41,7 @@ public final class CommunityBridge extends JavaPlugin
   {
 		instance = this;
 		log = new Log(this.getLogger(), Level.CONFIG);
-		config = new org.ruhlendavis.mc.communitybridge.Configuration(this, log);
+		config = new Configuration(this, log);
 
 		if (config.databaseUsername.equals("username")
 		 && config.databasePassword.equals("password"))
