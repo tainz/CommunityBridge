@@ -57,20 +57,23 @@ public class CBCommandExecutor implements CommandExecutor
 			sendAndLog(sender, "Reloading CommunityBridge configuration.", ChatColor.GREEN, true);
 
 			String error;
+			String filename;
 			if (arguments.length == 1)
 			{
 				// reload using the specified file.
 				error = config.reload(arguments[0]);
+				filename = arguments[0];
 			}
 			else
 			{
 				// reload using the config.yml file.
 				error = config.reload(null);
+				filename = "config.yml";
 			}
 
 			if (error == null)
 			{
-				sendOrLog(sender, "Reload succeeded.", ChatColor.GREEN, false);
+				sendOrLog(sender, "Reload succeeded. Loaded from: " + filename, ChatColor.GREEN, false);
 				config.report();
 			}
 			else
