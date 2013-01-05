@@ -696,23 +696,6 @@ public final class CommunityBridge extends JavaPlugin
             }
 					}
 
-					boolean requirements_met = true;
-
-//					if (config.require_minposts)
-//          {
-//						if (!checkMinPosts(id, p))
-//            {
-//              requirements_met = false;
-//            }
-//					}
-
-//					if (config.require_avatar) {
-//						if (!checkAvatar(id, p))
-//            {
-//              requirements_met = false;
-//            }
-//					}
-
 					if (config.groupSyncPrimaryEnabled)
 					{
 						// Note: groups is a map <String, Object> so we need the cast.
@@ -727,29 +710,14 @@ public final class CommunityBridge extends JavaPlugin
 							}
 						}
 
-						if (requirements_met)
+						if (isOkayToSetPrimaryGroup(groupID))
 						{
-							if (isOkayToSetPrimaryGroup(groupID))
-							{
-								setGroup(groupName, p, firstsync);
-							}
-							else
-							{
-								log.finer(p.getName()
-												+ "'s primary group not synchronized due to config.");
-							}
+							setGroup(groupName, p, firstsync);
 						}
 						else
 						{
-							if (isOkayToSetPrimaryGroup(groupID))
-							{
-								setGroup(config.defaultGroup, p, firstsync);
-							}
-							else
-							{
-								log.finer(p.getName()
-												+ "'s  primary group not synchronized due to config.");
-							}
+							log.finer(p.getName()
+											+ "'s primary group not synchronized due to config.");
 						}
 					}
 
