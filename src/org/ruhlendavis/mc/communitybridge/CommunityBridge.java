@@ -698,13 +698,13 @@ public final class CommunityBridge extends JavaPlugin
 
 					boolean requirements_met = true;
 
-					if (config.require_minposts)
-          {
-						if (!checkMinPosts(id, p))
-            {
-              requirements_met = false;
-            }
-					}
+//					if (config.require_minposts)
+//          {
+//						if (!checkMinPosts(id, p))
+//            {
+//              requirements_met = false;
+//            }
+//					}
 
 //					if (config.require_avatar) {
 //						if (!checkAvatar(id, p))
@@ -861,49 +861,6 @@ public final class CommunityBridge extends JavaPlugin
 			log.severe("Database SQL Error with " + keyval);
 			disablePlugin();
 		}
-	}
-
-	public static boolean checkMinPosts(int u, Player p){
-		ResultSet res;
-
-		try {
-			res = sql.sqlQuery("SELECT " + config.minposts_field + " FROM " + config.minposts_table + " WHERE " + config.minposts_user_field + " = '" + u + "'");
-			if (res == null)
-      {
-        return false;
-      }
-
-			if (res.next())
-      {
-        if (res.getInt(config.minposts_field) >= config.minposts_required)
-        {
-          return true;
-        }
-      }
-
-		}
-		catch (MalformedURLException e)
-		{
-			log.severe("Error in checkMinPosts():" + e.getMessage());
-		}
-		catch (InstantiationException e)
-		{
-			log.severe("Error in checkMinPosts():" + e.getMessage());
-		}
-		catch (IllegalAccessException e)
-		{
-			log.severe("Error in checkMinPosts():" + e.getMessage());
-		}
-		catch (SQLException e)
-		{
-			log.severe("Error in checkMinPosts():" + e.getMessage());
-			log.severe("Broken Post Count SQL Query, check your config.yml");
-			disablePlugin();
-		}
-		p.sendMessage(ChatColor.YELLOW + config.minposts_message);
-		log.fine((new StringBuilder("Notice Issued to ")).append(p.getName()).append(" for having less than ").append(config.minposts_required).append(" posts").toString());
-
-		return false;
 	}
 
 	public static void loadStatistics(int u, Player p){
