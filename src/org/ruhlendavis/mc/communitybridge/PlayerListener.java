@@ -40,7 +40,7 @@ public class PlayerListener implements Listener
 	public void onPlayerPreLogin(AsyncPlayerPreLoginEvent event)
 	{
 		String playerName = event.getName();
-		webapp.onPreLogin(playerName);
+		webapp.loadUserIDfromDatabase(playerName);
 
 		if (webapp.isPlayerRegistered(playerName))
 		{
@@ -76,7 +76,7 @@ public class PlayerListener implements Listener
 			{
 				event.setKickMessage(config.messages.get("require-minimum-posts-message"));
 				event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
-			} 
+			}
 		} // if isPlayerRegistered
 	} // onPlayerPreLogin
 

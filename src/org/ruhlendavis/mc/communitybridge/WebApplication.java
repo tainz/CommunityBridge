@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import net.netmanagers.api.SQL;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.ruhlendavis.mc.utility.Log;
 
 /**
@@ -164,9 +166,28 @@ public class WebApplication
 		return Integer.parseInt(playerUserIDs.get(playerName));
 	}
 
+	/**
+	 * Returns true if the player is registered on the web application.
+	 * @param String The name of the player.
+	 * @return boolean True if the player is registered.
+	 */
 	public boolean isPlayerRegistered(String playerName)
 	{
 		return !(getUserID(playerName) == null || getUserID(playerName).isEmpty());
+	}
+
+	/**
+	 * Retrieves user IDs for all connected players, usually only necessary
+	 * after a reload.
+	 */
+	public void loadOnlineUserIDsFromDatabase()
+	{
+		Player [] players =	Bukkit.getOnlinePlayers();
+
+		for (Player player : players)
+		{
+			loadUserIDfromDatabase(player.getName());
+		}
 	}
 
 	/**
@@ -174,7 +195,7 @@ public class WebApplication
 	 *
 	 * @param String containing the player's name.
 	 */
-	public void onPreLogin(String playerName)
+	public void loadUserIDfromDatabase(String playerName)
 	{
 		final String errorBase = "Error during WebApplication.onPreLogin(): ";
 		String query = "SELECT `" + config.linkingTableName + "`.`" + config.linkingUserIDColumn + "` "
@@ -229,7 +250,7 @@ public class WebApplication
 		{
 			log.severe(errorBase + error.getMessage());
 		}
-	} // onPreLogin()
+	} // loadUserIDfromDatabase()
 
 	/**
 	 * Performs operations when a player quits.
