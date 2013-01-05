@@ -116,7 +116,6 @@ public class WebApplication
 
 		try
 		{
-			String avatar = null;
 			ResultSet result = sql.sqlQuery(query);
 
 			if (result.next())
