@@ -105,19 +105,16 @@ public class Configuration
 
   public boolean secondary_groups = false;
 	public boolean show_primary_group = false;
-	public boolean require_avatar = false;
+
 	public boolean require_minposts = false;
 
 	public String users_table;
 	public String banlist_table;
 	public String groups_table;
 	public String multi_table;
-	public String avatar_table;
+
 	public String minposts_table;
 
-	public String avatar_user_field;
-	public String avatar_field;
-	public String avatar_message;
 	public String minposts_user_field;
 	public String minposts_field;
 	public String minposts_message;
@@ -373,23 +370,6 @@ public class Configuration
 									                      multi_table,
 																				multi_table_value_field);
 				}
-			}
-		}
-
-		if (require_avatar)
-		{
-			tempStatus = checkTable(sql, "profile-requirements.require-avatar-table",
-							                avatar_table);
-			status = status & tempStatus;
-
-			if (tempStatus)
-			{
-				status = status
-							 & checkColumn(sql, "profile-requirements.require-avatar-users-id-field",
-								             avatar_table, avatar_user_field);
-				status = status
-							 & checkColumn(sql, "profile-requirements.require-avatar-field",
-								             avatar_table, avatar_field);
 			}
 		}
 
@@ -901,12 +881,6 @@ public class Configuration
 		show_primary_group = config.getBoolean("show-primary-group", false);
 		secondary_groups = config.getBoolean("secondary-groups", false);
 
-		require_avatar = config.getBoolean("profile-requirements.require-avatar", false);
-		avatar_table = config.getString("profile-requirements.require-avatar-table", "");
-		avatar_user_field = config.getString("profile-requirements.require-avatar-user-id-field", "");
-		avatar_field = config.getString("profile-requirements.require-avatar-field", "");
-		avatar_message = config.getString("profile-requirements.require-avatar-message", "");
-
 		require_minposts = config.getBoolean("profile-requirements.require-minposts", false);
 		minposts_required =  config.getInt("profile-requirements.require-minposts-count", 0);
 		minposts_table = config.getString("profile-requirements.require-minposts-table", "");
@@ -1144,7 +1118,6 @@ public class Configuration
 
 		// Old System
 		log.config(  "Multi Tables                         : " + multiTables);
-		log.config(  "Require Avatar                       : " + require_avatar);
 		log.config(  "Min Posts                            : " + require_minposts);
 
 		log.config(  "Statistics Tracking                  : " + statisticsTrackingEnabled);

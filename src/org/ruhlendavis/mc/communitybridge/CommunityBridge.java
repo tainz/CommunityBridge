@@ -706,12 +706,12 @@ public final class CommunityBridge extends JavaPlugin
             }
 					}
 
-					if (config.require_avatar) {
-						if (!checkAvatar(id, p))
-            {
-              requirements_met = false;
-            }
-					}
+//					if (config.require_avatar) {
+//						if (!checkAvatar(id, p))
+//            {
+//              requirements_met = false;
+//            }
+//					}
 
 					if (config.groupSyncPrimaryEnabled)
 					{
@@ -861,40 +861,6 @@ public final class CommunityBridge extends JavaPlugin
 			log.severe("Database SQL Error with " + keyval);
 			disablePlugin();
 		}
-	}
-
-	public static boolean checkAvatar(int u, Player p){
-		ResultSet res;
-
-		try {
-			res = sql.sqlQuery("SELECT " + config.avatar_field + " FROM " + config.avatar_table + " WHERE " + config.avatar_user_field + " = '" + u + "'");
-			if (res == null)
-      {
-        return false;
-      }
-
-			if (res.next())
-      {
-        if (!res.getString(config.avatar_field).isEmpty())
-        {
-          return true;
-        }
-      }
-
-		} catch (MalformedURLException e) {
-			disablePlugin();
-		} catch (InstantiationException e) {
-			disablePlugin();
-		} catch (IllegalAccessException e) {
-			disablePlugin();
-		} catch (SQLException e) {
-			log.severe("Broken Avatar Check SQL Query, check your config.yml");
-			disablePlugin();
-		}
-
-		p.sendMessage(ChatColor.YELLOW + config.avatar_message);
-		log.fine((new StringBuilder("Notice Issued to ")).append(p.getName()).append(" for not having profile avatar").toString());
-		return false;
 	}
 
 	public static boolean checkMinPosts(int u, Player p){
