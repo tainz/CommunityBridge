@@ -217,22 +217,22 @@ public class Configuration
 	public boolean analyzeConfiguration(SQL sql)
 	{
 		boolean status;
+		boolean temp;
 
 		// Linking table section.
 		status = checkTable(sql, "player-user-linking.table-name", linkingTableName);
 		if (status)
 		{
-			status = checkColumn(sql, "player-user-linking.user-id-column", linkingTableName, linkingUserIDColumn);
+			status = status & checkColumn(sql, "player-user-linking.user-id-column", linkingTableName, linkingUserIDColumn);
 			if (linkingUsesKey)
 			{
-				boolean temp;
 				temp = checkColumn(sql, "player-user-linking.key-column", linkingTableName , linkingKeyColumn);
+				status = status & temp;
 				if (temp)
 				{
 					checkKeyColumnForKey(sql, "player-user-linking.key-name", linkingTableName, linkingKeyColumn,	linkingKeyName);
 				}
 
-				status = status & temp;
 				status = status & checkColumn(sql, "player-user-linking.value-column", linkingTableName, linkingValueColumn);
 			}
 			else
@@ -241,6 +241,28 @@ public class Configuration
 			}
 		}
 
+		if (requireAvatar)
+		{
+			temp = checkTable(sql, "requirement.avatar.table-name", requireAvatarTableName);
+			status = status & temp;
+			if (temp)
+			{
+				status = status & checkColumn(sql, "requirement.avatar.user-id-column", requireAvatarTableName, requireAvatarUserIDColumn);
+				status = status & checkColumn(sql, "requirement.avatar.avatar-column", requireAvatarTableName, requireAvatarAvatarColumn);
+			}
+		}
+
+		if (requireMinimumPosts)
+		{
+			temp = checkTable(sql, "requirement.minimum-posts.table-name", requirePostsTableName);
+			status = status & temp;
+			if (temp)
+			{
+				status = status & checkColumn(sql, "requirement.minimum-posts.user-id-column", requirePostsTableName, requirePostsUserIDColumn);
+				status = status & checkColumn(sql, "requirement.minimum-posts.post-count-column", requirePostsTableName, requirePostsPostCountColumn);
+			}
+
+		}
 		return status;
 	}
 
