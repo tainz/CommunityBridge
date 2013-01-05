@@ -88,22 +88,21 @@ public class PlayerListener implements Listener
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event)
 	{
-		Player player = event.getPlayer();
 		String playerName = event.getPlayer().getName();
 		if (webapp.isPlayerRegistered(playerName))
 		{
 			if (config.linkingNotifyRegistered)
 			{
-				String message = config.messages.get("link-registered-player");
-				player.sendMessage(ChatColor.GREEN + message);
+				String message = ChatColor.GREEN + config.messages.get("link-registered-player");
+				event.setJoinMessage(message);
 			}
 		}
 		else
 		{
 			if (config.linkingNotifyUnregistered)
 			{
-				String message = config.messages.get("link-unregistered-player");
-				player.sendMessage(ChatColor.RED + message);
+				String message = ChatColor.RED + config.messages.get("link-unregistered-player");
+				event.setJoinMessage(message);
 			} // if config.linkingNotifyUnregistered
 		} // if isPlayerRegistered
 	}
