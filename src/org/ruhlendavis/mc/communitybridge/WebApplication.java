@@ -63,7 +63,7 @@ public class WebApplication
 
 			if (result.next())
 			{
-				avatar = result.getString(1);
+				avatar = result.getString(config.requireAvatarAvatarColumn);
 			}
 
 			if (avatar == null || avatar.isEmpty())
@@ -120,7 +120,7 @@ public class WebApplication
 
 			if (result.next())
 			{
-				return result.getInt(1);
+				return result.getInt(config.requirePostsPostCountColumn);
 			}
 			else
 			{
@@ -177,22 +177,20 @@ public class WebApplication
 	public void onPreLogin(String playerName)
 	{
 		final String errorBase = "Error during WebApplication.onPreLogin(): ";
-		String query;
+		String query = "SELECT `" + config.linkingTableName + "`.`" + config.linkingUserIDColumn + "` "
+								 + "FROM `" + config.linkingTableName + "`";
 
 		if (config.linkingUsesKey)
 		{
-			query = "SELECT * FROM `" + config.linkingTableName + "` "
+			query = query
 						+ "WHERE `" + config.linkingKeyColumn + "` = '" + config.linkingKeyName + "' "
-						+ "AND `" + config.linkingValueColumn + "` = '" + playerName + "' "
-						+ "ORDER BY `" + config.linkingUserIDColumn + "` DESC";
+						+ "AND `" + config.linkingValueColumn + "` = '" + playerName + "' ";
 		}
 		else
 		{
-			query = "SELECT * FROM `" + config.linkingTableName + "` "
-						+ "WHERE LOWER(`" + config.linkingPlayerNameColumn + "`) = LOWER('" + playerName + "') "
-						+ "ORDER BY `" + config.linkingUserIDColumn + "` DESC";
-
+			query = query	+ "WHERE LOWER(`" + config.linkingPlayerNameColumn + "`) = LOWER('" + playerName + "') ";
 		}
+		query = query + "ORDER BY `" + config.linkingUserIDColumn + "` DESC";
 
 		log.finest(query);
 
