@@ -41,10 +41,23 @@ public class PlayerListener implements Listener
 	{
 		String playerName = event.getName();
 		webapp.onPreLogin(playerName);
+
 		if (webapp.isPlayerRegistered(playerName))
 		{
 			log.fine(playerName + " linked to web application user ID #" + webapp.getUserID(playerName) + ".");
-		}
+
+			if (config.requireAvatar && webapp.playerHasAvatar(playerName) == false)
+			{
+				event.setKickMessage(config.messages.get("require-avatar-message"));
+				event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
+			}
+
+			if (config.requireMinimumPosts && webapp.getUserPostCount(playerName) < config.requirePostsPostCount)
+			{
+				event.setKickMessage(config.messages.get("require-minimum-posts-message"));
+				event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
+			}
+		} // if isPlayerRegistered
 		else
 		{
 			if (config.linkingKickUnregistered)
@@ -52,6 +65,18 @@ public class PlayerListener implements Listener
 				event.setKickMessage(config.messages.get("link-unregistered-player"));
 				event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST);
 			} // if config.linkingKickUnregistered
+
+			if (config.requireAvatar)
+			{
+				event.setKickMessage(config.messages.get("require-avatar-message"));
+				event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
+			}
+
+			if (config.requireMinimumPosts)
+			{
+				event.setKickMessage(config.messages.get("require-minimum-posts-message"));
+				event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
+			} 
 		} // if isPlayerRegistered
 	} // onPlayerPreLogin
 

@@ -60,6 +60,18 @@ public class Configuration
 	public String linkingKeyColumn;
 	public String linkingValueColumn;
 
+	// Requirements Section
+	public boolean requireAvatar;
+	public String	requireAvatarTableName;
+	public String	requireAvatarUserIDColumn;
+	public String	requireAvatarAvatarColumn;
+
+	public boolean requireMinimumPosts;
+	public String	requirePostsTableName;
+	public String	requirePostsUserIDColumn;
+	public String requirePostsPostCountColumn;
+	public int requirePostsPostCount;
+
 	// Group Synchronization: Primary
 	public boolean groupSyncPrimaryEnabled;
 	public boolean groupSyncPrimaryNotifyPlayer;
@@ -460,7 +472,7 @@ public class Configuration
 		{
 			ResultSet result = sql.sqlQuery(query);
 
-			if (result.getInt(0) == 0)
+			if (result.getInt(1) == 0)
 			{
 				log.warning("There are no rows containing " + keyName
 								       + " in the " + keyColumn + " column, on the "
@@ -732,6 +744,24 @@ public class Configuration
 		linkingKeyColumn = config.getString("player-user-linking.key-column", "");
 		linkingValueColumn = config.getString("player-user-linking.value-column", "");
 
+		// Requirements Section
+		requireAvatar = config.getBoolean("requirement.avatar.enabled", false);
+		if (requireAvatar)
+		{
+			requireAvatarTableName = config.getString("requirement.avatar.table-name", "");
+			requireAvatarUserIDColumn = config.getString("requirement.avatar.user-id-column", "");
+			requireAvatarAvatarColumn = config.getString("requirement.avatar.avatar-column", "");
+		}
+
+		requireMinimumPosts = config.getBoolean("requirement.minimum-posts.enabled", false);
+		if (requireMinimumPosts)
+		{
+			requirePostsTableName = config.getString("requirement.minimum-posts.table-name", "");
+			requirePostsUserIDColumn = config.getString("requirement.minimum-posts.user-id-column", "");
+			requirePostsPostCountColumn = config.getString("requirement.minimum-posts.post-count-column", "");
+			requirePostsPostCount = config.getInt("requirement.minimum-posts.post-count", 0);
+		}
+
 		// Group Synchronization: Primary
 		groupSyncPrimaryEnabled = config.getBoolean("group-synchronization.primary.enabled", false);
 		if (groupSyncPrimaryEnabled)
@@ -975,6 +1005,7 @@ public class Configuration
 		{
 			String message = (String)entry.getValue();
 			message = message.replace("~APPURL~", applicationURL);
+			message = message.replace("~MINIMUMPOSTCOUNT~", Integer.toString(requirePostsPostCount));
 
 			messages.put(entry.getKey(), message);
 		}
@@ -1050,6 +1081,23 @@ public class Configuration
 		else
 		{
 			log.config(  "Linking player name column           : " + linkingPlayerNameColumn);
+		}
+
+		log.config(    "Require avatars                      : " + requireAvatar);
+		if (requireAvatar)
+		{
+			log.config(  "Require avatar table name            : " + requireAvatarTableName);
+			log.config(  "Require avatar user ID column        : " + requireAvatarUserIDColumn);
+			log.config(  "Require avatar avatar column         : " + requireAvatarAvatarColumn);
+		}
+
+		log.config(    "Require minimum posts                : " + requireMinimumPosts);
+		if (requireMinimumPosts)
+		{
+			log.config(  "Require minimum posts table name     : " + requirePostsTableName);
+			log.config(  "Require minimum posts user ID column : " + requirePostsUserIDColumn);
+			log.config(  "Require minimum posts avatar column  : " + requirePostsPostCountColumn);
+			log.config(  "Require minimum post count           : " + requirePostsPostCount);
 		}
 
 		log.config(    "Primary group synchronization        : " + groupSyncPrimaryEnabled);

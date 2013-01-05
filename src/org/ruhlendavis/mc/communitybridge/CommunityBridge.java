@@ -158,17 +158,17 @@ public final class CommunityBridge extends JavaPlugin
 
 		// *** OLD boundary
 
-		if (config.statisticsTrackingEnabled && config.onlinestatusEnabled)
-		{
-			resetOnlineStatus();
-		}
-
-		syncAll();
-
-		if (config.autoSync)
-		{
-			startSyncing();
-		}
+//		if (config.statisticsTrackingEnabled && config.onlinestatusEnabled)
+//		{
+//			resetOnlineStatus();
+//		}
+//
+//		syncAll();
+//
+//		if (config.autoSync)
+//		{
+//			startSyncing();
+//		}
 
 		active = true;
 		log.finest("CommunityBridge activated.");

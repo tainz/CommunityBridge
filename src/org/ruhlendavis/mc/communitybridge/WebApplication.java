@@ -40,6 +40,117 @@ public class WebApplication
 	}
 
 	/**
+	 * Returns true if the user's avatar column contains data.
+	 *
+	 * @param String The player's name.
+	 * @return boolean True if the user has an avatar.
+	 */
+	public boolean playerHasAvatar(String playerName)
+	{
+		final String errorBase = "Error during WebApplication.playerHasAvatar(): ";
+		String query;
+
+		query = "SELECT `" + config.requireAvatarTableName + "`.`" + config.requireAvatarAvatarColumn + "` "
+					+ "FROM `" + config.requireAvatarTableName + "` "
+					+ "WHERE `" + config.requireAvatarUserIDColumn + "` = '" + getUserID(playerName) + "'";
+
+		log.finest(query);
+
+		try
+		{
+			String avatar = null;
+			ResultSet result = sql.sqlQuery(query);
+
+			if (result.next())
+			{
+				avatar = result.getString(1);
+			}
+
+			if (avatar == null || avatar.isEmpty())
+			{
+				return false;
+			}
+			else
+			{
+				return true;
+			}
+		}
+		catch (SQLException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return false;
+		}
+		catch (MalformedURLException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return false;
+		}
+		catch (InstantiationException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return false;
+		}
+		catch (IllegalAccessException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return false;
+		}
+	}
+
+	/**
+	 * Fetches the user's post count from the web application.
+	 *
+	 * @param String The player's name.
+	 * @return int Number of posts.
+	 */
+	public int getUserPostCount(String playerName)
+	{
+		final String errorBase = "Error during WebApplication.playerHasAvatar(): ";
+		String query;
+
+		query = "SELECT `" + config.requirePostsTableName + "`.`" + config.requirePostsPostCountColumn + "` "
+					+ "FROM `" + config.requirePostsTableName + "` "
+					+ "WHERE `" + config.requirePostsUserIDColumn + "` = '" + getUserID(playerName) + "'";
+
+		log.finest(query);
+
+		try
+		{
+			String avatar = null;
+			ResultSet result = sql.sqlQuery(query);
+
+			if (result.next())
+			{
+				return result.getInt(1);
+			}
+			else
+			{
+				return 0;
+			}
+		}
+		catch (SQLException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return 0;
+		}
+		catch (MalformedURLException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return 0;
+		}
+		catch (InstantiationException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return 0;
+		}
+		catch (IllegalAccessException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return 0;
+		}
+	}
+
+	/**
 	 * Returns a given player's web application user ID.
 	 *
 	 * @param String containing the player's name.
@@ -60,16 +171,13 @@ public class WebApplication
 	}
 
 	/**
-	 * Performs the database query that should be done when a player joins.
+	 * Performs the database query that should be done when a player connects.
 	 *
-	 */
-	/**
-	 * Performs the database query that should be done when a player joins.
 	 * @param String containing the player's name.
 	 */
 	public void onPreLogin(String playerName)
 	{
-		final String errorBase = "Error during WebApplication.onJoin(): ";
+		final String errorBase = "Error during WebApplication.onPreLogin(): ";
 		String query;
 
 		if (config.linkingUsesKey)
@@ -124,7 +232,7 @@ public class WebApplication
 		{
 			log.severe(errorBase + error.getMessage());
 		}
-	} // onJoin()
+	} // onPreLogin()
 
 	/**
 	 * Performs operations when a player quits.
