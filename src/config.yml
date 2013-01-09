@@ -15,7 +15,7 @@ general:
   log-level: config
 
   # Allow plugin metrics to start up for this plugin.
-  # Disable for all plugins by editing the plugins/PluginMetrics/config.yml file.
+  # Disable for all plugins by editing plugins/PluginMetrics/config.yml.
   # They can be viewed at: http://mcstats.org
   plugin-metrics: true
 
@@ -24,17 +24,17 @@ general:
   # auto-sync-every and auto-remind-every.
   auto-every-unit: minutes
 
-  # This is a timer that will check and sync all data with your database at a set
-  # interval. Otherwise group and player statistics will only be synchronized when
-  # they join and leave the server.
+  # This is a timer that will check and sync all data with your database at a
+  # set interval. Otherwise group and player statistics will only be
+  # synchronized when they join and leave the server.
   auto-sync: true
 
   # The interval for the auto-sync timer, this should not be set any lower than
   # 20 minutes.
   auto-sync-every: 20
 
-  # The permissions system you're using. A permissions system is required for the
-  # following features:
+  # The permissions system you're using. A permissions system is required for
+  # the following features:
   # * Group Synchronization (both primary and secondary)
   # Current Options are: PEX, bPerms, GroupManager, PermsBukkit
   permissions-system:
@@ -229,8 +229,9 @@ group-synchronization:
     #    permissions-group: moderator
     #    direction: webapp
     #    all-worlds: true
-    # Players in the forum group ID are added to the spawnworldnobuild permissions
-    # group
+
+    # Players in the forum group ID are added to the spawnworldnobuild
+    # permissions group
     #  4:
     #    webapp-id: 10
     #    permissions-group: spawnworldnobuild
@@ -240,290 +241,88 @@ group-synchronization:
   secondary:
     enabled: false
 
+#                             Statistics Tracking
 # -----------------------------------------------------------------------------
-#OLD
-
-# If set to true it will show a message to the user that they have been placed
-# into a group
-show-primary-group: true
-
-# Multi-Tables are when you have all your tracking/minecraft usernames in a
-# different table to the users table
-multi-tables: false
-
-# Forums like XenForo use a table that has rows for each custom field as opposed
-# to columns for each custom field
-multi-tables-use-key: false
-
-# If set to true it will not allow banned players from your website to connect
-use-banned-field: false
-
-# Ban List in Seperate Table (Such as PHPBB) If you include a value for reason
-# then it will display that when booting the player
-banlist-table:
-    enabled: false
-    table: phpbb_banlist
-    user-id-field: ban_userid
-    reason-field: ban_reason
-
-# Groups in Separate Table (Such as PHPBB)
-groups-table:
-    enabled: false
-    table: phpbb_users_groups
-    user-id-field: ban_userid
-    group-id-field: ban_reason
-
-# If you have a second group level and want to make use of it
-secondary-groups: false
-
-# This is for extra features of the bridge plugin that allow you to save age,
-# gametime, last online, health, etc. to the database
-enable-basic-tracking: false
-
-#
-# Main Users table configuration
-#
-users-table:
-  # Users Database Table
-  table: ipbog3members
-
-  # The field that contains their Minecraft Username
-  user-name-field: username
-
-  # The field that contains their Unique ID across your site
-  user-id-field: member_id
-
-  # The field that contains their Primary Group
-  groups-id-field: member_group_id
-
-  # The field that contains their Secondary Group
-  secondary-groups-id-field: sub_group_ids
-
-  # The Banned Field should be a 1 or 0
-  banned-field: member_banned
-
-  # The Group Banned Users are placed in on your site
-  banned-users-group: 5
-
-  # The Default Group for when a group can't be found or they are unregistred.
-  # Note that this is the group ID on the web application, not the permissions
-  # group name.
-  default-group: 2
-
-#
-# This is only for multi-table websites where information is not all contained
-# in the users table
-#
-multi-table:
-
-  # Table that contains custom information for MineCraft
-  table: ipbog3pfields_content
-
-  # The field that has their users id
-  field-user-id-field: member_id
-
-  # This is the field that contains the KEY for multi-tables-use-key (XenForo)
-  field-key-field: key_str
-
-  # The value that is to be matched in field-key-field when looking for their
-  # Minecraft Username
-  field-key-value: mcusername
-
-  # This is for when multi-tables-use-key is false (Invision Power Board) it
-  # contains their Minecraft Username
-  field-value-field: field_11
-
-
-#
-# Optional
-# You can place users in the default group if they do not have an Avatar or
-# Minimum Posts or both
-#
-
-profile-requirements:
-
-  # Enable Forced Website Avatar
-  require-avatar: false
-
-  # Message when Avatar Not Found
-  require-avatar-message: This server requires players to upload an avatar to their profile.
-
-  # Table that contains user avatars
-  require-avatar-table: ipbog3profile_portal
-
-  # Field that has their User ID
-  require-avatar-user-id-field: member_id
-
-  # Field that has their Avatar (Empty/null value for no avatar)
-  require-avatar-field: pp_main_photo
-
-  # Enable Forced Minimum Posts
-  require-minposts: false
-
-  # Messages when Minimum Posts not met
-  require-minposts-message: This server requires players to have a minimum of 3 forum posts.
-
-  # Required amount of minimum Posts
-  require-minposts-count: 3
-
-  # Table that contains their post count
-  require-minposts-table: ipbog3members
-
-  # Field that has their User ID
-  require-minposts-user-id-field: member_id
-
-  # Field that has their post count
-  require-minposts-field: posts
-
-
-#
-# Optional
-# This is for Online Status, Health, Age etc...
-#
-
-basic-tracking:
-
-  # Table that contains the custom fields
-  table: ipbog3pfields_content
-
-  # Enable Tracking of Online status
-  field-onlinestatus-enabled: true
-
-  # Value to place in table when online
-  field-onlinestatus-valueonline: 1
-
-  # Value to place in table when offline
-  field-onlinestatus-valueoffline: 0
-
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field
-  field-onlinestatus-key-value: mconlinestatus
-
-  # Multi-Tables / Single Table field for Value
-  field-onlinestatus-field: field_14
-
-  # Enable tracking if player is online or not
-  field-lastonline-enabled: true
-
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field
-  field-lastonline-key-value: mclastonline
-
-  # Multi-Tables / Single Table field for Value
-  field-lastonline-field: field_15
-
-  # If you want to have a profile field that contains the gametime expressed
-  # in words (5 hours, 33 minutes...), create the custom field on your forum
-  # and enter its name here. Otherwise, leave 'blank': ''
-  # Note that for this to work, the field-lastonline-field must also have
-  # field/column and be configured correctly.
-  field-lastonline-formatted-field: ''
-
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field
-  # If you want to have a profile field that contains the gametime expressed
-  # in words (5 hours, 33 minutes...), create the custom field on your forum
-  # and enter its name here. Otherwise, leave 'blank': ''
-  # Note that for this to work, the field-lastonline-key-value must also have
-  # field/column and be configured correctly.
-  field-lastonline-formatted-key-value: ''
-
-  # Enable tracking how much time is spent on server
-  # Note: This relies on 'lastonline' being enabled to work.
-  field-gametime-enabled: true
-
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field
-  field-gametime-key-value: mcgametime
-
-  # Multi-Tables / Single Table field for Value
-  field-gametime-field: field_16
-
-  # If you want to have a profile field that contains the gametime expressed
-  # in words (5 hours, 33 minutes...), create the custom field on your forum
-  # and enter its name here. Otherwise, leave 'blank': ''
-  # Note that for this to work, the field-gametime-field must also be set.
-  field-gametime-formatted-field: ''
-
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field
-  # If you want to have a profile field that contains the gametime expressed
-  # in words (5 hours, 33 minutes...), create the custom field on your forum
-  # and enter its name here. Otherwise, leave 'blank': ''
-  # Note that for this to work, the field-gametime-key-value must also be set.
-  field-gametime-formatted-key-value: ''
-
-  # Enable Total XP earnt tracking
-  field-totalxp-enabled: true
-
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field
-  field-totalxp-key-value: mctotalxp
-
-  # Multi-Tables / Single Table field for Value
-  field-totalxp-field: field_18
-
-  # Enable Current XP tracking (progress to next level)
-  field-currentxp-enabled: true
-
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field
-  field-currentxp-key-value: mccurrentxp
-
-  # Multi-Tables / Single Table field for formatted version.
-  field-currentxp-formatted-field: ''
-
-  # Multi-Tables-Use Key 'field' for formatted version.
-  field-currentxp-formatted-key-value: ''
-
-  # Multi-Tables / Single Table field for Value
-  field-currentxp-field: field_17
-
-  # Enable Level tracking
-  field-level-enabled: true
-
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field
-  field-level-key-value: mclevel
-
-  # Multi-Tables / Single Table field for Value
-  field-level-field: field_19
-
-  # Enable tracking of players health
-  field-health-enabled: true
-
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field
-  field-health-key-value: mchealth
-
-  # Multi-Tables / Single Table field for Value
-  field-health-field: field_20
-
-  # Enable tracking of players time alive since last death
-  field-lifeticks-enabled: true
-
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field
-  field-lifeticks-key-value: mclifeticks
-
-  # Multi-Tables / Single Table field for Value
-  field-lifeticks-field: field_21
-
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field
-  field-lifeticks-formatted-key-value: ''
-
-  # Multi-Tables / Single Table field for Value
-  field-lifeticks-formatted-field: ''
-
-  # Enable Wallet Tracking (NOT IN USE YET)
-  field-wallet-enabled: false
-
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field
-  field-wallet-key-value: mcwallet
-
-  # Multi-Tables / Single Table field for Value
-  field-wallet-field: field_23
-
-#
-# Group Configuration
-# The strings on the left ('1', '2', etc.) is the group ID in the web application's
-# mysql database, the string on the right is the group name in your permissions
-# system.
-#
-groups:
-  '1': validating
-  '2': guest
-  '3': builder
-  '6': moderator
-  '4': admin
-  '5': banned
+# In general, to make this work, your web application will need to support
+# custom profile fields or a similar feature. CommunityBridge will put the
+# information in the database. It is up to you to configure your web application
+# so that it displays the information.
+statistics-tracking:
+  # Enables statistics tracking. Nothing will be tracked unless you also enable
+  # at least one of the trackers below.
+  enabled: false
+  # Name of the table to insert the tracking information on to.
+  table-name:
+  # Name of the column that contains the player's User ID on the table.
+  user-id-column:
+  # Set this to true if the table stores
+  uses-key: false
+
+  # Individual trackers
+  # -------------------
+  trackers:
+    # Below each tracker can be enabled and configured. For each tracker:
+    # * If uses key is true, set column-or-key-name to the key name OR
+    #   If uses key is false, set column-or-key-name to the column name
+    # For some trackers, there is a formatted version as well. For those
+    # trackers, the formatted version is optional. If you wish to use the
+    # formatted version, set the formatted-column-or-key-name appropriately.
+
+    # Online Status: Show a player is playing on the server in the forums.
+    online-status:
+      enabled: false
+      column-or-key-name:
+      # Set this to what should be stored in the field when the user is online.
+      online-value:
+      # Set this to what should be stored in the field when the user is offline.
+      offline-value:
+
+    # Last Online: Record the time that player was last online
+    last-online:
+      enabled: false
+      column-or-key-name:
+      formatted-column-or-key-name:
+
+    # Game Time: Record how much time the player has played.
+    game-time:
+      enabled: false
+      column-or-key-name:
+      formatted-column-or-key-name:
+
+    # Player's current level
+    level:
+      enabled: false
+      column-or-key-name:
+      formatted-column-or-key-name:
+
+    # Player's current progress toward next level
+    current-xp:
+      enabled: false
+      column-or-key-name:
+      formatted-column-or-key-name:
+
+    # Player's current XP total
+    total-xp:
+      enabled: false
+      column-or-key-name:
+
+    # Player's lifetime XP total
+    lifetime-xp:
+      enabled: false
+      column-or-key-name:
+
+    # Player's current health
+    health:
+      enabled: false
+      column-or-key-name:
+
+    # Lifeticks; the amount of time the player has been alive.
+    lifeticks:
+      enabled: false
+      column-or-key-name:
+      formatted-column-or-key-name:
+
+    # Wallet. The amount of money the player currently has. REQUIRES VAULT.
+    wallet:
+      enabled: false
+      column-or-key-name:
