@@ -66,7 +66,7 @@ public final class Main extends JavaPlugin
 			}
 		}
 
-		getServer().getPluginManager().registerEvents(new EventListener(), this);
+		getServer().getPluginManager().registerEvents(new EventListener(this), this);
 		getCommand("cbban").setExecutor(new Cmds());
 		getCommand("cbunban").setExecutor(new Cmds());
 		getCommand("cbrank").setExecutor(new Cmds());
