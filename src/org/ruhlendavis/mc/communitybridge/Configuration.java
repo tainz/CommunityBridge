@@ -603,17 +603,17 @@ public class Configuration
 		auto_remind_every = config.getLong("auto-remind-every", 12000L);
 
 		groupSynchronizationPrimaryEnabled = config.getBoolean("group-synchronization.primary-group.enabled", false);
+
 		if (groupSynchronizationPrimaryEnabled)
 		{
 			List<String> defaultList = new ArrayList<String>();
 			config.addDefault("group-synchronization.primary-group.group-ids-to-ignore", defaultList);
 			primaryGroupIDsToIgnore = config.getStringList("group-synchronization.primary-group.group-ids-to-ignore");
-			groups = config.getConfigurationSection("groups").getValues(true);
-
-			// Note: groups is a map <String, Object> so we need the cast.
-			defaultGroup = (String)groups.get(config.getString("users-table.default-group"));
-
 		}
+		groups = config.getConfigurationSection("groups").getValues(true);
+
+		// Note: groups is a map <String, Object> so we need the cast.
+		defaultGroup = (String)groups.get(config.getString("users-table.default-group"));
 
 		multiTables = config.getBoolean("multi-tables", false);
 		multiTablesUseKey = config.getBoolean("multi-tables-use-key", false);
