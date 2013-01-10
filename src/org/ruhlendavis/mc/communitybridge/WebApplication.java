@@ -261,7 +261,7 @@ public class WebApplication
 	 */
 	public void onJoin(final String playerName)
 	{
-		runUpdateStatisticsTask(playerName);
+		runUpdateStatisticsTask(playerName, true);
 	}
 
 	/**
@@ -273,7 +273,7 @@ public class WebApplication
 	{
 		// Only keep user IDs for connected players on hand.
 		playerUserIDs.remove(playerName);
-		runUpdateStatisticsTask(playerName);
+		runUpdateStatisticsTask(playerName, false);
 	}
 
 	/**
@@ -282,7 +282,7 @@ public class WebApplication
 	 *
 	 * @param String The player's name.
 	 */
-	private void runUpdateStatisticsTask(final String playerName)
+	private void runUpdateStatisticsTask(final String playerName, final boolean joining)
 	{
 		if (config.statisticsEnabled)
 		{
@@ -291,7 +291,7 @@ public class WebApplication
 				@Override
 				public void run()
 				{
-					updateStatistics(playerName);
+					updateStatistics(playerName, joining);
 				}
 			});
 		}
@@ -307,7 +307,7 @@ public class WebApplication
 		this.sql = sql;
 	}
 
-	private void updateStatistics(String playerName)
+	private void updateStatistics(String playerName, boolean joining)
 	{
 
 	}
