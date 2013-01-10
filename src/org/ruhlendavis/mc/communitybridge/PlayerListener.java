@@ -1,5 +1,6 @@
 package org.ruhlendavis.mc.communitybridge;
 
+import java.net.MalformedURLException;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -122,28 +123,28 @@ public class PlayerListener implements Listener
 } // PlayerListener class
 
 
-//		if (config.statisticsTrackingEnabled)
+//		if (config.statisticsEnabled)
 //		{
 //			int id = Main.getUserId(player.getName());
 //			if (id > 0)
 //			{
 //				Main.updateStatistics(id, player);
 //
-//				if (config.onlinestatusEnabled)
+//				if (config.onlineStatusEnabled)
 //				{
 //					try
 //					{
 //						if (config.multiTables && config.multiTablesUseKey)
 //						{
-//							Main.sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.multi_table_value_field + " = '" + config.onlinestatusValueOffline + "' WHERE " + config.multi_table_user_id_field + " = '" + id + "' and " + config.multi_table_key_field +" = '" + config.onlinestatusKeyValue + "'");
+//							Main.sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.multi_table_value_field + " = '" + config.onlineStatusValueOffline + "' WHERE " + config.multi_table_user_id_field + " = '" + id + "' and " + config.multi_table_key_field +" = '" + config.onlineStatusColumnOrKey + "'");
 //						}
 //						else if(config.multiTables)
 //						{
-//							Main.sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOffline + "' WHERE " + config.multi_table_user_id_field + " = '" + id + "'");
+//							Main.sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.onlinestatusColumn + " = '" + config.onlineStatusValueOffline + "' WHERE " + config.multi_table_user_id_field + " = '" + id + "'");
 //						}
 //						else
 //						{
-//							Main.sql.updateQuery("UPDATE " + config.users_table + " SET " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOnline + "' WHERE " + config.user_id_field + " = '" + id + "'");
+//							Main.sql.updateQuery("UPDATE " + config.users_table + " SET " + config.onlinestatusColumn + " = '" + config.onlineStatusValueOnline + "' WHERE " + config.user_id_field + " = '" + id + "'");
 //						}
 //					}
 //					catch (MalformedURLException e)
@@ -162,3 +163,35 @@ public class PlayerListener implements Listener
 //				}
 //			}
 //		}
+//	private void resetOnlineStatus()
+//  {
+//		try {
+//			if (config.multiTables)
+//      {
+//				if (config.multiTablesUseKey)
+//        {
+//					sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.multi_table_value_field + " = '" + config.onlineStatusValueOffline + "' WHERE " + config.multi_table_key_field + " = '" + config.onlineStatusColumnOrKey + "'");
+//				}
+//        else
+//        {
+//					sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.onlinestatusColumn + " = '" + config.onlineStatusValueOffline + "' WHERE " + config.onlinestatusColumn + " = '" + config.onlineStatusValueOnline + "'");
+//				}
+//			}
+//      else
+//      {
+//				sql.updateQuery("UPDATE " + config.users_table + " SET " + config.onlinestatusColumn + " = '" + config.onlineStatusValueOffline + "'  WHERE " + config.onlinestatusColumn + " = '" + config.onlineStatusValueOnline + "'");
+//			}
+//		}
+//		catch (MalformedURLException e)
+//		{
+//			log.severe("Error in ResetOnlineStatus: " + e.getMessage());
+//			disablePlugin();
+//		} catch (InstantiationException e) {
+//			log.severe("Error in ResetOnlineStatus: " + e.getMessage());
+//			disablePlugin();
+//		} catch (IllegalAccessException e) {
+//			log.severe("Error in ResetOnlineStatus: " + e.getMessage());
+//			disablePlugin();
+//		}
+//	}
+//

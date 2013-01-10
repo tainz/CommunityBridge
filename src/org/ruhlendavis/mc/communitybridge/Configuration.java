@@ -88,6 +88,19 @@ public class Configuration
 	// Group Synchronization: Secondary
 	public boolean groupSyncSecondaryEnabled;
 
+	// Statistics Tracking Settings
+	public boolean statisticsEnabled;
+	public String statisticsTableName;
+	public String statisticsUserIDColumn;
+	public boolean statisticsUsesKey;
+	public String statisticsKeyColumn;
+	public String statisticsValueColumn;
+
+	public boolean onlineStatusEnabled;
+	public String onlineStatusColumnOrKey;
+	public String onlineStatusValueOffline;
+	public String onlineStatusValueOnline;
+
 	// These are not in the config.yml. They are calculated.
 	public boolean permissionsSystemRequired;
 	public boolean groupSyncEnabled;
@@ -130,14 +143,6 @@ public class Configuration
 	public String multi_table_key_value;
 	public String multi_table_value_field;
 	public String multi_table_user_id_field;
-
-	public boolean statisticsTrackingEnabled;
-
-	public boolean onlinestatusEnabled;
-	public String onlinestatusColumn;
-	public String onlinestatusKeyValue;
-	public String onlinestatusValueOffline;
-	public String onlinestatusValueOnline;
 
 	public boolean lastonlineEnabled;
 	public String lastonlineColumn;
@@ -252,6 +257,31 @@ public class Configuration
 			}
 
 		}
+
+		if (statisticsEnabled)
+		{
+			temp = checkTable(sql, "statistics.table-name", statisticsTableName);
+			status = status & temp;
+			if (temp)
+			{
+				status = status & checkColumn(sql, "statistics.user-id-column", statisticsTableName, statisticsUserIDColumn);
+				if (statisticsUsesKey)
+				{
+					temp = checkColumn(sql, "statistics.key-column", statisticsTableName, statisticsKeyColumn);
+					temp = temp & checkColumn(sql, "statistics.value-column", statisticsTableName, statisticsValueColumn);
+					status = status & temp;
+					if (temp)
+					{
+						checkKeyColumnForKey(sql, "statistics.trackers.online-status.column-or-key-name", statisticsTableName, statisticsKeyColumn,	onlineStatusColumnOrKey);
+					}
+				}
+				else
+				{
+					status = status & checkColumn(sql, "statistics.trackers.online-status.column-or-key-name", statisticsTableName,	onlineStatusColumnOrKey);
+				}
+			}
+		}
+
 		return status;
 	}
 
@@ -362,18 +392,6 @@ public class Configuration
 									                      multi_table,
 																				multi_table_value_field);
 				}
-			}
-		}
-
-		if (statisticsTrackingEnabled)
-		{
-			if (multiTables && multiTableStatus)
-			{
-				checkTrackingColumns(sql, multi_table);
-			}
-			else if (userTableStatus)
-			{
-				checkTrackingColumns(sql, users_table);
 			}
 		}
 
@@ -535,142 +553,6 @@ public class Configuration
 	}
 
 	/**
-	 * Check the statistics tracking columns.
-	 *
-	 * @param SQL An SQL query object.
-	 * @param String containing the name of the statistics tracking table.
-	 */
-	private void checkTrackingColumns(SQL sql, String trackingTable)
-	{
-		if (onlinestatusEnabled)
-		{
-			if (checkColumn(sql, "basic-tracking.field-onlinestatus-field", trackingTable,
-							        onlinestatusColumn))
-			{}
-			else
-			{
-				onlinestatusEnabled = false;
-				log.severe("'online status' tracking disabled due to previous error.");
-			}
-		}
-
-		if (lastonlineEnabled)
-		{
-			if (checkColumn(sql, "basic-tracking.field-lastonline-field", trackingTable,
-				              lastonlineColumn)
-			 && checkColumn(sql, "basic-tracking.field-lastonline-formatted-field",
-							        trackingTable, lastonlineFormattedColumn))
-			{}
-			else
-			{
-				lastonlineEnabled = false;
-				log.severe("'last online' tracking disabled due to previous error(s).");
-			}
-		}
-
-		if (gametimeEnabled)
-		{
-			if (checkColumn(sql, "basic-tracking.field-gametime-field", trackingTable,
-						          gametimeColumn)
-			 && checkColumn(sql, "basic-tracking.field-gametime-formatted-field",
-							        trackingTable, gametimeFormattedColumn))
-			{}
-			else
-			{
-				gametimeEnabled = false;
-				log.severe("'game time' tracking disabled due to previous error(s).");
-			}
-		}
-
-		if (totalxpEnabled)
-		{
-			if (checkColumn(sql, "basic-tracking.field-totalxp-field", trackingTable,
-						          totalxpColumn))
-			{}
-			else
-			{
-				totalxpEnabled = false;
-				log.severe("'total xp' tracking disabled due to previous error(s).");
-			}
-		}
-
-		if (currentxpEnabled)
-		{
-			if (checkColumn(sql, "basic-tracking.field-currentxp-field", trackingTable,
-						          currentxpColumn)
-			 && checkColumn(sql, "basic-tracking.field-currentxp-formatted-field",
-							        trackingTable, currentxpFormattedColumn))
-			{}
-			else
-			{
-				currentxpEnabled = false;
-				log.severe("'current xp' tracking disabled due to previous error(s).");
-			}
-		}
-
-		if (levelEnabled)
-		{
-			if (checkColumn(sql, "basic-tracking.field-level-field", trackingTable,
-						          levelColumn))
-			{}
-			else
-			{
-				levelEnabled = false;
-				log.severe("'level' tracking disabled due to previous error(s).");
-			}
-		}
-
-		if (healthEnabled)
-		{
-			if (checkColumn(sql, "basic-tracking.field-health-field", trackingTable,
-						          healthColumn))
-			{}
-			else
-			{
-				healthEnabled = false;
-				log.severe("'health' tracking disabled due to previous error(s).");
-			}
-		}
-
-		if (lifeticksEnabled)
-		{
-			if (checkColumn(sql, "basic-tracking.field-lifeticks-field", trackingTable,
-						          lifeticksColumn)
-			 && checkColumn(sql, "basic-tracking.field-lifeticks-formatted-field",
-							        trackingTable, lifeticksFormattedColumn))
-			{}
-			else
-			{
-				lifeticksEnabled = false;
-				log.severe("'lifeticks' tracking disabled due to previous error(s).");
-			}
-		}
-
-		if (walletEnabled)
-		{
-			if (checkColumn(sql, "basic-tracking.field-wallet-field", trackingTable,
-						          walletColumn))
-			{}
-			else
-			{
-				walletEnabled = false;
-				log.severe("'wallet' tracking disabled due to previous error(s).");
-			}
-		}
-
-    if ((onlinestatusEnabled || lastonlineEnabled	|| gametimeEnabled
-			|| totalxpEnabled			 || currentxpEnabled	|| levelEnabled
-			|| healthEnabled       || lifeticksEnabled	|| walletEnabled))
-		{}
-		else
-    {
-      statisticsTrackingEnabled = false;
-      log.severe("Basic tracking is enabled, but all individual trackers are"
-                +" disabled. Basic tracking is now turned off.");
-    }
-	}
-
-	/**
 	 * Loads the configuration information from the yaml file.
 	 *
 	 * @param CommunityBridge The plugin object for this plugin.
@@ -816,6 +698,24 @@ public class Configuration
 		// Group Synchronization: Secondary
 		groupSyncSecondaryEnabled = config.getBoolean("group-synchronization.secondary.enabled", false);
 
+		// Statistics Tracking Settings
+		statisticsEnabled = config.getBoolean("statistics.enabled", false);
+
+		statisticsTableName = config.getString("statistics.table-name", "");
+		statisticsUserIDColumn = config.getString("statistics.user-id-column", "");
+		statisticsUsesKey = config.getBoolean("statistics.uses-key", false);
+
+		if (statisticsUsesKey)
+		{
+			statisticsKeyColumn = config.getString("statistics.key-column", "");
+			statisticsValueColumn = config.getString("statistics.value-column", "");
+		}
+
+		onlineStatusEnabled = config.getBoolean("statistics.trackers.online-status.enabled", false);
+		onlineStatusColumnOrKey = config.getString("statistics.trackers.online-status.column-or-key-name", "");
+		onlineStatusValueOnline = config.getString("statistics.trackers.online-status.online-value", "");
+		onlineStatusValueOffline = config.getString("statistics.trackers.online-status.offline-value", "");
+
 		// These are calculated from settings above.
 		groupSyncEnabled = groupSyncPrimaryEnabled && groupSyncSecondaryEnabled;
 		permissionsSystemRequired = groupSyncEnabled;
@@ -886,13 +786,7 @@ public class Configuration
 		multi_table_key_value = config.getString("multi-table.field-key-value", "");
 		multi_table_value_field = config.getString("multi-table.field-value-field", "");
 
-		statisticsTrackingEnabled = config.getBoolean("enable-basic-tracking", false);
-
-		onlinestatusEnabled = config.getBoolean("basic-tracking.field-onlinestatus-enabled", false);
-		onlinestatusKeyValue = config.getString("basic-tracking.field-onlinestatus-key-value", "");
-		onlinestatusColumn = config.getString("basic-tracking.field-onlinestatus-field", "");
-		onlinestatusValueOnline = config.getString("basic-tracking.field-onlinestatus-valueonline", "");
-		onlinestatusValueOffline = config.getString("basic-tracking.field-onlinestatus-valueoffline", "");
+		statisticsEnabled = config.getBoolean("enable-basic-tracking", false);
 
 		lastonlineEnabled = config.getBoolean("basic-tracking.field-lastonline-enabled", false);
 		lastonlineColumn = config.getString("basic-tracking.field-lastonline-field", "");
@@ -1087,11 +981,11 @@ public class Configuration
 		// Old System
 		log.config(  "Multi Tables                         : " + multiTables);
 
-		log.config(  "Statistics Tracking                  : " + statisticsTrackingEnabled);
+		log.config(  "Statistics Tracking                  : " + statisticsEnabled);
 
-		if (statisticsTrackingEnabled)
+		if (statisticsEnabled)
 		{
-			log.config("Tracking Online Status               : " + onlinestatusEnabled);
+			log.config("Tracking Online Status               : " + onlineStatusEnabled);
 			log.config("Tracking Last Online                 : " + lastonlineEnabled);
 			log.config("Tracking Game Time                   : " + gametimeEnabled);
 			log.config("Tracking Total XP                    : " + totalxpEnabled);

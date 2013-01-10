@@ -159,7 +159,7 @@ public final class CommunityBridge extends JavaPlugin
 
 		// *** OLD boundary
 
-//		if (config.statisticsTrackingEnabled && config.onlinestatusEnabled)
+//		if (config.statisticsEnabled && config.onlineStatusEnabled)
 //		{
 //			resetOnlineStatus();
 //		}
@@ -387,38 +387,6 @@ public final class CommunityBridge extends JavaPlugin
 					syncAll();
 				}
 			}, every, every);
-		}
-	}
-
-	private void resetOnlineStatus()
-  {
-		try {
-			if (config.multiTables)
-      {
-				if (config.multiTablesUseKey)
-        {
-					sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.multi_table_value_field + " = '" + config.onlinestatusValueOffline + "' WHERE " + config.multi_table_key_field + " = '" + config.onlinestatusKeyValue + "'");
-				}
-        else
-        {
-					sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOffline + "' WHERE " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOnline + "'");
-				}
-			}
-      else
-      {
-				sql.updateQuery("UPDATE " + config.users_table + " SET " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOffline + "'  WHERE " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOnline + "'");
-			}
-		}
-		catch (MalformedURLException e)
-		{
-			log.severe("Error in ResetOnlineStatus: " + e.getMessage());
-			disablePlugin();
-		} catch (InstantiationException e) {
-			log.severe("Error in ResetOnlineStatus: " + e.getMessage());
-			disablePlugin();
-		} catch (IllegalAccessException e) {
-			log.severe("Error in ResetOnlineStatus: " + e.getMessage());
-			disablePlugin();
 		}
 	}
 
@@ -739,9 +707,9 @@ public final class CommunityBridge extends JavaPlugin
 
 					if (firstsync)
           {
-						if (config.statisticsTrackingEnabled)
+						if (config.statisticsEnabled)
             {
-              CommunityBridge.loadStatistics(id, p);
+              //CommunityBridge.loadStatistics(id, p);
             }
 
 						if (config.linkingNotifyRegistered)
@@ -754,9 +722,9 @@ public final class CommunityBridge extends JavaPlugin
 							}
 						}
 					}
-          else if (config.statisticsTrackingEnabled)
+          else if (config.statisticsEnabled)
           {
-						updateStatistics(id, p);
+//						updateStatistics(id, p);
 					}
 				}
 			}
@@ -832,178 +800,178 @@ public final class CommunityBridge extends JavaPlugin
 		}
 	}
 
-	public static void loadStatistics(int u, Player p){
-
-		int t = (int) (System.currentTimeMillis() / 1000L);
-
-		try {
-			ResultSet res;
-			if (config.multiTables && config.multiTablesUseKey)
-      {
-				// Check for each custom field in the database.
-				if (config.onlinestatusEnabled)
-        {
-					checkDBSanity(u, config.onlinestatusKeyValue);
-					sql.updateQuery("UPDATE "+config.multi_table+" SET " + config.multi_table_value_field +" = '" + config.onlinestatusValueOnline + "' WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '" + config.onlinestatusKeyValue + "'");
-				}
-
-				if (config.lastonlineEnabled)
-        {
-					checkDBSanity(u, config.lastonlineKeyValue);
-					sql.updateQuery("UPDATE " + config.multi_table
-									       + " SET " + config.multi_table_value_field + " = '" + t
-									       + "' WHERE " + config.multi_table_user_id_field + " = '" + u
-									       + "' AND " + config.multi_table_key_field + " = '"
-									       + config.lastonlineKeyValue + "'");
-				}
-
-				if (config.currentxpEnabled)
-        {
-					checkDBSanity(u, config.currentxpKeyValue);
-					res = sql.sqlQuery("SELECT " + config.multi_table_value_field + " FROM " + config.multi_table + " WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '"+ config.currentxpKeyValue + "'");
-					if (res.next())
-          {
-            p.setExp(res.getInt(config.multi_table_value_field));
-          }
-				}
-
-				if (config.totalxpEnabled)
-        {
-					checkDBSanity(u, config.totalxpKeyValue);
-					res = sql.sqlQuery("SELECT " + config.multi_table_value_field + " FROM " + config.multi_table + " WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '"+ config.totalxpKeyValue + "'");
-					if (res.next())
-          {
-            p.setTotalExperience(res.getInt(config.multi_table_value_field));
-          }
-				}
-
-				if (config.lifeticksEnabled)
-        {
-					checkDBSanity(u, config.lifeticksKeyValue);
-					res = sql.sqlQuery("SELECT " + config.multi_table_value_field + " FROM " + config.multi_table + " WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '"+ config.lifeticksKeyValue + "'");
-					if (res.next())
-          {
-            if (res.getInt(config.multi_table_value_field) > 0)
-            {
-              p.setTicksLived(res.getInt(config.multi_table_value_field));
-            }
-          }
-				}
-
-				if (config.levelEnabled)
-        {
-					checkDBSanity(u, config.levelKeyValue);
-					res = sql.sqlQuery("SELECT " + config.multi_table_value_field + " FROM " + config.multi_table + " WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '"+ config.levelKeyValue+"'");
-					if (res.next())
-          {
-            p.setLevel(res.getInt(config.multi_table_value_field));
-          }
-				}
-
-				if (config.healthEnabled)
-        {
-					checkDBSanity(u, config.healthKeyValue);
-					res = sql.sqlQuery("SELECT " + config.multi_table_value_field + " FROM " + config.multi_table + " WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '"+config.healthKeyValue+"'");
-					if (res.next())
-          {
-            if (res.getInt(config.multi_table_value_field)>0)
-            {
-              p.setHealth(res.getInt(config.multi_table_value_field));
-            }
-          }
-				}
-
-			}
-      else
-      {
-				if (config.multiTables)
-        {
-					res = sql.sqlQuery("SELECT * FROM " + config.multi_table + " WHERE " + config.multi_table_value_field + " = '" + p.getName() + "'");
-
-					if (config.onlinestatusEnabled)
-          {
-            sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOnline + "' WHERE " + config.multi_table_user_id_field + " = '" + u + "'");
-          }
-
-					if (config.lastonlineEnabled)
-          {
-            sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.lastonlineColumn + " = " + t + " WHERE " + config.multi_table_user_id_field + " = '" + u + "'");
-          }
-				}
-        else
-        {
-					res = sql.sqlQuery("SELECT * FROM " + config.users_table + " WHERE " + config.user_name_field + " = '" + p.getName() + "'");
-
-					if (config.onlinestatusEnabled)
-          {
-            sql.updateQuery("UPDATE " + config.users_table + " SET " + config.onlinestatusColumn + " = '" + config.onlinestatusValueOnline + "' WHERE " + config.user_id_field + " = '" + u + "'");
-          }
-
-					if (config.lastonlineEnabled)
-          {
-            sql.updateQuery("UPDATE " + config.users_table + " SET " + config.lastonlineColumn + " = " + t +" WHERE " + config.user_id_field + " = '" + u + "'");
-          }
-
-					if (!res.next())
-          {
-            return;
-          }
-				}
-
-				if (res.next())
-        {
-					if (config.currentxpEnabled)
-          {
-            p.setExp(res.getInt(config.currentxpColumn));
-          }
-
-					if (config.totalxpEnabled)
-          {
-            p.setTotalExperience(res.getInt(config.totalxpColumn));
-          }
-
-					if (config.lifeticksEnabled)
-          {
-						if (res.getInt(config.lifeticksColumn) > 0)
-            {
-              p.setTicksLived(res.getInt(config.lifeticksColumn));
-            }
-					}
-
-					if (config.levelEnabled)
-          {
-            p.setLevel(res.getInt(config.levelColumn));
-          }
-
-					if (config.healthEnabled)
-          {
-						if (res.getInt(config.healthColumn) > 0)
-            {
-              p.setHealth(res.getInt(config.healthColumn));
-            }
-					}
-				}
-			}
-		}
-		catch (MalformedURLException e)
-		{
-			log.severe("Error in LoadTrackingStats(): " + e.getMessage());
-		}
-		catch (InstantiationException e)
-		{
-			log.severe("Error in LoadTrackingStats(): " + e.getMessage());
-		}
-		catch (IllegalAccessException e)
-		{
-			log.severe("Error in LoadTrackingStats(): " + e.getMessage());
-		}
-		catch (SQLException e)
-		{
-			log.severe("Error in LoadTrackingStats(): " + e.getMessage());
-			log.severe("Broken Stat Tracking SQL Query, check your config.yml");
-			disablePlugin();
-		}
-	}
+//	public static void loadStatistics(int u, Player p){
+//
+//		int t = (int) (System.currentTimeMillis() / 1000L);
+//
+//		try {
+//			ResultSet res;
+//			if (config.multiTables && config.multiTablesUseKey)
+//      {
+//				// Check for each custom field in the database.
+//				if (config.onlineStatusEnabled)
+//        {
+//					checkDBSanity(u, config.onlineStatusColumnOrKey);
+//					sql.updateQuery("UPDATE "+config.multi_table+" SET " + config.multi_table_value_field +" = '" + config.onlineStatusValueOnline + "' WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '" + config.onlineStatusColumnOrKey + "'");
+//				}
+//
+//				if (config.lastonlineEnabled)
+//        {
+//					checkDBSanity(u, config.lastonlineKeyValue);
+//					sql.updateQuery("UPDATE " + config.multi_table
+//									       + " SET " + config.multi_table_value_field + " = '" + t
+//									       + "' WHERE " + config.multi_table_user_id_field + " = '" + u
+//									       + "' AND " + config.multi_table_key_field + " = '"
+//									       + config.lastonlineKeyValue + "'");
+//				}
+//
+//				if (config.currentxpEnabled)
+//        {
+//					checkDBSanity(u, config.currentxpKeyValue);
+//					res = sql.sqlQuery("SELECT " + config.multi_table_value_field + " FROM " + config.multi_table + " WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '"+ config.currentxpKeyValue + "'");
+//					if (res.next())
+//          {
+//            p.setExp(res.getInt(config.multi_table_value_field));
+//          }
+//				}
+//
+//				if (config.totalxpEnabled)
+//        {
+//					checkDBSanity(u, config.totalxpKeyValue);
+//					res = sql.sqlQuery("SELECT " + config.multi_table_value_field + " FROM " + config.multi_table + " WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '"+ config.totalxpKeyValue + "'");
+//					if (res.next())
+//          {
+//            p.setTotalExperience(res.getInt(config.multi_table_value_field));
+//          }
+//				}
+//
+//				if (config.lifeticksEnabled)
+//        {
+//					checkDBSanity(u, config.lifeticksKeyValue);
+//					res = sql.sqlQuery("SELECT " + config.multi_table_value_field + " FROM " + config.multi_table + " WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '"+ config.lifeticksKeyValue + "'");
+//					if (res.next())
+//          {
+//            if (res.getInt(config.multi_table_value_field) > 0)
+//            {
+//              p.setTicksLived(res.getInt(config.multi_table_value_field));
+//            }
+//          }
+//				}
+//
+//				if (config.levelEnabled)
+//        {
+//					checkDBSanity(u, config.levelKeyValue);
+//					res = sql.sqlQuery("SELECT " + config.multi_table_value_field + " FROM " + config.multi_table + " WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '"+ config.levelKeyValue+"'");
+//					if (res.next())
+//          {
+//            p.setLevel(res.getInt(config.multi_table_value_field));
+//          }
+//				}
+//
+//				if (config.healthEnabled)
+//        {
+//					checkDBSanity(u, config.healthKeyValue);
+//					res = sql.sqlQuery("SELECT " + config.multi_table_value_field + " FROM " + config.multi_table + " WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '"+config.healthKeyValue+"'");
+//					if (res.next())
+//          {
+//            if (res.getInt(config.multi_table_value_field)>0)
+//            {
+//              p.setHealth(res.getInt(config.multi_table_value_field));
+//            }
+//          }
+//				}
+//
+//			}
+//      else
+//      {
+//				if (config.multiTables)
+//        {
+//					res = sql.sqlQuery("SELECT * FROM " + config.multi_table + " WHERE " + config.multi_table_value_field + " = '" + p.getName() + "'");
+//
+//					if (config.onlineStatusEnabled)
+//          {
+//            sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.onlinestatusColumn + " = '" + config.onlineStatusValueOnline + "' WHERE " + config.multi_table_user_id_field + " = '" + u + "'");
+//          }
+//
+//					if (config.lastonlineEnabled)
+//          {
+//            sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.lastonlineColumn + " = " + t + " WHERE " + config.multi_table_user_id_field + " = '" + u + "'");
+//          }
+//				}
+//        else
+//        {
+//					res = sql.sqlQuery("SELECT * FROM " + config.users_table + " WHERE " + config.user_name_field + " = '" + p.getName() + "'");
+//
+//					if (config.onlineStatusEnabled)
+//          {
+//            sql.updateQuery("UPDATE " + config.users_table + " SET " + config.onlinestatusColumn + " = '" + config.onlineStatusValueOnline + "' WHERE " + config.user_id_field + " = '" + u + "'");
+//          }
+//
+//					if (config.lastonlineEnabled)
+//          {
+//            sql.updateQuery("UPDATE " + config.users_table + " SET " + config.lastonlineColumn + " = " + t +" WHERE " + config.user_id_field + " = '" + u + "'");
+//          }
+//
+//					if (!res.next())
+//          {
+//            return;
+//          }
+//				}
+//
+//				if (res.next())
+//        {
+//					if (config.currentxpEnabled)
+//          {
+//            p.setExp(res.getInt(config.currentxpColumn));
+//          }
+//
+//					if (config.totalxpEnabled)
+//          {
+//            p.setTotalExperience(res.getInt(config.totalxpColumn));
+//          }
+//
+//					if (config.lifeticksEnabled)
+//          {
+//						if (res.getInt(config.lifeticksColumn) > 0)
+//            {
+//              p.setTicksLived(res.getInt(config.lifeticksColumn));
+//            }
+//					}
+//
+//					if (config.levelEnabled)
+//          {
+//            p.setLevel(res.getInt(config.levelColumn));
+//          }
+//
+//					if (config.healthEnabled)
+//          {
+//						if (res.getInt(config.healthColumn) > 0)
+//            {
+//              p.setHealth(res.getInt(config.healthColumn));
+//            }
+//					}
+//				}
+//			}
+//		}
+//		catch (MalformedURLException e)
+//		{
+//			log.severe("Error in LoadTrackingStats(): " + e.getMessage());
+//		}
+//		catch (InstantiationException e)
+//		{
+//			log.severe("Error in LoadTrackingStats(): " + e.getMessage());
+//		}
+//		catch (IllegalAccessException e)
+//		{
+//			log.severe("Error in LoadTrackingStats(): " + e.getMessage());
+//		}
+//		catch (SQLException e)
+//		{
+//			log.severe("Error in LoadTrackingStats(): " + e.getMessage());
+//			log.severe("Broken Stat Tracking SQL Query, check your config.yml");
+//			disablePlugin();
+//		}
+//	}
 
   public static String timeElapsedtoString(int time)
   {
@@ -1056,284 +1024,283 @@ public final class CommunityBridge extends JavaPlugin
     return elapsed;
   }
 
-
-	public static void updateStatistics(int u, Player p)
-  {
-		float currentxp = p.getExp();
-		String currentxp_formatted = ((int)(currentxp * 100)) + "%";
-		int t = (int) (System.currentTimeMillis() / 1000L);
-    Date date = new Date();
-    SimpleDateFormat format = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss a");
-		int lifeticks = p.getTicksLived();
-		String lifeticks_formatted = timeElapsedtoString((int)(lifeticks / 20));
-		int totalxp = p.getTotalExperience();
-		int level = p.getLevel();
-		int health = p.getHealth();
-		int lastonline = 0;
-		int gametime = 0;
-    String timeElapsed = "";
-
-		ResultSet res;
-
-		try {
-			if (config.multiTables && config.multiTablesUseKey)
-      {
-				if (config.lastonlineEnabled)
-        {
-					res = sql.sqlQuery("SELECT " + config.multi_table_value_field + " FROM " + config.multi_table + " WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '" + config.lastonlineKeyValue + "'");
-					if (res.next())
-          {
-            lastonline = res.getInt(config.multi_table_value_field);
-          }
-				}
-
-				if (config.lastonlineEnabled && config.gametimeEnabled)
-        {
-					res = sql.sqlQuery("SELECT " + config.multi_table_value_field + " FROM " + config.multi_table + " WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '" + config.gametimeKeyValue + "'");
-
-          if (res.next())
-          {
-						gametime = res.getInt(config.multi_table_value_field);
-
-						if (lastonline > 0)
-            {
-              gametime = gametime + (t - lastonline);
-              timeElapsed = timeElapsedtoString(gametime);
-            }
-					}
-				}
-
-				if (config.onlinestatusEnabled)
-        {
-          sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.multi_table_value_field + " = '" + config.onlinestatusValueOnline + "' WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '" + config.onlinestatusKeyValue + "'");
-        }
-
-				if (config.totalxpEnabled)
-        {
-          sql.updateQuery("UPDATE " + config.multi_table + " SET " +config.multi_table_value_field + " = '" + totalxp + "' WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '" + config.totalxpKeyValue + "'");
-        }
-
-				if (config.currentxpEnabled)
-        {
-          sql.updateQuery("UPDATE " + config.multi_table
-									       + " SET " + config.multi_table_value_field + " = '" + currentxp
-									       + "' WHERE " + config.multi_table_user_id_field + " = '" + u
-									       + "' AND " + config.multi_table_key_field + " = '"
-									       + config.currentxpKeyValue + "'");
-
-					if (!config.currentxpFormattedKeyValue.isEmpty())
-					{
-						sql.updateQuery("UPDATE " + config.multi_table
-													 + " SET " + config.multi_table_value_field + " = '"
-													 + currentxp_formatted
-													 + "' WHERE " + config.multi_table_user_id_field + " = '" + u
-													 + "' AND " + config.multi_table_key_field + " = '"
-													 + config.currentxpFormattedKeyValue + "'");
-					}
-        }
-
-				if (config.levelEnabled)
-        {
-          sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.multi_table_value_field + " = '" + level + "' WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '" + config.levelKeyValue + "'");
-        }
-
-				if (config.healthEnabled)
-        {
-          sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.multi_table_value_field + " = '" + health + "' WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '" + config.healthKeyValue + "'");
-        }
-
-				if (config.lifeticksEnabled)
-        {
-          sql.updateQuery("UPDATE " + config.multi_table
-									       + " SET " + config.multi_table_value_field + " = '"
-									       + lifeticks
-									       + "' WHERE " + config.multi_table_user_id_field + " = '" + u
-									       + "' AND " + config.multi_table_key_field + " = '"
-									       + config.lifeticksKeyValue + "'");
-					if (!config.lifeticksFormattedKeyValue.isEmpty())
-					{
-						sql.updateQuery("UPDATE " + config.multi_table
-													 + " SET " + config.multi_table_value_field + " = '"
-													 + lifeticks_formatted
-													 + "' WHERE " + config.multi_table_user_id_field + " = '" + u
-													 + "' AND " + config.multi_table_key_field + " = '"
-													 + config.lifeticksFormattedKeyValue + "'");
-					}
-        }
-
-				if (config.lastonlineEnabled)
-        {
-					sql.updateQuery("UPDATE " + config.multi_table
-                         + " SET " + config.multi_table_value_field + " = '" + t
-                         + "' WHERE " + config.multi_table_user_id_field + " = '" + u
-                         + "' AND " + config.multi_table_key_field +" = '"
-                         + config.lastonlineKeyValue + "'");
-
-          if (!config.lastonlineFormattedKeyValue.isEmpty())
-          {
-            sql.updateQuery("UPDATE " + config.multi_table
-                           + " SET " + config.multi_table_value_field + " = '"
-                           + format.format(date)
-                           + "' WHERE " + config.multi_table_user_id_field + " = '" + u
-                           + "' AND " + config.multi_table_key_field + " = '"
-                           + config.lastonlineFormattedKeyValue + "'");
-          }
-        }
-
-				if (config.lastonlineEnabled && config.gametimeEnabled)
-        {
-					sql.updateQuery("UPDATE " + config.multi_table
-                         + " SET " + config.multi_table_value_field + " = '" + gametime
-                         + "' WHERE " + config.multi_table_user_id_field + " = '" + u
-                         + "' AND " + config.multi_table_key_field + " = '"
-                         + config.gametimeKeyValue + "'");
-
-          if (!config.gametimeFormattedKeyValue.isEmpty())
-          {
-            sql.updateQuery("UPDATE " + config.multi_table
-                           + " SET " + config.multi_table_value_field + " = '"
-                           + timeElapsed + "'"
-                           + " WHERE " + config.multi_table_user_id_field + " = '" + u
-                           + "' AND " + config.multi_table_key_field + " = '"
-                           + config.gametimeFormattedKeyValue + "'");
-          }
-        }
-			}
-      else
-      {
-				if (config.multiTables)
-        {
-					res = CommunityBridge.sql.sqlQuery("SELECT * FROM  "+ config.multi_table +" WHERE " + config.multi_table_user_id_field + " = '" + u + "'");
-				}
-        else
-        {
-					res = CommunityBridge.sql.sqlQuery("SELECT * FROM " + config.users_table + " WHERE " + config.user_id_field + " = '" + u + "'");
-				}
-
-				if (res.next())
-        {
-					if (config.lastonlineEnabled)
-          {
-            lastonline = res.getInt(config.lastonlineColumn);
-          }
-
-					if (config.lastonlineEnabled && config.gametimeEnabled)
-          {
-						gametime = res.getInt(config.gametimeColumn);
-						if (lastonline > 0)
-            {
-              gametime = gametime + (t - lastonline);
-              timeElapsed = timeElapsedtoString(gametime);
-            }
-					}
-				}
-
-				LinkedList <String> SQLParts = new LinkedList<String>();
-				if (config.onlinestatusEnabled)
-        {
-          SQLParts.add(config.onlinestatusColumn + " = '" + config.onlinestatusValueOnline + "'");
-        }
-
-				if (config.totalxpEnabled)
-        {
-          SQLParts.add(config.totalxpColumn + " = '" + totalxp + "'");
-        }
-
-				if (config.currentxpEnabled)
-        {
-          SQLParts.add(config.currentxpColumn + " = '" + currentxp + "'");
-
-					if (!config.currentxpFormattedColumn.isEmpty())
-					{
-						SQLParts.add(config.currentxpFormattedColumn + " = '"
-										    + currentxp_formatted + "'");
-					}
-        }
-
-				if (config.levelEnabled)
-        {
-          SQLParts.add(config.levelColumn + " = '" + level + "'");
-        }
-
-				if (config.healthEnabled)
-        {
-          SQLParts.add(config.healthColumn + " = '" + health + "'");
-        }
-
-				if (config.lifeticksEnabled)
-        {
-          SQLParts.add(config.lifeticksColumn + " = '" + lifeticks + "'");
-
-					if (!config.lifeticksFormattedColumn.isEmpty())
-					{
-						SQLParts.add(config.lifeticksFormattedColumn
-										    + " = '" + lifeticks_formatted + "'");
-					}
-        }
-
-				if (config.gametimeEnabled)
-        {
-					SQLParts.add(config.gametimeColumn + " = '" + gametime + "'");
-
-          if (!config.gametimeFormattedColumn.isEmpty())
-          {
-            SQLParts.add(config.gametimeFormattedColumn + " = '"
-                        + timeElapsed
-                        + "'");
-          }
-        }
-
-				if (config.lastonlineEnabled)
-        {
-					SQLParts.add(config.lastonlineColumn + " = '" + t + "'");
-
-          if (!config.lastonlineFormattedColumn.isEmpty())
-          {
-            SQLParts.add(config.lastonlineFormattedColumn + " = '"
-                        + format.format(date)
-                        + "'");
-          }
-        }
-
-				StringBuilder SQLUpdates = new StringBuilder();
-				for(String s: SQLParts)
-        {
-					if (!SQLUpdates.toString().isEmpty())
-          {
-            SQLUpdates.append(", ");
-          }
-					SQLUpdates.append(s);
-				}
-
-				if (config.multiTables)
-        {
-					sql.updateQuery("UPDATE " + config.multi_table + " SET " + SQLUpdates + " WHERE " + config.multi_table_user_id_field + " = '" + u + "'");
-				}
-        else
-        {
-					sql.updateQuery("UPDATE " + config.users_table + " SET " + SQLUpdates + " WHERE " + config.user_id_field + " = '" + u + "'");
-				}
-			}
-		}
-		catch (SQLException e)
-		{
-			log.severe("Error in UpdateTrackingStats(): " + e.getMessage());
-		}
-		catch (MalformedURLException e)
-		{
-			log.severe("Error in UpdateTrackingStats(): " + e.getMessage());
-		}
-		catch (InstantiationException e)
-		{
-			log.severe("Error in UpdateTrackingStats(): " + e.getMessage());
-		}
-		catch (IllegalAccessException e)
-		{
-			log.severe("Error in UpdateTrackingStats(): " + e.getMessage());
-			log.severe("Broken Save Stats SQL Query, check your config.yml");
-			disablePlugin();
-		}
-	}
+//	public static void updateStatistics(int u, Player p)
+//  {
+//		float currentxp = p.getExp();
+//		String currentxp_formatted = ((int)(currentxp * 100)) + "%";
+//		int t = (int) (System.currentTimeMillis() / 1000L);
+//    Date date = new Date();
+//    SimpleDateFormat format = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss a");
+//		int lifeticks = p.getTicksLived();
+//		String lifeticks_formatted = timeElapsedtoString((int)(lifeticks / 20));
+//		int totalxp = p.getTotalExperience();
+//		int level = p.getLevel();
+//		int health = p.getHealth();
+//		int lastonline = 0;
+//		int gametime = 0;
+//    String timeElapsed = "";
+//
+//		ResultSet res;
+//
+//		try {
+//			if (config.multiTables && config.multiTablesUseKey)
+//      {
+//				if (config.lastonlineEnabled)
+//        {
+//					res = sql.sqlQuery("SELECT " + config.multi_table_value_field + " FROM " + config.multi_table + " WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '" + config.lastonlineKeyValue + "'");
+//					if (res.next())
+//          {
+//            lastonline = res.getInt(config.multi_table_value_field);
+//          }
+//				}
+//
+//				if (config.lastonlineEnabled && config.gametimeEnabled)
+//        {
+//					res = sql.sqlQuery("SELECT " + config.multi_table_value_field + " FROM " + config.multi_table + " WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '" + config.gametimeKeyValue + "'");
+//
+//          if (res.next())
+//          {
+//						gametime = res.getInt(config.multi_table_value_field);
+//
+//						if (lastonline > 0)
+//            {
+//              gametime = gametime + (t - lastonline);
+//              timeElapsed = timeElapsedtoString(gametime);
+//            }
+//					}
+//				}
+//
+//				if (config.onlineStatusEnabled)
+//        {
+//          sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.multi_table_value_field + " = '" + config.onlineStatusValueOnline + "' WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '" + config.onlineStatusColumnOrKey + "'");
+//        }
+//
+//				if (config.totalxpEnabled)
+//        {
+//          sql.updateQuery("UPDATE " + config.multi_table + " SET " +config.multi_table_value_field + " = '" + totalxp + "' WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '" + config.totalxpKeyValue + "'");
+//        }
+//
+//				if (config.currentxpEnabled)
+//        {
+//          sql.updateQuery("UPDATE " + config.multi_table
+//									       + " SET " + config.multi_table_value_field + " = '" + currentxp
+//									       + "' WHERE " + config.multi_table_user_id_field + " = '" + u
+//									       + "' AND " + config.multi_table_key_field + " = '"
+//									       + config.currentxpKeyValue + "'");
+//
+//					if (!config.currentxpFormattedKeyValue.isEmpty())
+//					{
+//						sql.updateQuery("UPDATE " + config.multi_table
+//													 + " SET " + config.multi_table_value_field + " = '"
+//													 + currentxp_formatted
+//													 + "' WHERE " + config.multi_table_user_id_field + " = '" + u
+//													 + "' AND " + config.multi_table_key_field + " = '"
+//													 + config.currentxpFormattedKeyValue + "'");
+//					}
+//        }
+//
+//				if (config.levelEnabled)
+//        {
+//          sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.multi_table_value_field + " = '" + level + "' WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '" + config.levelKeyValue + "'");
+//        }
+//
+//				if (config.healthEnabled)
+//        {
+//          sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.multi_table_value_field + " = '" + health + "' WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '" + config.healthKeyValue + "'");
+//        }
+//
+//				if (config.lifeticksEnabled)
+//        {
+//          sql.updateQuery("UPDATE " + config.multi_table
+//									       + " SET " + config.multi_table_value_field + " = '"
+//									       + lifeticks
+//									       + "' WHERE " + config.multi_table_user_id_field + " = '" + u
+//									       + "' AND " + config.multi_table_key_field + " = '"
+//									       + config.lifeticksKeyValue + "'");
+//					if (!config.lifeticksFormattedKeyValue.isEmpty())
+//					{
+//						sql.updateQuery("UPDATE " + config.multi_table
+//													 + " SET " + config.multi_table_value_field + " = '"
+//													 + lifeticks_formatted
+//													 + "' WHERE " + config.multi_table_user_id_field + " = '" + u
+//													 + "' AND " + config.multi_table_key_field + " = '"
+//													 + config.lifeticksFormattedKeyValue + "'");
+//					}
+//        }
+//
+//				if (config.lastonlineEnabled)
+//        {
+//					sql.updateQuery("UPDATE " + config.multi_table
+//                         + " SET " + config.multi_table_value_field + " = '" + t
+//                         + "' WHERE " + config.multi_table_user_id_field + " = '" + u
+//                         + "' AND " + config.multi_table_key_field +" = '"
+//                         + config.lastonlineKeyValue + "'");
+//
+//          if (!config.lastonlineFormattedKeyValue.isEmpty())
+//          {
+//            sql.updateQuery("UPDATE " + config.multi_table
+//                           + " SET " + config.multi_table_value_field + " = '"
+//                           + format.format(date)
+//                           + "' WHERE " + config.multi_table_user_id_field + " = '" + u
+//                           + "' AND " + config.multi_table_key_field + " = '"
+//                           + config.lastonlineFormattedKeyValue + "'");
+//          }
+//        }
+//
+//				if (config.lastonlineEnabled && config.gametimeEnabled)
+//        {
+//					sql.updateQuery("UPDATE " + config.multi_table
+//                         + " SET " + config.multi_table_value_field + " = '" + gametime
+//                         + "' WHERE " + config.multi_table_user_id_field + " = '" + u
+//                         + "' AND " + config.multi_table_key_field + " = '"
+//                         + config.gametimeKeyValue + "'");
+//
+//          if (!config.gametimeFormattedKeyValue.isEmpty())
+//          {
+//            sql.updateQuery("UPDATE " + config.multi_table
+//                           + " SET " + config.multi_table_value_field + " = '"
+//                           + timeElapsed + "'"
+//                           + " WHERE " + config.multi_table_user_id_field + " = '" + u
+//                           + "' AND " + config.multi_table_key_field + " = '"
+//                           + config.gametimeFormattedKeyValue + "'");
+//          }
+//        }
+//			}
+//      else
+//      {
+//				if (config.multiTables)
+//        {
+//					res = CommunityBridge.sql.sqlQuery("SELECT * FROM  "+ config.multi_table +" WHERE " + config.multi_table_user_id_field + " = '" + u + "'");
+//				}
+//        else
+//        {
+//					res = CommunityBridge.sql.sqlQuery("SELECT * FROM " + config.users_table + " WHERE " + config.user_id_field + " = '" + u + "'");
+//				}
+//
+//				if (res.next())
+//        {
+//					if (config.lastonlineEnabled)
+//          {
+//            lastonline = res.getInt(config.lastonlineColumn);
+//          }
+//
+//					if (config.lastonlineEnabled && config.gametimeEnabled)
+//          {
+//						gametime = res.getInt(config.gametimeColumn);
+//						if (lastonline > 0)
+//            {
+//              gametime = gametime + (t - lastonline);
+//              timeElapsed = timeElapsedtoString(gametime);
+//            }
+//					}
+//				}
+//
+//				LinkedList <String> SQLParts = new LinkedList<String>();
+//				if (config.onlineStatusEnabled)
+//        {
+//          SQLParts.add(config.onlinestatusColumn + " = '" + config.onlineStatusValueOnline + "'");
+//        }
+//
+//				if (config.totalxpEnabled)
+//        {
+//          SQLParts.add(config.totalxpColumn + " = '" + totalxp + "'");
+//        }
+//
+//				if (config.currentxpEnabled)
+//        {
+//          SQLParts.add(config.currentxpColumn + " = '" + currentxp + "'");
+//
+//					if (!config.currentxpFormattedColumn.isEmpty())
+//					{
+//						SQLParts.add(config.currentxpFormattedColumn + " = '"
+//										    + currentxp_formatted + "'");
+//					}
+//        }
+//
+//				if (config.levelEnabled)
+//        {
+//          SQLParts.add(config.levelColumn + " = '" + level + "'");
+//        }
+//
+//				if (config.healthEnabled)
+//        {
+//          SQLParts.add(config.healthColumn + " = '" + health + "'");
+//        }
+//
+//				if (config.lifeticksEnabled)
+//        {
+//          SQLParts.add(config.lifeticksColumn + " = '" + lifeticks + "'");
+//
+//					if (!config.lifeticksFormattedColumn.isEmpty())
+//					{
+//						SQLParts.add(config.lifeticksFormattedColumn
+//										    + " = '" + lifeticks_formatted + "'");
+//					}
+//        }
+//
+//				if (config.gametimeEnabled)
+//        {
+//					SQLParts.add(config.gametimeColumn + " = '" + gametime + "'");
+//
+//          if (!config.gametimeFormattedColumn.isEmpty())
+//          {
+//            SQLParts.add(config.gametimeFormattedColumn + " = '"
+//                        + timeElapsed
+//                        + "'");
+//          }
+//        }
+//
+//				if (config.lastonlineEnabled)
+//        {
+//					SQLParts.add(config.lastonlineColumn + " = '" + t + "'");
+//
+//          if (!config.lastonlineFormattedColumn.isEmpty())
+//          {
+//            SQLParts.add(config.lastonlineFormattedColumn + " = '"
+//                        + format.format(date)
+//                        + "'");
+//          }
+//        }
+//
+//				StringBuilder SQLUpdates = new StringBuilder();
+//				for(String s: SQLParts)
+//        {
+//					if (!SQLUpdates.toString().isEmpty())
+//          {
+//            SQLUpdates.append(", ");
+//          }
+//					SQLUpdates.append(s);
+//				}
+//
+//				if (config.multiTables)
+//        {
+//					sql.updateQuery("UPDATE " + config.multi_table + " SET " + SQLUpdates + " WHERE " + config.multi_table_user_id_field + " = '" + u + "'");
+//				}
+//        else
+//        {
+//					sql.updateQuery("UPDATE " + config.users_table + " SET " + SQLUpdates + " WHERE " + config.user_id_field + " = '" + u + "'");
+//				}
+//			}
+//		}
+//		catch (SQLException e)
+//		{
+//			log.severe("Error in UpdateTrackingStats(): " + e.getMessage());
+//		}
+//		catch (MalformedURLException e)
+//		{
+//			log.severe("Error in UpdateTrackingStats(): " + e.getMessage());
+//		}
+//		catch (InstantiationException e)
+//		{
+//			log.severe("Error in UpdateTrackingStats(): " + e.getMessage());
+//		}
+//		catch (IllegalAccessException e)
+//		{
+//			log.severe("Error in UpdateTrackingStats(): " + e.getMessage());
+//			log.severe("Broken Save Stats SQL Query, check your config.yml");
+//			disablePlugin();
+//		}
+//	}
 
 	public static boolean isOkayToSetPrimaryGroup(String groupID)
 	{

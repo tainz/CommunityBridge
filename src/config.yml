@@ -247,7 +247,7 @@ group-synchronization:
 # custom profile fields or a similar feature. CommunityBridge will put the
 # information in the database. It is up to you to configure your web application
 # so that it displays the information.
-statistics-tracking:
+statistics:
   # Enables statistics tracking. Nothing will be tracked unless you also enable
   # at least one of the trackers below.
   enabled: false
@@ -255,8 +255,12 @@ statistics-tracking:
   table-name:
   # Name of the column that contains the player's User ID on the table.
   user-id-column:
-  # Set this to true if the table stores
+  # Set this to true if data on the table is stored in key-value pairs.
   uses-key: false
+  
+  # If uses-key is true, set these as well. They are unused if uses-key is false.
+  key-column:
+  value-column:
 
   # Individual trackers
   # -------------------
