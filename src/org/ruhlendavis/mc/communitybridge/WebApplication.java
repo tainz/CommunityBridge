@@ -17,15 +17,17 @@ import org.ruhlendavis.mc.utility.Log;
  */
 public class WebApplication
 {
+	private CommunityBridge plugin;
 	private Configuration config;
-	private SQL sql;
 	private Log log;
+	private SQL sql;
 
 	private Map<String, String> playerUserIDs = new HashMap();
 
-	public WebApplication(Configuration config, SQL sql, Log log)
+	public WebApplication(CommunityBridge plugin, Configuration config, Log log, SQL sql)
 	{
 		this.config = config;
+		this.plugin = plugin;
 		this.log = log;
 		setSQL(sql);
 	}
@@ -253,14 +255,46 @@ public class WebApplication
 	} // loadUserIDfromDatabase()
 
 	/**
+	 * Performs operations when a player joins
+	 *
+	 * @param String The player who joined.
+	 */
+	public void onJoin(final String playerName)
+	{
+		runUpdateStatisticsTask(playerName);
+	}
+
+	/**
 	 * Performs operations when a player quits.
 	 *
 	 * @param String containing the player's name.
 	 */
-	public void onQuit(String playerName)
+	public void onQuit(final String playerName)
 	{
 		// Only keep user IDs for connected players on hand.
 		playerUserIDs.remove(playerName);
+		runUpdateStatisticsTask(playerName);
+	}
+
+	/**
+	 * If statistics is enabled, this method sets up an update statistics task
+	 * for the given player.
+	 *
+	 * @param String The player's name.
+	 */
+	private void runUpdateStatisticsTask(final String playerName)
+	{
+		if (config.statisticsEnabled)
+		{
+			Bukkit.getScheduler().runTaskAsynchronously(plugin,	new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					updateStatistics(playerName);
+				}
+			});
+		}
 	}
 
 	/**
@@ -272,4 +306,10 @@ public class WebApplication
 	{
 		this.sql = sql;
 	}
+
+	private void updateStatistics(String playerName)
+	{
+
+	}
+
 } // WebApplication class

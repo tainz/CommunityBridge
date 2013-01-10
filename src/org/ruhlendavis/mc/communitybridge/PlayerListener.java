@@ -1,8 +1,6 @@
 package org.ruhlendavis.mc.communitybridge;
 
-import java.net.MalformedURLException;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
@@ -15,6 +13,7 @@ public class PlayerListener implements Listener
 	private Configuration config;
 	private Log log;
 	private WebApplication webapp;
+
 
 	/**
 	 * Constructor
@@ -97,6 +96,7 @@ public class PlayerListener implements Listener
 				String message = ChatColor.GREEN + config.messages.get("link-registered-player");
 				event.setJoinMessage(message);
 			}
+			webapp.onJoin(playerName);
 		}
 		else
 		{
@@ -116,9 +116,7 @@ public class PlayerListener implements Listener
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event)
 	{
-		Player player = event.getPlayer();
-
-		webapp.onQuit(player.getName());
+		webapp.onQuit(event.getPlayer().getName());
 	} // onPlayerQuit
 } // PlayerListener class
 

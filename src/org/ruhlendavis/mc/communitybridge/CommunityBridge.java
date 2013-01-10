@@ -107,7 +107,7 @@ public final class CommunityBridge extends JavaPlugin
 			}
 		}
 
-		webapp = new WebApplication(config, sql, log);
+		webapp = new WebApplication(this, config, log, sql);
 		webapp.loadOnlineUserIDsFromDatabase();
 		getServer().getPluginManager().registerEvents(new PlayerListener(log, config, webapp), this);
 
