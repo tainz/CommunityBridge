@@ -665,6 +665,7 @@ public final class Main extends JavaPlugin
       {
 				ResultSet res = sql.sqlQuery("SELECT * FROM " + config.users_table
 								                   + " WHERE " + config.user_id_field + " = '" + id + "'");
+
 				if (res.next())
         {
 					if (config.useBanned)
@@ -696,8 +697,20 @@ public final class Main extends JavaPlugin
 
 					if (config.groupSynchronizationPrimaryEnabled)
 					{
-						// Note: groups is a map <String, Object> so we need the cast.
-						groupID = res.getString(config.groups_id_field);
+						if (config.groups_table_enabled)
+						{
+							ResultSet res2 = sql.sqlQuery("SELECT * FROM " + config.groups_table
+								                   + " WHERE " + config.groups_user_id_field + " = '" + id + "'");
+							if (res2.next())
+							{
+								groupID = res.getString(config.groups_group_id_field);
+							}
+						}
+						else
+						{
+							// Note: groups is a map <String, Object> so we need the cast.
+							groupID = res.getString(config.groups_id_field);
+						}
 						groupName = (String)config.groups.get(groupID);
 
 						if (config.banlistTableEnabled)
