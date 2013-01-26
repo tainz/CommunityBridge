@@ -703,7 +703,7 @@ public final class Main extends JavaPlugin
 								                   + " WHERE " + config.groups_user_id_field + " = '" + id + "'");
 							if (res2.next())
 							{
-								groupID = res.getString(config.groups_group_id_field);
+								groupID = res2.getString(config.groups_group_id_field);
 							}
 						}
 						else
@@ -823,6 +823,7 @@ public final class Main extends JavaPlugin
 			disablePlugin();
 		} catch (SQLException e) {
 			log.severe("Sync User SQL Query Broken, check your config.yml;" + e.getMessage());
+			e.printStackTrace();
 			disablePlugin();
 		}
 	}
