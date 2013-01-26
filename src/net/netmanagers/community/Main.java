@@ -792,32 +792,24 @@ public final class Main extends JavaPlugin
 			}
       else
       {
-				if (config.kick_unregistered)
-        {
-					p.kickPlayer(config.unregistered_message);
-					log.info(p.getName() + " kicked because they are not registered.");
+				if (firstsync)
+				{
+					p.sendMessage(ChatColor.RED + config.unregistered_message);
+					log.fine(p.getName() + "'s name not set or not registered on community site");
 				}
-        else
-        {
-					if (firstsync)
-					{
-						p.sendMessage(ChatColor.RED + config.unregistered_message);
-						log.fine(p.getName() + "'s name not set or not registered on community site");
-					}
-					else
-					{
-						p.sendMessage(ChatColor.RED + config.unregistered_messagereminder);
-						log.fine(p.getName() + " issued unregistered reminder notice");
-					}
+				else
+				{
+					p.sendMessage(ChatColor.RED + config.unregistered_messagereminder);
+					log.fine(p.getName() + " issued unregistered reminder notice");
+				}
 
-					if (isOkayToSetPrimaryGroup(null))
-					{
-						setGroup(config.defaultGroup, p, true);
-					}
-					else
-					{
-						log.finer(p.getName() + "'s  primary group not set to default due to config.");
-					}
+				if (isOkayToSetPrimaryGroup(null))
+				{
+					setGroup(config.defaultGroup, p, true);
+				}
+				else
+				{
+					log.finer(p.getName() + "'s  primary group not set to default due to config.");
 				}
 			}
 		} catch (MalformedURLException e) {

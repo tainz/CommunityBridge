@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -15,6 +16,19 @@ public class EventListener implements Listener
 	EventListener(Main plugin)
 	{
 		this.plugin = plugin;
+	}
+
+	@EventHandler
+	public void onPlayerPreLogin(AsyncPlayerPreLoginEvent event)
+	{
+		if (Main.config.kick_unregistered)
+		{
+			if (Main.getUserId(event.getName()) == 0)
+			{
+				event.setKickMessage(Main.config.unregistered_message);
+				event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST);
+			}
+		}
 	}
 
 	@EventHandler
