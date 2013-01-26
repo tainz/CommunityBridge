@@ -668,16 +668,6 @@ public final class Main extends JavaPlugin
 
 				if (res.next())
         {
-					if (config.useBanned)
-          {
-						boolean banned = res.getBoolean(config.is_banned_field);
-
-						if (banned)
-            {
-              p.kickPlayer("You have been banned from the site.");
-            }
-					}
-
 					boolean requirements_met = true;
 
 					if (config.require_minposts)
@@ -712,14 +702,6 @@ public final class Main extends JavaPlugin
 							groupID = res.getString(config.groups_id_field);
 						}
 						groupName = (String)config.groups.get(groupID);
-
-						if (config.banlistTableEnabled)
-						{
-							if (res.getString(config.groups_id_field).equalsIgnoreCase(config.banned_users_group))
-							{
-								p.kickPlayer("You have been banned from the site.");
-							}
-						}
 
 						if (requirements_met)
 						{

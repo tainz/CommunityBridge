@@ -1,6 +1,10 @@
 package net.netmanagers.community;
 
 import java.net.MalformedURLException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,15 +25,62 @@ public class EventListener implements Listener
 	@EventHandler
 	public void onPlayerPreLogin(AsyncPlayerPreLoginEvent event)
 	{
-		if (Main.config.kick_unregistered)
+		int id = Main.getUserId(event.getName());
+		if (id == 0)
 		{
-			if (Main.getUserId(event.getName()) == 0)
+			if (Main.config.kick_unregistered)
 			{
 				event.setKickMessage(Main.config.unregistered_message);
 				event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST);
 			}
 		}
-	}
+		else
+		{
+			if (Main.config.useBanned || Main.config.banlistTableEnabled)
+			{
+				try
+				{
+					ResultSet res = Main.sql.sqlQuery("SELECT * FROM " + Main.config.users_table	 + " WHERE " + Main.config.user_id_field + " = '" + id + "'");
+
+					if (Main.config.useBanned)
+					{
+						boolean banned = res.getBoolean(Main.config.is_banned_field);
+
+						if (banned)
+						{
+							event.setKickMessage("You have been banned from the site.");
+							event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_BANNED);
+						}
+					}
+
+					if (Main.config.banlistTableEnabled)
+					{
+						if (res.getString(Main.config.groups_id_field).equalsIgnoreCase(Main.config.banned_users_group))
+						{
+								event.setKickMessage("You have been banned from the site.");
+								event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_BANNED);
+						}
+					}
+				}
+				catch (SQLException error)
+				{
+					Main.log.severe("Error during preloginevent: " + error.getMessage());
+				}
+				catch (MalformedURLException error)
+				{
+					Main.log.severe("Error during preloginevent: " + error.getMessage());
+				}
+				catch (InstantiationException error)
+				{
+					Main.log.severe("Error during preloginevent: " + error.getMessage());
+				}
+				catch (IllegalAccessException error)
+				{
+					Main.log.severe("Error during preloginevent: " + error.getMessage());
+				}
+			} // if config.use banned or banlist
+		} // if id == 0 else
+	} // method
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
