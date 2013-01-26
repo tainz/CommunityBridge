@@ -1,5 +1,7 @@
 package org.ruhlendavis.utility;
 
+import java.util.List;
+
 /**
  * A small collection of string related methods that don't belong anywhere else.
  *
@@ -103,5 +105,33 @@ public final class StringUtilities
 			}
 		}
 		return -1;
+	}
+
+	/**
+	 * Join a list of strings into one string. With thanks to StackOverflow.
+	 *
+	 * @param List<String> List of strings to concatenate.
+	 * @param String String to place between the concatenated strings.
+	 * @return String The string to return.
+	 */
+	public static String joinStrings(List<String> stringList, String conjunction)
+	{
+		StringBuilder stringBuilder = new StringBuilder();
+		boolean first = true;
+
+		for (String string : stringList)
+		{
+			if (first)
+			{
+         first = false;
+			}
+      else
+			{
+         stringBuilder.append(conjunction);
+			}
+      stringBuilder.append(string);
+   }
+
+   return stringBuilder.toString();
 	}
 }
