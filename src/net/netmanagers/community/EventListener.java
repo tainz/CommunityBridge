@@ -133,7 +133,7 @@ public class EventListener implements Listener
 								}
 								else
 								{
-									Main.sql.updateQuery("UPDATE " + Main.config.users_table + " SET " + Main.config.onlinestatusColumn + " = '" + Main.config.onlinestatusValueOnline + "' WHERE " + Main.config.user_id_field + " = '" + id + "'");
+									Main.sql.updateQuery("UPDATE " + Main.config.users_table + " SET " + Main.config.onlinestatusColumn + " = '" + Main.config.onlinestatusValueOffline + "' WHERE " + Main.config.user_id_field + " = '" + id + "'");
 								}
 							}
 							catch (MalformedURLException e)
