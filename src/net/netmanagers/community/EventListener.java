@@ -41,25 +41,31 @@ public class EventListener implements Listener
 				try
 				{
 					ResultSet res = Main.sql.sqlQuery("SELECT * FROM " + Main.config.users_table	 + " WHERE " + Main.config.user_id_field + " = '" + id + "'");
-
-					if (Main.config.useBanned)
+					if (res.next())
 					{
-						boolean banned = res.getBoolean(Main.config.is_banned_field);
-
-						if (banned)
+						if (Main.config.useBanned)
 						{
-							event.setKickMessage("You have been banned from the site.");
-							event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_BANNED);
-						}
-					}
+							boolean banned = res.getBoolean(Main.config.is_banned_field);
 
-					if (Main.config.banlistTableEnabled)
-					{
-						if (res.getString(Main.config.groups_id_field).equalsIgnoreCase(Main.config.banned_users_group))
-						{
+							if (banned)
+							{
 								event.setKickMessage("You have been banned from the site.");
 								event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_BANNED);
+							}
 						}
+
+						if (Main.config.banlistTableEnabled)
+						{
+							if (res.getString(Main.config.groups_id_field).equalsIgnoreCase(Main.config.banned_users_group))
+							{
+									event.setKickMessage("You have been banned from the site.");
+									event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_BANNED);
+							}
+						}
+					}
+					else
+					{
+						Main.log.severe("res.next() failure during prelogin.");
 					}
 				}
 				catch (SQLException error)
