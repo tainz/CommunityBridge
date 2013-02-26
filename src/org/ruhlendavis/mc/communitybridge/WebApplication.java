@@ -212,7 +212,7 @@ public class WebApplication
 	 */
 	public synchronized void loadUserIDfromDatabase(String playerName)
 	{
-		if (playerUserIDs.size() >= maxPlayers)
+		if (playerUserIDs.size() >= (maxPlayers * 4))
 		{
 			playerUserIDs.clear();
 			loadOnlineUserIDsFromDatabase();
