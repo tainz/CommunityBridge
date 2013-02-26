@@ -467,11 +467,18 @@ public class Configuration
 		{
 			ResultSet result = sql.sqlQuery(query);
 
-			if (result.getInt(1) == 0)
+			if (result.next())
 			{
-				log.warning("There are no rows containing " + keyName
-								       + " in the " + keyColumn + " column, on the "
-								       + tableName + " table.");
+				if (result.getInt(1) == 0)
+				{
+					log.warning("There are no rows containing " + keyName
+												 + " in the " + keyColumn + " column, on the "
+												 + tableName + " table.");
+				}
+			}
+			else
+			{
+					log.warning("Empty result set while checking: " + yamlKeyName);
 			}
 		}
 		catch (SQLException e)
