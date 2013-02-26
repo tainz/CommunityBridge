@@ -26,6 +26,7 @@ public class WebApplication
 	private Configuration config;
 	private Log log;
 	private SQL sql;
+	private int maxPlayers;
 
 	private Map<String, String> playerUserIDs = new HashMap();
 
@@ -35,6 +36,7 @@ public class WebApplication
 		this.plugin = plugin;
 		this.log = log;
 		setSQL(sql);
+		this.maxPlayers = Bukkit.getMaxPlayers();
 	}
 
 	/**
@@ -190,10 +192,10 @@ public class WebApplication
 	}
 
 	/**
-	 * Retrieves user IDs for all connected players, usually only necessary
-	 * after a reload.
+	 * Retrieves user IDs for all connected players, required after a cache
+	 * cleanup and after cb reload.
 	 */
-	public void loadOnlineUserIDsFromDatabase()
+	public synchronized void loadOnlineUserIDsFromDatabase()
 	{
 		Player [] players =	Bukkit.getOnlinePlayers();
 
@@ -208,8 +210,14 @@ public class WebApplication
 	 *
 	 * @param String containing the player's name.
 	 */
-	public void loadUserIDfromDatabase(String playerName)
+	public synchronized void loadUserIDfromDatabase(String playerName)
 	{
+		if (playerUserIDs.size() >= maxPlayers)
+		{
+			playerUserIDs.clear();
+			loadOnlineUserIDsFromDatabase();
+		}
+
 		final String errorBase = "Error during WebApplication.onPreLogin(): ";
 		String query = "SELECT `" + config.linkingTableName + "`.`" + config.linkingUserIDColumn + "` "
 								 + "FROM `" + config.linkingTableName + "`";
@@ -283,8 +291,6 @@ public class WebApplication
 	public void onQuit(final String playerName)
 	{
 		runUpdateStatisticsTask(playerName, false);
-		// Only keep user IDs for connected players on hand.
-		playerUserIDs.remove(playerName);
 	}
 
 	/**
@@ -394,77 +400,3 @@ public class WebApplication
 	}
 
 } // WebApplication class
-
-
-//		if (config.statisticsEnabled)
-//		{
-//			int id = Main.getUserId(player.getName());
-//			if (id > 0)
-//			{
-//				Main.updateStatistics(id, player);
-//
-//				if (config.onlineStatusEnabled)
-//				{
-//					try
-//					{
-//						if (config.multiTables && config.multiTablesUseKey)
-//						{
-//							Main.sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.multi_table_value_field + " = '" + config.onlineStatusValueOffline + "' WHERE " + config.multi_table_user_id_field + " = '" + id + "' and " + config.multi_table_key_field +" = '" + config.onlineStatusColumnOrKey + "'");
-//						}
-//						else if(config.multiTables)
-//						{
-//							Main.sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.onlinestatusColumn + " = '" + config.onlineStatusValueOffline + "' WHERE " + config.multi_table_user_id_field + " = '" + id + "'");
-//						}
-//						else
-//						{
-//							Main.sql.updateQuery("UPDATE " + config.users_table + " SET " + config.onlinestatusColumn + " = '" + config.onlineStatusValueOnline + "' WHERE " + config.user_id_field + " = '" + id + "'");
-//						}
-//					}
-//					catch (MalformedURLException e)
-//					{
-//						e.printStackTrace();
-//					}
-//					catch (InstantiationException e)
-//					{
-//						e.printStackTrace();
-//					}
-//					catch (IllegalAccessException e)
-//					{
-//						Main.log.severe("Broken Set User Offline SQL Query, check your config.yml");
-//						e.printStackTrace();
-//					}
-//				}
-//			}
-//		}
-//	private void resetOnlineStatus()
-//  {
-//		try {
-//			if (config.multiTables)
-//      {
-//				if (config.multiTablesUseKey)
-//        {
-//					sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.multi_table_value_field + " = '" + config.onlineStatusValueOffline + "' WHERE " + config.multi_table_key_field + " = '" + config.onlineStatusColumnOrKey + "'");
-//				}
-//        else
-//        {
-//					sql.updateQuery("UPDATE " + config.multi_table + " SET " + config.onlinestatusColumn + " = '" + config.onlineStatusValueOffline + "' WHERE " + config.onlinestatusColumn + " = '" + config.onlineStatusValueOnline + "'");
-//				}
-//			}
-//      else
-//      {
-//				sql.updateQuery("UPDATE " + config.users_table + " SET " + config.onlinestatusColumn + " = '" + config.onlineStatusValueOffline + "'  WHERE " + config.onlinestatusColumn + " = '" + config.onlineStatusValueOnline + "'");
-//			}
-//		}
-//		catch (MalformedURLException e)
-//		{
-//			log.severe("Error in ResetOnlineStatus: " + e.getMessage());
-//			disablePlugin();
-//		} catch (InstantiationException e) {
-//			log.severe("Error in ResetOnlineStatus: " + e.getMessage());
-//			disablePlugin();
-//		} catch (IllegalAccessException e) {
-//			log.severe("Error in ResetOnlineStatus: " + e.getMessage());
-//			disablePlugin();
-//		}
-//	}
-//
