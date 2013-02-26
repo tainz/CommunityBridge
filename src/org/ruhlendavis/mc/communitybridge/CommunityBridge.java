@@ -973,57 +973,6 @@ public final class CommunityBridge extends JavaPlugin
 //		}
 //	}
 
-  public static String timeElapsedtoString(int time)
-  {
-    if (time == 0)
-    {
-      return "0 seconds";
-    }
-
-    String elapsed = "";
-
-    if (time >= 86400)
-    {
-      elapsed = elapsed
-              + time / 86400 + " day"
-              + (time >= 172800 ? "s" : "");
-      time = time - 86400 * (time / 86400); // Ah, the joys of integer math.
-    }
-
-    if (time >= 3600)
-    {
-      elapsed = elapsed
-              + (!elapsed.isEmpty() ? ", " : "")
-              + time / 3600 + " hour"
-              + (time >= 7200 ? "s" : "");
-      time = time - 3600 * (time / 3600);
-    }
-
-    if (time >= 60)
-    {
-      elapsed = elapsed
-              + (!elapsed.isEmpty() ? ", " : "")
-              + time / 60 + " minute"
-              + (time >= 120 ? "s" : "");
-      time = time - 60 * (time / 60);
-    }
-
-    if (time > 0)
-    {
-      elapsed = elapsed
-              + (!elapsed.isEmpty() ? ", " : "")
-              + time + " second"
-              + (time >= 1 ? "s" : "");
-    }
-
-		if (elapsed.length() >= 60)
-		{
-			elapsed = elapsed.substring(0, 60);
-		}
-
-    return elapsed;
-  }
-
 //	public static void updateStatistics(int u, Player p)
 //  {
 //		float currentxp = p.getExp();
