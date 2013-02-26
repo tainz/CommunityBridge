@@ -3,7 +3,9 @@ package org.ruhlendavis.mc.communitybridge;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -308,7 +310,10 @@ public class WebApplication
 				@Override
 				public void run()
 				{
-					updateStatistics(playerName, online);
+					if (config.statisticsUsesKey)
+					{
+						updateStatistics(playerName, online);
+					}
 				}
 			});
 		}
@@ -326,12 +331,9 @@ public class WebApplication
 
 	private void updateStatistics(String playerName, boolean online)
 	{
+		Player player = Bukkit.getPlayer(playerName);
+
 		String onlineStatus;
-		String query;
-		String userID = getUserID(playerName);
-
-		List<String> fields = new ArrayList();
-
 		if (online)
 		{
 			onlineStatus = config.onlineStatusValueOnline;
@@ -340,6 +342,19 @@ public class WebApplication
 		{
 			onlineStatus = config.onlineStatusValueOffline;
 		}
+
+		// Needed for lastonline
+		int lastonlineTime = (int) (System.currentTimeMillis() / 1000L);
+		SimpleDateFormat dateFormat = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss a");
+		String lastonlineFormattedTime = dateFormat.format(new Date());
+
+		//int lifeticks = player.getTicksLived();
+		//String lifeticks_formatted = StringUtilities.timeElapsedtoString((int)(lifeticks / 20));
+
+		String query;
+		String userID = getUserID(playerName);
+
+		List<String> fields = new ArrayList();
 
 		query = "UPDATE `" + config.statisticsTableName + "` "
 					+ "SET ";
@@ -359,10 +374,23 @@ public class WebApplication
 			 */
 			query = query + "`" + config.statisticsValueColumn
 						+ "` = CASE " + "`" + config.statisticsKeyColumn + "` ";
+
 			if (config.onlineStatusEnabled)
 			{
 				fields.add("WHEN '" + config.onlineStatusColumnOrKey + "' THEN '" + onlineStatus + "' ");
 			}
+
+			if (config.lastonlineEnabled)
+			{
+				fields.add("WHEN '" + config.lastonlineColumnOrKey + "' THEN '" + lastonlineTime + "' ");
+				if (config.lastonlineFormattedColumnOrKey.isEmpty())
+				{}
+				else
+				{
+					fields.add("WHEN '" + config.lastonlineFormattedColumnOrKey + "' THEN '" + lastonlineFormattedTime + "' ");
+				}
+			}
+
 			query = query + StringUtilities.joinStrings(fields, " ");
 			query = query + "END";
 		}
@@ -373,6 +401,16 @@ public class WebApplication
 				fields.add("`" + config.onlineStatusColumnOrKey + "` = '" + onlineStatus +  "'");
 			}
 
+			if (config.lastonlineEnabled)
+			{
+				fields.add("`" + config.lastonlineColumnOrKey + "` = '" + lastonlineTime + "'");
+				if (config.lastonlineFormattedColumnOrKey.isEmpty())
+				{}
+				else
+				{
+					fields.add("`" + config.lastonlineFormattedColumnOrKey + "` = '" + lastonlineFormattedTime + "'");
+				}
+			}
 			query = query + StringUtilities.joinStrings(fields, ", ");
 		}
 
