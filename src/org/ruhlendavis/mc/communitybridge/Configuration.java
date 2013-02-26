@@ -786,8 +786,6 @@ public class Configuration
 		multi_table_key_value = config.getString("multi-table.field-key-value", "");
 		multi_table_value_field = config.getString("multi-table.field-value-field", "");
 
-		statisticsEnabled = config.getBoolean("enable-basic-tracking", false);
-
 		lastonlineEnabled = config.getBoolean("basic-tracking.field-lastonline-enabled", false);
 		lastonlineColumn = config.getString("basic-tracking.field-lastonline-field", "");
 		lastonlineFormattedColumn = config.getString("basic-tracking.field-lastonline-formatted-field", "");
@@ -978,22 +976,24 @@ public class Configuration
 			log.config(  "Primary group sync rule count        : " + (groupSyncPrimaryWebappRules.size() + groupSyncPrimaryMinecraftRules.size()));
 		}
 
-		// Old System
-		log.config(  "Multi Tables                         : " + multiTables);
-
-		log.config(  "Statistics Tracking                  : " + statisticsEnabled);
-
+		log.config(    "Tracking Statistics                  : " + statisticsEnabled);
 		if (statisticsEnabled)
 		{
-			log.config("Tracking Online Status               : " + onlineStatusEnabled);
-			log.config("Tracking Last Online                 : " + lastonlineEnabled);
-			log.config("Tracking Game Time                   : " + gametimeEnabled);
-			log.config("Tracking Total XP                    : " + totalxpEnabled);
-			log.config("Tracking Current XP                  : " + currentxpEnabled);
-			log.config("Tracking Level                       : " + levelEnabled);
-			log.config("Tracking Health                      : " + healthEnabled);
-			log.config("Tracking Life Ticks                  : " + lifeticksEnabled);
-			log.config("Tracking Wallet                      : " + walletEnabled);
+			log.config(  "Tracking Table Name                  : " + statisticsTableName);
+			log.config(  "Tracking User ID Column              : " + statisticsUserIDColumn);
+			log.config(  "Tracking Uses Key                    : " + statisticsUsesKey);
+			if (statisticsUsesKey)
+			{
+				log.config("Tracking Key Column                  : " + statisticsKeyColumn);
+				log.config("Tracking Value Column                : " + statisticsValueColumn);
+			}
+			log.config(  "Tracking Online Status               : " + onlineStatusEnabled);
+			if (onlineStatusEnabled)
+			{
+				log.config("Tracking Online Status Column/Key    : " + onlineStatusColumnOrKey);
+				log.config("Tracking Online Status Online Value  : " + onlineStatusValueOnline);
+				log.config("Tracking Online Status Offline Value : " + onlineStatusValueOffline);
+			}
 		}
 	}
 }
