@@ -101,9 +101,15 @@ public class Configuration
 	public String onlineStatusValueOffline;
 	public String onlineStatusValueOnline;
 
+	public boolean lastonlineEnabled;
+	public String lastonlineColumnOrKey;
+	public String lastonlineFormattedColumnOrKey;
+
 	// These are not in the config.yml. They are calculated.
 	public boolean permissionsSystemRequired;
 	public boolean groupSyncEnabled;
+
+
 
 	// Instance variables associated with the old configuration
 	public List<String> primaryGroupIDsToIgnore;
@@ -143,12 +149,6 @@ public class Configuration
 	public String multi_table_key_value;
 	public String multi_table_value_field;
 	public String multi_table_user_id_field;
-
-	public boolean lastonlineEnabled;
-	public String lastonlineColumn;
-	public String lastonlineFormattedColumn;
-  public String lastonlineKeyValue;
-  public String lastonlineFormattedKeyValue;
 
 	public boolean gametimeEnabled;
 	public String gametimeColumn;
@@ -273,6 +273,13 @@ public class Configuration
 					if (temp)
 					{
 						checkKeyColumnForKey(sql, "statistics.trackers.online-status.column-or-key-name", statisticsTableName, statisticsKeyColumn,	onlineStatusColumnOrKey);
+						checkKeyColumnForKey(sql, "statistics.trackers.last-online.column-or-key-name", statisticsTableName, statisticsKeyColumn,	lastonlineColumnOrKey);
+						if (lastonlineFormattedColumnOrKey.isEmpty())
+						{}
+						else
+						{
+							checkKeyColumnForKey(sql, "statistics.trackers.last-online.formatted-column-or-key-name", statisticsTableName, statisticsKeyColumn,	lastonlineFormattedColumnOrKey);
+						}
 					}
 				}
 				else
@@ -723,6 +730,10 @@ public class Configuration
 		onlineStatusValueOnline = config.getString("statistics.trackers.online-status.online-value", "");
 		onlineStatusValueOffline = config.getString("statistics.trackers.online-status.offline-value", "");
 
+		lastonlineEnabled = config.getBoolean("statistics.trackers.last-online.enabled", false);
+		lastonlineColumnOrKey = config.getString("statistics.trackers.last-online.column-or-key-name", "");
+		lastonlineFormattedColumnOrKey = config.getString("statistics.trackers.last-online.formatted-column-or-key-name", "");
+
 		// These are calculated from settings above.
 		groupSyncEnabled = groupSyncPrimaryEnabled && groupSyncSecondaryEnabled;
 		permissionsSystemRequired = groupSyncEnabled;
@@ -792,12 +803,6 @@ public class Configuration
 		multi_table_key_field = config.getString("multi-table.field-key-field", "");
 		multi_table_key_value = config.getString("multi-table.field-key-value", "");
 		multi_table_value_field = config.getString("multi-table.field-value-field", "");
-
-		lastonlineEnabled = config.getBoolean("basic-tracking.field-lastonline-enabled", false);
-		lastonlineColumn = config.getString("basic-tracking.field-lastonline-field", "");
-		lastonlineFormattedColumn = config.getString("basic-tracking.field-lastonline-formatted-field", "");
-		lastonlineKeyValue = config.getString("basic-tracking.field-lastonline-key-value", "");
-		lastonlineFormattedKeyValue = config.getString("basic-tracking.field-lastonline-formatted-key-value", "");
 
 		gametimeEnabled = config.getBoolean("basic-tracking.field-gametime-enabled", false);
 		gametimeColumn = config.getString("basic-tracking.field-gametime-field", "");
@@ -1000,6 +1005,11 @@ public class Configuration
 				log.config("Tracking Online Status Column/Key    : " + onlineStatusColumnOrKey);
 				log.config("Tracking Online Status Online Value  : " + onlineStatusValueOnline);
 				log.config("Tracking Online Status Offline Value : " + onlineStatusValueOffline);
+			}
+			if (lastonlineEnabled)
+			{
+				log.config("Tracking Last Online Column/Key      : " + lastonlineColumnOrKey);
+				log.config("Tracking Last Online Formatted Co/Key: " + lastonlineFormattedColumnOrKey);
 			}
 		}
 	}
