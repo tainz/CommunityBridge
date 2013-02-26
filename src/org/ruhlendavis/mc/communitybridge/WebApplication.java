@@ -45,6 +45,12 @@ public class WebApplication
 	 */
 	public String getUserID(String playerName)
 	{
+		if (playerUserIDs.containsKey(playerName))
+		{}
+		else
+		{
+			loadUserIDfromDatabase(playerName);
+		}
 		return playerUserIDs.get(playerName);
 	}
 
@@ -276,9 +282,9 @@ public class WebApplication
 	 */
 	public void onQuit(final String playerName)
 	{
+		runUpdateStatisticsTask(playerName, false);
 		// Only keep user IDs for connected players on hand.
 		playerUserIDs.remove(playerName);
-		runUpdateStatisticsTask(playerName, false);
 	}
 
 	/**
@@ -316,7 +322,7 @@ public class WebApplication
 	{
 		String onlineStatus;
 		String query;
-		String statisticsTableName = "`" + config.statisticsTableName + "`.`";
+		String userID = getUserID(playerName);
 
 		List<String> fields = new ArrayList();
 
@@ -334,22 +340,44 @@ public class WebApplication
 
 		if (config.statisticsUsesKey)
 		{
+			/* To collapse multiple MySQL queries into one query, we're using the
+			 * MySQL CASE operator. Recommended reading:
+			 * http://www.karlrixon.co.uk/writing/update-multiple-rows-with-different-values-and-a-single-sql-query/
+			 * Prototype:
+			 * UPDATE tablename
+			 * SET valueColumn = CASE keycolumn
+			 *                   WHEN keyname THEN keyvalue
+			 *                   WHEN keyname THEN keyvalue
+			 *                   END
+			 * WHERE useridcolumn = userid;
+			 */
+			query = query + "`" + config.statisticsValueColumn
+						+ "` = CASE " + "`" + config.statisticsKeyColumn + "` ";
+			if (config.onlineStatusEnabled)
+			{
+				fields.add("WHEN '" + config.onlineStatusColumnOrKey + "' THEN '" + onlineStatus + "' ");
+			}
+			query = query + StringUtilities.joinStrings(fields, " ");
+			query = query + "END";
 		}
 		else
 		{
 			if (config.onlineStatusEnabled)
 			{
-				fields.add(statisticsTableName + config.onlineStatusColumnOrKey + "` = '" + onlineStatus +  "'");
+				fields.add("`" + config.onlineStatusColumnOrKey + "` = '" + onlineStatus +  "'");
 			}
+
+			query = query + StringUtilities.joinStrings(fields, ", ");
 		}
 
-		query = query + StringUtilities.joinStrings(fields, ", ");
+		query = query + " WHERE `" + config.statisticsUserIDColumn + "` = '" + userID + "'";
 
 		String errorBase = "Error during statistics update: ";
-		
+
+		log.finest(query);
 		try
 		{
-			sql.sqlQuery(query);
+			sql.updateQuery(query);
 		}
 		catch (MalformedURLException error)
 		{
