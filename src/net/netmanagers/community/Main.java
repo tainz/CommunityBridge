@@ -667,15 +667,26 @@ public final class Main extends JavaPlugin
 								                   + " WHERE " + config.user_id_field + " = '" + id + "'");
 				if (res.next())
         {
+					boolean banned = false;
 					if (config.useBanned)
           {
-						boolean banned = res.getBoolean(config.is_banned_field);
-
-						if (banned)
-            {
-              p.kickPlayer("You have been banned from the site.");
-            }
+						banned = res.getBoolean(config.is_banned_field);
 					}
+
+					if (config.banlistTableEnabled)
+					{
+						ResultSet banQuery = sql.sqlQuery("SELECT `" + config.banlist_user_id_field +"` FROM `" + config.banlist_table + "`");
+						if (banQuery.next())
+						{
+							banned = true;
+						}
+					}
+
+					if (banned)
+					{
+						p.kickPlayer("You have been banned from the site.");
+					}
+
 
 					boolean requirements_met = true;
 
@@ -700,12 +711,9 @@ public final class Main extends JavaPlugin
 						groupID = res.getString(config.groups_id_field);
 						groupName = (String)config.groups.get(groupID);
 
-						if (config.banlistTableEnabled)
+						if (res.getString(config.groups_id_field).equalsIgnoreCase(config.banned_users_group))
 						{
-							if (res.getString(config.groups_id_field).equalsIgnoreCase(config.banned_users_group))
-							{
-								p.kickPlayer("You have been banned from the site.");
-							}
+							p.kickPlayer("You have been banned from the site.");
 						}
 
 						if (requirements_met)
