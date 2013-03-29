@@ -175,9 +175,14 @@ public class Configuration
 
 		if (status)
 		{
-			status = status & checkColumn(sql, "users-table.username",
+			if (multiTables)
+			{}
+			else
+			{
+				status = status & checkColumn(sql, "users-table.username",
 																		users_table,
 							                      user_name_field);
+			}
 			status = status & checkColumn(sql, "users-table.user-id-field",
 																		users_table,
 							                      user_id_field);
