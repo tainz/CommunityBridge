@@ -1,6 +1,7 @@
 package org.ruhlendavis.mc.communitybridge;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
@@ -88,7 +89,8 @@ public class PlayerListener implements Listener
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event)
 	{
-		String playerName = event.getPlayer().getName();
+		Player player = event.getPlayer();
+		String playerName = player.getName();
 		if (webapp.isPlayerRegistered(playerName))
 		{
 			if (config.linkingNotifyRegistered)
@@ -96,7 +98,7 @@ public class PlayerListener implements Listener
 				String message = ChatColor.GREEN + config.messages.get("link-registered-player");
 				event.setJoinMessage(message);
 			}
-			webapp.onJoin(playerName);
+			webapp.onJoin(player);
 		}
 		else
 		{
@@ -116,6 +118,6 @@ public class PlayerListener implements Listener
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event)
 	{
-		webapp.onQuit(event.getPlayer().getName());
+		webapp.onQuit(event.getPlayer());
 	} // onPlayerQuit
 } // PlayerListener class

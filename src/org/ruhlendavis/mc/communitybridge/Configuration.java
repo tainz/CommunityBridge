@@ -105,11 +105,33 @@ public class Configuration
 	public String lastonlineColumnOrKey;
 	public String lastonlineFormattedColumnOrKey;
 
+	public boolean gametimeEnabled;
+	public String gametimeColumnOrKey;
+	public String gametimeFormattedColumnOrKey;
+
+	public boolean levelEnabled;
+	public String levelColumnOrKey;
+
+	public boolean totalxpEnabled;
+	public String totalxpColumnOrKey;
+
+	public boolean currentxpEnabled;
+  public String currentxpColumnOrKey;
+  public String currentxpFormattedColumnOrKey;
+
+	public boolean lifeticksEnabled;
+	public String lifeticksColumnOrKey;
+	public String lifeticksFormattedColumnOrKey;
+
+	public boolean healthEnabled;
+	public String healthColumnOrKey;
+
+	public boolean walletEnabled;
+  public String walletColumnOrKey;
+
 	// These are not in the config.yml. They are calculated.
 	public boolean permissionsSystemRequired;
 	public boolean groupSyncEnabled;
-
-
 
 	// Instance variables associated with the old configuration
 	public List<String> primaryGroupIDsToIgnore;
@@ -149,40 +171,6 @@ public class Configuration
 	public String multi_table_key_value;
 	public String multi_table_value_field;
 	public String multi_table_user_id_field;
-
-	public boolean gametimeEnabled;
-	public String gametimeColumn;
-  public String gametimeFormattedColumn;
-  public String gametimeKeyValue;
-  public String gametimeFormattedKeyValue;
-
-	public boolean totalxpEnabled;
-	public String totalxpKeyValue;
-	public String totalxpColumn;
-
-	public boolean currentxpEnabled;
-  public String currentxpKeyValue;
-  public String currentxpFormattedKeyValue;
-	public String currentxpColumn;
-	public String currentxpFormattedColumn;
-
-	public boolean levelEnabled;
-	public String levelColumn;
-  public String levelKeyValue;
-
-	public boolean healthEnabled;
-	public String healthColumn;
-  public String healthKeyValue;
-
-	public boolean lifeticksEnabled;
-	public String lifeticksColumn;
-	public String lifeticksFormattedColumn;
-  public String lifeticksKeyValue;
-	public String lifeticksFormattedKeyValue;
-
-	public boolean walletEnabled;
-  public String walletKeyValue;
-	public String walletColumn;
 
 	/**
 	 * Constructor for the configuration class.
@@ -272,132 +260,225 @@ public class Configuration
 					status = status & temp;
 					if (temp)
 					{
-						checkKeyColumnForKey(sql, "statistics.trackers.online-status.column-or-key-name", statisticsTableName, statisticsKeyColumn,	onlineStatusColumnOrKey);
-						checkKeyColumnForKey(sql, "statistics.trackers.last-online.column-or-key-name", statisticsTableName, statisticsKeyColumn,	lastonlineColumnOrKey);
-						if (lastonlineFormattedColumnOrKey.isEmpty())
-						{}
-						else
+						if (onlineStatusEnabled)
 						{
-							checkKeyColumnForKey(sql, "statistics.trackers.last-online.formatted-column-or-key-name", statisticsTableName, statisticsKeyColumn,	lastonlineFormattedColumnOrKey);
+							checkKeyColumnForKey(sql, "statistics.trackers.online-status.column-or-key-name", statisticsTableName, statisticsKeyColumn,	onlineStatusColumnOrKey);
+						}
+						if (lastonlineEnabled)
+						{
+							checkKeyColumnForKey(sql, "statistics.trackers.last-online.column-or-key-name", statisticsTableName, statisticsKeyColumn,	lastonlineColumnOrKey);
+							if (lastonlineFormattedColumnOrKey.isEmpty())
+							{}
+							else
+							{
+								checkKeyColumnForKey(sql, "statistics.trackers.last-online.formatted-column-or-key-name", statisticsTableName, statisticsKeyColumn,	lastonlineFormattedColumnOrKey);
+							}
+						}
+						if (gametimeEnabled)
+						{
+							checkKeyColumnForKey(sql, "statistics.trackers.game-time.column-or-key-name", statisticsTableName, statisticsKeyColumn,	gametimeColumnOrKey);
+							if (gametimeFormattedColumnOrKey.isEmpty())
+							{}
+							else
+							{
+								checkKeyColumnForKey(sql, "statistics.trackers.game-time.formatted-column-or-key-name", statisticsTableName, statisticsKeyColumn,	gametimeFormattedColumnOrKey);
+							}
+							if (lastonlineEnabled)
+							{}
+							else
+							{
+								log.warning("Game time statistic tracker requires last online tracker to be enabled. Temporarily disabling gametime tracker.");
+								gametimeEnabled = false;
+							}
+						}
+						if (levelEnabled)
+						{
+							checkKeyColumnForKey(sql, "statistics.trackers.level.column-or-key-name", statisticsTableName, statisticsKeyColumn,	levelColumnOrKey);
+						}
+						if (totalxpEnabled)
+						{
+							checkKeyColumnForKey(sql, "statistics.trackers.total-xp.column-or-key-name", statisticsTableName, statisticsKeyColumn, totalxpColumnOrKey);
+						}
+						if (currentxpEnabled)
+						{
+							checkKeyColumnForKey(sql, "statistics.trackers.current-xp.column-or-key-name", statisticsTableName, statisticsKeyColumn, currentxpColumnOrKey);
+							if (currentxpFormattedColumnOrKey.isEmpty())
+							{}
+							else
+							{
+								checkKeyColumnForKey(sql, "statistics.trackers.current-xp.formatted-column-or-key-name", statisticsTableName, statisticsKeyColumn,currentxpFormattedColumnOrKey);
+							}
+						}
+						if (healthEnabled)
+						{
+							checkKeyColumnForKey(sql, "statistics.trackers.health.column-or-key-name", statisticsTableName, statisticsKeyColumn, healthColumnOrKey);
+						}
+						if (lifeticksEnabled)
+						{
+							checkKeyColumnForKey(sql, "statistics.trackers.lifeticks.column-or-key-name", statisticsTableName, statisticsKeyColumn,	lifeticksColumnOrKey);
+							if (lifeticksFormattedColumnOrKey.isEmpty())
+							{}
+							else
+							{
+								checkKeyColumnForKey(sql, "statistics.trackers.lifeticks.formatted-column-or-key-name", statisticsTableName, statisticsKeyColumn,	lifeticksFormattedColumnOrKey);
+							}
+						}
+						if (walletEnabled)
+						{
+							checkKeyColumnForKey(sql, "statistics.trackers.wallet.column-or-key-name", statisticsTableName, statisticsKeyColumn, walletColumnOrKey);
 						}
 					}
 				}
 				else
 				{
-					status = status & checkColumn(sql, "statistics.trackers.online-status.column-or-key-name", statisticsTableName,	onlineStatusColumnOrKey);
-				}
-			}
-		}
+					if (onlineStatusEnabled)
+					{
+						if(checkColumn(sql, "statistics.trackers.online-status.column-or-key-name", statisticsTableName,	onlineStatusColumnOrKey))
+						{}
+						else
+						{
+							onlineStatusEnabled = false;
+						}
+					}
 
-		return status;
-	}
+					if (lastonlineEnabled)
+					{
+						if(checkColumn(sql, "statistics.trackers.last-online.column-or-key-name", statisticsTableName,	lastonlineColumnOrKey))
+						{}
+						else
+						{
+							lastonlineEnabled = false;
+						}
+						if (lastonlineFormattedColumnOrKey.isEmpty())
+						{}
+						else
+						{
+							if (checkColumn(sql, "statistics.trackers.last-online.formatted-column-or-key-name", statisticsTableName, lastonlineFormattedColumnOrKey))
+							{}
+							else
+							{
+								lastonlineFormattedColumnOrKey = "";
+							}
+						}
+					}
 
-	/**
-	 * Analyze the configuration for potential problems.
-	 *
-	 * Checks for the existence of the specified tables and columns within those
-	 * tables.
-	 *
-	 * @param SQL SQL query object.
-	 * @return boolean True if the configuration is okay.
-	 */
-	public boolean analyzeConfigurationOld(SQL sql)
-	{
-		boolean status;
-		boolean userTableStatus;
-		boolean multiTableStatus = true;
-		boolean tempStatus;
+					if (gametimeEnabled)
+					{
+						if (checkColumn(sql, "statistics.trackers.game-time.column-or-key-name", statisticsTableName,	gametimeColumnOrKey))
+						{}
+						else
+						{
+							gametimeEnabled = false;
+						}
 
-		status = checkTable(sql, "users-table.table", users_table);
-		userTableStatus = status;
+						if (gametimeFormattedColumnOrKey.isEmpty())
+						{}
+						else
+						{
+							if(checkColumn(sql, "statistics.trackers.game-time.formatted-column-or-key-name", statisticsTableName, gametimeFormattedColumnOrKey))
+							{}
+							else
+							{
+								gametimeFormattedColumnOrKey = "";
+							}
+						}
+						if (lastonlineEnabled)
+						{}
+						else
+						{
+							log.warning("Gametime tracker requires lastonline tracker to be enabled. Temporarily disabling gametime tracker.");
+							gametimeEnabled = false;
+							gametimeFormattedColumnOrKey = "";
+						}
+					}
+					if (levelEnabled)
+					{
+						if (checkColumn(sql, "statistics.trackers.level.column-or-key-name", statisticsTableName,	levelColumnOrKey))
+						{}
+						else
+						{
+							levelEnabled = false;
+						}
+					}
+					if (totalxpEnabled)
+					{
+						if (checkColumn(sql, "statistics.trackers.total-xp.column-or-key-name", statisticsTableName, totalxpColumnOrKey))
+						{}
+						else
+						{
+							totalxpEnabled = false;
+						}
+					}
 
-		if (status)
-		{
-			status = status & checkColumn(sql, "users-table.username",
-																		users_table,
-							                      user_name_field);
-			status = status & checkColumn(sql, "users-table.user-id-field",
-																		users_table,
-							                      user_id_field);
-			if (secondary_groups)
-			{
-				status = status & checkColumn(sql, "user-table.secondary-groups-id-field",
-								                      users_table,
-																			secondary_groups_id_field);
-			}
+					if (currentxpEnabled)
+					{
+						if (checkColumn(sql, "statistics.trackers.current-xp.column-or-key-name", statisticsTableName,	currentxpColumnOrKey))
+						{}
+						else
+						{
+							currentxpEnabled = false;
+						}
+						if (currentxpFormattedColumnOrKey.isEmpty())
+						{}
+						else
+						{
+							if (checkColumn(sql, "statistics.trackers.current-xp.formatted-column-or-key-name", statisticsTableName, currentxpFormattedColumnOrKey))
+							{}
+							else
+							{
+								currentxpFormattedColumnOrKey = "";
+							}
+						}
+					}
 
-			if (useBanned)
-			{
-				status = status & checkColumn(sql, "user-table.banned-field",
-								                      users_table,
-																			is_banned_field);
-			}
-		}
+					if (healthEnabled)
+					{
+						if (checkColumn(sql, "statistics.trackers.health.column-or-key-name", statisticsTableName, healthColumnOrKey))
+						{}
+						else
+						{
+							healthEnabled = false;
+						}
+					}
 
-		if (groups_table_enabled)
-		{
-			tempStatus = checkTable(sql, "groups-table.table", groups_table);
+					if (lifeticksEnabled)
+					{
+						if (checkColumn(sql, "statistics.trackers.lifeticks.column-or-key-name", statisticsTableName,	lifeticksColumnOrKey))
+						{}
+						else
+						{
+							lifeticksEnabled = false;
+						}
+						if (lifeticksFormattedColumnOrKey.isEmpty())
+						{}
+						else
+						{
+							if (checkColumn(sql, "statistics.trackers.lifeticks.formatted-column-or-key-name", statisticsTableName, lifeticksFormattedColumnOrKey))
+							{}
+							else
+							{
+								lifeticksFormattedColumnOrKey = "";
+							}
+						}
+					}
 
-			status = status & tempStatus;
+					if (walletEnabled)
+					{
+						if (checkColumn(sql, "statistics.trackers.wallet.column-or-key-name", statisticsTableName, walletColumnOrKey))
+						{}
+						else
+						{
+							walletEnabled = false;
+						}
+					}
 
-			if (tempStatus)
-			{
-				status = status & checkColumn(sql, "groups-table.user-id-field",
-								                      groups_table,
-																			groups_user_id_field);
-				status = status & checkColumn(sql, "groups-table.group-id-field",
-								                      groups_table,
-																			groups_group_id_field);
-			}
-		}
-		else
-		{
-			// We're not using groups table, so we check the group id designated
-			// by user-table keys.
-			if (status && groupSyncPrimaryEnabled)
-			{
-				status = status & checkColumn(sql, "users-table.groups-id-field",
-								                      users_table,
-																			groups_id_field);
-			}
-		}
-
-		if (banlistTableEnabled)
-		{
-			tempStatus = checkTable(sql, "banlist-table.table", banlist_table);
-			status = status & tempStatus;
-
-			if (tempStatus)
-			{
-				status = status & checkColumn(sql, "banlist-table.user-id-field",
-								                      banlist_table,
-																			banlist_user_id_field);
-				//status = status & checkColumn(sql, "banlist-table.reason-field",
-				//				                      banlist_table, banlist_reason_field);
-			}
-		}
-
-		if (multiTables)
-		{
-			multiTableStatus = checkTable(sql, "multi-table.table", multi_table);
-			status = status & multiTableStatus;
-
-			if (multiTableStatus)
-			{
-				status = status & checkColumn(sql, "multi-table.field-user-id-field",
-								                      multi_table,
-																			multi_table_user_id_field);
-				if (multiTablesUseKey)
-				{
-					status = status & checkColumn(sql, "multi-table.field-key-field",
-									                      multi_table,
-																				multi_table_key_field);
-				}
-				else
-				{
-					status = status & checkColumn(sql, "multi-table.field-value-field",
-									                      multi_table,
-																				multi_table_value_field);
+					if (onlineStatusEnabled || lastonlineEnabled || gametimeEnabled || levelEnabled || totalxpEnabled || currentxpEnabled || healthEnabled || lifeticksEnabled || walletEnabled)
+					{}
+					else
+					{
+						log.warning("Statistics tracking is enabled, but none of the individual trackers are enabled. Temporarily disabling statistics tracking.");
+						statisticsEnabled = false;
+					}
 				}
 			}
 		}
@@ -734,6 +815,30 @@ public class Configuration
 		lastonlineColumnOrKey = config.getString("statistics.trackers.last-online.column-or-key-name", "");
 		lastonlineFormattedColumnOrKey = config.getString("statistics.trackers.last-online.formatted-column-or-key-name", "");
 
+		gametimeEnabled = config.getBoolean("statistics.trackers.game-time.enabled", false);
+		gametimeColumnOrKey = config.getString("statistics.trackers.game-time.column-or-key-name", "");
+		gametimeFormattedColumnOrKey = config.getString("statistics.trackers.game-time.formatted-column-or-key-name", "");
+
+		levelEnabled = config.getBoolean("statistics.trackers.level.enabled", false);
+		levelColumnOrKey = config.getString("statistics.trackers.level.column-or-key-name", "");
+
+		totalxpEnabled = config.getBoolean("statistics.trackers.total-xp.enabled", false);
+		totalxpColumnOrKey = config.getString("statistics.trackers.total-xp.column-or-key-name", "");
+
+		currentxpEnabled = config.getBoolean("statistics.trackers.current-xp.enabled", false);
+		currentxpColumnOrKey = config.getString("statistics.trackers.current-xp.column-or-key-name", "");
+		currentxpFormattedColumnOrKey = config.getString("statistics.trackers.current-xp.formatted-column-or-key-name", "");
+
+		healthEnabled = config.getBoolean("statistics.trackers.health.enabled", false);
+		healthColumnOrKey = config.getString("statistics.trackers.health.column-or-key-name", "");
+
+		lifeticksEnabled = config.getBoolean("statistics.trackers.lifeticks.enabled", false);
+		lifeticksColumnOrKey = config.getString("statistics.trackers.lifeticks.column-or-key-name", "");
+		lifeticksFormattedColumnOrKey = config.getString("statistics.trackers.lifeticks.formatted-column-or-key-name", "");
+
+		walletEnabled = config.getBoolean("statistics.trackers.wallet.enabled", false);
+		walletColumnOrKey = config.getString("statistics.trackers.wallet.column-or-key-name", "");
+
 		// These are calculated from settings above.
 		groupSyncEnabled = groupSyncPrimaryEnabled && groupSyncSecondaryEnabled;
 		permissionsSystemRequired = groupSyncEnabled;
@@ -803,40 +908,6 @@ public class Configuration
 		multi_table_key_field = config.getString("multi-table.field-key-field", "");
 		multi_table_key_value = config.getString("multi-table.field-key-value", "");
 		multi_table_value_field = config.getString("multi-table.field-value-field", "");
-
-		gametimeEnabled = config.getBoolean("basic-tracking.field-gametime-enabled", false);
-		gametimeColumn = config.getString("basic-tracking.field-gametime-field", "");
-		gametimeFormattedColumn = config.getString("basic-tracking.field-gametime-formatted-field", "");
-		gametimeKeyValue = config.getString("basic-tracking.field-gametime-key-value", "");
-		gametimeFormattedKeyValue = config.getString("basic-tracking.field-gametime-formatted-key-value", "");
-
-		totalxpEnabled = config.getBoolean("basic-tracking.field-totalxp-enabled", false);
-		totalxpKeyValue = config.getString("basic-tracking.field-totalxp-key-value", "");
-		totalxpColumn = config.getString("basic-tracking.field-totalxp-field", "");
-
-		currentxpEnabled = config.getBoolean("basic-tracking.field-currentxp-enabled", false);
-		currentxpColumn = config.getString("basic-tracking.field-currentxp-field", "");
-		currentxpFormattedColumn = config.getString("basic-tracking.field-currentxp-formatted-field", "");
-		currentxpKeyValue = config.getString("basic-tracking.field-currentxp-key-value", "");
-		currentxpFormattedKeyValue = config.getString("basic-tracking.field-currentxp-formatted-key-value", "");
-
-		levelEnabled = config.getBoolean("basic-tracking.field-level-enabled", false);
-		levelColumn = config.getString("basic-tracking.field-level-field", "");
-		levelKeyValue = config.getString("basic-tracking.field-level-key-value", "");
-
-		healthEnabled = config.getBoolean("basic-tracking.field-health-enabled", false);
-		healthColumn = config.getString("basic-tracking.field-health-field", "");
-		healthKeyValue = config.getString("basic-tracking.field-health-key-value", "");
-
-		lifeticksEnabled = config.getBoolean("basic-tracking.field-lifeticks-enabled", false);
-		lifeticksColumn = config.getString("basic-tracking.field-lifeticks-field", "");
-		lifeticksFormattedColumn = config.getString("basic-tracking.field-lifeticks-formatted-field", "");
-		lifeticksKeyValue = config.getString("basic-tracking.field-lifeticks-key-value", "");
-		lifeticksFormattedKeyValue = config.getString("basic-tracking.field-lifeticks-formatted-key-value", "");
-
-		walletEnabled = config.getBoolean("basic-tracking.field-wallet-enabled", false);
-		walletColumn = config.getString("basic-tracking.field-wallet-field", "");
-		walletKeyValue = config.getString("basic-tracking.field-wallet-key-value", "");
 	}
 
 	/**
@@ -1006,10 +1077,44 @@ public class Configuration
 				log.config("Tracking Online Status Online Value  : " + onlineStatusValueOnline);
 				log.config("Tracking Online Status Offline Value : " + onlineStatusValueOffline);
 			}
+			log.config(  "Tracking Last Online                 : " + lastonlineEnabled);
 			if (lastonlineEnabled)
 			{
 				log.config("Tracking Last Online Column/Key      : " + lastonlineColumnOrKey);
 				log.config("Tracking Last Online Formatted Co/Key: " + lastonlineFormattedColumnOrKey);
+			}
+			log.config(  "Tracking Game Time                   : " + gametimeEnabled);
+			if (gametimeEnabled)
+			{
+				log.config("Tracking Game Time Column/Key        : " + gametimeColumnOrKey);
+				log.config("Tracking Game Time Formatted Co/Key  : " + gametimeFormattedColumnOrKey);
+			}
+			log.config(  "Tracking Level                       : " + levelEnabled);
+			if (levelEnabled)
+			{
+				log.config("Tracking Level Column/Key            : " + levelColumnOrKey);
+			}
+			if (totalxpEnabled)
+			{
+				log.config("Tracking Total XP Column/Key         : " + totalxpColumnOrKey);
+			}
+			if (currentxpEnabled)
+			{
+				log.config("Tracking Current XP Column/Key       : " + currentxpColumnOrKey);
+				log.config("Tracking Current XP Formatted Co/Key : " + currentxpFormattedColumnOrKey);
+			}
+			if (lifeticksEnabled)
+			{
+				log.config("Tracking Lifeticks Column/Key        : " + lifeticksColumnOrKey);
+				log.config("Tracking Lifeticks Formatted Co/Key  : " + lifeticksFormattedColumnOrKey);
+			}
+			if (healthEnabled)
+			{
+				log.config("Tracking Health Column/Key           : " + healthColumnOrKey);
+			}
+			if (walletEnabled)
+			{
+				log.config("Tracking Wallet Column/Key           : " + walletColumnOrKey);
 			}
 		}
 	}

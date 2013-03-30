@@ -9,11 +9,13 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.logging.Level;
+import net.milkbowl.vault.economy.Economy;
 import net.netmanagers.api.SQL;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
 import org.ruhlendavis.mc.utility.Log;
@@ -43,6 +45,7 @@ public final class CommunityBridge extends JavaPlugin
 	@SuppressWarnings("NonConstantLogger")
 	public static Log log;
 	public static SQL sql;
+	public static Economy economy;
 	private static CommunityBridge instance = null;
 	private static Metrics metrics = null;
 	public static WebApplication webapp = null;
@@ -66,6 +69,32 @@ public final class CommunityBridge extends JavaPlugin
 		getCommand("cbsync").setExecutor(new CBCommandExecutor(config, log));
 		getCommand("cbsyncall").setExecutor(new CBCommandExecutor(config, log));
 
+		if (config.statisticsEnabled && config.walletEnabled)
+		{
+	    if (getServer().getPluginManager().getPlugin("Vault") == null)
+			{
+				log.warning("Wallet statistics tracker requires Vault. Temporarily disabling Wallet tracker");
+				config.walletEnabled = false;
+			}
+			else
+			{
+        RegisteredServiceProvider<Economy> rsp = Bukkit.getServicesManager().getRegistration(Economy.class);
+        if (rsp == null)
+				{
+					log.warning("Failure getting economy service registration. Temporarily disabling Wallet tracker");
+					config.walletEnabled = false;
+	      }
+				else
+				{
+	        economy = rsp.getProvider();
+					if (economy == null)
+					{
+						log.warning("Failure getting economy provider. Temporarily disabling Wallet tracker");
+						config.walletEnabled = false;				
+					}
+				}
+			}
+		}
 		activate();
 
 		if (CommunityBridge.isActive())

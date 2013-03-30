@@ -4,7 +4,7 @@ description: Community Bridging plugin based off of ChillerCrafts ForumBridge pl
 authors: [ChillerCraft, NoRC, Feaelin]
 website: http://dev.bukkit.org/server-mods/communitybridge-fm/
 
-softdepend: [bPermissions, GroupManager, PermissionsBukkit, PermissionsEx]
+softdepend: [bPermissions, GroupManager, PermissionsBukkit, PermissionsEx, Vault]
 main: org.ruhlendavis.mc.communitybridge.CommunityBridge
 
 # Note 'usage:' is commented out because as of Bukkit 1.3.1-R2, the message

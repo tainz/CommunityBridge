@@ -257,7 +257,7 @@ statistics:
   user-id-column:
   # Set this to true if data on the table is stored in key-value pairs.
   uses-key: false
-  
+
   # If uses-key is true, set these as well. They are unused if uses-key is false.
   key-column:
   value-column:
@@ -288,6 +288,7 @@ statistics:
       formatted-column-or-key-name:
 
     # Game Time: Record how much time the player has played.
+    # Requires the last-online tracker to be turned on as well.
     game-time:
       enabled: false
       column-or-key-name:
@@ -297,7 +298,6 @@ statistics:
     level:
       enabled: false
       column-or-key-name:
-      formatted-column-or-key-name:
 
     # Player's current progress toward next level
     current-xp:
@@ -307,11 +307,6 @@ statistics:
 
     # Player's current XP total
     total-xp:
-      enabled: false
-      column-or-key-name:
-
-    # Player's lifetime XP total
-    lifetime-xp:
       enabled: false
       column-or-key-name:
 
