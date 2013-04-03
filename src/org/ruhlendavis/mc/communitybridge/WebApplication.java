@@ -1,5 +1,6 @@
 package org.ruhlendavis.mc.communitybridge;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -282,6 +283,7 @@ public class WebApplication
 	 */
 	public void onJoin(final Player player)
 	{
+		runGroupSynchronizationTask(player);
 		runUpdateStatisticsTask(player, true);
 	}
 
@@ -293,6 +295,24 @@ public class WebApplication
 	public void onQuit(Player player)
 	{
 		runUpdateStatisticsTask(player, false);
+	}
+
+	/**
+	 * If statistics is enabled, this method sets up an update statistics task
+	 * for the given player.
+	 *
+	 * @param String The player's name.
+	 */
+	private void runGroupSynchronizationTask(final Player player)
+	{
+		Bukkit.getScheduler().runTaskAsynchronously(plugin,	new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				synchronizeGroups(player);
+			}
+		});
 	}
 
 	/**
@@ -324,6 +344,16 @@ public class WebApplication
 	public final void setSQL(SQL sql)
 	{
 		this.sql = sql;
+	}
+
+	private void synchronizeGroups(Player player)
+	{
+		// 1. Retrieve previous group state for forum groups and permissions groups.
+		// 2. Capture current group state
+		// 3. Compare current group state to previous, noting any additions or deletions.
+		// 4. Process additions
+		// 5. Process deletions
+		// 6. Store current group state
 	}
 
 	/**
