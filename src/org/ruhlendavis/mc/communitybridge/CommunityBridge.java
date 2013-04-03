@@ -186,20 +186,6 @@ public final class CommunityBridge extends JavaPlugin
 			}
 		}
 
-		// *** OLD boundary
-
-//		if (config.statisticsEnabled && config.onlineStatusEnabled)
-//		{
-//			resetOnlineStatus();
-//		}
-//
-//		syncAll();
-//
-//		if (config.autoSync)
-//		{
-//			startSyncing();
-//		}
-
 		active = true;
 		log.finest("CommunityBridge activated.");
 	}
@@ -422,45 +408,6 @@ public final class CommunityBridge extends JavaPlugin
 	public static int getUserId(String username)
 	{
 		return webapp.getUserIDint(username);
-	}
-
-	public static ResultSet getOnlinePlayerInfo(String username) {
-		try {
-			ResultSet res;
-			if (config.multiTables)
-      {
-				if (config.multiTablesUseKey)
-        {
-					res = CommunityBridge.sql.sqlQuery("SELECT * FROM " + config.multi_table + " WHERE " + config.multi_table_key_field + " = '" + config.multi_table_key_value + "' AND " + config.multi_table_value_field + " = '" + username + "'");
-				}
-        else
-        {
-					res = CommunityBridge.sql.sqlQuery("SELECT * FROM  "+ config.multi_table +" WHERE " + config.multi_table_value_field + " = '" + username + "'");
-				}
-			}
-      else
-      {
-				res = CommunityBridge.sql.sqlQuery("SELECT * FROM " + config.users_table + " WHERE " + config.user_name_field + " = '" + username + "'");
-			}
-
-			if (res.next())
-      {
-				return res;
-			}
-		} catch (MalformedURLException e) {
-
-		} catch (InstantiationException e) {
-
-		} catch (IllegalAccessException e) {
-
-		}
-		catch (SQLException e)
-		{
-			log.severe("Error in getOnlinePlayerInfo(): " + e.getMessage());
-			log.severe("Broken Get Online Player Info SQL Query, check your config.yml");
-			disablePlugin();
-		}
-		return null;
 	}
 
 	/**
@@ -736,11 +683,6 @@ public final class CommunityBridge extends JavaPlugin
 
 					if (firstsync)
           {
-						if (config.statisticsEnabled)
-            {
-              //CommunityBridge.loadStatistics(id, p);
-            }
-
 						if (config.linkingNotifyRegistered)
 						{
 							if (isOkayToSetPrimaryGroup(groupID))
@@ -750,10 +692,6 @@ public final class CommunityBridge extends JavaPlugin
 								p.sendMessage(ChatColor.YELLOW + message);
 							}
 						}
-					}
-          else if (config.statisticsEnabled)
-          {
-//						updateStatistics(id, p);
 					}
 				}
 			}
@@ -793,38 +731,6 @@ public final class CommunityBridge extends JavaPlugin
 			disablePlugin();
 		} catch (SQLException e) {
 			log.severe("Sync User SQL Query Broken, check your config.yml;" + e.getMessage());
-			disablePlugin();
-		}
-	}
-
-	public static void checkDBSanity(int u, String keyval)
-  {
-		ResultSet res;
-		try
-    {
-			res = sql.sqlQuery("SELECT 1 FROM " + config.multi_table + " WHERE " + config.multi_table_user_id_field + " = '" + u + "' and " + config.multi_table_key_field +" = '" + keyval + "'");
-			if (!res.next())
-      {
-        sql.insertQuery("INSERT INTO " + config.multi_table + " (`"+config.multi_table_user_id_field+"`, `"+config.multi_table_key_field+"`, `"+config.multi_table_value_field+"`) VALUES ('" + u + "', '" + keyval + "', 0)");
-      }
-
-		}
-		catch (MalformedURLException e)
-		{
-			log.severe("Error in checkDBSanity(): " + e.getMessage());
-		}
-		catch (InstantiationException e)
-		{
-			log.severe("Error in checkDBSanity(): " + e.getMessage());
-		}
-		catch (IllegalAccessException e)
-		{
-			log.severe("Error in checkDBSanity(): " + e.getMessage());
-		}
-		catch (SQLException e)
-		{
-			log.severe("Error in checkDBSanity(): " + e.getMessage());
-			log.severe("Database SQL Error with " + keyval);
 			disablePlugin();
 		}
 	}
