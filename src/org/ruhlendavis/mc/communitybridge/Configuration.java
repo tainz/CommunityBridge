@@ -929,7 +929,7 @@ public class Configuration
 		{}
 		else
 		{
-			plugin.saveResource("messages.yml", false);
+			plugin.saveResource(messageFilename, false);
 			messagesFile = new File(plugin.getDataFolder(), messageFilename);
 		}
 
