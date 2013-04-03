@@ -72,22 +72,6 @@ public class Configuration
 	public String requirePostsPostCountColumn;
 	public int requirePostsPostCount;
 
-	// Group Synchronization: Primary
-	public boolean groupSyncPrimaryEnabled;
-	public boolean groupSyncPrimaryNotifyPlayer;
-	public boolean groupSyncPrimaryUsesKey;
-	public String groupSyncPrimaryTableName;
-	public String groupSyncPrimaryUserIDColumn;
-	public String groupSyncPrimaryGroupIDColumn;
-	public String groupSyncPrimaryKeyName;
-	public String groupSyncPrimaryKeyColumn;
-	public String groupSyncPrimaryValueColumn;
-	public Map<String, GroupRule> groupSyncPrimaryWebappRules = new HashMap();
-	public Map<String, GroupRule> groupSyncPrimaryMinecraftRules = new HashMap();
-
-	// Group Synchronization: Secondary
-	public boolean groupSyncSecondaryEnabled;
-
 	// Statistics Tracking Settings
 	public boolean statisticsEnabled;
 	public String statisticsTableName;
@@ -131,46 +115,6 @@ public class Configuration
 
 	// These are not in the config.yml. They are calculated.
 	public boolean permissionsSystemRequired;
-	public boolean groupSyncEnabled;
-
-	// Instance variables associated with the old configuration
-	public List<String> primaryGroupIDsToIgnore;
-	public Map<String, Object> groups;
-	public String defaultGroup;
-
-	public boolean multiTables;
-	public boolean multiTablesUseKey;
-	public boolean useBanned;
-	public boolean banlistTableEnabled;
-	public boolean groups_table_enabled;
-
-  public boolean secondary_groups = false;
-	public boolean show_primary_group = false;
-
-	public String users_table;
-	public String banlist_table;
-	public String groups_table;
-	public String multi_table;
-
-	public String banlist_user_id_field;
-	public String banlist_banned_id_field;
-	public String groups_user_id_field;
-	public String groups_group_id_field;
-
-	public String user_id_field;
-	public String user_name_field;
-	public String groups_id_field;
-	public String secondary_groups_id_field;
-
-	public String is_banned_field;
-
-	public String banned_users_group;
-	public int minposts_required;
-
-	public String multi_table_key_field;
-	public String multi_table_key_value;
-	public String multi_table_value_field;
-	public String multi_table_user_id_field;
 
 	/**
 	 * Constructor for the configuration class.
@@ -182,7 +126,6 @@ public class Configuration
 		this.plugin = plugin;
 		this.log = log;
 		load();
-		loadOldConfig();
 		loadMessages();
 		report();
 	}
@@ -716,83 +659,6 @@ public class Configuration
 			requirePostsPostCount = config.getInt("requirement.minimum-posts.post-count", 0);
 		}
 
-		// Group Synchronization: Primary
-		groupSyncPrimaryEnabled = config.getBoolean("group-synchronization.primary.enabled", false);
-		if (groupSyncPrimaryEnabled)
-		{
-			groupSyncPrimaryNotifyPlayer = config.getBoolean("group-synchronization.primary.notify-player", false);
-			groupSyncPrimaryTableName = config.getString("group-synchronization.primary.table-name", "");
-			groupSyncPrimaryUserIDColumn = config.getString("group-synchronization.primary.user-id-column", "");
-
-			groupSyncPrimaryUsesKey = config.getBoolean("group-synchronization.primary.uses-key", false);
-			if (groupSyncPrimaryUsesKey)
-			{
-				groupSyncPrimaryKeyName = config.getString("group-synchronization.primary.key-name", "");
-				groupSyncPrimaryKeyColumn = config.getString("group-synchronization.primary.key-column", "");
-				groupSyncPrimaryValueColumn = config.getString("group-synchronization.primary.value-column", "");
-			}
-			else
-			{
-				groupSyncPrimaryGroupIDColumn = config.getString("group-synchronization.primary.group-id-column", "");
-			}
-
-			ConfigurationSection groupRules = config.getConfigurationSection("group-synchronization.primary.group-rules");
-			if (groupRules == null)
-			{
-				log.warning("Primary group synchronization is turned on, but there are no rules defined.");
-			}
-			else
-			{
-				Set<String> rules = groupRules.getKeys(false);
-
-				for (String ruleNumber : rules)
-				{
-					String ruleSectionPath = "group-synchronization.primary.group-rules." + ruleNumber + ".";
-
-					GroupRule rule = new GroupRule();
-					rule.groupID = config.getString(ruleSectionPath + "webapp-id", "");
-					if (rule.groupID.isEmpty())
-					{
-						log.warning("Ignoring primary group rule #" + ruleNumber + ": missing web application group ID.");
-						continue;
-					}
-					rule.groupName = config.getString(ruleSectionPath + "permissions-group", "");
-					if (rule.groupName.isEmpty())
-					{
-						log.warning("Ignoring primary group rule #" + ruleNumber + ": missing permissions group name.");
-						continue;
-					}
-
-					rule.allWorlds = config.getBoolean(ruleSectionPath + "all-worlds", false);
-					if (rule.allWorlds)
-					{}
-					else
-					{
-						rule.world = config.getString(ruleSectionPath + "world", "");
-					}
-
-					if (config.getString(ruleSectionPath + "direction", "").equalsIgnoreCase("minecraft"))
-					{
-						rule.direction = GroupRuleDirection.MINECRAFT;
-						groupSyncPrimaryMinecraftRules.put(rule.groupID, rule);
-					}
-					else if (config.getString(ruleSectionPath + "direction", "").equalsIgnoreCase("webapp"))
-					{
-						rule.direction = GroupRuleDirection.WEBAPP;
-						groupSyncPrimaryWebappRules.put(rule.groupName, rule);
-					}
-					else
-					{
-						log.warning("Ignoring primary group rule #" + ruleNumber + ": invalid direction.");
-						continue;
-					}
-				}
-			}
-		}
-
-		// Group Synchronization: Secondary
-		groupSyncSecondaryEnabled = config.getBoolean("group-synchronization.secondary.enabled", false);
-
 		// Statistics Tracking Settings
 		statisticsEnabled = config.getBoolean("statistics.enabled", false);
 
@@ -840,74 +706,7 @@ public class Configuration
 		walletColumnOrKey = config.getString("statistics.trackers.wallet.column-or-key-name", "");
 
 		// These are calculated from settings above.
-		groupSyncEnabled = groupSyncPrimaryEnabled && groupSyncSecondaryEnabled;
-		permissionsSystemRequired = groupSyncEnabled;
-	}
-
-	/**
-	 * Loads the configuration information from the yaml file.
-	 *
-	 * @param CommunityBridge The plugin object for this plugin.
-	 */
-	private void loadOldConfig()
-	{
-		plugin.saveDefaultConfig();
-
-		FileConfiguration config = plugin.getConfig();
-
-		// TODO: Remove this chunk after primary group synchronization is implemented.
-		if (groupSyncPrimaryEnabled)
-		{
-			List<String> defaultList = new ArrayList<String>();
-			config.addDefault("group-synchronization.primary-group.group-ids-to-ignore", defaultList);
-			primaryGroupIDsToIgnore = config.getStringList("group-synchronization.primary-group.group-ids-to-ignore");
-			groups = config.getConfigurationSection("groups").getValues(true);
-
-			// Note: groups is a map <String, Object> so we need the cast.
-			defaultGroup = (String)groups.get(config.getString("users-table.default-group"));
-
-		}
-
-		multiTables = config.getBoolean("multi-tables", false);
-		multiTablesUseKey = config.getBoolean("multi-tables-use-key", false);
-		useBanned = config.getBoolean("use-banned-field", false);
-
-		banlistTableEnabled = config.getBoolean("banlist-table.enabled", false);
-
-		groups_table_enabled = config.getBoolean("groups-table.enabled", false);
-
-		show_primary_group = config.getBoolean("show-primary-group", false);
-		secondary_groups = config.getBoolean("secondary-groups", false);
-
-		banlist_table = config.getString("banlist-table.table", "");
-		banlist_user_id_field = config.getString("banlist-table.user-id-field", "");
-		banlist_banned_id_field = config.getString("banlist-table.user-id-field", "");
-
-		if (useBanned)
-		{
-			is_banned_field = config.getString("users-table.banned-field", "");
-		}
-		else
-		{
-			banned_users_group = config.getString("users-table.banned-users-group", "");
-		}
-
-		groups_table = config.getString("groups-table.table", "");
-		groups_user_id_field = config.getString("groups-table.user-id-field", "");
-		groups_group_id_field = config.getString("groups-table.group-id-field", "");
-
-		users_table = config.getString("users-table.table", "");
-		user_id_field = config.getString("users-table.user-id-field", "");
-		user_name_field = config.getString("users-table.user-name-field", "");
-
-		groups_id_field = config.getString("users-table.groups-id-field", "");
-		secondary_groups_id_field = config.getString("users-table.secondary-groups-id-field", "");
-
-		multi_table = config.getString("multi-table.table", "");
-		multi_table_user_id_field = config.getString("multi-table.field-user-id-field", "");
-		multi_table_key_field = config.getString("multi-table.field-key-field", "");
-		multi_table_key_value = config.getString("multi-table.field-key-value", "");
-		multi_table_value_field = config.getString("multi-table.field-value-field", "");
+		permissionsSystemRequired = false;
 	}
 
 	/**
@@ -1037,26 +836,6 @@ public class Configuration
 			log.config(  "Require minimum posts user ID column : " + requirePostsUserIDColumn);
 			log.config(  "Require minimum posts avatar column  : " + requirePostsPostCountColumn);
 			log.config(  "Require minimum post count           : " + requirePostsPostCount);
-		}
-
-		log.config(    "Primary group synchronization        : " + groupSyncPrimaryEnabled);
-		if (groupSyncPrimaryEnabled)
-		{
-			log.config(  "Primary group sync notify player     : " + groupSyncPrimaryNotifyPlayer);
-			log.config(  "Primary group sync table name        : " + groupSyncPrimaryTableName);
-			log.config(  "Primary group sync user ID column    : " + groupSyncPrimaryUserIDColumn);
-			log.config(  "Primary group sync uses key          : " + groupSyncPrimaryUsesKey);
-			if (groupSyncPrimaryUsesKey)
-			{
-				log.config("Primary group sync key name          : " + groupSyncPrimaryKeyName);
-				log.config("Primary group sync key column        : " + groupSyncPrimaryKeyColumn);
-				log.config("Primary group sync value column      : " + groupSyncPrimaryValueColumn);
-			}
-			else
-			{
-				log.config("Primary group sync group ID column   : " + groupSyncPrimaryGroupIDColumn);
-			}
-			log.config(  "Primary group sync rule count        : " + (groupSyncPrimaryWebappRules.size() + groupSyncPrimaryMinecraftRules.size()));
 		}
 
 		log.config(    "Tracking Statistics                  : " + statisticsEnabled);
