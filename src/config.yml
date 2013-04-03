@@ -157,90 +157,6 @@ requirement:
     # Minimum number of posts to require.
     post-count:
 
-#                             Group Synchronization Settings
-# -----------------------------------------------------------------------------
-# Settings to control group synchronization features.
-group-synchronization:
-  primary:
-    enabled: false
-    # Notify player that they've been placed in a primary group.
-    notify-player: false
-
-    # The table that contains the primary group ID.
-    table-name:
-
-    # The column on the table that contains the user ID.
-    user-id-column:
-
-    # If the primary group is stored in a key-value pair, set this to true.
-    uses-key: false
-
-    # If you set uses-key to false, then set this to the column that the group
-    # ID is in on the table. Otherwise, this setting is ignored.
-    group-id-column:
-
-    # If you set uses-key to true, then set the following three settings:
-    # Key name for the key-value pair.
-    key-name:
-    # Column that the key name is in
-    key-column:
-    # Column that the value is in
-    value-column:
-
-    # ***** PRIMARY Group Rules *****
-    # This subsection is where you tell Community Bridge how you want it to
-    # synchronize the primary groups. The numbers are solely for reference.
-    # The rules are applied in the order that they appear in this file.
-
-    # * webapp-id is the group ID that the web application uses. Often, these
-    #   are numbers, but not always.
-    # * permissions-group is the name of the permissions group that the
-    #   group ID should be synchronized with.
-
-    # * direction controls which way the synchronization occurs. Possible
-    #   options are:
-    #   - webapp: Assigns web application user to the specified group ID, based
-    #             on the permissions group name.
-    #   - minecraft: Assigns the Minecraft player to the specified permissions
-    #                group, based on the web application group ID.
-    # OPTIONAL:
-    # * world: <worldname> can optionally be specified. If present and if the
-    #   permissions system supports it, CommunityBridge will apply the group
-    #   membership for the world <worldname>.
-    # * all-worlds: true. If this is present, set to true, and the permissions
-    #   system supports it, CommunityBridge will apply the group membership for
-    #   every world it knows about.
-    # EXAMPLES:
-    # Users in forum group ID 15 are added to the guest permissions group.
-    #  1:
-    #    webapp-id: 15
-    #    permissions-group: guest
-    #    direction: minecraft
-    # Users in forum group ID 5 are added to the builder permissions group.
-    #  2:
-    #    webapp-id: 5
-    #    permissions-group: builder
-    #    direction: minecraft
-    # Players in the moderator permissions group are added to the moderator
-    # forum group ID 7. If the permissions system supports it, the permission
-    # will be applied to every world that Community Bridge knows about.
-    #  3:
-    #    webapp-id: 7
-    #    permissions-group: moderator
-    #    direction: webapp
-    #    all-worlds: true
-
-    # Players in the forum group ID are added to the spawnworldnobuild
-    # permissions group
-    #  4:
-    #    webapp-id: 10
-    #    permissions-group: spawnworldnobuild
-    #    direction: minecraft
-    #    world: spawnworld
-    group-rules:
-  secondary:
-    enabled: false
-
 #                             Statistics Tracking
 # -----------------------------------------------------------------------------
 # In general, to make this work, your web application will need to support
@@ -325,3 +241,71 @@ statistics:
     wallet:
       enabled: false
       column-or-key-name:
+
+#                     Web Application Group Configuration
+# -----------------------------------------------------------------------------
+#
+# Some terminology:
+# - Primary group: A group setting such that the setting can only be set to
+#   exactly one group. Most web applications have such a feature. Very few
+#   permissions systems have such a feature.
+# - Secondary group(s): A group setting such that the setting can be set to
+#   multiple groups or none.
+
+# This section describes to Communitybridge how the web application stores
+# user group/role information.
+group-config-app:
+  # If the web application has a primary group/role feature, configure it here.
+  primary-group:
+    enabled: false
+    # The table that contains the primary group ID.
+    table-name:
+
+    # The column on the table that contains the user ID.
+    user-id-column:
+
+    # If the primary group is stored in a key-value pair, set this to true.
+    uses-key: false
+
+    # The column that the primary group ID is stored in. If uses-key is true,
+    # this is the column that the "value" of the key-value pair is stored in.
+    group-id-column:
+
+    # If you set uses-key to true, then set the following three settings:
+    # Key name for the key-value pair.
+    key-name:
+    # Column that the key name is in
+    key-column:
+
+  # If the web application has a secondary groups feature, configure it here.
+  secondary-group:
+    enabled: false
+    # The table that contains the secondary groups.
+    table-name:
+
+    # The column on the table that contains the user ID.
+    user-id-column:
+
+    # Storage method. Set to one of the following:
+    # - junction: The table can contain multiple rows for a given user_id,
+    #             each with their own group_id.
+    # - single-column: All the group ids in a single column with a specified
+    #                 delimiter below.
+    # - key-value: The secondary groups are in a single column on a table that
+    #              stores its data in key-value pairs.
+    storage-method: junction
+
+    # The column that the group ID(s) are stored in:
+    # (For the key-value method, this is the 'value' column)
+    group-id-column:
+
+    # For single-column or key-value storage methods, the delimiter/separator
+    # that separates the group IDs: (ignored for junction storage method)
+    group-id-delimiter: ,
+
+    # For the key-value storage method:
+    # (ignored for the junction and single-column methods)
+    # Key name for the key-value pair.
+    key-name:
+    # Column that the key name is in
+    key-column:
