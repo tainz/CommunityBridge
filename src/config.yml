@@ -254,9 +254,9 @@ statistics:
 
 # This section describes to Communitybridge how the web application stores
 # user group/role information.
-group-config-app:
+app-group-config:
   # If the web application has a primary group/role feature, configure it here.
-  primary-group:
+  primary:
     enabled: false
     # The table that contains the primary group ID.
     table-name:
@@ -278,7 +278,7 @@ group-config-app:
     key-column:
 
   # If the web application has a secondary groups feature, configure it here.
-  secondary-group:
+  secondary:
     enabled: false
     # The table that contains the secondary groups.
     table-name:

@@ -113,6 +113,27 @@ public class Configuration
 	public boolean walletEnabled;
   public String walletColumnOrKey;
 
+	// Web App group configuration
+	// - primary
+	public boolean webappPrimaryGroupEnabled;
+	public String webappPrimaryGroupTable;
+	public String webappPrimaryGroupUserIDColumn;
+	public boolean webappPrimaryGroupUsesKey;
+	public String webappPrimaryGroupGroupIDColumn;
+	public String webappPrimaryGroupKeyName;
+	public String webappPrimaryGroupKeyColumn;
+
+	// - secondary
+	public boolean webappSecondaryGroupEnabled;
+	public String webappSecondaryGroupTable;
+	public String webappSecondaryGroupUserIDColumn;
+	public String webappSecondaryGroupGroupIDColumn;
+	public String webappSecondaryGroupKeyName;
+	public String webappSecondaryGroupKeyColumn;
+	public String webappSecondaryGroupGroupIDDelimiter;
+	// junction, single-column, key-value
+	public String webappSecondaryGroupStorageMethod;
+
 	// These are not in the config.yml. They are calculated.
 	public boolean permissionsSystemRequired;
 
@@ -426,6 +447,46 @@ public class Configuration
 			}
 		}
 
+		if (webappPrimaryGroupEnabled)
+		{
+			temp = checkTable(sql, "app-group-config.primary.table-name", webappPrimaryGroupTable);
+			temp = temp & checkColumn(sql, "app-group-config.primary.user-id-column", webappPrimaryGroupTable, webappPrimaryGroupUserIDColumn);
+      temp = temp & checkColumn(sql, "app-group-config.primary.group-id-column", webappPrimaryGroupTable, webappPrimaryGroupGroupIDColumn);
+			if (webappPrimaryGroupUsesKey)
+			{
+				temp = temp & checkColumn(sql, "app-group-config.primary.key-column", webappPrimaryGroupTable, webappPrimaryGroupKeyColumn);
+				if (temp)
+				{
+					checkKeyColumnForKey(sql, "app-group-config.primary.key-name", webappPrimaryGroupTable, webappPrimaryGroupKeyColumn, webappPrimaryGroupKeyName);
+				}
+				else
+				{
+					webappPrimaryGroupEnabled = false;
+					log.warning("Web application primary group disabled due to prior errors.");
+				}
+			}
+		}
+
+		if (webappSecondaryGroupEnabled)
+		{
+			temp = checkTable(sql, "app-group-config.secondary.table-name", webappSecondaryGroupTable);
+			temp = temp & checkColumn(sql, "app-group-config.secondary.user-id-column", webappSecondaryGroupTable, webappSecondaryGroupUserIDColumn);
+      temp = temp & checkColumn(sql, "app-group-config.secondary.group-id-column", webappSecondaryGroupTable, webappSecondaryGroupGroupIDColumn);
+			if (webappSecondaryGroupStorageMethod.equalsIgnoreCase("key-value"))
+			{
+				temp = temp & checkColumn(sql, "app-group-config.primary.key-column", webappPrimaryGroupTable, webappPrimaryGroupKeyColumn);
+				if (temp)
+				{
+					checkKeyColumnForKey(sql, "app-group-config.primary.key-name", webappPrimaryGroupTable, webappPrimaryGroupKeyColumn, webappPrimaryGroupKeyName);
+				}
+				else
+				{
+					webappSecondaryGroupEnabled = false;
+					log.warning("Web application secondary groups disabled due to prior errors.");
+				}
+			}
+		}
+
 		return status;
 	}
 
@@ -705,6 +766,26 @@ public class Configuration
 		walletEnabled = config.getBoolean("statistics.trackers.wallet.enabled", false);
 		walletColumnOrKey = config.getString("statistics.trackers.wallet.column-or-key-name", "");
 
+		// Web App group configuration
+		// - Primary
+		webappPrimaryGroupEnabled = config.getBoolean("app-group-config.primary.enabled", false);
+		webappPrimaryGroupTable = config.getString("app-group-config.primary.table-name", "");
+		webappPrimaryGroupUserIDColumn = config.getString("app-group-config.primary.user-id-column", "");
+		webappPrimaryGroupUsesKey = config.getBoolean("app-group-config.primary.uses-key", false);
+		webappPrimaryGroupGroupIDColumn = config.getString("app-group-config.primary.group-id-column", "");
+		webappPrimaryGroupKeyName = config.getString("app-group-config.primary.key-name", "");
+		webappPrimaryGroupKeyColumn = config.getString("app-group-config.primary.key-column", "");
+
+		webappSecondaryGroupEnabled = config.getBoolean("app-group-config.secondary.enabled", false);
+		webappSecondaryGroupTable = config.getString("app-group-config.secondary.table-name", "");
+		webappSecondaryGroupUserIDColumn = config.getString("app-group-config.secondary.user-id-column", "");
+		webappSecondaryGroupGroupIDColumn = config.getString("app-group-config.secondary.group-id-column", "");
+		webappSecondaryGroupKeyName = config.getString("app-group-config.secondary.key-name", "");
+		webappSecondaryGroupKeyColumn = config.getString("app-group-config.secondary.key-column", "");
+		webappSecondaryGroupGroupIDDelimiter = config.getString("app-group-config.secondary.group-id-column", "");
+		// junction, single-column, key-value
+		webappSecondaryGroupStorageMethod = config.getString("app-group-config.secondary.storage-method", "");
+
 		// These are calculated from settings above.
 		permissionsSystemRequired = false;
 	}
@@ -895,6 +976,27 @@ public class Configuration
 			{
 				log.config("Tracking Wallet Column/Key           : " + walletColumnOrKey);
 			}
+		}
+
+		if (webappPrimaryGroupEnabled)
+		{
+			log.config(  "Primary group table                  : " + webappPrimaryGroupTable);
+			log.config(  "Primary group user id column         : " + webappPrimaryGroupUserIDColumn);
+			log.config(  "Primary group uses key               : " + webappPrimaryGroupUsesKey);
+			log.config(  "Primary group group id column        : " + webappPrimaryGroupGroupIDColumn);
+			log.config(  "Primary group key name               : " + webappPrimaryGroupKeyName);
+			log.config(  "Primary group key column             : " + webappPrimaryGroupKeyColumn);
+		}
+
+		if (webappSecondaryGroupEnabled)
+		{
+			log.config(  "Secondary group table                  : " + webappSecondaryGroupTable);
+			log.config(  "Secondary group user id column         : " + webappSecondaryGroupUserIDColumn);
+			log.config(  "Secondary group group id column        : " + webappSecondaryGroupGroupIDColumn);
+			log.config(  "Secondary group key name               : " + webappSecondaryGroupKeyName);
+			log.config(  "Secondary group key column             : " + webappSecondaryGroupKeyColumn);
+			log.config(  "Secondary group id delimiter           : " + webappSecondaryGroupGroupIDDelimiter);
+			log.config(  "Secondary group storage method         : " + webappSecondaryGroupStorageMethod);
 		}
 	}
 }
