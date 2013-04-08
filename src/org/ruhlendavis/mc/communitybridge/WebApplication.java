@@ -1,6 +1,5 @@
 package org.ruhlendavis.mc.communitybridge;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,8 +9,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.netmanagers.api.SQL;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -283,7 +280,10 @@ public class WebApplication
 	 */
 	public void onJoin(final Player player)
 	{
-		runGroupSynchronizationTask(player);
+		if (config.webappPrimaryGroupEnabled || config.webappSecondaryGroupEnabled)
+		{
+			runGroupSynchronizationTask(player);
+		}
 		runUpdateStatisticsTask(player, true);
 	}
 
@@ -349,8 +349,17 @@ public class WebApplication
 	private void synchronizeGroups(Player player)
 	{
 		// 1. Retrieve previous group state for forum groups and permissions groups.
+		PlayerGroupState previousState = new PlayerGroupState(player.getName());
+		previousState.load();
+
 		// 2. Capture current group state
+		PlayerGroupState currentState = new PlayerGroupState(player.getName());
+		currentState.generate();
+
 		// 3. Compare current group state to previous, noting any additions or deletions.
+		List additions = previousState.identifyAdditions(currentState);
+		List removals = previousState.identifyRemovals(currentState);
+
 		// 4. Process additions
 		// 5. Process deletions
 		// 6. Store current group state
