@@ -301,7 +301,7 @@ app-group-config:
 
     # For single-column or key-value storage methods, the delimiter/separator
     # that separates the group IDs: (ignored for junction storage method)
-    group-id-delimiter: ,
+    group-id-delimiter: ','
 
     # For the key-value storage method:
     # (ignored for the junction and single-column methods)
