@@ -487,6 +487,35 @@ public class Configuration
 			}
 		}
 
+		boolean playerDataRequired = true;
+
+		if (playerDataRequired)
+		{
+			File playerData = new File(plugin.getDataFolder(), "PlayerData");
+
+			if (playerData.exists())
+			{
+				if (playerData.isDirectory())
+				{}
+				else
+				{
+					log.severe("There is a file named PlayerData in the CommunityBridge plugin folder preventing creation of the data directory.");
+					// Here we disable anything that relies on the player data folder.
+				}
+			}
+			else
+			{
+				boolean success = playerData.mkdirs();
+				if (success)
+				{}
+				else
+				{
+					log.severe("Error when creating the CommunityBridge/PlayerData folder.");
+					// Here we disable anything that relies on the player data folder.
+				}
+			}
+		}
+
 		return status;
 	}
 
