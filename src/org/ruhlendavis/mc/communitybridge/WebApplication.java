@@ -1,5 +1,6 @@
 package org.ruhlendavis.mc.communitybridge;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -348,12 +349,13 @@ public class WebApplication
 
 	private void synchronizeGroups(Player player)
 	{
+		File playerFolder = new File(plugin.getDataFolder(), "Players");
 		// 1. Retrieve previous group state for forum groups and permissions groups.
-		PlayerGroupState previousState = new PlayerGroupState(player.getName());
+		PlayerGroupState previousState = new PlayerGroupState(player.getName(), playerFolder);
 		previousState.load();
 
 		// 2. Capture current group state
-		PlayerGroupState currentState = new PlayerGroupState(player.getName());
+		PlayerGroupState currentState = new PlayerGroupState(player.getName(), playerFolder);
 		currentState.generate();
 
 		// 3. Compare current group state to previous, noting any additions or deletions.
