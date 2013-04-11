@@ -126,7 +126,7 @@ public class WebApplication
 	 */
 	public int getUserPostCount(String playerName)
 	{
-		final String errorBase = "Error during WebApplication.playerHasAvatar(): ";
+		final String errorBase = "Error during WebApplication.getUserPostCount(): ";
 		String query;
 
 		query = "SELECT `" + config.requirePostsTableName + "`.`" + config.requirePostsPostCountColumn + "` "
@@ -168,6 +168,73 @@ public class WebApplication
 			log.severe(errorBase + error.getMessage());
 			return 0;
 		}
+	}
+
+	/**
+	 * Retrieves a player's primary group ID from the web application database.
+	 *
+	 * @param String player name to retrieve.
+	 * @return String containing the group ID or null if there was an error or it doesn't exist.
+	 */
+	public String getUserPrimaryGroupID(String playerName)
+	{
+		final String errorBase = "Error during WebApplication.getUserPrimaryGroupID(): ";
+		String query;
+
+		if (config.webappPrimaryGroupUsesKey)
+		{
+			query = "SELECT `" + config.webappPrimaryGroupGroupIDColumn + "` "
+						+ "FROM `" + config.webappPrimaryGroupTable + "` "
+						+ "WHERE `" + config.webappPrimaryGroupUserIDColumn + "` = '" + getUserID(playerName) + "' "
+						+ "AND `" + config.webappPrimaryGroupKeyColumn + "` = '" + config.webappPrimaryGroupKeyName + "' ";
+		}
+		else
+		{
+			query = "SELECT `" + config.webappPrimaryGroupGroupIDColumn + "` "
+						+ "FROM `" + config.webappPrimaryGroupTable + "` "
+						+ "WHERE `" + config.webappPrimaryGroupUserIDColumn + "` = '" + getUserID(playerName) + "'";
+		}
+
+		log.finest(query);
+
+		try
+		{
+			ResultSet result = sql.sqlQuery(query);
+
+			if (result.next())
+			{
+				return result.getString(config.webappPrimaryGroupGroupIDColumn);
+			}
+			else
+			{
+				return null;
+			}
+		}
+		catch (SQLException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return null;
+		}
+		catch (MalformedURLException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return null;
+		}
+		catch (InstantiationException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return null;
+		}
+		catch (IllegalAccessException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return null;
+		}
+	}
+
+	public List getUserGroupIDs(String playerName)
+	{
+		return new ArrayList();
 	}
 
 	/**
