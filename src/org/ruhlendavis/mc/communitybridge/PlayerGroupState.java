@@ -1,9 +1,12 @@
 package org.ruhlendavis.mc.communitybridge;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -14,7 +17,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
  */
 public class PlayerGroupState
 {
-	private String playerName;
 	private String fileName;
 	private File playerFolder;
 
@@ -27,7 +29,6 @@ public class PlayerGroupState
 
 	public PlayerGroupState(String playerName, File playerDataFolder)
 	{
-		this.playerName = playerName;
 		this.fileName = playerName + ".yml";
 		this.playerFolder = playerDataFolder;
 		this.webappGroupIDs = new ArrayList();
@@ -49,7 +50,7 @@ public class PlayerGroupState
 		return true;
 	}
 
-	public boolean load()
+	public void load()
 	{
 		File playerFile = new File(playerFolder, fileName);
 
@@ -59,13 +60,20 @@ public class PlayerGroupState
 			webappPrimaryGroupID = playerData.getString("webapp.primary-group-id", "");
 			webappGroupIDs = playerData.getStringList("webapp.group-ids");
 			permissionsSystemPrimaryGroupName = playerData.getString("permissions-system.primary-group-name", "");
-			permissionsSystemGroupNames = playerData.getStringList("permissions-system.group-ids");
+			permissionsSystemGroupNames = playerData.getStringList("permissions-system.group-names");
 		}
-		return true;
 	}
 
-	private boolean save()
+	public void save() throws IOException
 	{
-		return true;
+		File playerFile = new File(playerFolder, fileName);
+
+		FileConfiguration playerData = new YamlConfiguration();
+		playerData.set("webapp.primary-group-id", webappPrimaryGroupID);
+		playerData.set("webapp.group-ids", webappGroupIDs);
+		playerData.set("permissions-system.primary-group-name", permissionsSystemPrimaryGroupName);
+		playerData.set("permissions-system.group-names", permissionsSystemGroupNames);
+
+		playerData.save(playerFile);
 	}
 }

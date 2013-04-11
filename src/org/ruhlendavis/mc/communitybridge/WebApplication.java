@@ -1,6 +1,7 @@
 package org.ruhlendavis.mc.communitybridge;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,6 +11,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.netmanagers.api.SQL;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -349,13 +352,14 @@ public class WebApplication
 
 	private void synchronizeGroups(Player player)
 	{
+		String playerName = player.getName();
 		File playerFolder = new File(plugin.getDataFolder(), "Players");
 		// 1. Retrieve previous group state for forum groups and permissions groups.
-		PlayerGroupState previousState = new PlayerGroupState(player.getName(), playerFolder);
+		PlayerGroupState previousState = new PlayerGroupState(playerName, playerFolder);
 		previousState.load();
 
 		// 2. Capture current group state
-		PlayerGroupState currentState = new PlayerGroupState(player.getName(), playerFolder);
+		PlayerGroupState currentState = new PlayerGroupState(playerName, playerFolder);
 		currentState.generate();
 
 		// 3. Compare current group state to previous, noting any additions or deletions.
@@ -363,8 +367,18 @@ public class WebApplication
 		List removals = previousState.identifyRemovals(currentState);
 
 		// 4. Process additions
+
 		// 5. Process deletions
+
 		// 6. Store current group state
+		try
+		{
+			currentState.save();
+		}
+		catch (IOException error)
+		{
+			log.severe("Error when saving group state for player " + playerName + ": " + error.getMessage());
+		}
 	}
 
 	/**
