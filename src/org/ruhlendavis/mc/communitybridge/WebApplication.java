@@ -493,7 +493,11 @@ public class WebApplication
 		int lifeticks = player.getTicksLived();
 		String lifeticksFormatted = StringUtilities.timeElapsedtoString((int)(lifeticks / 20));
 
-		double wallet = CommunityBridge.economy.getBalance(playerName);
+		double wallet = 0.0;
+		if (config.walletEnabled)
+		{
+			wallet = CommunityBridge.economy.getBalance(playerName);
+		}
 
 		if (config.statisticsUsesKey)
 		{
