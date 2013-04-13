@@ -247,9 +247,9 @@ public class WebApplication
 		else if (config.webappSecondaryGroupStorageMethod.toLowerCase().startsWith("key"))
 
 		{
-			log.severe("Invalid storage method for secondary groups.");
 			return getUserGroupIDsKeyValue(playerName);
 		}
+		log.severe("Invalid storage method for secondary groups.");
 		return null;
 	}
 
