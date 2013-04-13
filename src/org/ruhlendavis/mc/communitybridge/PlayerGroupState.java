@@ -3,6 +3,7 @@ package org.ruhlendavis.mc.communitybridge;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -17,6 +18,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
  */
 public class PlayerGroupState
 {
+	private String playerName;
 	private String fileName;
 	private File playerFolder;
 
@@ -29,6 +31,7 @@ public class PlayerGroupState
 
 	public PlayerGroupState(String playerName, File playerDataFolder)
 	{
+		this.playerName = playerName;
 		this.fileName = playerName + ".yml";
 		this.playerFolder = playerDataFolder;
 		this.webappGroupIDs = new ArrayList();
@@ -45,9 +48,13 @@ public class PlayerGroupState
 		return new ArrayList();
 	}
 
-	public boolean generate()
+	public void generate()
 	{
-		return true;
+		permissionsSystemPrimaryGroupName = CommunityBridge.permissionHandler.getPrimaryGroup(playerName);
+		permissionsSystemGroupNames = new ArrayList(Arrays.asList(CommunityBridge.permissionHandler.getGroups(playerName)));
+
+		webappPrimaryGroupID = CommunityBridge.webapp.getUserPrimaryGroupID(playerName);
+		webappGroupIDs = CommunityBridge.webapp.getUserGroupIDs(playerName);
 	}
 
 	public void load()
