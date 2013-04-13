@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -234,7 +235,157 @@ public class WebApplication
 
 	public List getUserGroupIDs(String playerName)
 	{
-		return new ArrayList();
+		if (config.webappSecondaryGroupStorageMethod.toLowerCase().startsWith("sin"))
+		{
+			return getUserGroupIDsSingleColumn(playerName);
+		}
+		else if (config.webappSecondaryGroupStorageMethod.toLowerCase().startsWith("jun"))
+
+		{
+			return getUserGroupIDsJunction(playerName);
+		}
+		else if (config.webappSecondaryGroupStorageMethod.toLowerCase().startsWith("key"))
+
+		{
+			log.severe("Invalid storage method for secondary groups.");
+			return getUserGroupIDsKeyValue(playerName);
+		}
+		return null;
+	}
+
+	private List getUserGroupIDsSingleColumn(String playerName)
+	{
+		final String errorBase = "Error during WebApplication.getUserGroupIDsSingleColumn(): ";
+		String query;
+
+		query = "SELECT `" + config.webappSecondaryGroupGroupIDColumn + "` "
+					+ "FROM `" + config.webappSecondaryGroupTable + "` "
+					+ "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + getUserID(playerName) + "' ";
+
+		log.finest(query);
+
+		try
+		{
+			ResultSet result = sql.sqlQuery(query);
+
+			if (result.next())
+			{
+				return new ArrayList(Arrays.asList(result.getString(config.webappSecondaryGroupGroupIDColumn).split(config.webappSecondaryGroupGroupIDDelimiter)));
+			}
+			else
+			{
+				return null;
+			}
+		}
+		catch (SQLException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return null;
+		}
+		catch (MalformedURLException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return null;
+		}
+		catch (InstantiationException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return null;
+		}
+		catch (IllegalAccessException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return null;
+		}
+	}
+
+	private List getUserGroupIDsJunction(String playerName)
+	{
+		final String errorBase = "Error during WebApplication.getUserGroupIDsJunction(): ";
+		String query;
+
+		query = "SELECT `" + config.webappSecondaryGroupGroupIDColumn + "` "
+					+ "FROM `" + config.webappSecondaryGroupTable + "` "
+					+ "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + getUserID(playerName) + "' ";
+
+		log.finest(query);
+
+		try
+		{
+			ResultSet result = sql.sqlQuery(query);
+			List groupIDs = new ArrayList();
+
+			while (result.next())
+			{
+				groupIDs.add(result.getString(config.webappSecondaryGroupGroupIDColumn));
+			}
+			return groupIDs;
+		}
+		catch (SQLException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return null;
+		}
+		catch (MalformedURLException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return null;
+		}
+		catch (InstantiationException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return null;
+		}
+		catch (IllegalAccessException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return null;
+		}
+	}
+
+	private List getUserGroupIDsKeyValue(String playerName)
+	{
+		final String errorBase = "Error during WebApplication.getUserGroupIDsKeyValue(): ";
+		String query;
+
+		query = "SELECT `" + config.webappSecondaryGroupGroupIDColumn + "` "
+					+ "FROM `" + config.webappSecondaryGroupTable + "` "
+					+ "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + getUserID(playerName) + "' "
+					+ "AND `" + config.webappSecondaryGroupKeyColumn + "` = '" + config.webappSecondaryGroupKeyName + "' ";
+
+		log.finest(query);
+
+		try
+		{
+			ResultSet result = sql.sqlQuery(query);
+			List groupIDs = new ArrayList();
+
+			while (result.next())
+			{
+				groupIDs.add(result.getString(config.webappSecondaryGroupGroupIDColumn));
+			}
+			return groupIDs;
+		}
+		catch (SQLException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return null;
+		}
+		catch (MalformedURLException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return null;
+		}
+		catch (InstantiationException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return null;
+		}
+		catch (IllegalAccessException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return null;
+		}
 	}
 
 	/**
