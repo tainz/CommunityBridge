@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import net.netmanagers.api.SQL;
 import org.bukkit.configuration.ConfigurationSection;
@@ -624,12 +625,6 @@ public class Configuration
 	}
 
 	/**
-  * Check to see if a table exists.
-  *
-	* @param tableName Name of the table to check
-	* @return Empty string if the check succeeds otherwise an error string
-  */
-	/**
 	 * Check to see if a table exists.
 	 *
 	 * @param SQL An SQL query object.
@@ -681,6 +676,23 @@ public class Configuration
 			log.severe(errorBase + e.getMessage());
 			return false;
 		}
+	}
+
+	public String getGroupNameByGroupID(String groupID)
+	{
+		return (String)simpleSynchronizationGroupMap.get(groupID);
+	}
+
+	public String getWebappGroupIDbyGroupName(String groupName)
+	{
+		for (Entry<String, Object> entry: simpleSynchronizationGroupMap.entrySet())
+		{
+			if (groupName.equalsIgnoreCase((String)entry.getValue()))
+			{
+				return entry.getKey();
+			}
+		}
+    return null;
 	}
 
 	/**
