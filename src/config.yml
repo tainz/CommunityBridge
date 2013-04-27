@@ -309,3 +309,15 @@ app-group-config:
     key-name:
     # Column that the key name is in
     key-column:
+
+# Simple Synchronization Configuration
+simple-synchronization:
+  # Set this to enabled for simple two-way synchronization
+  enabled: false
+  # List groups and group IDs to be synchronized here. On the left side of
+  # the colon put a web application's group ID. On the right side of the colon
+  # put the corresponding permissions group name. Only list group IDs and
+  # group names you wish to be synchronized.
+  group-mapping:
+    '1' : 'guest'
+    '2' : 'member'

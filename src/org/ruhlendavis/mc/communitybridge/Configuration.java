@@ -134,6 +134,9 @@ public class Configuration
 	// junction, single-column, key-value
 	public String webappSecondaryGroupStorageMethod;
 
+	public boolean simpleSynchronizationEnabled;
+	public Map<String, Object> simpleSynchronizationGroupMap = new HashMap();
+
 	// These are not in the config.yml. They are calculated.
 	public boolean permissionsSystemRequired;
 
@@ -815,8 +818,12 @@ public class Configuration
 		// junction, single-column, key-value
 		webappSecondaryGroupStorageMethod = config.getString("app-group-config.secondary.storage-method", "");
 
+		// Simple synchronization
+		simpleSynchronizationEnabled = config.getBoolean("simple-synchronization.enabled", false);
+		simpleSynchronizationGroupMap = config.getConfigurationSection("simple-synchronization.group-mapping").getValues(false);
+
 		// These are calculated from settings above.
-		permissionsSystemRequired = false;
+		permissionsSystemRequired = simpleSynchronizationEnabled;
 	}
 
 	/**
