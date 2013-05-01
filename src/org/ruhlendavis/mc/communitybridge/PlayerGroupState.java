@@ -5,9 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -22,12 +19,11 @@ public class PlayerGroupState
 	private String fileName;
 	private File playerFolder;
 
-	private String webappPrimaryGroupID;
-	private List webappGroupIDs;
+	public String webappPrimaryGroupID;
+	public List<String> webappGroupIDs;
 
-	private String permissionsSystemPrimaryGroupName;
-	private List permissionsSystemGroupNames;
-
+	public String permissionsSystemPrimaryGroupName;
+	public List<String> permissionsSystemGroupNames;
 
 	public PlayerGroupState(String playerName, File playerDataFolder)
 	{
@@ -38,18 +34,10 @@ public class PlayerGroupState
 		this.permissionsSystemGroupNames = new ArrayList();
 	}
 
-	public List identifyAdditions(PlayerGroupState newState)
-	{
-		return new ArrayList();
-	}
-
-	public List identifyRemovals(PlayerGroupState newState)
-	{
-		return new ArrayList();
-	}
-
 	public void generate()
 	{
+		permissionsSystemGroupNames.clear();
+		webappGroupIDs.clear();
 		permissionsSystemPrimaryGroupName = CommunityBridge.permissionHandler.getPrimaryGroup(playerName);
 		permissionsSystemGroupNames = new ArrayList(Arrays.asList(CommunityBridge.permissionHandler.getGroups(playerName)));
 

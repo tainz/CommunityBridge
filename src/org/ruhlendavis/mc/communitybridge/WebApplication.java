@@ -12,8 +12,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.netmanagers.api.SQL;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -389,21 +387,6 @@ public class WebApplication
 	}
 
 	/**
-	 * Returns a given player's web application user ID.
-	 *
-	 * @param String containing the player's name.
-	 * @return String containing the player's  web application user ID.
-	 */
-	public int getUserIDint(String playerName)
-	{
-		if (playerUserIDs.get(playerName) == null)
-		{
-			return 0;
-		}
-		return Integer.parseInt(playerUserIDs.get(playerName));
-	}
-
-	/**
 	 * Returns true if the player is registered on the web application.
 	 * @param String The name of the player.
 	 * @return boolean True if the player is registered.
@@ -568,9 +551,49 @@ public class WebApplication
 		this.sql = sql;
 	}
 
+	private void setPrimaryGroup(String userID, String groupName)
+	{
+		String errorBase = "Error during setPrimaryGroup(): ";
+		String groupID = config.getWebappGroupIDbyGroupName(groupName);
+
+		try
+		{
+			if (config.webappPrimaryGroupUsesKey)
+			{
+				String query = "UPDATE `" + config.webappPrimaryGroupTable + "` "
+								     + "SET `" + config.webappPrimaryGroupGroupIDColumn + "` = '" + groupID + "' "
+										 + "WHERE `" + config.webappPrimaryGroupKeyColumn + "` = '" + config.webappPrimaryGroupKeyName + "' "
+										 + "AND `" + config.webappPrimaryGroupUserIDColumn + "` = '" + userID + "'";
+				log.finest(query);
+				sql.updateQuery(query);
+			}
+			else
+			{
+				String query = "UPDATE `" + config.webappPrimaryGroupTable + "` "
+										 + "SET `" + config.webappPrimaryGroupGroupIDColumn + "` = '" + groupID + "' "
+										 + "WHERE `" + config.webappPrimaryGroupUserIDColumn + "` = '" + userID + "' ";
+				log.finest(query);
+				sql.updateQuery(query);
+			}
+		}
+		catch (MalformedURLException error)
+		{
+			log.severe(errorBase + error.getMessage());
+		}
+		catch (InstantiationException error)
+		{
+			log.severe(errorBase + error.getMessage());
+		}
+		catch (IllegalAccessException error)
+		{
+			log.severe(errorBase + error.getMessage());
+		}
+	}
+
 	private void synchronizeGroups(Player player)
 	{
 		String playerName = player.getName();
+		String userID = getUserID(playerName);
 		File playerFolder = new File(plugin.getDataFolder(), "Players");
 		// 1. Retrieve previous group state for forum groups and permissions groups.
 		PlayerGroupState previousState = new PlayerGroupState(playerName, playerFolder);
@@ -580,15 +603,67 @@ public class WebApplication
 		PlayerGroupState currentState = new PlayerGroupState(playerName, playerFolder);
 		currentState.generate();
 
-		// 3. Compare current group state to previous, noting any additions or deletions.
-		List additions = previousState.identifyAdditions(currentState);
-		List removals = previousState.identifyRemovals(currentState);
+		if (config.webappPrimaryGroupEnabled)
+		{
+			if (previousState.permissionsSystemPrimaryGroupName.equals(currentState.permissionsSystemPrimaryGroupName))
+			{}
+			else
+			{
+				setPrimaryGroup(userID, currentState.permissionsSystemPrimaryGroupName);
+			}
 
-		// 4. Process additions
+			if (previousState.webappPrimaryGroupID.equals(currentState.webappPrimaryGroupID))
+			{}
+			else
+			{
+				CommunityBridge.permissionHandler.setPrimaryGroup(playerName, config.getGroupNameByGroupID(currentState.webappPrimaryGroupID));
+			}
+		}
 
-		// 5. Process deletions
+		for(String groupName : previousState.permissionsSystemGroupNames)
+		{
+			if (currentState.permissionsSystemGroupNames.contains(groupName))
+			{}
+			else
+			{
+				removeGroup(userID, groupName);
+			}
+		}
 
-		// 6. Store current group state
+		for (String groupName : currentState.permissionsSystemGroupNames)
+		{
+			if (previousState.permissionsSystemGroupNames.contains(groupName))
+			{}
+			else
+			{
+				addGroup(userID, groupName, currentState.webappGroupIDs.size());
+			}
+		}
+
+		for(String groupID : previousState.webappGroupIDs)
+		{
+			if (currentState.webappGroupIDs.contains(groupID))
+			{}
+			else
+			{
+				String groupName = config.getGroupNameByGroupID(groupID);
+				CommunityBridge.permissionHandler.removeFromGroup(playerName, groupName);
+			}
+		}
+
+		for(String groupID : currentState.webappGroupIDs)
+		{
+			if (previousState.webappGroupIDs.contains(groupID))
+			{}
+			else
+			{
+				String groupName = config.getGroupNameByGroupID(groupID);
+				CommunityBridge.permissionHandler.addToGroup(playerName, groupName);
+			}
+		}
+
+		// 5. Save newly created state
+		currentState.generate();
 		try
 		{
 			currentState.save();
@@ -596,6 +671,129 @@ public class WebApplication
 		catch (IOException error)
 		{
 			log.severe("Error when saving group state for player " + playerName + ": " + error.getMessage());
+		}
+	}
+
+	/**
+	 * Handles adding a group to the user's group list on the web application.
+	 *
+	 * @param String Name from permissions system of group added.
+	 */
+	private void addGroup(String userID, String groupName, int currentGroupCount)
+	{
+		String groupID = config.getWebappGroupIDbyGroupName(groupName);
+		String errorBase = "Error during addGroup(): ";
+
+		try
+		{
+			if (config.webappSecondaryGroupStorageMethod.toLowerCase().startsWith("sin"))
+			{
+				if (currentGroupCount > 0)
+				{
+					groupID = config.webappSecondaryGroupGroupIDDelimiter + groupID;
+				}
+				String query = "UPDATE `" + config.webappSecondaryGroupTable + "` "
+										 + "SET `" + config.webappSecondaryGroupGroupIDColumn + "` = CONCAT(`" + config.webappSecondaryGroupGroupIDColumn + "`, '" + groupID + "') "
+										 + "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + userID + "'";
+				log.finest(query);
+				sql.updateQuery(query);
+			}
+			else if (config.webappSecondaryGroupStorageMethod.toLowerCase().startsWith("jun"))
+			{
+				String query = "INSERT INTO `" + config.webappSecondaryGroupTable + "` "
+										 + "(`" + config.webappSecondaryGroupUserIDColumn + "`, `" + config.webappSecondaryGroupGroupIDColumn + "`) "
+										 + "VALUES ('" + userID + "', '" + groupID +"')";
+				log.finest(query);
+				sql.insertQuery(query);
+			}
+			else if (config.webappSecondaryGroupStorageMethod.toLowerCase().startsWith("key"))
+			{
+				String query = "INSERT INTO `" + config.webappSecondaryGroupTable + "` "
+										 + "(`" + config.webappPrimaryGroupKeyColumn + "`, `" + config.webappSecondaryGroupGroupIDColumn + "`) "
+										 + "VALUES ('" + config.webappSecondaryGroupKeyName + "', '" + groupID + "'";
+				log.finest(query);
+				sql.insertQuery(query);
+			}
+		}
+		catch (MalformedURLException error)
+		{
+			log.severe(errorBase + error.getMessage());
+		}
+		catch (InstantiationException error)
+		{
+			log.severe(errorBase + error.getMessage());
+		}
+		catch (IllegalAccessException error)
+		{
+			log.severe(errorBase + error.getMessage());
+		}
+	}
+
+	/**
+	 * Handles removing a group from the user's group list on the web application.
+	 *
+	 * @param String Name from permissions system of group to remove.
+	 */
+	private void removeGroup(String userID, String groupName)
+	{
+		String groupID = config.getWebappGroupIDbyGroupName(groupName);
+		String errorBase = "Error during addGroup(): ";
+
+		try
+		{
+			if (config.webappSecondaryGroupStorageMethod.toLowerCase().startsWith("sin"))
+			{
+				String groupIDs;
+				String query = "SELECT `" + config.webappSecondaryGroupGroupIDColumn + "` "
+										 + "FROM `" + config.webappSecondaryGroupTable + "` "
+										 + "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + userID + "'";
+				log.finest(query);
+				ResultSet result = sql.sqlQuery(query);
+
+				if (result.next())
+				{
+					groupIDs = result.getString(config.webappSecondaryGroupGroupIDColumn);
+					List<String> groupIDsAsList = Arrays.asList(groupIDs.split("\\" + config.webappSecondaryGroupGroupIDDelimiter));
+					groupIDsAsList.remove(groupID);
+					groupIDs = StringUtilities.joinStrings(groupIDsAsList, config.webappSecondaryGroupGroupIDDelimiter);
+					query = "UPDATE `" + config.webappSecondaryGroupTable + "` "
+								+ " SET `" + config.webappSecondaryGroupGroupIDColumn + "` = '" + groupIDs + "'";
+					log.finest(query);
+					sql.updateQuery(query);
+				}
+			}
+			else if (config.webappSecondaryGroupStorageMethod.toLowerCase().startsWith("jun"))
+			{
+				String query = "DELETE FROM `" + config.webappSecondaryGroupTable + "` "
+									   + "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' "
+										 + "AND `" + config.webappSecondaryGroupGroupIDColumn + "` = '" + groupID + "' ";
+				log.finest(query);
+				sql.deleteQuery(query);
+			}
+			else if (config.webappSecondaryGroupStorageMethod.toLowerCase().startsWith("key"))
+			{
+				String query = "DELETE FROM `" + config.webappSecondaryGroupTable + "` "
+									   + "WHERE `" + config.webappSecondaryGroupKeyColumn + "` = '" + config.webappSecondaryGroupKeyName + "' "
+										 + "AND `" + config.webappSecondaryGroupGroupIDColumn + "` = '" + groupID + "' ";
+				log.finest(query);
+				sql.deleteQuery(query);
+			}
+		}
+		catch (SQLException error)
+		{
+			log.severe(errorBase + error.getMessage());
+		}
+		catch (MalformedURLException error)
+		{
+			log.severe(errorBase + error.getMessage());
+		}
+		catch (InstantiationException error)
+		{
+			log.severe(errorBase + error.getMessage());
+		}
+		catch (IllegalAccessException error)
+		{
+			log.severe(errorBase + error.getMessage());
 		}
 	}
 
