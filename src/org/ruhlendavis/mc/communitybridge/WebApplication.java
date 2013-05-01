@@ -425,7 +425,7 @@ public class WebApplication
 
 		final String errorBase = "Error during WebApplication.onPreLogin(): ";
 		String query = "SELECT `" + config.linkingTableName + "`.`" + config.linkingUserIDColumn + "` "
-								 + "FROM `" + config.linkingTableName + "`";
+								 + "FROM `" + config.linkingTableName + "` ";
 
 		if (config.linkingUsesKey)
 		{
