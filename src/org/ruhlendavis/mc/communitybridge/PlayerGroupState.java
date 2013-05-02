@@ -36,8 +36,6 @@ public class PlayerGroupState
 
 	public void generate()
 	{
-		permissionsSystemGroupNames.clear();
-		webappGroupIDs.clear();
 		permissionsSystemPrimaryGroupName = CommunityBridge.permissionHandler.getPrimaryGroup(playerName);
 		permissionsSystemGroupNames = new ArrayList(Arrays.asList(CommunityBridge.permissionHandler.getGroups(playerName)));
 
@@ -56,6 +54,13 @@ public class PlayerGroupState
 			webappGroupIDs = playerData.getStringList("webapp.group-ids");
 			permissionsSystemPrimaryGroupName = playerData.getString("permissions-system.primary-group-name", "");
 			permissionsSystemGroupNames = playerData.getStringList("permissions-system.group-names");
+		}
+		else
+		{
+			webappPrimaryGroupID = "";
+			webappGroupIDs = new ArrayList();
+			permissionsSystemPrimaryGroupName = "";
+			permissionsSystemGroupNames = new ArrayList();
 		}
 	}
 

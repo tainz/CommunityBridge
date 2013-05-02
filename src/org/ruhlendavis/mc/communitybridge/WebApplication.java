@@ -177,6 +177,13 @@ public class WebApplication
 	 */
 	public String getUserPrimaryGroupID(String playerName)
 	{
+		if (config.webappPrimaryGroupEnabled)
+		{}
+		else
+		{
+			return "";
+		}
+
 		final String errorBase = "Error during WebApplication.getUserPrimaryGroupID(): ";
 		String query;
 
@@ -206,33 +213,40 @@ public class WebApplication
 			}
 			else
 			{
-				return null;
+				return "";
 			}
 		}
 		catch (SQLException error)
 		{
 			log.severe(errorBase + error.getMessage());
-			return null;
+			return "";
 		}
 		catch (MalformedURLException error)
 		{
 			log.severe(errorBase + error.getMessage());
-			return null;
+			return "";
 		}
 		catch (InstantiationException error)
 		{
 			log.severe(errorBase + error.getMessage());
-			return null;
+			return "";
 		}
 		catch (IllegalAccessException error)
 		{
 			log.severe(errorBase + error.getMessage());
-			return null;
+			return "";
 		}
 	}
 
 	public List getUserGroupIDs(String playerName)
 	{
+		if (config.webappSecondaryGroupEnabled)
+		{}
+		else
+		{
+			return null;
+		}
+
 		if (config.webappSecondaryGroupStorageMethod.toLowerCase().startsWith("sin"))
 		{
 			return getUserGroupIDsSingleColumn(playerName);
@@ -551,10 +565,9 @@ public class WebApplication
 		this.sql = sql;
 	}
 
-	private void setPrimaryGroup(String userID, String groupName)
+	private void setPrimaryGroup(String userID, String groupID)
 	{
 		String errorBase = "Error during setPrimaryGroup(): ";
-		String groupID = config.getWebappGroupIDbyGroupName(groupName);
 
 		try
 		{
@@ -605,60 +618,80 @@ public class WebApplication
 
 		if (config.webappPrimaryGroupEnabled)
 		{
-			if (previousState.permissionsSystemPrimaryGroupName.equals(currentState.permissionsSystemPrimaryGroupName))
-			{}
-			else
-			{
-				setPrimaryGroup(userID, currentState.permissionsSystemPrimaryGroupName);
-			}
-
 			if (previousState.webappPrimaryGroupID.equals(currentState.webappPrimaryGroupID))
 			{}
 			else
 			{
-				CommunityBridge.permissionHandler.setPrimaryGroup(playerName, config.getGroupNameByGroupID(currentState.webappPrimaryGroupID));
+				String groupName = config.getGroupNameByGroupID(currentState.webappPrimaryGroupID);
+				if (groupName == null)
+				{
+					// TODO: Issue warning?
+				}
+				else
+				{
+					CommunityBridge.permissionHandler.setPrimaryGroup(playerName, groupName);
+				}
 			}
-		}
 
-		for(String groupName : previousState.permissionsSystemGroupNames)
-		{
-			if (currentState.permissionsSystemGroupNames.contains(groupName))
+			if (previousState.permissionsSystemPrimaryGroupName.equals(currentState.permissionsSystemPrimaryGroupName))
 			{}
 			else
 			{
-				removeGroup(userID, groupName);
+				String groupID = config.getWebappGroupIDbyGroupName(currentState.permissionsSystemPrimaryGroupName);
+
+				if (groupID == null)
+				{
+					// TODO: Issue warning?
+				}
+				else
+				{
+					setPrimaryGroup(userID, groupID);
+				}
 			}
 		}
 
-		for (String groupName : currentState.permissionsSystemGroupNames)
+		if (config.webappSecondaryGroupEnabled)
 		{
-			if (previousState.permissionsSystemGroupNames.contains(groupName))
-			{}
-			else
+			for(String groupName : previousState.permissionsSystemGroupNames)
 			{
-				addGroup(userID, groupName, currentState.webappGroupIDs.size());
+				if (currentState.permissionsSystemGroupNames.contains(groupName))
+				{}
+				else
+				{
+					removeGroup(userID, groupName);
+				}
 			}
-		}
 
-		for(String groupID : previousState.webappGroupIDs)
-		{
-			if (currentState.webappGroupIDs.contains(groupID))
-			{}
-			else
+			for (String groupName : currentState.permissionsSystemGroupNames)
 			{
-				String groupName = config.getGroupNameByGroupID(groupID);
-				CommunityBridge.permissionHandler.removeFromGroup(playerName, groupName);
+				if (previousState.permissionsSystemGroupNames.contains(groupName))
+				{}
+				else
+				{
+					addGroup(userID, groupName, currentState.webappGroupIDs.size());
+				}
 			}
-		}
 
-		for(String groupID : currentState.webappGroupIDs)
-		{
-			if (previousState.webappGroupIDs.contains(groupID))
-			{}
-			else
+			for(String groupID : previousState.webappGroupIDs)
 			{
-				String groupName = config.getGroupNameByGroupID(groupID);
-				CommunityBridge.permissionHandler.addToGroup(playerName, groupName);
+				if (currentState.webappGroupIDs.contains(groupID))
+				{}
+				else
+				{
+					String groupName = config.getGroupNameByGroupID(groupID);
+					CommunityBridge.permissionHandler.removeFromGroup(playerName, groupName);
+				}
+			}
+
+			for(String groupID : currentState.webappGroupIDs)
+			{
+				if (previousState.webappGroupIDs.contains(groupID))
+				{}
+				else
+				{
+					String groupName = config.getGroupNameByGroupID(groupID);
+					CommunityBridge.permissionHandler.addToGroup(playerName, groupName);
+				}
 			}
 		}
 
