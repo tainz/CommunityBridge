@@ -139,6 +139,7 @@ public class Configuration
 	public Map<String, Object> simpleSynchronizationGroupMap = new HashMap();
 
 	// These are not in the config.yml. They are calculated.
+	public boolean playerDataRequired;
 	public boolean permissionsSystemRequired;
 
 	/**
@@ -491,11 +492,9 @@ public class Configuration
 			}
 		}
 
-		boolean playerDataRequired = true;
-
 		if (playerDataRequired)
 		{
-			File playerData = new File(plugin.getDataFolder(), "PlayerData");
+			File playerData = new File(plugin.getDataFolder(), "Players");
 
 			if (playerData.exists())
 			{
@@ -503,8 +502,11 @@ public class Configuration
 				{}
 				else
 				{
-					log.severe("There is a file named PlayerData in the CommunityBridge plugin folder preventing creation of the data directory.");
+					log.severe("There is a file named Players in the CommunityBridge plugin folder preventing creation of the data directory.");
 					// Here we disable anything that relies on the player data folder.
+					simpleSynchronizationEnabled = false;
+					webappPrimaryGroupEnabled = false;
+					webappSecondaryGroupEnabled = false;
 				}
 			}
 			else
@@ -514,8 +516,11 @@ public class Configuration
 				{}
 				else
 				{
-					log.severe("Error when creating the CommunityBridge/PlayerData folder.");
+					log.severe("Error when creating the CommunityBridge/Players folder.");
 					// Here we disable anything that relies on the player data folder.
+					simpleSynchronizationEnabled = false;
+					webappPrimaryGroupEnabled = false;
+					webappSecondaryGroupEnabled = false;
 				}
 			}
 		}
@@ -835,7 +840,8 @@ public class Configuration
 		simpleSynchronizationGroupMap = config.getConfigurationSection("simple-synchronization.group-mapping").getValues(false);
 
 		// These are calculated from settings above.
-		permissionsSystemRequired = simpleSynchronizationEnabled;
+		playerDataRequired = simpleSynchronizationEnabled && (webappPrimaryGroupEnabled || webappSecondaryGroupEnabled);
+		permissionsSystemRequired = simpleSynchronizationEnabled && (webappPrimaryGroupEnabled || webappSecondaryGroupEnabled);
 	}
 
 	/**
