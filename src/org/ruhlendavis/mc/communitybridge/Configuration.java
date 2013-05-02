@@ -1036,21 +1036,24 @@ public class Configuration
 		{
 			log.config(  "Primary group table                  : " + webappPrimaryGroupTable);
 			log.config(  "Primary group user id column         : " + webappPrimaryGroupUserIDColumn);
-			log.config(  "Primary group uses key               : " + webappPrimaryGroupUsesKey);
 			log.config(  "Primary group group id column        : " + webappPrimaryGroupGroupIDColumn);
-			log.config(  "Primary group key name               : " + webappPrimaryGroupKeyName);
-			log.config(  "Primary group key column             : " + webappPrimaryGroupKeyColumn);
+			log.config(  "Primary group uses key               : " + webappPrimaryGroupUsesKey);
+			if (webappPrimaryGroupUsesKey)
+			{
+				log.config("Primary group key name               : " + webappPrimaryGroupKeyName);
+				log.config("Primary group key column             : " + webappPrimaryGroupKeyColumn);
+			}
 		}
 
 		if (webappSecondaryGroupEnabled)
 		{
+			log.config(  "Secondary group storage method         : " + webappSecondaryGroupStorageMethod);
 			log.config(  "Secondary group table                  : " + webappSecondaryGroupTable);
 			log.config(  "Secondary group user id column         : " + webappSecondaryGroupUserIDColumn);
 			log.config(  "Secondary group group id column        : " + webappSecondaryGroupGroupIDColumn);
 			log.config(  "Secondary group key name               : " + webappSecondaryGroupKeyName);
 			log.config(  "Secondary group key column             : " + webappSecondaryGroupKeyColumn);
 			log.config(  "Secondary group id delimiter           : " + webappSecondaryGroupGroupIDDelimiter);
-			log.config(  "Secondary group storage method         : " + webappSecondaryGroupStorageMethod);
 		}
 	}
 }
