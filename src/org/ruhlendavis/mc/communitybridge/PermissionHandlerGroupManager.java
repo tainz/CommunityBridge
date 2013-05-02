@@ -123,12 +123,10 @@ public class PermissionHandlerGroupManager implements PermissionHandler
 
 	/**
 	 * Retrieves the primary group for a given player.
-	 * Note that for bPermissions, it returns the first group on the player's
-	 * group list for their current world, or the default world if they are
-	 * offline.
 	 *
 	 * @param playerName String containing the player's name.
-	 * @return String containing the name of the player's primary group.
+	 * @return empty String if the player does not exist, has no groups, or some
+	 *         other error, otherwise a String containing the group's name.
 	 */
 	@Override
 	public String getPrimaryGroup(String playerName)
@@ -153,7 +151,16 @@ public class PermissionHandlerGroupManager implements PermissionHandler
 			throw new RuntimeException("isMemberOfGroup(): Failed to obtain a GroupManager permissions handler");
 		}
 
-		return handler.getGroup(playerName);
+		String group = handler.getGroup(playerName);
+
+		if (group == null)
+		{
+			return "";
+		}
+		else
+		{
+			return group;
+		}
 	}
 
 	/**

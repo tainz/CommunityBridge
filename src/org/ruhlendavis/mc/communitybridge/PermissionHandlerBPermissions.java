@@ -116,7 +116,8 @@ public class PermissionHandlerBPermissions implements PermissionHandler
 	 * offline.
 	 *
 	 * @param playerName String containing the player's name.
-	 * @return String containing the name of the player's primary group.
+	 * @return empty String if the player does not exist, has no groups, or some
+	 *         other error, otherwise a String containing the group's name.
 	 */
 	@Override
 	public String getPrimaryGroup(String playerName)
@@ -142,12 +143,12 @@ public class PermissionHandlerBPermissions implements PermissionHandler
 		catch(Error e)
 		{
 			CommunityBridge.log.severe("getPrimaryGroup(): " + e.getMessage());
-			return null;
+			return "";
 		}
 
 		if (groups == null || groups.length == 0)
 		{
-			return null;
+			return "";
 		}
 		else
 		{

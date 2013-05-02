@@ -88,7 +88,8 @@ public class PermissionHandlerPermissionsBukkit implements PermissionHandler
 	 * Retrieves the player's primary group.
 	 *
 	 * @param playerName String containing name of the player to look up.
-	 * @return String containing the name of the player's primary group or null if the player is not found or does not have a primary group.
+	 * @return empty String if the player does not exist, has no groups, or some
+	 *         other error, otherwise a String containing the group's name.
 	 */
 	@Override
 	public String getPrimaryGroup(String playerName)
@@ -97,10 +98,17 @@ public class PermissionHandlerPermissionsBukkit implements PermissionHandler
 		 || permissions.getPlayerInfo(playerName).getGroups() == null
 		 || permissions.getPlayerInfo(playerName).getGroups().isEmpty())
 		{
-			return null;
+			return "";
 		}
-
-		return permissions.getPlayerInfo(playerName).getGroups().get(0).getName();
+		String group = permissions.getPlayerInfo(playerName).getGroups().get(0).getName();
+		if (group == null)
+		{
+			return "";
+		}
+		else
+		{
+			return group;
+		}
 	}
 
  /**

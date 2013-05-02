@@ -100,10 +100,18 @@ public class PermissionHandlerPermissionsEx implements PermissionHandler
 		PermissionUser permissionUser = PermissionsEx.getUser(playerName);
 		if (permissionUser == null || permissionUser.getGroupsNames().length == 0)
 		{
-			return null;
+			return "";
 		}
 
-		return permissionUser.getGroupsNames()[0];
+		String group = permissionUser.getGroupsNames()[0];
+		if (group == null)
+		{
+			return "";
+		}
+		else
+		{
+			return group;
+		}
 	}
 
   /**
