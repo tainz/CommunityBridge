@@ -622,14 +622,15 @@ public class WebApplication
 			{}
 			else
 			{
-				String groupName = config.getGroupNameByGroupID(currentState.webappPrimaryGroupID);
-				if (groupName == null)
+				String formerGroupName = config.getGroupNameByGroupID(currentState.webappPrimaryGroupID);
+				String newGroupName = config.getGroupNameByGroupID(currentState.webappPrimaryGroupID);
+				if (newGroupName == null || formerGroupName == null)
 				{
 					// TODO: Issue warning?
 				}
 				else
 				{
-					CommunityBridge.permissionHandler.setPrimaryGroup(playerName, groupName);
+					CommunityBridge.permissionHandler.setPrimaryGroup(playerName, newGroupName, formerGroupName);
 				}
 			}
 

@@ -169,8 +169,8 @@ public class PermissionHandlerPermissionsBukkit implements PermissionHandler
 	 */
 	// TODO: Revise this so we can ensure that the 'primary group' is group 0.
 	@Override
-	public boolean setPrimaryGroup(String playerName, String groupName)
+	public boolean setPrimaryGroup(String playerName, String groupName, String formerGroupName)
 	{
-		return addToGroup(playerName, groupName);
+		return removeFromGroup(playerName, formerGroupName) && addToGroup(playerName, groupName);
 	}
 }

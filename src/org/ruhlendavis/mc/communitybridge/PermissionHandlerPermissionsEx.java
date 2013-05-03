@@ -181,8 +181,8 @@ public class PermissionHandlerPermissionsEx implements PermissionHandler
 	 */
 	// TODO: Work out a way to ensure the group is first on the player's group list
 	@Override
-	public boolean setPrimaryGroup(String playerName, String groupName)
+	public boolean setPrimaryGroup(String playerName, String groupName, String formerGroupName)
 	{
-		return addToGroup(playerName, groupName);
+		return removeFromGroup(playerName, formerGroupName) && addToGroup(playerName, groupName);
 	}
 }

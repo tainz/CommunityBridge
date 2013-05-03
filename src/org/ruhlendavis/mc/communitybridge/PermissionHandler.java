@@ -69,5 +69,5 @@ public interface PermissionHandler
 	 * @param groupName  String containing the group name.
 	 * @return true if the set succeeded, false if it failed for any reason.
 	 */
-	public boolean setPrimaryGroup(String playerName, String groupName);
+	public boolean setPrimaryGroup(String playerName, String groupName, String formerGroupName);
 }

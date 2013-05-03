@@ -9,6 +9,8 @@ import org.bukkit.plugin.Plugin;
 
 /**
  * Implements the PermissionHandler interface for bPermissions
+ * Notes about bPermissions
+ * 2013-May-03: bP does not support the notion of a primary group.
  *
  * @author Feaelin
  */
@@ -251,13 +253,14 @@ public class PermissionHandlerBPermissions implements PermissionHandler
 	 *
 	 * @param playerName String containing player's name to set
 	 * @param groupName  String containing group name to set player's primary group to.
+	 * @param formerGroupName String containing the former group name.
 	 * @return true if the set succeeded, false if it failed for any reason.
 	 */
 	// TODO: Consider how we can add the group in such a way that it is the first
 	//       group on the player's group list.
 	@Override
-	public boolean setPrimaryGroup(String playerName, String groupName)
+	public boolean setPrimaryGroup(String playerName, String groupName, String formerGroupName)
 	{
-		return addToGroup(playerName, groupName);
+		return removeFromGroup(playerName, formerGroupName) && addToGroup(playerName, groupName);
 	}
 }
