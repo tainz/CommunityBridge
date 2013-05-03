@@ -13,7 +13,7 @@ import org.bukkit.plugin.Plugin;
  *	Implements the permission handler interface for GroupManager.
  *  Notes for GroupManager:
  *  2013-May-03: GroupManager has a notion of a primary group (an odd notion)
- * 
+ *
  * @author Feaelin
  */
 public class PermissionHandlerGroupManager implements PermissionHandler
@@ -276,6 +276,17 @@ public class PermissionHandlerGroupManager implements PermissionHandler
 
 		user.setGroup(group, false);
 
+		return true;
+	}
+
+	/**
+	 * Returns true if the permissions system has a concept of a primary group.
+	 *
+	 * @return boolean true if the permissions system can handle primary groups.
+	 */
+	@Override
+	public boolean supportsPrimaryGroups()
+	{
 		return true;
 	}
 }

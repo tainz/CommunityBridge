@@ -70,4 +70,11 @@ public interface PermissionHandler
 	 * @return true if the set succeeded, false if it failed for any reason.
 	 */
 	public boolean setPrimaryGroup(String playerName, String groupName, String formerGroupName);
+
+	/**
+	 * Returns true if the permissions system has a concept of a primary group.
+	 *
+	 * @return boolean true if the permissions system can handle primary groups.
+	 */
+	public boolean supportsPrimaryGroups();
 }

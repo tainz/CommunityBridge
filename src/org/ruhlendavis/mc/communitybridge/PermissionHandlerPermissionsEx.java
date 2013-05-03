@@ -185,4 +185,15 @@ public class PermissionHandlerPermissionsEx implements PermissionHandler
 	{
 		return removeFromGroup(playerName, formerGroupName) && addToGroup(playerName, groupName);
 	}
+
+	/**
+	 * Returns true if the permissions system has a concept of a primary group.
+	 *
+	 * @return boolean true if the permissions system can handle primary groups.
+	 */
+	@Override
+	public boolean supportsPrimaryGroups()
+	{
+		return false;
+	}
 }

@@ -167,10 +167,20 @@ public class PermissionHandlerPermissionsBukkit implements PermissionHandler
 	 * @param groupName  String containing group name to set player's primary group to.
 	 * @return true if the set succeeded, false if it failed for any reason.
 	 */
-	// TODO: Revise this so we can ensure that the 'primary group' is group 0.
 	@Override
 	public boolean setPrimaryGroup(String playerName, String groupName, String formerGroupName)
 	{
 		return removeFromGroup(playerName, formerGroupName) && addToGroup(playerName, groupName);
+	}
+
+	/**
+	 * Returns true if the permissions system has a concept of a primary group.
+	 *
+	 * @return boolean true if the permissions system can handle primary groups.
+	 */
+	@Override
+	public boolean supportsPrimaryGroups()
+	{
+		return false;
 	}
 }
