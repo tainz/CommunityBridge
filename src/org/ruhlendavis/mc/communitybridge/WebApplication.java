@@ -499,10 +499,7 @@ public class WebApplication
 	 */
 	public void onJoin(final Player player)
 	{
-		if (config.webappPrimaryGroupEnabled || config.webappSecondaryGroupEnabled)
-		{
-			runGroupSynchronizationTask(player);
-		}
+		runGroupSynchronizationTask(player);
 		runUpdateStatisticsTask(player, true);
 	}
 
@@ -524,14 +521,17 @@ public class WebApplication
 	 */
 	private void runGroupSynchronizationTask(final Player player)
 	{
-		Bukkit.getScheduler().runTaskAsynchronously(plugin,	new Runnable()
+		if (config.webappPrimaryGroupEnabled || config.webappSecondaryGroupEnabled)
 		{
-			@Override
-			public void run()
+			Bukkit.getScheduler().runTaskAsynchronously(plugin,	new Runnable()
 			{
-				synchronizeGroups(player);
-			}
-		});
+				@Override
+				public void run()
+				{
+					synchronizeGroups(player);
+				}
+			});
+		}
 	}
 
 	/**
