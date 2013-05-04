@@ -478,7 +478,7 @@ public class Configuration
 			temp = checkTable(sql, "app-group-config.secondary.table-name", webappSecondaryGroupTable);
 			temp = temp & checkColumn(sql, "app-group-config.secondary.user-id-column", webappSecondaryGroupTable, webappSecondaryGroupUserIDColumn);
       temp = temp & checkColumn(sql, "app-group-config.secondary.group-id-column", webappSecondaryGroupTable, webappSecondaryGroupGroupIDColumn);
-			if (webappSecondaryGroupStorageMethod.equalsIgnoreCase("key-value"))
+			if (webappSecondaryGroupStorageMethod.startsWith("mul"))
 			{
 				temp = temp & checkColumn(sql, "app-group-config.primary.key-column", webappPrimaryGroupTable, webappPrimaryGroupKeyColumn);
 				if (temp)
@@ -832,9 +832,9 @@ public class Configuration
 		webappSecondaryGroupGroupIDColumn = config.getString("app-group-config.secondary.group-id-column", "");
 		webappSecondaryGroupKeyName = config.getString("app-group-config.secondary.key-name", "");
 		webappSecondaryGroupKeyColumn = config.getString("app-group-config.secondary.key-column", "");
-		webappSecondaryGroupGroupIDDelimiter = config.getString("app-group-config.secondary.group-id-column", "");
+		webappSecondaryGroupGroupIDDelimiter = config.getString("app-group-config.secondary.group-id-delimiter", "");
 		// junction, single-column, key-value
-		webappSecondaryGroupStorageMethod = config.getString("app-group-config.secondary.storage-method", "");
+		webappSecondaryGroupStorageMethod = config.getString("app-group-config.secondary.storage-method", "").toLowerCase();
 
 		// Simple synchronization
 		simpleSynchronizationEnabled = config.getBoolean("simple-synchronization.enabled", false);
@@ -1049,13 +1049,21 @@ public class Configuration
 
 		if (webappSecondaryGroupEnabled)
 		{
-			log.config(  "Secondary group storage method         : " + webappSecondaryGroupStorageMethod);
-			log.config(  "Secondary group table                  : " + webappSecondaryGroupTable);
-			log.config(  "Secondary group user id column         : " + webappSecondaryGroupUserIDColumn);
-			log.config(  "Secondary group group id column        : " + webappSecondaryGroupGroupIDColumn);
-			log.config(  "Secondary group key name               : " + webappSecondaryGroupKeyName);
-			log.config(  "Secondary group key column             : " + webappSecondaryGroupKeyColumn);
-			log.config(  "Secondary group id delimiter           : " + webappSecondaryGroupGroupIDDelimiter);
+			log.config(  "Secondary group table                : " + webappSecondaryGroupTable);
+			log.config(  "Secondary group user id column       : " + webappSecondaryGroupUserIDColumn);
+			log.config(  "Secondary group group id column      : " + webappSecondaryGroupGroupIDColumn);
+			log.config(  "Secondary group storage method       : " + webappSecondaryGroupStorageMethod);
+
+			if (webappSecondaryGroupStorageMethod.startsWith("sin") || webappSecondaryGroupStorageMethod.startsWith("key"))
+			{
+				log.config("Secondary group id delimiter         : " + webappSecondaryGroupGroupIDDelimiter);
+			}
+
+			if (webappSecondaryGroupStorageMethod.startsWith("mul") || webappSecondaryGroupStorageMethod.startsWith("key"))
+			{
+				log.config("Secondary group key name             : " + webappSecondaryGroupKeyName);
+				log.config("Secondary group key column           : " + webappSecondaryGroupKeyColumn);
+			}
 		}
 	}
 }
