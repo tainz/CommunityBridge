@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import net.netmanagers.api.SQL;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.ruhlendavis.mc.utility.Log;
 import org.ruhlendavis.utility.StringUtilities;
@@ -624,7 +625,7 @@ public class WebApplication
 			{}
 			else
 			{
-				String formerGroupName = config.getGroupNameByGroupID(currentState.webappPrimaryGroupID);
+				String formerGroupName = config.getGroupNameByGroupID(previousState.webappPrimaryGroupID);
 				String newGroupName = config.getGroupNameByGroupID(currentState.webappPrimaryGroupID);
 				if (formerGroupName == null)
 				{
