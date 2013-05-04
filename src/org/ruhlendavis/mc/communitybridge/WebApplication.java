@@ -624,16 +624,23 @@ public class WebApplication
 			{
 				String formerGroupName = config.getGroupNameByGroupID(currentState.webappPrimaryGroupID);
 				String newGroupName = config.getGroupNameByGroupID(currentState.webappPrimaryGroupID);
-				if (newGroupName == null || formerGroupName == null)
+				if (formerGroupName == null)
 				{
-					// TODO: Issue warning?
+					log.warning("Not changing permissions group due to permissions system group name lookup failure for web application group ID: " + previousState.webappPrimaryGroupID);
+				}
+				else if (newGroupName == null)
+				{
+					log.warning("Not changing permissions group due to permissions system group name lookup failure for web application group ID: " + currentState.webappPrimaryGroupID);
 				}
 				else
 				{
 					CommunityBridge.permissionHandler.setPrimaryGroup(playerName, newGroupName, formerGroupName);
 				}
 			}
-
+		}
+		
+		if (CommunityBridge.permissionHandler.supportsPrimaryGroups())
+		{
 			if (previousState.permissionsSystemPrimaryGroupName.equals(currentState.permissionsSystemPrimaryGroupName))
 			{}
 			else
@@ -642,7 +649,7 @@ public class WebApplication
 
 				if (groupID == null)
 				{
-					// TODO: Issue warning?
+					log.warning("Not changing web application group due to web application group ID lookup failure for: " + currentState.permissionsSystemPrimaryGroupName);
 				}
 				else
 				{
