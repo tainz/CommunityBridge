@@ -287,13 +287,16 @@ app-group-config:
     user-id-column:
 
     # Storage method. Set to one of the following:
+    # - single: All the group ids in a single row & column separated by the
+    #           delimiter specified below.
+    # - key-value: All the group ids are in a single row & column, separated
+    #              by the delimiter specified below, on a table that stores
+    #              its data in key-value pairs
+    # - multi-key-value: Group IDs are stored on a table of key-value pairs,
+    #                    where the key name can appear in multiple rows.
     # - junction: The table can contain multiple rows for a given user_id,
     #             each with their own group_id.
-    # - single-column: All the group ids in a single column with a specified
-    #                 delimiter below.
-    # - key-value: The secondary groups are in a single column on a table that
-    #              stores its data in key-value pairs.
-    storage-method: junction
+    storage-method: single
 
     # The column that the group ID(s) are stored in:
     # (For the key-value method, this is the 'value' column)
@@ -314,7 +317,7 @@ app-group-config:
 simple-synchronization:
   # Set this to true for simple two-way synchronization
   enabled: false
-  
+
   # Set this to true if you want the player to be notified when their primary group changes.
   primary-group-change-notify: false
 
@@ -325,3 +328,5 @@ simple-synchronization:
   group-mapping:
     '1' : 'guest'
     '2' : 'member'
+    '3' : 'premium'
+

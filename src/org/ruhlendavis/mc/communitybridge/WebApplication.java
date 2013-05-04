@@ -803,7 +803,7 @@ public class WebApplication
 				if (result.next())
 				{
 					groupIDs = result.getString(config.webappSecondaryGroupGroupIDColumn);
-					List<String> groupIDsAsList = Arrays.asList(groupIDs.split("\\" + config.webappSecondaryGroupGroupIDDelimiter));
+					List<String> groupIDsAsList = new ArrayList(Arrays.asList(groupIDs.split(config.webappSecondaryGroupGroupIDDelimiter)));
 					groupIDsAsList.remove(groupID);
 					groupIDs = StringUtilities.joinStrings(groupIDsAsList, config.webappSecondaryGroupGroupIDDelimiter);
 					query = "UPDATE `" + config.webappSecondaryGroupTable + "` "
