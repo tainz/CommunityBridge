@@ -312,8 +312,12 @@ app-group-config:
 
 # Simple Synchronization Configuration
 simple-synchronization:
-  # Set this to enabled for simple two-way synchronization
+  # Set this to true for simple two-way synchronization
   enabled: false
+  
+  # Set this to true if you want the player to be notified when their primary group changes.
+  primary-group-change-notify: false
+
   # List groups and group IDs to be synchronized here. On the left side of
   # the colon put a web application's group ID. On the right side of the colon
   # put the corresponding permissions group name. Only list group IDs and

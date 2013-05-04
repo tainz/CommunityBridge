@@ -136,6 +136,7 @@ public class Configuration
 	public String webappSecondaryGroupStorageMethod;
 
 	public boolean simpleSynchronizationEnabled;
+	public boolean simpleSynchronizationPrimaryGroupNotify;
 	public Map<String, Object> simpleSynchronizationGroupMap = new HashMap();
 
 	// These are not in the config.yml. They are calculated.
@@ -837,6 +838,7 @@ public class Configuration
 
 		// Simple synchronization
 		simpleSynchronizationEnabled = config.getBoolean("simple-synchronization.enabled", false);
+		simpleSynchronizationPrimaryGroupNotify = config.getBoolean("simple-synchronization.primary-group-change-notify", false);
 		simpleSynchronizationGroupMap = config.getConfigurationSection("simple-synchronization.group-mapping").getValues(false);
 
 		// These are calculated from settings above.

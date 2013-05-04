@@ -638,6 +638,14 @@ public class WebApplication
 				else
 				{
 					CommunityBridge.permissionHandler.setPrimaryGroup(playerName, newGroupName, formerGroupName);
+					log.fine("Moved player '" + playerName + "' from permissions group '" + formerGroupName + "' to permissions group '" + newGroupName + "'.");
+					if (config.simpleSynchronizationPrimaryGroupNotify)
+					{
+						String message = ChatColor.YELLOW + CommunityBridge.config.messages.get("group-synchronization-primary-notify-player");
+						message = message.replace("~FORMERGROUPNAME~", formerGroupName);
+						message = message.replace("~GROUPNAME~", newGroupName);
+						player.sendMessage(message);
+					}
 				}
 			}
 
@@ -654,6 +662,7 @@ public class WebApplication
 				else
 				{
 					setPrimaryGroup(userID, groupID);
+					log.fine("Moved player '" + playerName + "' to web application group ID '" + groupID + "'.");
 				}
 			}
 		}
