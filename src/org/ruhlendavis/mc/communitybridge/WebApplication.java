@@ -608,6 +608,7 @@ public class WebApplication
 		String playerName = player.getName();
 		String userID = getUserID(playerName);
 		File playerFolder = new File(plugin.getDataFolder(), "Players");
+
 		// 1. Retrieve previous group state for forum groups and permissions groups.
 		PlayerGroupState previousState = new PlayerGroupState(playerName, playerFolder);
 		previousState.load();
@@ -616,6 +617,7 @@ public class WebApplication
 		PlayerGroupState currentState = new PlayerGroupState(playerName, playerFolder);
 		currentState.generate();
 
+		// 3. Synchronize primary group state
 		if (config.webappPrimaryGroupEnabled)
 		{
 			if (previousState.webappPrimaryGroupID.equals(currentState.webappPrimaryGroupID))
@@ -637,10 +639,7 @@ public class WebApplication
 					CommunityBridge.permissionHandler.setPrimaryGroup(playerName, newGroupName, formerGroupName);
 				}
 			}
-		}
-		
-		if (CommunityBridge.permissionHandler.supportsPrimaryGroups())
-		{
+
 			if (previousState.permissionsSystemPrimaryGroupName.equals(currentState.permissionsSystemPrimaryGroupName))
 			{}
 			else
@@ -658,6 +657,7 @@ public class WebApplication
 			}
 		}
 
+		// 4. Synchronize secondary group state
 		if (config.webappSecondaryGroupEnabled)
 		{
 			for(String groupName : previousState.permissionsSystemGroupNames)
