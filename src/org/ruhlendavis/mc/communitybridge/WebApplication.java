@@ -248,17 +248,16 @@ public class WebApplication
 			return null;
 		}
 
-		if (config.webappSecondaryGroupStorageMethod.toLowerCase().startsWith("sin"))
+		if (config.webappSecondaryGroupStorageMethod.startsWith("sin"))
 		{
 			return getUserGroupIDsSingleColumn(playerName);
 		}
-		else if (config.webappSecondaryGroupStorageMethod.toLowerCase().startsWith("jun"))
+		else if (config.webappSecondaryGroupStorageMethod.startsWith("jun"))
 
 		{
 			return getUserGroupIDsJunction(playerName);
 		}
-		else if (config.webappSecondaryGroupStorageMethod.toLowerCase().startsWith("key"))
-
+		else if (config.webappSecondaryGroupStorageMethod.startsWith("mul"))
 		{
 			return getUserGroupIDsKeyValue(playerName);
 		}
@@ -737,7 +736,7 @@ public class WebApplication
 
 		try
 		{
-			if (config.webappSecondaryGroupStorageMethod.toLowerCase().startsWith("sin"))
+			if (config.webappSecondaryGroupStorageMethod.startsWith("sin"))
 			{
 				if (currentGroupCount > 0)
 				{
@@ -749,7 +748,7 @@ public class WebApplication
 				log.finest(query);
 				sql.updateQuery(query);
 			}
-			else if (config.webappSecondaryGroupStorageMethod.toLowerCase().startsWith("jun"))
+			else if (config.webappSecondaryGroupStorageMethod.startsWith("jun"))
 			{
 				String query = "INSERT INTO `" + config.webappSecondaryGroupTable + "` "
 										 + "(`" + config.webappSecondaryGroupUserIDColumn + "`, `" + config.webappSecondaryGroupGroupIDColumn + "`) "
@@ -757,7 +756,7 @@ public class WebApplication
 				log.finest(query);
 				sql.insertQuery(query);
 			}
-			else if (config.webappSecondaryGroupStorageMethod.toLowerCase().startsWith("key"))
+			else if (config.webappSecondaryGroupStorageMethod.startsWith("mul"))
 			{
 				String query = "INSERT INTO `" + config.webappSecondaryGroupTable + "` "
 										 + "(`" + config.webappPrimaryGroupKeyColumn + "`, `" + config.webappSecondaryGroupGroupIDColumn + "`) "
@@ -792,7 +791,7 @@ public class WebApplication
 
 		try
 		{
-			if (config.webappSecondaryGroupStorageMethod.toLowerCase().startsWith("sin"))
+			if (config.webappSecondaryGroupStorageMethod.startsWith("sin"))
 			{
 				String groupIDs;
 				String query = "SELECT `" + config.webappSecondaryGroupGroupIDColumn + "` "
@@ -813,7 +812,7 @@ public class WebApplication
 					sql.updateQuery(query);
 				}
 			}
-			else if (config.webappSecondaryGroupStorageMethod.toLowerCase().startsWith("jun"))
+			else if (config.webappSecondaryGroupStorageMethod.startsWith("jun"))
 			{
 				String query = "DELETE FROM `" + config.webappSecondaryGroupTable + "` "
 									   + "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' "
@@ -821,7 +820,7 @@ public class WebApplication
 				log.finest(query);
 				sql.deleteQuery(query);
 			}
-			else if (config.webappSecondaryGroupStorageMethod.toLowerCase().startsWith("key"))
+			else if (config.webappSecondaryGroupStorageMethod.startsWith("mul"))
 			{
 				String query = "DELETE FROM `" + config.webappSecondaryGroupTable + "` "
 									   + "WHERE `" + config.webappSecondaryGroupKeyColumn + "` = '" + config.webappSecondaryGroupKeyName + "' "
