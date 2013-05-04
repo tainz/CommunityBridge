@@ -292,7 +292,7 @@ app-group-config:
     # - key-value: All the group ids are in a single row & column, separated
     #              by the delimiter specified below, on a table that stores
     #              its data in key-value pairs
-    # - multi-key-value: Group IDs are stored on a table of key-value pairs,
+    # - multiple-key-value: Group IDs are stored on a table of key-value pairs,
     #                    where the key name can appear in multiple rows.
     # - junction: The table can contain multiple rows for a given user_id,
     #             each with their own group_id.
@@ -303,11 +303,12 @@ app-group-config:
     group-id-column:
 
     # For single-column or key-value storage methods, the delimiter/separator
-    # that separates the group IDs: (ignored for junction storage method)
+    # that separates the group IDs:
+    # (ignored for junction and multiple-key-value storage method)
     group-id-delimiter: ','
 
     # For the key-value storage method:
-    # (ignored for the junction and single-column methods)
+    # (ignored for the junction and single methods)
     # Key name for the key-value pair.
     key-name:
     # Column that the key name is in
