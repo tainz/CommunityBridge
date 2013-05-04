@@ -759,8 +759,8 @@ public class WebApplication
 			else if (config.webappSecondaryGroupStorageMethod.startsWith("mul"))
 			{
 				String query = "INSERT INTO `" + config.webappSecondaryGroupTable + "` "
-										 + "(`" + config.webappPrimaryGroupKeyColumn + "`, `" + config.webappSecondaryGroupGroupIDColumn + "`) "
-										 + "VALUES ('" + config.webappSecondaryGroupKeyName + "', '" + groupID + "'";
+										 + "(`" + config.webappSecondaryGroupUserIDColumn + "`, `" + config.webappPrimaryGroupKeyColumn + "`, `" + config.webappSecondaryGroupGroupIDColumn + "`) "
+										 + "VALUES ('" + userID + "', '" + config.webappSecondaryGroupKeyName + "', '" + groupID + "')";
 				log.finest(query);
 				sql.insertQuery(query);
 			}
