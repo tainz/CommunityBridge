@@ -25,8 +25,7 @@ public interface PermissionHandler
 	public String [] getGroups(String playerName);
 
 	/**
-	 * Retrieves a player's primary group. For some permission systems, this is
-	 * merely the first group on the list.
+	 * Retrieves a player's primary group.
 	 *
 	 * @param playerName String containing the player's name.
 	 * @return empty String if the player does not exist, has no groups, or some

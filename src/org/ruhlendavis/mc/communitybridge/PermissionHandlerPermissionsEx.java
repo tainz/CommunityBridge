@@ -43,15 +43,6 @@ public class PermissionHandlerPermissionsEx implements PermissionHandler
 	}
 
 	/**
-	 * Dummy constructor for unit testing purposes.
-	 *
-	 * @param dummy Any boolean value (not used)
-	 * @throws IllegalStateException Not actually thrown as this is a dummy method
-	 */
-	public PermissionHandlerPermissionsEx(boolean dummy) throws IllegalStateException
-	{}
-
-	/**
 	 * Adds a player to a group.
 	 *
 	 * @param playerName String containing the player's name.

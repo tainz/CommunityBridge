@@ -40,17 +40,6 @@ public class PermissionHandlerGroupManager implements PermissionHandler
 	}
 
 	/**
-	 * This is actually here to allow the unit tests to work. This bypasses
-	 * the need to mock all the object types used in the normal constructor.
-	 *
-	 * @param groupManagerIn The groupManager object mocked by the unit tests.
-	 */
-	public PermissionHandlerGroupManager(GroupManager groupManagerIn) throws IllegalStateException
-	{
-		groupManager = groupManagerIn;
-	}
-
-	/**
 	 * Adds a player to a group.
 	 *
 	 * @param playerName String containing the player's name.

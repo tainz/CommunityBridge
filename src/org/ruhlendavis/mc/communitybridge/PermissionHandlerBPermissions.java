@@ -34,15 +34,6 @@ public class PermissionHandlerBPermissions implements PermissionHandler
 	}
 
 	/**
-	 * Dummy constructor for unit testing.
-	 *
-	 * @param dummy boolean can be any boolean value
-	 * @throws IllegalStateException not actually thrown as this is a dummy method
-	 */
-	public PermissionHandlerBPermissions(boolean dummy) throws IllegalStateException
-	{}
-
-	/**
 	 * Adds a player to a group.
 	 *
 	 * @param playerName String containing the player's name.

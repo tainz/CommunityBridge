@@ -38,19 +38,6 @@ public class PermissionHandlerPermissionsBukkit implements PermissionHandler
 	}
 
 	/**
-	 * This is here to simplify unit testing. Bypasses the normal constructor so
-	 * unit tests can mock objects as appropriate.
-	 *
-	 * @param pIn PermissionPlugin object
-	 * @throws IllegalStateException Doesn't actually throw, but required for signature matching.
-	 */
-
-	public PermissionHandlerPermissionsBukkit(PermissionsPlugin pIn) throws IllegalStateException
-	{
-		permissions = pIn;
-	}
-
-	/**
 	 * Adds a player to a group.
 	 *
 	 * @param playerName String containing the player's name.
