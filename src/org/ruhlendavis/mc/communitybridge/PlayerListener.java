@@ -98,6 +98,19 @@ public class PlayerListener implements Listener
 				String message = ChatColor.GREEN + config.messages.get("link-registered-player");
 				event.setJoinMessage(message);
 			}
+
+			if (config.groupSynchronizationActive || config.linkingRegisteredGroup.isEmpty())
+			{}
+			else
+			{
+				CommunityBridge.permissionHandler.addToGroup(playerName, config.linkingRegisteredGroup);
+				if (config.linkingNotifyPlayer)
+				{
+					String message = ChatColor.RED + config.messages.get("link-notify-player-group-change");
+					message = message.replace("~GROUPNAME~", config.linkingRegisteredGroup);
+					player.sendMessage(message);
+				}
+			}
 			webapp.onJoin(player);
 		}
 		else
@@ -107,6 +120,19 @@ public class PlayerListener implements Listener
 				String message = ChatColor.RED + config.messages.get("link-unregistered-player");
 				event.setJoinMessage(message);
 			} // if config.linkingNotifyUnregistered
+
+			if (config.linkingUnregisteredGroup.isEmpty())
+			{}
+			else
+			{
+				CommunityBridge.permissionHandler.addToGroup(playerName, config.linkingUnregisteredGroup);
+				if (config.linkingNotifyPlayer)
+				{
+					String message = ChatColor.RED + config.messages.get("link-notify-player-group-change");
+					message = message.replace("~GROUPNAME~", config.linkingUnregisteredGroup);
+					player.sendMessage(message);
+				}
+			}
 		} // if isPlayerRegistered
 	}
 
