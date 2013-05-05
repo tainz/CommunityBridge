@@ -53,6 +53,10 @@ public class Configuration
 	public boolean linkingNotifyUnregistered;
 	public boolean linkingKickUnregistered;
 
+	public String linkingUnregisteredGroup;
+	public String linkingRegisteredGroup;
+	public boolean linkingNotifyPlayer;
+
 	public boolean linkingUsesKey;
 	public String linkingTableName;
 	public String linkingUserIDColumn;
@@ -743,6 +747,10 @@ public class Configuration
 		linkingNotifyRegistered = config.getBoolean("player-user-linking.notify-registered-player", true);
 		linkingNotifyUnregistered = config.getBoolean("player-user-linking.notify-unregistered-player", true);
 
+		linkingUnregisteredGroup = config.getString("player-user-linking.unregistered-player-group", "");
+		linkingRegisteredGroup = config.getString("player-user-linking.registered-player-group", "");
+		linkingNotifyPlayer = config.getBoolean("player-user-linking.notify-player-of-group", false);
+
 		linkingUsesKey = config.getBoolean("player-user-linking.uses-key", false);
 		linkingTableName = config.getString("player-user-linking.table-name", "");
 		linkingUserIDColumn = config.getString("player-user-linking.user-id-column", "");
@@ -944,6 +952,11 @@ public class Configuration
 		log.config(    "Linking notify registered            : " + linkingNotifyRegistered);
 		log.config(    "Linking notify unregistered          : " + linkingNotifyUnregistered);
 		log.config(    "Linking kick unregistered            : " + linkingKickUnregistered);
+
+		log.config(    "Linking unregistered group           : " + linkingUnregisteredGroup);
+		log.config(    "Linking registered group             : " + linkingRegisteredGroup);
+		log.config(    "Linking notify player of group       : " + linkingNotifyPlayer);
+		
 		log.config(    "Linking uses key-value pair          : " + linkingUsesKey);
 		log.config(    "Linking table name                   : " + linkingTableName);
 		log.config(    "Linking user ID column               : " + linkingUserIDColumn);

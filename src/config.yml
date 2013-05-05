@@ -95,6 +95,14 @@ player-user-linking:
   notify-registered-player: true
   notify-unregistered-player: true
 
+  # If you have a permissions system and you want the player to be placed
+  # in a group based on (un)-registered status, set the following.
+  # If left blank the setting won't be used. If a group-synchronization
+  # feature is turned on, the 'registered-player-group' won't be used.
+  unregistered-player-group:
+  registered-player-group:
+  notify-player-of-group: true
+
   # This is where we specify how to associate a Minecraft player with a web
   # application user. We do this by matching up the player name with a name
   # stored in the web application's database.
