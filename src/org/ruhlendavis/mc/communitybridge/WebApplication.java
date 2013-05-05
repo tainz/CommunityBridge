@@ -257,9 +257,13 @@ public class WebApplication
 		{
 			return getUserGroupIDsJunction(playerName);
 		}
-		else if (config.webappSecondaryGroupStorageMethod.startsWith("mul"))
+		else if (config.webappSecondaryGroupStorageMethod.startsWith("key"))
 		{
 			return getUserGroupIDsKeyValue(playerName);
+		}
+		else if (config.webappSecondaryGroupStorageMethod.startsWith("mul"))
+		{
+			return getUserGroupIDsMultipleKeyValue(playerName);
 		}
 		log.severe("Invalid storage method for secondary groups.");
 		return null;
@@ -273,6 +277,53 @@ public class WebApplication
 		query = "SELECT `" + config.webappSecondaryGroupGroupIDColumn + "` "
 					+ "FROM `" + config.webappSecondaryGroupTable + "` "
 					+ "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + getUserID(playerName) + "' ";
+
+		log.finest(query);
+
+		try
+		{
+			ResultSet result = sql.sqlQuery(query);
+
+			if (result.next())
+			{
+				return new ArrayList(Arrays.asList(result.getString(config.webappSecondaryGroupGroupIDColumn).split(config.webappSecondaryGroupGroupIDDelimiter)));
+			}
+			else
+			{
+				return null;
+			}
+		}
+		catch (SQLException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return null;
+		}
+		catch (MalformedURLException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return null;
+		}
+		catch (InstantiationException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return null;
+		}
+		catch (IllegalAccessException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return null;
+		}
+	}
+
+	private List getUserGroupIDsKeyValue(String playerName)
+	{
+		final String errorBase = "Error during WebApplication.getUserGroupIDsKeyValue(): ";
+		String query;
+
+		query = "SELECT `" + config.webappSecondaryGroupGroupIDColumn + "` "
+					+ "FROM `" + config.webappSecondaryGroupTable + "` "
+					+ "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + getUserID(playerName) + "' "
+					+ "AND `" + config.webappSecondaryGroupKeyColumn + "` = '" + config.webappSecondaryGroupKeyName + "' ";
 
 		log.finest(query);
 
@@ -355,7 +406,7 @@ public class WebApplication
 		}
 	}
 
-	private List getUserGroupIDsKeyValue(String playerName)
+	private List getUserGroupIDsMultipleKeyValue(String playerName)
 	{
 		final String errorBase = "Error during WebApplication.getUserGroupIDsKeyValue(): ";
 		String query;
@@ -748,6 +799,19 @@ public class WebApplication
 				log.finest(query);
 				sql.updateQuery(query);
 			}
+			else if (config.webappSecondaryGroupStorageMethod.startsWith("key"))
+			{
+				if (currentGroupCount > 0)
+				{
+					groupID = config.webappSecondaryGroupGroupIDDelimiter + groupID;
+				}
+				String query = "UPDATE `" + config.webappSecondaryGroupTable + "` "
+										 + "SET `" + config.webappSecondaryGroupGroupIDColumn + "` = CONCAT(`" + config.webappSecondaryGroupGroupIDColumn + "`, '" + groupID + "') "
+										 + "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' "
+										 + "AND `" + config.webappSecondaryGroupKeyColumn + "` = '" + config.webappSecondaryGroupKeyName + "' ";
+				log.finest(query);
+				sql.updateQuery(query);
+			}
 			else if (config.webappSecondaryGroupStorageMethod.startsWith("jun"))
 			{
 				String query = "INSERT INTO `" + config.webappSecondaryGroupTable + "` "
@@ -807,7 +871,32 @@ public class WebApplication
 					groupIDsAsList.remove(groupID);
 					groupIDs = StringUtilities.joinStrings(groupIDsAsList, config.webappSecondaryGroupGroupIDDelimiter);
 					query = "UPDATE `" + config.webappSecondaryGroupTable + "` "
-								+ " SET `" + config.webappSecondaryGroupGroupIDColumn + "` = '" + groupIDs + "'";
+								+ "SET `" + config.webappSecondaryGroupGroupIDColumn + "` = '" + groupIDs + "' "
+							  + "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + userID + "'";
+					log.finest(query);
+					sql.updateQuery(query);
+				}
+			}
+			else if (config.webappSecondaryGroupStorageMethod.startsWith("key"))
+			{
+				String groupIDs;
+				String query = "SELECT `" + config.webappSecondaryGroupGroupIDColumn + "` "
+										 + "FROM `" + config.webappSecondaryGroupTable + "` "
+										 + "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' "
+								     + "AND `" + config.webappSecondaryGroupKeyColumn + "` = '" + config.webappSecondaryGroupKeyName + "' ";
+				log.finest(query);
+				ResultSet result = sql.sqlQuery(query);
+
+				if (result.next())
+				{
+					groupIDs = result.getString(config.webappSecondaryGroupGroupIDColumn);
+					List<String> groupIDsAsList = new ArrayList(Arrays.asList(groupIDs.split(config.webappSecondaryGroupGroupIDDelimiter)));
+					groupIDsAsList.remove(groupID);
+					groupIDs = StringUtilities.joinStrings(groupIDsAsList, config.webappSecondaryGroupGroupIDDelimiter);
+					query = "UPDATE `" + config.webappSecondaryGroupTable + "` "
+								+ " SET `" + config.webappSecondaryGroupGroupIDColumn + "` = '" + groupIDs + "' "
+								+ "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' "
+								+ "AND `" + config.webappSecondaryGroupKeyColumn + "` = '" + config.webappSecondaryGroupKeyName + "' ";
 					log.finest(query);
 					sql.updateQuery(query);
 				}

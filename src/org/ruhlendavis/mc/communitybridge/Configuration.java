@@ -478,7 +478,7 @@ public class Configuration
 			temp = checkTable(sql, "app-group-config.secondary.table-name", webappSecondaryGroupTable);
 			temp = temp & checkColumn(sql, "app-group-config.secondary.user-id-column", webappSecondaryGroupTable, webappSecondaryGroupUserIDColumn);
       temp = temp & checkColumn(sql, "app-group-config.secondary.group-id-column", webappSecondaryGroupTable, webappSecondaryGroupGroupIDColumn);
-			if (webappSecondaryGroupStorageMethod.startsWith("mul"))
+			if (webappSecondaryGroupStorageMethod.startsWith("mul") || webappSecondaryGroupStorageMethod.startsWith("key"))
 			{
 				temp = temp & checkColumn(sql, "app-group-config.secondary.key-column", webappSecondaryGroupTable, webappSecondaryGroupKeyColumn);
 				if (temp)
