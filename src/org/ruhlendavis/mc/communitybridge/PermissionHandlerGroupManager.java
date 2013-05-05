@@ -72,11 +72,11 @@ public class PermissionHandlerGroupManager implements PermissionHandler
 		// If it is a primary group, set as a primary group.
 		if (user.getGroup().equals(worldHolder.getDefaultGroup()))
 		{
-			user.setGroup(group, true);
+			user.setGroup(group, false);
 		}
 		else if (group.getInherits().contains(user.getGroup().getName().toLowerCase()))
 		{
-			user.setGroup(group, true);
+			user.setGroup(group, false);
 		}
 		else
 		{
@@ -223,7 +223,7 @@ public class PermissionHandlerGroupManager implements PermissionHandler
 
 		if (user.getGroup().getName().equalsIgnoreCase(groupName))
 		{
-			user.setGroup(worldHolder.getDefaultGroup(), true);
+			user.setGroup(worldHolder.getDefaultGroup(), false);
 			return true;
 		}
 		else
