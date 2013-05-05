@@ -851,7 +851,8 @@ public class Configuration
 
 		// These are calculated from settings above.
 		playerDataRequired = simpleSynchronizationEnabled && (webappPrimaryGroupEnabled || webappSecondaryGroupEnabled);
-		permissionsSystemRequired = simpleSynchronizationEnabled && (webappPrimaryGroupEnabled || webappSecondaryGroupEnabled);
+		permissionsSystemRequired = (!linkingUnregisteredGroup.isEmpty()) || (!linkingRegisteredGroup.isEmpty())
+														 || (simpleSynchronizationEnabled && (webappPrimaryGroupEnabled || webappSecondaryGroupEnabled));
 	}
 
 	/**
@@ -956,7 +957,7 @@ public class Configuration
 		log.config(    "Linking unregistered group           : " + linkingUnregisteredGroup);
 		log.config(    "Linking registered group             : " + linkingRegisteredGroup);
 		log.config(    "Linking notify player of group       : " + linkingNotifyPlayer);
-		
+
 		log.config(    "Linking uses key-value pair          : " + linkingUsesKey);
 		log.config(    "Linking table name                   : " + linkingTableName);
 		log.config(    "Linking user ID column               : " + linkingUserIDColumn);
