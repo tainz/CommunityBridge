@@ -146,6 +146,7 @@ public class Configuration
 	// These are not in the config.yml. They are calculated.
 	public boolean playerDataRequired;
 	public boolean permissionsSystemRequired;
+	public boolean groupSynchronizationActive;
 
 	/**
 	 * Constructor for the configuration class.
@@ -850,9 +851,9 @@ public class Configuration
 		simpleSynchronizationGroupMap = config.getConfigurationSection("simple-synchronization.group-mapping").getValues(false);
 
 		// These are calculated from settings above.
-		playerDataRequired = simpleSynchronizationEnabled && (webappPrimaryGroupEnabled || webappSecondaryGroupEnabled);
-		permissionsSystemRequired = (!linkingUnregisteredGroup.isEmpty()) || (!linkingRegisteredGroup.isEmpty())
-														 || (simpleSynchronizationEnabled && (webappPrimaryGroupEnabled || webappSecondaryGroupEnabled));
+		groupSynchronizationActive = simpleSynchronizationEnabled && (webappPrimaryGroupEnabled || webappSecondaryGroupEnabled);
+		playerDataRequired = groupSynchronizationActive;
+		permissionsSystemRequired = (!linkingUnregisteredGroup.isEmpty()) || (!linkingRegisteredGroup.isEmpty()) || groupSynchronizationActive;
 	}
 
 	/**
