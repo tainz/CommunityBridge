@@ -227,7 +227,7 @@ public class PermissionHandlerGroupManager implements PermissionHandler
 
 		if (user.getGroup().getName().equalsIgnoreCase(groupName))
 		{
-			user.setGroup(worldHolder.getDefaultGroup(), true);
+			user.setGroup(worldHolder.getDefaultGroup(), false);
 			return true;
 		}
 		else
