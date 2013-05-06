@@ -324,8 +324,17 @@ app-group-config:
 
 # Simple Synchronization Configuration
 simple-synchronization:
-  # Set this to true for simple two-way synchronization
+  # Set this to true for simple synchronization
   enabled: false
+
+  # Controls the "direction" of synchronization.
+  # Options are: two-way, web-application, or minecraft.
+  # - two-way: Changes on either side are synchronized to the other.
+  # - web-application: Changes made in the web-application are
+  #   synchronized to the Minecraft server.
+  # - minecraft: Changes made in Minecraft are synchronized to the
+  #   web-application.
+  direction: two-way
 
   # Set this to true if you want the player to be notified when their primary group changes.
   primary-group-change-notify: false
@@ -338,4 +347,3 @@ simple-synchronization:
     '1' : 'guest'
     '2' : 'member'
     '3' : 'premium'
-

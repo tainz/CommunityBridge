@@ -140,6 +140,7 @@ public class Configuration
 	public String webappSecondaryGroupStorageMethod;
 
 	public boolean simpleSynchronizationEnabled;
+	public String simpleSynchronizationDirection;
 	public boolean simpleSynchronizationPrimaryGroupNotify;
 	public Map<String, Object> simpleSynchronizationGroupMap = new HashMap();
 
@@ -498,6 +499,12 @@ public class Configuration
 			}
 		}
 
+		if (webappPrimaryGroupEnabled == false && webappSecondaryGroupEnabled == false && simpleSynchronizationEnabled)
+		{
+			simpleSynchronizationEnabled = false;
+			log.warning("Simple synchronization disabled due to prior errors.");
+		}
+
 		if (playerDataRequired)
 		{
 			File playerData = new File(plugin.getDataFolder(), "Players");
@@ -847,6 +854,7 @@ public class Configuration
 
 		// Simple synchronization
 		simpleSynchronizationEnabled = config.getBoolean("simple-synchronization.enabled", false);
+		simpleSynchronizationDirection = config.getString("simple-synchronization.directoin", "two-way");
 		simpleSynchronizationPrimaryGroupNotify = config.getBoolean("simple-synchronization.primary-group-change-notify", false);
 		simpleSynchronizationGroupMap = config.getConfigurationSection("simple-synchronization.group-mapping").getValues(false);
 
@@ -1079,6 +1087,13 @@ public class Configuration
 				log.config("Secondary group key name             : " + webappSecondaryGroupKeyName);
 				log.config("Secondary group key column           : " + webappSecondaryGroupKeyColumn);
 			}
+		}
+
+		log.config(    "Simple synchronization enabled       : " + simpleSynchronizationEnabled);
+		if (simpleSynchronizationEnabled)
+		{
+			log.config(  "Simple synchronization direction     : " + simpleSynchronizationDirection);
+			log.config(  "Simple synchronization notification  : " + simpleSynchronizationPrimaryGroupNotify);
 		}
 	}
 }
