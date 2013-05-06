@@ -671,48 +671,54 @@ public class WebApplication
 		// 3. Synchronize primary group state
 		if (config.webappPrimaryGroupEnabled)
 		{
-			if (previousState.webappPrimaryGroupID.equals(currentState.webappPrimaryGroupID))
-			{}
-			else
+			if (config.simpleSynchronizationDirection.startsWith("two") || config.simpleSynchronizationDirection.startsWith("web"))
 			{
-				String formerGroupName = config.getGroupNameByGroupID(previousState.webappPrimaryGroupID);
-				String newGroupName = config.getGroupNameByGroupID(currentState.webappPrimaryGroupID);
-				if (formerGroupName == null)
-				{
-					log.warning("Not changing permissions group due to permissions system group name lookup failure for web application group ID: " + previousState.webappPrimaryGroupID);
-				}
-				else if (newGroupName == null)
-				{
-					log.warning("Not changing permissions group due to permissions system group name lookup failure for web application group ID: " + currentState.webappPrimaryGroupID);
-				}
+				if (previousState.webappPrimaryGroupID.equals(currentState.webappPrimaryGroupID))
+				{}
 				else
 				{
-					CommunityBridge.permissionHandler.setPrimaryGroup(playerName, newGroupName, formerGroupName);
-					log.fine("Moved player '" + playerName + "' from permissions group '" + formerGroupName + "' to permissions group '" + newGroupName + "'.");
-					if (config.simpleSynchronizationPrimaryGroupNotify)
+					String formerGroupName = config.getGroupNameByGroupID(previousState.webappPrimaryGroupID);
+					String newGroupName = config.getGroupNameByGroupID(currentState.webappPrimaryGroupID);
+					if (formerGroupName == null)
 					{
-						String message = ChatColor.YELLOW + CommunityBridge.config.messages.get("group-synchronization-primary-notify-player");
-						message = message.replace("~FORMERGROUPNAME~", formerGroupName);
-						message = message.replace("~GROUPNAME~", newGroupName);
-						player.sendMessage(message);
+						log.warning("Not changing permissions group due to permissions system group name lookup failure for web application group ID: " + previousState.webappPrimaryGroupID);
+					}
+					else if (newGroupName == null)
+					{
+						log.warning("Not changing permissions group due to permissions system group name lookup failure for web application group ID: " + currentState.webappPrimaryGroupID);
+					}
+					else
+					{
+						CommunityBridge.permissionHandler.setPrimaryGroup(playerName, newGroupName, formerGroupName);
+						log.fine("Moved player '" + playerName + "' from permissions group '" + formerGroupName + "' to permissions group '" + newGroupName + "'.");
+						if (config.simpleSynchronizationPrimaryGroupNotify)
+						{
+							String message = ChatColor.YELLOW + CommunityBridge.config.messages.get("group-synchronization-primary-notify-player");
+							message = message.replace("~FORMERGROUPNAME~", formerGroupName);
+							message = message.replace("~GROUPNAME~", newGroupName);
+							player.sendMessage(message);
+						}
 					}
 				}
 			}
 
-			if (previousState.permissionsSystemPrimaryGroupName.equals(currentState.permissionsSystemPrimaryGroupName))
-			{}
-			else
+			if (config.simpleSynchronizationDirection.startsWith("two") || config.simpleSynchronizationDirection.startsWith("min"))
 			{
-				String groupID = config.getWebappGroupIDbyGroupName(currentState.permissionsSystemPrimaryGroupName);
-
-				if (groupID == null)
-				{
-					log.warning("Not changing web application group due to web application group ID lookup failure for: " + currentState.permissionsSystemPrimaryGroupName);
-				}
+				if (previousState.permissionsSystemPrimaryGroupName.equals(currentState.permissionsSystemPrimaryGroupName))
+				{}
 				else
 				{
-					setPrimaryGroup(userID, groupID);
-					log.fine("Moved player '" + playerName + "' to web application group ID '" + groupID + "'.");
+					String groupID = config.getWebappGroupIDbyGroupName(currentState.permissionsSystemPrimaryGroupName);
+
+					if (groupID == null)
+					{
+						log.warning("Not changing web application group due to web application group ID lookup failure for: " + currentState.permissionsSystemPrimaryGroupName);
+					}
+					else
+					{
+						setPrimaryGroup(userID, groupID);
+						log.fine("Moved player '" + playerName + "' to web application group ID '" + groupID + "'.");
+					}
 				}
 			}
 		}
@@ -720,48 +726,54 @@ public class WebApplication
 		// 4. Synchronize secondary group state
 		if (config.webappSecondaryGroupEnabled)
 		{
-			for(String groupName : previousState.permissionsSystemGroupNames)
+			if (config.simpleSynchronizationDirection.startsWith("two") || config.simpleSynchronizationDirection.startsWith("web"))
 			{
-				if (currentState.permissionsSystemGroupNames.contains(groupName))
-				{}
-				else
+				for(String groupName : previousState.permissionsSystemGroupNames)
 				{
-					removeGroup(userID, groupName);
+					if (currentState.permissionsSystemGroupNames.contains(groupName))
+					{}
+					else
+					{
+						removeGroup(userID, groupName);
+					}
+				}
+
+				for (String groupName : currentState.permissionsSystemGroupNames)
+				{
+					if (previousState.permissionsSystemGroupNames.contains(groupName))
+					{}
+					else
+					{
+						addGroup(userID, groupName, currentState.webappGroupIDs.size());
+					}
 				}
 			}
 
-			for (String groupName : currentState.permissionsSystemGroupNames)
+			if (config.simpleSynchronizationDirection.startsWith("two") || config.simpleSynchronizationDirection.startsWith("web"))
 			{
-				if (previousState.permissionsSystemGroupNames.contains(groupName))
-				{}
-				else
+				for(String groupID : previousState.webappGroupIDs)
 				{
-					addGroup(userID, groupName, currentState.webappGroupIDs.size());
+					if (currentState.webappGroupIDs.contains(groupID))
+					{}
+					else
+					{
+						String groupName = config.getGroupNameByGroupID(groupID);
+						CommunityBridge.permissionHandler.removeFromGroup(playerName, groupName);
+					}
 				}
-			}
 
-			for(String groupID : previousState.webappGroupIDs)
-			{
-				if (currentState.webappGroupIDs.contains(groupID))
-				{}
-				else
+				for(String groupID : currentState.webappGroupIDs)
 				{
-					String groupName = config.getGroupNameByGroupID(groupID);
-					CommunityBridge.permissionHandler.removeFromGroup(playerName, groupName);
-				}
-			}
-
-			for(String groupID : currentState.webappGroupIDs)
-			{
-				if (previousState.webappGroupIDs.contains(groupID))
-				{}
-				else
-				{
-					String groupName = config.getGroupNameByGroupID(groupID);
-					CommunityBridge.permissionHandler.addToGroup(playerName, groupName);
-				}
-			}
-		}
+					if (previousState.webappGroupIDs.contains(groupID))
+					{}
+					else
+					{
+						String groupName = config.getGroupNameByGroupID(groupID);
+						CommunityBridge.permissionHandler.addToGroup(playerName, groupName);
+					} // if previousState contains group ID
+				} // for each group ID in currentState
+			} // Synchronization direction check.
+		} // if SecondaryWebapp enabled.
 
 		// 5. Save newly created state
 		currentState.generate();

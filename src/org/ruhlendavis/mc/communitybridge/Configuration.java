@@ -854,7 +854,7 @@ public class Configuration
 
 		// Simple synchronization
 		simpleSynchronizationEnabled = config.getBoolean("simple-synchronization.enabled", false);
-		simpleSynchronizationDirection = config.getString("simple-synchronization.directoin", "two-way");
+		simpleSynchronizationDirection = config.getString("simple-synchronization.direction", "two-way").toLowerCase();
 		simpleSynchronizationPrimaryGroupNotify = config.getBoolean("simple-synchronization.primary-group-change-notify", false);
 		simpleSynchronizationGroupMap = config.getConfigurationSection("simple-synchronization.group-mapping").getValues(false);
 

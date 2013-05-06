@@ -26,7 +26,7 @@ general:
 
   # This is a timer that will check and sync all data with your database at a
   # set interval. Otherwise group and player statistics will only be
-  # synchronized when they join and leave the server.
+  # synchronized when the player joins and leaves the Minecraft server.
   auto-sync: true
 
   # The interval for the auto-sync timer, this should not be set any lower than
