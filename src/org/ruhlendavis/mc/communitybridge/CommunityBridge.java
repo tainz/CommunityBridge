@@ -252,7 +252,7 @@ public final class CommunityBridge extends JavaPlugin
 	}
 
 	/**
-	 * Called by onEnable() if the auto reminder to register is turned on, this
+	 * Called by activate() if the auto reminder to register is turned on, this
 	 * method starts up the reminder task.
 	 */
 	private void reminderStart()
@@ -283,6 +283,49 @@ public final class CommunityBridge extends JavaPlugin
 																										},
 																										every, every);
 		log.fine("Auto reminder started.");
+  }
+
+	/**
+	 * Called by activate() if the auto sync is turned on, this starts up the
+	 * auto synchronization task runner.
+	 */
+	private void autosyncStart()
+  {
+    long every;
+
+    if (config.autoEveryUnit.toLowerCase().startsWith("second"))
+    {
+      every = config.autoSyncEvery * 20; // 20 ticks per second.
+    }
+    else if (config.autoEveryUnit.toLowerCase().startsWith("minute"))
+    {
+      every = config.autoSyncEvery * 1200; // 20 ticks per second, 60 sec/minute
+    }
+    else if (config.autoEveryUnit.toLowerCase().startsWith("hour"))
+    {
+      every = config.autoSyncEvery * 72000; // 20 ticks/s 60s/m, 60m/h
+    }
+		else if (config.autoEveryUnit.startsWith("day"))
+		{
+			every = config.autoSyncEvery * 1728000; // 20 ticks/s 60s/m, 60m/h, 24h/day
+		}
+		else
+		{
+			// Effectively defaulting to ticks.
+			every = config.autoSyncEvery;
+		}
+
+		Bukkit.getScheduler().runTaskTimerAsynchronously(this,
+																										new Runnable()
+																										{
+																											@Override
+																											public void run()
+																											{
+																												webapp.synchronizeAll();
+																											}
+																										},
+																										every, every);
+		log.fine("Auto synchronization started.");
   }
 
 	/**

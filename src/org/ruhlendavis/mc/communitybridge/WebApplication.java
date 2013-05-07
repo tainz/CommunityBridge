@@ -594,7 +594,7 @@ public class WebApplication
 		});
 	}
 
-	private void synchronizeAll()
+	public void synchronizeAll()
 	{
 		Player[] onlinePlayers = Bukkit.getOnlinePlayers();
 		for (Player player : onlinePlayers)
