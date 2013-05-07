@@ -582,6 +582,27 @@ public class WebApplication
 		});
 	}
 
+	public void runSynchronizeAll()
+	{
+		Bukkit.getScheduler().runTaskAsynchronously(plugin,	new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				synchronizeAll();
+			}
+		});
+	}
+
+	private void synchronizeAll()
+	{
+		Player[] onlinePlayers = Bukkit.getOnlinePlayers();
+		for (Player player : onlinePlayers)
+		{
+			synchronizePlayer(player, true);
+		}
+	}
+
 	private void synchronizePlayer(Player player, boolean online)
 	{
 		if (synchronizationLocks.contains(player))

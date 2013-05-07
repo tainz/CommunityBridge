@@ -98,6 +98,11 @@ public class CBCommandExecutor implements CommandExecutor
 			}
 			return true;
 		}
+		else if (label.equals("cbysncall"))
+		{
+			CommunityBridge.webapp.runSynchronizeAll();
+			return true;
+		}
 
 		return true;
 	}
