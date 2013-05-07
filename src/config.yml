@@ -20,7 +20,7 @@ general:
   plugin-metrics: true
 
   # Set the unit of measurement for sync and reminder scheduling. Options are:
-  # ticks, seconds, minutes, or hours. Note that this applies to both
+  # ticks, seconds, minutes, hours, or days. Note that this applies to both
   # auto-sync-every and auto-remind-every.
   auto-every-unit: minutes
 
