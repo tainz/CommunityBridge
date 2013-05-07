@@ -178,6 +178,11 @@ public final class CommunityBridge extends JavaPlugin
 			}
 		}
 
+		if (config.autoSync)
+		{
+			autosyncStart();
+		}
+
 		active = true;
 		log.finest("CommunityBridge activated.");
 	}
