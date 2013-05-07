@@ -254,10 +254,7 @@ public final class CommunityBridge extends JavaPlugin
 	/**
 	 * Called by onEnable() if the auto reminder to register is turned on, this
 	 * method starts up the reminder task.
-	 *
 	 */
-	// EXPIRABLE: When we remove the deprecated code, this can go away as well.
-	@SuppressWarnings("deprecation")
 	private void reminderStart()
   {
     long every = config.linkingAutoEvery; // Effectively defaulting to ticks.
@@ -275,32 +272,16 @@ public final class CommunityBridge extends JavaPlugin
       every = config.linkingAutoEvery * 72000; // 20 ticks/s 60s/m, 60m/h
     }
 
-		// EXPIRABLE: ST2012-Dec-21: The else block and the if statement itself. The true block should stay
-		if (StringUtilities.compareVersion(Bukkit.getBukkitVersion().replace("R", ""), "1.4.5.1.0") > -1)
-		{
-			// As of MC 1.4.5.1.0, running tasks have changed.
-			Bukkit.getScheduler().runTaskTimerAsynchronously(this,
-																											new Runnable()
+		Bukkit.getScheduler().runTaskTimerAsynchronously(this,
+																										new Runnable()
+																										{
+																											@Override
+																											public void run()
 																											{
-																												@Override
-																												public void run()
-																												{
-																													remindUnregisteredPlayers();
-																												}
-																											},
-																											every, every);
-		}
-		else
-		{
-			Bukkit.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					remindUnregisteredPlayers();
-				}
-			}, every, every);
-		}
+																												remindUnregisteredPlayers();
+																											}
+																										},
+																										every, every);
 		log.fine("Auto reminder started.");
   }
 
