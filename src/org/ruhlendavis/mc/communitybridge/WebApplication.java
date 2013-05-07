@@ -33,6 +33,7 @@ public class WebApplication
 	private int maxPlayers;
 
 	private Map<String, String> playerUserIDs = new HashMap();
+	private List<Player> synchronizationLocks = new ArrayList();
 
 	public WebApplication(CommunityBridge plugin, Configuration config, Log log, SQL sql)
 	{
@@ -550,8 +551,7 @@ public class WebApplication
 	 */
 	public void onJoin(final Player player)
 	{
-		runGroupSynchronizationTask(player);
-		runUpdateStatisticsTask(player, true);
+		runSynchronizePlayer(player, true);
 	}
 
 	/**
@@ -561,7 +561,7 @@ public class WebApplication
 	 */
 	public void onQuit(Player player)
 	{
-		runUpdateStatisticsTask(player, false);
+		runSynchronizePlayer(player, false);
 	}
 
 	/**
@@ -570,39 +570,34 @@ public class WebApplication
 	 *
 	 * @param String The player's name.
 	 */
-	public void runGroupSynchronizationTask(final Player player)
+	public void runSynchronizePlayer(final Player player, final boolean online)
 	{
-		if (config.webappPrimaryGroupEnabled || config.webappSecondaryGroupEnabled)
+		Bukkit.getScheduler().runTaskAsynchronously(plugin,	new Runnable()
 		{
-			Bukkit.getScheduler().runTaskAsynchronously(plugin,	new Runnable()
+			@Override
+			public void run()
 			{
-				@Override
-				public void run()
-				{
-					synchronizeGroups(player);
-				}
-			});
-		}
+				synchronizePlayer(player, online);
+			}
+		});
 	}
 
-	/**
-	 * If statistics is enabled, this method sets up an update statistics task
-	 * for the given player.
-	 *
-	 * @param String The player's name.
-	 */
-	private void runUpdateStatisticsTask(final Player player, final boolean online)
+	private void synchronizePlayer(Player player, boolean online)
 	{
-		if (config.statisticsEnabled)
+		if (synchronizationLocks.contains(player))
+		{}
+		else
 		{
-			Bukkit.getScheduler().runTaskAsynchronously(plugin,	new Runnable()
+			synchronizationLocks.add(player);
+			if (config.groupSynchronizationActive)
 			{
-				@Override
-				public void run()
-				{
-					updateStatistics(player, online);
-				}
-			});
+				synchronizeGroups(player);
+			}
+			if (config.statisticsEnabled)
+			{
+				updateStatistics(player, online);
+			}
+			synchronizationLocks.remove(player);
 		}
 	}
 

@@ -44,7 +44,8 @@ public class CBCommandExecutor implements CommandExecutor
 	public boolean onCommand(CommandSender sender, Command command, String label,
 	                         String[] arguments)
 	{
-		if (label.equalsIgnoreCase("cbreload"))
+		label = label.toLowerCase();
+		if (label.equals("cbreload"))
 		{
 			if (arguments.length > 1)
 			{
@@ -85,16 +86,17 @@ public class CBCommandExecutor implements CommandExecutor
 			sendOrLog(sender, "CommunityBridge is NOT active. Only the cbreload command is available.", ChatColor.RED, false);
 			return true;
 		}
-		else if (label.equalsIgnoreCase("cbsync"))
+		else if (label.equals("cbsync"))
 		{
 			if (sender instanceof Player)
 			{
-				CommunityBridge.webapp.runGroupSynchronizationTask((Player) sender);
+				CommunityBridge.webapp.runSynchronizePlayer((Player) sender, true);
 			}
 			else
 			{
 				sendOrLog(sender, "cbsync can only be used while in the game. You can use cbsyncall to force a synchronization for all connected players.", ChatColor.RED, false);
 			}
+			return true;
 		}
 
 		return true;
