@@ -570,7 +570,7 @@ public class WebApplication
 	 *
 	 * @param String The player's name.
 	 */
-	private void runGroupSynchronizationTask(final Player player)
+	public void runGroupSynchronizationTask(final Player player)
 	{
 		if (config.webappPrimaryGroupEnabled || config.webappSecondaryGroupEnabled)
 		{

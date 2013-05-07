@@ -44,9 +44,6 @@ public class CBCommandExecutor implements CommandExecutor
 	public boolean onCommand(CommandSender sender, Command command, String label,
 	                         String[] arguments)
 	{
-		// This models how I think each command should be handled. Note that if
-		// you're looking for permissions, that is handled entirely by the
-		// Bukkit via settings in plugin.yml
 		if (label.equalsIgnoreCase("cbreload"))
 		{
 			if (arguments.length > 1)
@@ -88,50 +85,19 @@ public class CBCommandExecutor implements CommandExecutor
 			sendOrLog(sender, "CommunityBridge is NOT active. Only the cbreload command is available.", ChatColor.RED, false);
 			return true;
 		}
+		else if (label.equalsIgnoreCase("cbsync"))
+		{
+			if (sender instanceof Player)
+			{
+				CommunityBridge.webapp.runGroupSynchronizationTask((Player) sender);
+			}
+			else
+			{
+				sendOrLog(sender, "cbsync can only be used while in the game. You can use cbsyncall to force a synchronization for all connected players.", ChatColor.RED, false);
+			}
+		}
 
 		return true;
-	}
-
- 	/**
-  * Send response message to player (if possible) AND to the console/log.
-  *
-	* @param staff Target Player object or null
-	* @param message Message to send
-	* @param color ChatColor for message text, not used for console/log
-  */
-	private void sendAndLog(Player staff, String message, ChatColor color)
-  {
-		String name;
-		if (staff == null)
-		{
-			name = "Console";
-		}
-		else
-		{
-			staff.sendMessage(color + message);
-			name = staff.getName();
-		}
-
-		log.info(name + " " + message);
-  }
-
-	/**
-  * Send response message to player (if possible) or to the console/log.
-  *
-	* @param staff Target Player object or null
-	* @param message Message to send
-	* @param color ChatColor for message text, not used for console/log
-  */
-  private void sendOrLog(Player staff, String message, ChatColor color)
-  {
-    if (staff == null)
-    {
-			log.info("Console " + message);
-		}
-    else
-    {
-      staff.sendMessage(color + message);
-		}
 	}
 
 /**
