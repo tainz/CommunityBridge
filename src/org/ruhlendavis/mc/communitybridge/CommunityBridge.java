@@ -257,20 +257,29 @@ public final class CommunityBridge extends JavaPlugin
 	 */
 	private void reminderStart()
   {
-    long every = config.linkingAutoEvery; // Effectively defaulting to ticks.
+    long every;
 
-    if (config.autoEveryUnit.toLowerCase().startsWith("second"))
+    if (config.autoEveryUnit.startsWith("sec"))
     {
       every = config.linkingAutoEvery * 20; // 20 ticks per second.
     }
-    else if (config.autoEveryUnit.toLowerCase().startsWith("minute"))
+    else if (config.autoEveryUnit.startsWith("min"))
     {
       every = config.linkingAutoEvery * 1200; // 20 ticks per second, 60 sec/minute
     }
-    else if (config.autoEveryUnit.toLowerCase().startsWith("hour"))
+    else if (config.autoEveryUnit.startsWith("hou"))
     {
       every = config.linkingAutoEvery * 72000; // 20 ticks/s 60s/m, 60m/h
     }
+		else if (config.autoEveryUnit.startsWith("day"))
+		{
+			every = config.linkingAutoEvery * 1728000;
+		}
+		else
+		{
+			// Defaulting to ticks.
+			every = config.linkingAutoEvery;
+		}
 
 		Bukkit.getScheduler().runTaskTimerAsynchronously(this,
 																										new Runnable()
@@ -293,15 +302,15 @@ public final class CommunityBridge extends JavaPlugin
   {
     long every;
 
-    if (config.autoEveryUnit.toLowerCase().startsWith("second"))
+    if (config.autoEveryUnit.startsWith("sec"))
     {
       every = config.autoSyncEvery * 20; // 20 ticks per second.
     }
-    else if (config.autoEveryUnit.toLowerCase().startsWith("minute"))
+    else if (config.autoEveryUnit.startsWith("min"))
     {
       every = config.autoSyncEvery * 1200; // 20 ticks per second, 60 sec/minute
     }
-    else if (config.autoEveryUnit.toLowerCase().startsWith("hour"))
+    else if (config.autoEveryUnit.startsWith("hou"))
     {
       every = config.autoSyncEvery * 72000; // 20 ticks/s 60s/m, 60m/h
     }

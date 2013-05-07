@@ -735,7 +735,7 @@ public class Configuration
 
 		permissionsSystem = config.getString("general.permissions-system", "");
 
-		autoEveryUnit = config.getString("general.auto-every-unit", "ticks");
+		autoEveryUnit = config.getString("general.auto-every-unit", "ticks").toLowerCase();
 		autoSync = config.getBoolean("general.auto-sync", false);
 		autoSyncEvery = config.getLong("general.auto-sync-every", 24000L);
 
