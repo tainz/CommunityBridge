@@ -195,9 +195,9 @@ public final class CommunityBridge extends JavaPlugin
   {
 		deactivate();
 
-		getCommand("cbban").setExecutor(null);
-		getCommand("cbunban").setExecutor(null);
-		getCommand("cbrank").setExecutor(null);
+//		getCommand("cbban").setExecutor(null);
+//		getCommand("cbunban").setExecutor(null);
+//		getCommand("cbrank").setExecutor(null);
 		getCommand("cbreload").setExecutor(null);
 		getCommand("cbsync").setExecutor(null);
 		getCommand("cbsyncall").setExecutor(null);
