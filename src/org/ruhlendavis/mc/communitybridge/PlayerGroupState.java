@@ -25,6 +25,8 @@ public class PlayerGroupState
 	public String permissionsSystemPrimaryGroupName;
 	public List<String> permissionsSystemGroupNames;
 
+	public boolean isNewFile;
+
 	public PlayerGroupState(String playerName, File playerDataFolder)
 	{
 		this.playerName = playerName;
@@ -54,9 +56,11 @@ public class PlayerGroupState
 			webappGroupIDs = playerData.getStringList("webapp.group-ids");
 			permissionsSystemPrimaryGroupName = playerData.getString("permissions-system.primary-group-name", "");
 			permissionsSystemGroupNames = playerData.getStringList("permissions-system.group-names");
+			isNewFile = false;
 		}
 		else
 		{
+			isNewFile = true;
 			webappPrimaryGroupID = "";
 			webappGroupIDs = new ArrayList();
 			permissionsSystemPrimaryGroupName = "";

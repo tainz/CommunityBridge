@@ -174,7 +174,16 @@ public class PermissionHandlerPermissionsEx implements PermissionHandler
 	@Override
 	public boolean setPrimaryGroup(String playerName, String groupName, String formerGroupName)
 	{
-		return removeFromGroup(playerName, formerGroupName) && addToGroup(playerName, groupName);
+		boolean result;
+		if (formerGroupName == null)
+		{
+			result = true;
+		}
+		else
+		{
+			result = removeFromGroup(playerName, formerGroupName);
+		}
+		return result && addToGroup(playerName, groupName);
 	}
 
 	/**

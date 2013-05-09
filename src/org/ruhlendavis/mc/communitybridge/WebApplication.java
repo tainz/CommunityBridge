@@ -695,11 +695,7 @@ public class WebApplication
 				{
 					String formerGroupName = config.getGroupNameByGroupID(previousState.webappPrimaryGroupID);
 					String newGroupName = config.getGroupNameByGroupID(currentState.webappPrimaryGroupID);
-					if (formerGroupName == null)
-					{
-						log.warning("Not changing permissions group due to permissions system group name lookup failure for web application group ID: " + previousState.webappPrimaryGroupID);
-					}
-					else if (newGroupName == null)
+					if (newGroupName == null)
 					{
 						log.warning("Not changing permissions group due to permissions system group name lookup failure for web application group ID: " + currentState.webappPrimaryGroupID);
 					}

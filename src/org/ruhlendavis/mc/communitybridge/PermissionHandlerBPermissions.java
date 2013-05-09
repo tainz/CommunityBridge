@@ -244,7 +244,7 @@ public class PermissionHandlerBPermissions implements PermissionHandler
 	 *
 	 * @param playerName String containing player's name to set
 	 * @param groupName  String containing group name to set player's primary group to.
-	 * @param formerGroupName String containing the former group name.
+	 * @param formerGroupName String containing the former group name (will be removed, unless null).
 	 * @return true if the set succeeded, false if it failed for any reason.
 	 */
 	// TODO: Consider how we can add the group in such a way that it is the first
@@ -252,7 +252,16 @@ public class PermissionHandlerBPermissions implements PermissionHandler
 	@Override
 	public boolean setPrimaryGroup(String playerName, String groupName, String formerGroupName)
 	{
-		return removeFromGroup(playerName, formerGroupName) && addToGroup(playerName, groupName);
+		boolean result;
+		if (formerGroupName == null)
+		{
+			result = true;
+		}
+		else
+		{
+			result = removeFromGroup(playerName, formerGroupName);
+		}
+		return result && addToGroup(playerName, groupName);
 	}
 
 	/**
