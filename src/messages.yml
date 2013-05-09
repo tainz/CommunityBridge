@@ -13,5 +13,5 @@ require-minimum-posts-message: 'This server requires players to have a minimum o
 
 #                            Group Synchronization Messages
 # -----------------------------------------------------------------------------
-group-synchronization-primary-notify-player: 'Your primary group has been changed from group ~FORMERGROUPNAME~ to the group ~GROUPNAME~.'
+group-synchronization-primary-notify-player: 'Your primary group has been set to the group ~GROUPNAME~.'
 group-synchronization-multiple-notify-player: 'You have been placed in the following groups: ~GROUPNAMES~.'
