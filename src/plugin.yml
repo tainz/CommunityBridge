@@ -12,21 +12,21 @@ main: org.ruhlendavis.mc.communitybridge.CommunityBridge
 # can uncomment these and remove the then redundant else's in onCommand.
 # Unfortunately, I was later told this behavior will not change...
 commands:
-  cbban:
-    description: Bans from the forum.
-    #usage: "§cIncorrect usage, use: /cbban <username>"
-    permission: communitybridge.cbban
-    permission-message: "§cYou do not have access to that command."
-  cbunban:
-    description: Unbans from the forum.
-    #usage: "§cIncorrect usage, use: /cbunban <username>"
-    permission: communitybridge.cbunban
-    permission-message: "§cYou do not have access to that command."
-  cbrank:
-    description: Ranks on the forum.
-    #usage: "§cIncorrect usage, use: /cbrank <username> <rank>"
-    permission: communitybridge.cbrank
-    permission-message: "§cYou do not have access to that command."
+#  cbban:
+#    description: Bans from the forum.
+#    #usage: "§cIncorrect usage, use: /cbban <username>"
+#    permission: communitybridge.cbban
+#    permission-message: "§cYou do not have access to that command."
+#  cbunban:
+#    description: Unbans from the forum.
+#    #usage: "§cIncorrect usage, use: /cbunban <username>"
+#    permission: communitybridge.cbunban
+#    permission-message: "§cYou do not have access to that command."
+#  cbrank:
+#    description: Ranks on the forum.
+#    #usage: "§cIncorrect usage, use: /cbrank <username> <rank>"
+#    permission: communitybridge.cbrank
+#    permission-message: "§cYou do not have access to that command."
   cbreload:
     description: Reloads CommunityBridge's configuration from disk.
     #usage: "§cIncorrect usage, use: /cbrank [filename]"
