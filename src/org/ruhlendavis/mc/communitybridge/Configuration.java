@@ -911,6 +911,7 @@ public class Configuration
 		if (filename == null || filename.isEmpty() || filename.equals("config.yml"))
 		{
 			plugin.deactivate();
+			plugin.reloadConfig();
 			load();
 			plugin.activate();
 			return null;

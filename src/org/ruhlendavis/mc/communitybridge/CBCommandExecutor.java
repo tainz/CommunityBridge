@@ -58,16 +58,14 @@ public class CBCommandExecutor implements CommandExecutor
 			String filename;
 			if (arguments.length == 1)
 			{
-				// reload using the specified file.
-				error = config.reload(arguments[0]);
 				filename = arguments[0];
 			}
 			else
 			{
-				// reload using the config.yml file.
-				error = config.reload(null);
 				filename = "config.yml";
 			}
+
+			error = config.reload(null);
 
 			if (error == null)
 			{
