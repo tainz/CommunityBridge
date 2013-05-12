@@ -36,6 +36,7 @@ general:
   # The permissions system you're using. A permissions system is required for
   # the following features:
   # * Group Synchronization (both primary and secondary)
+  # * Unregistered/Registered group assignment (subfeatures of 'linking')
   # Current Options are: PEX, bPerms, GroupManager, PermsBukkit
   permissions-system:
 
@@ -103,9 +104,10 @@ player-user-linking:
   registered-player-group:
   notify-player-of-group: true
 
-  # If you want a player to be added to the 'registered-plyaer-group' ONLY
-  # when they are a member of the unregistered-player-group (or they have no
-  # assigned groups), set this to true.
+  # If you want a player to be added to the 'registered-plyaer-group' ONLY if:
+  # * they are a member of the unregistered-player-group OR
+  # * they have no assigned groups
+  # then set this to true.
   registered-former-unregistered-only: false
 
   # This is where we specify how to associate a Minecraft player with a web
