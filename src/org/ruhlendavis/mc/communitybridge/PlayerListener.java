@@ -99,16 +99,18 @@ public class PlayerListener implements Listener
 				event.setJoinMessage(message);
 			}
 
-			if (config.groupSynchronizationActive || config.linkingRegisteredGroup.isEmpty())
-			{}
-			else
+			if (!config.groupSynchronizationActive && !config.linkingRegisteredGroup.isEmpty())
 			{
-				CommunityBridge.permissionHandler.addToGroup(playerName, config.linkingRegisteredGroup);
-				if (config.linkingNotifyPlayer)
+				if (!config.linkingRegisteredFormerUnregistedOnly || CommunityBridge.permissionHandler.isMemberOfGroup(playerName, config.linkingUnregisteredGroup) || CommunityBridge.permissionHandler.getGroupsPure(playerName).length == 0)
 				{
-					String message = ChatColor.RED + config.messages.get("link-notify-player-group-change");
-					message = message.replace("~GROUPNAME~", config.linkingRegisteredGroup);
-					player.sendMessage(message);
+					CommunityBridge.permissionHandler.removeFromGroup(playerName, config.linkingUnregisteredGroup);
+					CommunityBridge.permissionHandler.addToGroup(playerName, config.linkingRegisteredGroup);
+					if (config.linkingNotifyPlayerGroup)
+					{
+						String message = ChatColor.RED + config.messages.get("link-notify-player-group-change");
+						message = message.replace("~GROUPNAME~", config.linkingRegisteredGroup);
+						player.sendMessage(message);
+					}
 				}
 			}
 			webapp.onJoin(player);
@@ -121,12 +123,10 @@ public class PlayerListener implements Listener
 				event.setJoinMessage(message);
 			} // if config.linkingNotifyUnregistered
 
-			if (config.linkingUnregisteredGroup.isEmpty())
-			{}
-			else
+			if (!config.linkingUnregisteredGroup.isEmpty())
 			{
 				CommunityBridge.permissionHandler.addToGroup(playerName, config.linkingUnregisteredGroup);
-				if (config.linkingNotifyPlayer)
+				if (config.linkingNotifyPlayerGroup)
 				{
 					String message = ChatColor.RED + config.messages.get("link-notify-player-group-change");
 					message = message.replace("~GROUPNAME~", config.linkingUnregisteredGroup);

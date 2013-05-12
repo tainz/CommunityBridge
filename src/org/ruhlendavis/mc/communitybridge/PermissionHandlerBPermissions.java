@@ -103,6 +103,18 @@ public class PermissionHandlerBPermissions implements PermissionHandler
 	}
 
 	/**
+	 * Retrieves an array of group names for the player excluding any 'default' groups.
+	 *
+	 * @param playerName String containing the name of the player.
+	 * @return An String array containing the group names.
+	 */
+	@Override
+	public String [] getGroupsPure(String playerName)
+	{
+		return getGroups(playerName);
+	}
+
+	/**
 	 * Retrieves the primary group for a given player.
 	 * Note that for bPermissions, it returns the first group on the player's
 	 * group list for their current world, or the default world if they are

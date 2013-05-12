@@ -96,12 +96,17 @@ player-user-linking:
   notify-unregistered-player: true
 
   # If you have a permissions system and you want the player to be placed
-  # in a group based on (un)-registered status, set the following.
+  # in a group based on (un)registered status, set the following.
   # If left blank the setting won't be used. If a group-synchronization
   # feature is turned on, the 'registered-player-group' won't be used.
   unregistered-player-group:
   registered-player-group:
   notify-player-of-group: true
+
+  # If you want a player to be added to the 'registered-plyaer-group' ONLY
+  # when they are a member of the unregistered-player-group (or they have no
+  # assigned groups), set this to true.
+  registered-former-unregistered-only: false
 
   # This is where we specify how to associate a Minecraft player with a web
   # application user. We do this by matching up the player name with a name
@@ -131,8 +136,8 @@ player-user-linking:
   # the playername is stored in. Otherwise, leave it empty.
   playername-column:
 
-  # If you set 'linking-uses-key' to true, then set the key column, value column,
-  # and the key-name here. Otherwise, leave these fields empty.
+  # If you set 'linking-uses-key' to true, then set the key column, value
+  # column, and the key-name here. Otherwise, leave these fields empty.
   key-name:
   key-column:
   value-column:
@@ -182,7 +187,8 @@ statistics:
   # Set this to true if data on the table is stored in key-value pairs.
   uses-key: false
 
-  # If uses-key is true, set these as well. They are unused if uses-key is false.
+  # If uses-key is true, set these as well. These settings are not used if
+  # uses-key is false.
   key-column:
   value-column:
 
@@ -336,7 +342,8 @@ simple-synchronization:
   #   web-application.
   direction: two-way
 
-  # Set this to true if you want the player to be notified when their primary group changes.
+  # Set this to true if you want the player to be notified when their primary
+  # group changes.
   primary-group-change-notify: false
 
   # List groups and group IDs to be synchronized here. On the left side of

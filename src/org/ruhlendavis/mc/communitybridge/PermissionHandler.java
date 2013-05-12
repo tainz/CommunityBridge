@@ -25,6 +25,14 @@ public interface PermissionHandler
 	public String [] getGroups(String playerName);
 
 	/**
+	 * Retrieves an array of group names for the player excluding any 'default' groups.
+	 *
+	 * @param playerName String containing the name of the player.
+	 * @return An String array containing the group names.
+	 */
+	public String [] getGroupsPure(String playerName);
+
+	/**
 	 * Retrieves a player's primary group.
 	 *
 	 * @param playerName String containing the player's name.
