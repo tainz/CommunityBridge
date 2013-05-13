@@ -76,8 +76,6 @@ public class WebApplication
 					+ "FROM `" + config.requireAvatarTableName + "` "
 					+ "WHERE `" + config.requireAvatarUserIDColumn + "` = '" + getUserID(playerName) + "'";
 
-		log.finest(query);
-
 		try
 		{
 			String avatar = null;
@@ -133,8 +131,6 @@ public class WebApplication
 		query = "SELECT `" + config.requirePostsTableName + "`.`" + config.requirePostsPostCountColumn + "` "
 					+ "FROM `" + config.requirePostsTableName + "` "
 					+ "WHERE `" + config.requirePostsUserIDColumn + "` = '" + getUserID(playerName) + "'";
-
-		log.finest(query);
 
 		try
 		{
@@ -202,8 +198,6 @@ public class WebApplication
 						+ "FROM `" + config.webappPrimaryGroupTable + "` "
 						+ "WHERE `" + config.webappPrimaryGroupUserIDColumn + "` = '" + getUserID(playerName) + "'";
 		}
-
-		log.finest(query);
 
 		try
 		{
@@ -279,8 +273,6 @@ public class WebApplication
 					+ "FROM `" + config.webappSecondaryGroupTable + "` "
 					+ "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + getUserID(playerName) + "' ";
 
-		log.finest(query);
-
 		try
 		{
 			ResultSet result = sql.sqlQuery(query);
@@ -326,8 +318,6 @@ public class WebApplication
 					+ "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + getUserID(playerName) + "' "
 					+ "AND `" + config.webappSecondaryGroupKeyColumn + "` = '" + config.webappSecondaryGroupKeyName + "' ";
 
-		log.finest(query);
-
 		try
 		{
 			ResultSet result = sql.sqlQuery(query);
@@ -372,8 +362,6 @@ public class WebApplication
 					+ "FROM `" + config.webappSecondaryGroupTable + "` "
 					+ "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + getUserID(playerName) + "' ";
 
-		log.finest(query);
-
 		try
 		{
 			ResultSet result = sql.sqlQuery(query);
@@ -416,8 +404,6 @@ public class WebApplication
 					+ "FROM `" + config.webappSecondaryGroupTable + "` "
 					+ "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + getUserID(playerName) + "' "
 					+ "AND `" + config.webappSecondaryGroupKeyColumn + "` = '" + config.webappSecondaryGroupKeyName + "' ";
-
-		log.finest(query);
 
 		try
 		{
@@ -504,8 +490,6 @@ public class WebApplication
 			query = query	+ "WHERE LOWER(`" + config.linkingPlayerNameColumn + "`) = LOWER('" + playerName + "') ";
 		}
 		query = query + "ORDER BY `" + config.linkingUserIDColumn + "` DESC";
-
-		log.finest(query);
 
 		try
 		{
@@ -644,7 +628,6 @@ public class WebApplication
 								     + "SET `" + config.webappPrimaryGroupGroupIDColumn + "` = '" + groupID + "' "
 										 + "WHERE `" + config.webappPrimaryGroupKeyColumn + "` = '" + config.webappPrimaryGroupKeyName + "' "
 										 + "AND `" + config.webappPrimaryGroupUserIDColumn + "` = '" + userID + "'";
-				log.finest(query);
 				sql.updateQuery(query);
 			}
 			else
@@ -652,7 +635,6 @@ public class WebApplication
 				String query = "UPDATE `" + config.webappPrimaryGroupTable + "` "
 										 + "SET `" + config.webappPrimaryGroupGroupIDColumn + "` = '" + groupID + "' "
 										 + "WHERE `" + config.webappPrimaryGroupUserIDColumn + "` = '" + userID + "' ";
-				log.finest(query);
 				sql.updateQuery(query);
 			}
 		}
@@ -819,7 +801,6 @@ public class WebApplication
 				String query = "UPDATE `" + config.webappSecondaryGroupTable + "` "
 										 + "SET `" + config.webappSecondaryGroupGroupIDColumn + "` = CONCAT(`" + config.webappSecondaryGroupGroupIDColumn + "`, '" + groupID + "') "
 										 + "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + userID + "'";
-				log.finest(query);
 				sql.updateQuery(query);
 			}
 			else if (config.webappSecondaryGroupStorageMethod.startsWith("key"))
@@ -832,7 +813,6 @@ public class WebApplication
 										 + "SET `" + config.webappSecondaryGroupGroupIDColumn + "` = CONCAT(`" + config.webappSecondaryGroupGroupIDColumn + "`, '" + groupID + "') "
 										 + "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' "
 										 + "AND `" + config.webappSecondaryGroupKeyColumn + "` = '" + config.webappSecondaryGroupKeyName + "' ";
-				log.finest(query);
 				sql.updateQuery(query);
 			}
 			else if (config.webappSecondaryGroupStorageMethod.startsWith("jun"))
@@ -840,7 +820,6 @@ public class WebApplication
 				String query = "INSERT INTO `" + config.webappSecondaryGroupTable + "` "
 										 + "(`" + config.webappSecondaryGroupUserIDColumn + "`, `" + config.webappSecondaryGroupGroupIDColumn + "`) "
 										 + "VALUES ('" + userID + "', '" + groupID +"')";
-				log.finest(query);
 				sql.insertQuery(query);
 			}
 			else if (config.webappSecondaryGroupStorageMethod.startsWith("mul"))
@@ -848,7 +827,6 @@ public class WebApplication
 				String query = "INSERT INTO `" + config.webappSecondaryGroupTable + "` "
 										 + "(`" + config.webappSecondaryGroupUserIDColumn + "`, `" + config.webappPrimaryGroupKeyColumn + "`, `" + config.webappSecondaryGroupGroupIDColumn + "`) "
 										 + "VALUES ('" + userID + "', '" + config.webappSecondaryGroupKeyName + "', '" + groupID + "')";
-				log.finest(query);
 				sql.insertQuery(query);
 			}
 		}
@@ -884,7 +862,6 @@ public class WebApplication
 				String query = "SELECT `" + config.webappSecondaryGroupGroupIDColumn + "` "
 										 + "FROM `" + config.webappSecondaryGroupTable + "` "
 										 + "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + userID + "'";
-				log.finest(query);
 				ResultSet result = sql.sqlQuery(query);
 
 				if (result.next())
@@ -896,7 +873,6 @@ public class WebApplication
 					query = "UPDATE `" + config.webappSecondaryGroupTable + "` "
 								+ "SET `" + config.webappSecondaryGroupGroupIDColumn + "` = '" + groupIDs + "' "
 							  + "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + userID + "'";
-					log.finest(query);
 					sql.updateQuery(query);
 				}
 			}
@@ -907,7 +883,6 @@ public class WebApplication
 										 + "FROM `" + config.webappSecondaryGroupTable + "` "
 										 + "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' "
 								     + "AND `" + config.webappSecondaryGroupKeyColumn + "` = '" + config.webappSecondaryGroupKeyName + "' ";
-				log.finest(query);
 				ResultSet result = sql.sqlQuery(query);
 
 				if (result.next())
@@ -920,7 +895,6 @@ public class WebApplication
 								+ " SET `" + config.webappSecondaryGroupGroupIDColumn + "` = '" + groupIDs + "' "
 								+ "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' "
 								+ "AND `" + config.webappSecondaryGroupKeyColumn + "` = '" + config.webappSecondaryGroupKeyName + "' ";
-					log.finest(query);
 					sql.updateQuery(query);
 				}
 			}
@@ -929,7 +903,6 @@ public class WebApplication
 				String query = "DELETE FROM `" + config.webappSecondaryGroupTable + "` "
 									   + "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' "
 										 + "AND `" + config.webappSecondaryGroupGroupIDColumn + "` = '" + groupID + "' ";
-				log.finest(query);
 				sql.deleteQuery(query);
 			}
 			else if (config.webappSecondaryGroupStorageMethod.startsWith("mul"))
@@ -937,7 +910,6 @@ public class WebApplication
 				String query = "DELETE FROM `" + config.webappSecondaryGroupTable + "` "
 									   + "WHERE `" + config.webappSecondaryGroupKeyColumn + "` = '" + config.webappSecondaryGroupKeyName + "' "
 										 + "AND `" + config.webappSecondaryGroupGroupIDColumn + "` = '" + groupID + "' ";
-				log.finest(query);
 				sql.deleteQuery(query);
 			}
 		}
@@ -982,9 +954,9 @@ public class WebApplication
 		{
 			if (config.statisticsUsesKey)
 			{
-				query = "SELECT `" + config.statisticsKeyColumn +  "`, `" + config.statisticsValueColumn
-							+ " FROM `" + config.statisticsTableName + "`"
-							+ " WHERE `" + config.statisticsUserIDColumn + "` = '" + userID + "'";
+				query = "SELECT `" + config.statisticsKeyColumn +  "`, `" + config.statisticsValueColumn + "` "
+							+ "FROM `" + config.statisticsTableName + "` "
+							+ "WHERE `" + config.statisticsUserIDColumn + "` = '" + userID + "'";
 				try
 				{
 					result = sql.sqlQuery(query);
@@ -1204,7 +1176,6 @@ public class WebApplication
 
 		String errorBase = "Error during updateStatisticsKeyStyle(): ";
 
-		log.finest(query);
 		try
 		{
 			sql.updateQuery(query);
@@ -1321,7 +1292,6 @@ public class WebApplication
 
 		String errorBase = "Error during updateStatisticsKeylessStyle(): ";
 
-		log.finest(query);
 		try
 		{
 			sql.updateQuery(query);

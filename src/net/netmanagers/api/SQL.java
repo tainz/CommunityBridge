@@ -3,6 +3,7 @@ package net.netmanagers.api;
 import java.net.MalformedURLException;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import org.ruhlendavis.mc.communitybridge.CommunityBridge;
 
 public class SQL {
 	public String host;
@@ -18,40 +19,53 @@ public class SQL {
 		this.password = password;
 	}
 
-	public Boolean initialize() {
+	public Boolean initialize()
+	{
 		this.manageDB = new DatabaseHandler(this, this.host, this.database, this.username, this.password);
 		return Boolean.valueOf(false);
 	}
 
-	public ResultSet sqlQuery(String query) throws MalformedURLException, InstantiationException, IllegalAccessException {
+	public ResultSet sqlQuery(String query) throws MalformedURLException, InstantiationException, IllegalAccessException
+	{
+		CommunityBridge.log.finest(query);
 		return this.manageDB.sqlQuery(query);
 	}
 
-	public void insertQuery(String query) throws MalformedURLException, InstantiationException, IllegalAccessException {
+	public void insertQuery(String query) throws MalformedURLException, InstantiationException, IllegalAccessException
+	{
+		CommunityBridge.log.finest(query);
 		this.manageDB.insertQuery(query);
 	}
 
-	public void updateQuery(String query) throws MalformedURLException, InstantiationException, IllegalAccessException {
+	public void updateQuery(String query) throws MalformedURLException, InstantiationException, IllegalAccessException
+	{
+		CommunityBridge.log.finest(query);
 		this.manageDB.updateQuery(query);
 	}
 
-	public void deleteQuery(String query) throws MalformedURLException, InstantiationException, IllegalAccessException {
+	public void deleteQuery(String query) throws MalformedURLException, InstantiationException, IllegalAccessException
+	{
+		CommunityBridge.log.finest(query);
 		this.manageDB.deleteQuery(query);
 	}
 
-	public Boolean checkTable(String table) throws MalformedURLException, InstantiationException, IllegalAccessException {
+	public Boolean checkTable(String table) throws MalformedURLException, InstantiationException, IllegalAccessException
+	{
 		return this.manageDB.checkTable(table);
 	}
 
-	public Connection getConnection() throws MalformedURLException, InstantiationException, IllegalAccessException {
+	public Connection getConnection() throws MalformedURLException, InstantiationException, IllegalAccessException
+	{
 		return this.manageDB.getConnection();
 	}
 
-	public void close() {
+	public void close()
+	{
 		this.manageDB.closeConnection();
 	}
 
-	public Boolean checkConnection() {
+	public Boolean checkConnection()
+	{
 		return this.manageDB.checkConnection();
 	}
 }
