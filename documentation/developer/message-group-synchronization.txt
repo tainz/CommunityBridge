@@ -1,4 +1,0 @@
-#                            Group Synchronization Messages
-# -----------------------------------------------------------------------------
-group-synchronization-primary-notify-player: You have been placed in the primary group ~GROUPNAME~.
-group-synchronization-multiple-notify-player: 'You have been placed in the following groups: ~GROUPNAMES~.'
