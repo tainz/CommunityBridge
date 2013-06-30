@@ -104,7 +104,7 @@ player-user-linking:
   registered-player-group:
   notify-player-of-group: true
 
-  # If you want a player to be added to the 'registered-plyaer-group' ONLY if:
+  # If you want a player to be added to the 'registered-player-group' ONLY if:
   # * they are a member of the unregistered-player-group OR
   # * they have no assigned groups
   # then set this to true.
