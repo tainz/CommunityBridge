@@ -679,7 +679,8 @@ public class WebApplication
 					String newGroupName = config.getGroupNameByGroupID(currentState.webappPrimaryGroupID);
 					if (newGroupName == null)
 					{
-						log.warning("Not changing permissions group due to permissions system group name lookup failure for web application group ID: " + currentState.webappPrimaryGroupID);
+						log.warning("Not changing permissions group due to permissions system group name lookup failure for web application group ID: " + currentState.webappPrimaryGroupID + ". Player '" + playerName + "' primary group state unchanged.");
+						currentState.webappPrimaryGroupID = previousState.webappPrimaryGroupID;
 					}
 					else
 					{
@@ -705,7 +706,8 @@ public class WebApplication
 
 					if (groupID == null)
 					{
-						log.warning("Not changing web application group due to web application group ID lookup failure for: " + currentState.permissionsSystemPrimaryGroupName);
+						log.warning("Not changing web application group due to web application group ID lookup failure for: " + currentState.permissionsSystemPrimaryGroupName + ". Player '" + playerName + "' primary group state unchanged.");
+						currentState.permissionsSystemPrimaryGroupName = previousState.permissionsSystemPrimaryGroupName;
 					}
 					else
 					{
@@ -733,11 +735,14 @@ public class WebApplication
 
 				for (String groupName : currentState.permissionsSystemGroupNames)
 				{
-					if (previousState.permissionsSystemGroupNames.contains(groupName))
-					{}
-					else
+					if (!previousState.permissionsSystemGroupNames.contains(groupName))
 					{
-						addGroup(userID, groupName, currentState.webappGroupIDs.size());
+						String groupID = config.getWebappGroupIDbyGroupName(groupName);
+
+						if (groupID != null && !currentState.webappPrimaryGroupID.equals(groupID) && !currentState.webappGroupIDs.contains(groupID))
+						{
+							addGroup(userID, groupID, currentState.webappGroupIDs.size());
+						}
 					}
 				}
 			}
@@ -762,7 +767,10 @@ public class WebApplication
 					else
 					{
 						String groupName = config.getGroupNameByGroupID(groupID);
-						CommunityBridge.permissionHandler.addToGroup(playerName, groupName);
+						if (groupName != null && !currentState.permissionsSystemPrimaryGroupName.equals(groupName) && !currentState.permissionsSystemGroupNames.contains(groupName))
+						{
+							CommunityBridge.permissionHandler.addToGroup(playerName, groupName);
+						} // Check for null/primaryalreadyset/secondaryalreadyset
 					} // if previousState contains group ID
 				} // for each group ID in currentState
 			} // Synchronization direction check.
@@ -785,9 +793,8 @@ public class WebApplication
 	 *
 	 * @param String Name from permissions system of group added.
 	 */
-	private void addGroup(String userID, String groupName, int currentGroupCount)
+	private void addGroup(String userID, String groupID, int currentGroupCount)
 	{
-		String groupID = config.getWebappGroupIDbyGroupName(groupName);
 		String errorBase = "Error during addGroup(): ";
 
 		try
