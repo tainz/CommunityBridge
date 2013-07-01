@@ -36,8 +36,8 @@ general:
   # The permissions system you're using. A permissions system is required for
   # the following features:
   # * Group Synchronization (both primary and secondary)
-  # * Unregistered/Registered group assignment (subfeatures of 'linking')
-  # Current Options are: PEX, bPerms, GroupManager, PermsBukkit
+  # * Unregistered/Registered group assignment (sub-features of 'linking')
+  # Current Options are: bPerms, GroupManager, PermsBukkit, PEX.
   permissions-system:
 
   # If ~APPURL~ appears in a message in messages.yml, it will be replaced with
