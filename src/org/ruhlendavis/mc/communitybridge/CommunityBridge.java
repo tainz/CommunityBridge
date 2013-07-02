@@ -164,9 +164,8 @@ public final class CommunityBridge extends JavaPlugin
 				}
 				else
 				{
-					log.severe("Unknown permissions system in config.yml. CommunityBridge deactivated.");
-					deactivate();
-					return;
+					log.severe("Unknown permissions system in config.yml. Features dependent on a permissions system disabled.");
+					config.disableFeaturesDependentOnPermissions();
 				}
 			}
 			catch (IllegalStateException e)

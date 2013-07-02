@@ -725,6 +725,12 @@ public class Configuration
 		loadSettings(plugin.getConfig());
 	}
 
+	/**
+	 * Loads the individual settings into our config object from the YAML
+	 * configuration.
+	 * 
+	 * @param FileConfiguration The file configuration to load the settings from. 
+	 */
 	private void loadSettings(FileConfiguration config)
 	{
 		logLevel = config.getString("general.log-level", "config");
@@ -866,6 +872,17 @@ public class Configuration
 		permissionsSystemRequired = (!linkingUnregisteredGroup.isEmpty()) || (!linkingRegisteredGroup.isEmpty()) || groupSynchronizationActive;
 	}
 
+	/**
+	 * Soft disables any features that depend on a Permissions System.
+	 */
+	public void disableFeaturesDependentOnPermissions()
+	{
+		groupSynchronizationActive = false;
+		simpleSynchronizationEnabled = false;
+		linkingUnregisteredGroup = "";
+		linkingRegisteredGroup = "";
+	}
+	
 	/**
 	 * Loads the messages from the message file.
 	 *
