@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import net.netmanagers.api.SQL;
@@ -733,8 +734,10 @@ public class WebApplication
 					}
 				}
 
-				for (String groupName : currentState.permissionsSystemGroupNames)
+				for (Iterator<String> iterator = currentState.permissionsSystemGroupNames.iterator(); iterator.hasNext();)
 				{
+					String groupName = iterator.next();
+					
 					if (!previousState.permissionsSystemGroupNames.contains(groupName))
 					{
 						String groupID = config.getWebappGroupIDbyGroupName(groupName);
@@ -744,7 +747,7 @@ public class WebApplication
 						// the mapping later, we'll see it as a 'new' group and syncrhonize.
 						if (groupID == null)
 						{
-							currentState.permissionsSystemGroupNames.remove(groupName);
+							iterator.remove();
 						} 
 						else if (!currentState.webappPrimaryGroupID.equals(groupID) && !currentState.webappGroupIDs.contains(groupID))
 						{
@@ -767,8 +770,10 @@ public class WebApplication
 					}
 				}
 
-				for(String groupID : currentState.webappGroupIDs)
+				for (Iterator<String> iterator = currentState.webappGroupIDs.iterator(); iterator.hasNext();)
 				{
+					String groupID = iterator.next();
+
 					if (previousState.webappGroupIDs.contains(groupID))
 					{}
 					else
@@ -780,7 +785,7 @@ public class WebApplication
 						// and we will syncrhonize.
 						if (groupName == null)
 						{
-							currentState.webappGroupIDs.remove(groupID);
+							iterator.remove();
 						}
 						else if (!currentState.permissionsSystemPrimaryGroupName.equals(groupName) && !currentState.permissionsSystemGroupNames.contains(groupName))
 						{
