@@ -739,7 +739,14 @@ public class WebApplication
 					{
 						String groupID = config.getWebappGroupIDbyGroupName(groupName);
 
-						if (groupID != null && !currentState.webappPrimaryGroupID.equals(groupID) && !currentState.webappGroupIDs.contains(groupID))
+						// Since the group is not in the mapping, we'll NOT record it as
+						// part of the current state. That way, if the group is added to
+						// the mapping later, we'll see it as a 'new' group and syncrhonize.
+						if (groupID == null)
+						{
+							currentState.permissionsSystemGroupNames.remove(groupName);
+						} 
+						else if (!currentState.webappPrimaryGroupID.equals(groupID) && !currentState.webappGroupIDs.contains(groupID))
 						{
 							addGroup(userID, groupID, currentState.webappGroupIDs.size());
 						}
@@ -767,7 +774,15 @@ public class WebApplication
 					else
 					{
 						String groupName = config.getGroupNameByGroupID(groupID);
-						if (groupName != null && !currentState.permissionsSystemPrimaryGroupName.equals(groupName) && !currentState.permissionsSystemGroupNames.contains(groupName))
+						
+						// Since this group is not in the mapping, we shouldn't record it
+						// This way, if the group is later added, it will be 'new' to us
+						// and we will syncrhonize.
+						if (groupName == null)
+						{
+							currentState.webappGroupIDs.remove(groupID);
+						}
+						else if (!currentState.permissionsSystemPrimaryGroupName.equals(groupName) && !currentState.permissionsSystemGroupNames.contains(groupName))
 						{
 							CommunityBridge.permissionHandler.addToGroup(playerName, groupName);
 						} // Check for null/primaryalreadyset/secondaryalreadyset
