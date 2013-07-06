@@ -170,9 +170,8 @@ public final class CommunityBridge extends JavaPlugin
 			catch (IllegalStateException e)
 			{
 				log.severe(e.getMessage());
-				log.severe("Deactivating CommunityBridge.");
-				deactivate();
-				return;
+				log.severe("Disabling features dependent on a permissions system.");
+				config.disableFeaturesDependentOnPermissions();
 			}
 		}
 
