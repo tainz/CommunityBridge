@@ -265,6 +265,12 @@ statistics:
 # - Primary group: A group setting such that the setting can only be set to
 #   exactly one group. Most web applications have such a feature. Very few
 #   permissions systems have such a feature.
+#   NOTE: If you wish to utilize the primary group synchronization feature and
+#         your permissions system does not support primary groups, then you must
+#         list groups you wish to be synchronized into the web applications
+#         primary group field in the "groups-treated-as-primary" setting (see
+#         the synchronization options below). The permissions systems that this
+#         applies to are: bPerms, PermissionsBukkit, PermissionsEx, and Vault.
 # - Secondary group(s): A group setting such that the setting can be set to
 #   multiple groups or none.
 
@@ -331,6 +337,12 @@ app-group-config:
     key-column:
 
 # Simple Synchronization Configuration
+# NOTE: If you wish to utilize the primary group synchronization feature and
+#       your permissions system does not support primary groups, then you must
+#       list groups you wish to be synchronized into the web applications
+#       primary group field in the "groups-treated-as-primary" setting. The
+#       permissions systems that this applies to are: bPerms, PermissionsBukkit,
+#       PermissionsEx, and Vault.
 simple-synchronization:
   # Set this to true for simple synchronization
   enabled: false
@@ -348,6 +360,13 @@ simple-synchronization:
   # group changes.
   primary-group-change-notify: false
 
+  # If you're using primary group synchronization and a permissions system that
+  # does NOT have the notion of primary groups (bPerms, PermissionsBukkit,
+  # PermissionsEx, Vault) you must list permission group names that you wish to
+  # be synchronized into the user's primary group field on the web application
+  # here. Be sure to include these groups in the group-mapping as well.
+  groups-treated-as-primary: []
+
   # List groups and group IDs to be synchronized here. On the left side of
   # the colon put a web application's group ID. On the right side of the colon
   # put the corresponding permissions group name. Only list group IDs and
@@ -356,3 +375,4 @@ simple-synchronization:
     '1' : 'guest'
     '2' : 'member'
     '3' : 'premium'
+  
