@@ -161,6 +161,11 @@ public final class CommunityBridge extends JavaPlugin
 					permissionHandler = new PermissionHandlerPermissionsBukkit();
 					log.config("Permissions System: PermissionsBukkit (PermsBukkit)");
 				}
+				else if (config.permissionsSystem.equalsIgnoreCase("Vault"))
+				{
+					permissionHandler = new PermissionHandlerVault();
+					log.config("Permissions System: Vault");
+				}
 				else
 				{
 					log.severe("Unknown permissions system in config.yml. Features dependent on a permissions system disabled.");

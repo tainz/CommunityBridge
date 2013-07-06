@@ -37,7 +37,7 @@ general:
   # the following features:
   # * Group Synchronization (both primary and secondary)
   # * Unregistered/Registered group assignment (sub-features of 'linking')
-  # Current Options are: bPerms, GroupManager, PermsBukkit, PEX.
+  # Current Options are: bPerms, GroupManager, PermsBukkit, PEX, Vault.
   permissions-system:
 
   # If ~APPURL~ appears in a message in messages.yml, it will be replaced with
