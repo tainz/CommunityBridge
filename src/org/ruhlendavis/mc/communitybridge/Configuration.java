@@ -9,9 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import net.netmanagers.api.SQL;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.ruhlendavis.mc.utility.Log;
@@ -144,6 +142,7 @@ public class Configuration
 	public String simpleSynchronizationDirection;
 	public boolean simpleSynchronizationPrimaryGroupNotify;
 	public Map<String, Object> simpleSynchronizationGroupMap = new HashMap();
+	public List<String> simpleSynchronizationGroupsTreatedAsPrimary = new ArrayList();
 
 	// These are not in the config.yml. They are calculated.
 	public boolean playerDataRequired;
@@ -865,6 +864,7 @@ public class Configuration
 		simpleSynchronizationDirection = config.getString("simple-synchronization.direction", "two-way").toLowerCase();
 		simpleSynchronizationPrimaryGroupNotify = config.getBoolean("simple-synchronization.primary-group-change-notify", false);
 		simpleSynchronizationGroupMap = config.getConfigurationSection("simple-synchronization.group-mapping").getValues(false);
+		simpleSynchronizationGroupsTreatedAsPrimary = config.getStringList("simple-synchronization.groups-treated-as-primary");
 
 		// These are calculated from settings above.
 		groupSynchronizationActive = simpleSynchronizationEnabled && (webappPrimaryGroupEnabled || webappSecondaryGroupEnabled);
@@ -1114,6 +1114,7 @@ public class Configuration
 		{
 			log.config(  "Simple synchronization direction     : " + simpleSynchronizationDirection);
 			log.config(  "Simple synchronization notification  : " + simpleSynchronizationPrimaryGroupNotify);
+			log.config(  "Simple synchronization P-Groups      : " + simpleSynchronizationGroupsTreatedAsPrimary.toString());
 		}
 	}
 }
