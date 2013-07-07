@@ -22,12 +22,10 @@ commands:
     permission-message: "§cYou do not have access to that command."
   cbsync:
     description: Syncs to the forum.
-    #usage: "§cIncorrect usage, use: /cbsync"
     permission: communitybridge.cbsync
     permission-message: "§cYou do not have access to that command."
   cbsyncall:
     description: Syncs everyone to the forum.
-    #usage: "§cIncorrect usage, use: /cbsyncall"
     permission: communitybridge.cbsyncall
     permission-message: "§cYou do not have access to that command."
 
