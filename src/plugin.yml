@@ -16,10 +16,6 @@ commands:
 #    description: Unbans from the forum.
 #    permission: communitybridge.cbunban
 #    permission-message: "§cYou do not have access to that command."
-#  cbrank:
-#    description: Ranks on the forum.
-#    permission: communitybridge.cbrank
-#    permission-message: "§cYou do not have access to that command."
   cbreload:
     description: Reloads CommunityBridge's configuration from disk.
     permission: communitybridge.cbreload
