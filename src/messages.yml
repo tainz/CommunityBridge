@@ -1,3 +1,19 @@
+#                             Command Interaction Messages
+# -----------------------------------------------------------------------------
+communitybridge-inactive: 'CommunityBridge is NOT active. Only the cbreload command is available.'
+
+# - cbreload
+cbreload: 'Reloading CommunityBridge configuration...'
+cbreload-success: 'Reload succeeded. Loaded from: ~FILENAME~'
+cbreload-too-many-arguments: 'Too many arguments. Usage: /cbreload [filename]'
+
+# cbsync
+cbsync: 'Your groups and/or statistics will be synchronized shortly.'
+cbsync-ingame: 'cbsync can only be used while in the game. You can use cbsyncall to force a synchronization for all connected players.'
+
+# cbsyncall
+cbsyncall: 'Groups and/or statistics will be synchronized for all connected players.'
+
 #                             Player Linking Messages
 # -----------------------------------------------------------------------------
 link-registered-player: 'Registered Account, Linked to Forums.'

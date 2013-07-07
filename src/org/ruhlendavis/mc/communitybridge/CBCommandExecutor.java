@@ -49,10 +49,10 @@ public class CBCommandExecutor implements CommandExecutor
 		{
 			if (arguments.length > 1)
 			{
-				sendOrLog(sender, "Too many arguments. Usage: /cbreload [filename]", ChatColor.RED, false);
+				sendOrLog(sender, config.messages.get("cbreload-too-many-arguments"), ChatColor.RED, false);
 			}
 
-			sendAndLog(sender, "Reloading CommunityBridge configuration.", ChatColor.GREEN, true);
+			sendAndLog(sender, config.messages.get("cbreload"), ChatColor.GREEN, true);
 
 			String error;
 			String filename;
@@ -69,7 +69,7 @@ public class CBCommandExecutor implements CommandExecutor
 
 			if (error == null)
 			{
-				sendOrLog(sender, "Reload succeeded. Loaded from: " + filename, ChatColor.GREEN, false);
+				sendOrLog(sender, config.messages.get("cbreload-success").replace("~FILENAME~", filename), ChatColor.GREEN, false);
 				config.report();
 			}
 			else
@@ -81,23 +81,25 @@ public class CBCommandExecutor implements CommandExecutor
 
 		if (CommunityBridge.isActive() == false)
 		{
-			sendOrLog(sender, "CommunityBridge is NOT active. Only the cbreload command is available.", ChatColor.RED, false);
+			sendOrLog(sender, config.messages.get("communitybridge-inactive"), ChatColor.RED, false);
 			return true;
 		}
 		else if (label.equals("cbsync"))
 		{
 			if (sender instanceof Player)
 			{
+				sendOrLog(sender, config.messages.get("manual-synchronize-individual"), ChatColor.GREEN, false);
 				CommunityBridge.webapp.runSynchronizePlayer((Player) sender, true);
 			}
 			else
 			{
-				sendOrLog(sender, "cbsync can only be used while in the game. You can use cbsyncall to force a synchronization for all connected players.", ChatColor.RED, false);
+				sendOrLog(sender, config.messages.get("cbsync-ingame"), ChatColor.RED, false);
 			}
 			return true;
 		}
 		else if (label.equals("cbysncall"))
 		{
+			sendAndLog(sender, config.messages.get("cbsyncall"), ChatColor.GREEN, true);
 			CommunityBridge.webapp.runSynchronizeAll();
 			return true;
 		}
