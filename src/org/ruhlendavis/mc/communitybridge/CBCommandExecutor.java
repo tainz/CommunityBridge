@@ -84,7 +84,8 @@ public class CBCommandExecutor implements CommandExecutor
 			sendOrLog(sender, config.messages.get("communitybridge-inactive"), ChatColor.RED, false);
 			return true;
 		}
-		else if (label.equals("cbsync"))
+		
+		if (label.equals("cbsync"))
 		{
 			if (sender instanceof Player)
 			{
@@ -97,7 +98,8 @@ public class CBCommandExecutor implements CommandExecutor
 			}
 			return true;
 		}
-		else if (label.equals("cbsyncall"))
+		
+		if (label.equals("cbsyncall"))
 		{
 			sendAndLog(sender, config.messages.get("cbsyncall"), ChatColor.GREEN, true);
 			CommunityBridge.webapp.runSynchronizeAll();
