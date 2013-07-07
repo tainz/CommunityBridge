@@ -97,7 +97,7 @@ public class CBCommandExecutor implements CommandExecutor
 			}
 			return true;
 		}
-		else if (label.equals("cbysncall"))
+		else if (label.equals("cbsyncall"))
 		{
 			sendAndLog(sender, config.messages.get("cbsyncall"), ChatColor.GREEN, true);
 			CommunityBridge.webapp.runSynchronizeAll();
