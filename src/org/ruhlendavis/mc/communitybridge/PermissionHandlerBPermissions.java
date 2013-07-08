@@ -111,7 +111,15 @@ public class PermissionHandlerBPermissions implements PermissionHandler
 	@Override
 	public String [] getGroupsPure(String playerName)
 	{
-		return getGroups(playerName);
+		String[] groups = getGroups(playerName);
+		if (groups.length == 1)
+		{
+			if (groups[0].equals("default"))
+			{
+				return EMPTY_ARRAY;
+			}
+		}
+		return groups;
 	}
 
 	/**

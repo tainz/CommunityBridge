@@ -8,6 +8,11 @@ package org.ruhlendavis.mc.communitybridge;
 public interface PermissionHandler
 {
 	/**
+	 * Returned by getGroups or getGroupsPure when there are no groups.
+	 */
+	static final String[] EMPTY_ARRAY = new String[0];
+
+	/**
 	 * Adds a player to a group.
 	 *
 	 * @param playerName String containing the player's name.

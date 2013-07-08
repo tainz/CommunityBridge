@@ -15,7 +15,6 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
  */
 public class PermissionHandlerPermissionsEx implements PermissionHandler
 {
-	private static final String[] EMPTY_ARRAY = new String[0];
 	/**
 	 * Actual constructor.
 	 *
