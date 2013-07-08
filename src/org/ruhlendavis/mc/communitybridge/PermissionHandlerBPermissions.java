@@ -112,13 +112,11 @@ public class PermissionHandlerBPermissions implements PermissionHandler
 	public String [] getGroupsPure(String playerName)
 	{
 		String[] groups = getGroups(playerName);
-		if (groups.length == 1)
+		if (groups.length == 0 || (groups.length == 1 && groups[0].equals("default")))
 		{
-			if (groups[0].equals("default"))
-			{
-				return EMPTY_ARRAY;
-			}
+			return EMPTY_ARRAY;
 		}
+		
 		return groups;
 	}
 
