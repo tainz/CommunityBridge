@@ -99,19 +99,6 @@ public class PermissionHandlerBPermissions implements PermissionHandler
 			CommunityBridge.log.severe("getGroups(): " + e.getMessage());
 		}
 
-		return groups;
-	}
-
-	/**
-	 * Retrieves an array of group names for the player excluding any 'default' groups.
-	 *
-	 * @param playerName String containing the name of the player.
-	 * @return An String array containing the group names.
-	 */
-	@Override
-	public String [] getGroupsPure(String playerName)
-	{
-		String[] groups = getGroups(playerName);
 		if (groups.length == 0 || (groups.length == 1 && groups[0].equals("default")))
 		{
 			return EMPTY_ARRAY;

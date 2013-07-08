@@ -72,18 +72,6 @@ public class PermissionHandlerPermissionsBukkit implements PermissionHandler
 	}
 
 	/**
-	 * Retrieves an array of group names for the player excluding any 'default' groups.
-	 *
-	 * @param playerName String containing the name of the player.
-	 * @return An String array containing the group names.
-	 */
-	@Override
-	public String [] getGroupsPure(String playerName)
-	{
-		return getGroups(playerName);
-	}
-
-	/**
 	 * Retrieves the player's primary group.
 	 *
 	 * @param playerName String containing name of the player to look up.
