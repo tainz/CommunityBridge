@@ -38,7 +38,15 @@ public class PlayerGroupState
 
 	public void generate()
 	{
-		permissionsSystemPrimaryGroupName = CommunityBridge.permissionHandler.getPrimaryGroup(playerName);
+		if (CommunityBridge.permissionHandler.supportsPrimaryGroups())
+		{
+			permissionsSystemPrimaryGroupName = CommunityBridge.permissionHandler.getPrimaryGroup(playerName);
+		}
+		else
+		{
+			permissionsSystemPrimaryGroupName = "";
+		}
+		
 		permissionsSystemGroupNames = new ArrayList(Arrays.asList(CommunityBridge.permissionHandler.getGroups(playerName)));
 
 		webappPrimaryGroupID = CommunityBridge.webapp.getUserPrimaryGroupID(playerName);
