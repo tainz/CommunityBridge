@@ -188,7 +188,6 @@ public class PermissionHandlerPermissionsEx implements PermissionHandler
 	 * @param groupName  String containing the group name.
 	 * @return true if the set succeeded, false if it failed for any reason.
 	 */
-	// TODO: Work out a way to ensure the group is first on the player's group list
 	@Override
 	public boolean setPrimaryGroup(String playerName, String groupName, String formerGroupName)
 	{
