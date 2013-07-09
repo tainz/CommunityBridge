@@ -24,9 +24,7 @@ public class PermissionHandlerPermissionsEx implements PermissionHandler
 	{
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("PermissionsEx");
 
-		if (plugin != null && plugin.isEnabled())
-		{}
-		else
+		if (plugin == null || !plugin.isEnabled())
 		{
 			throw new IllegalStateException("PermissionsEx is either not present or not enabled.");
 		}
@@ -87,7 +85,13 @@ public class PermissionHandlerPermissionsEx implements PermissionHandler
 	public String [] getGroupsPure(String playerName)
 	{
 		String[] groups = getGroups(playerName);
-		if (groups.length == 0 || (groups.length == 1 && groups[0].equals("default")))
+		
+		if (groups.length == 0)
+		{
+			return EMPTY_ARRAY;
+		}
+		
+		if (groups.length == 1 && groups[0].equalsIgnoreCase("default"))
 		{
 			return EMPTY_ARRAY;
 		}
