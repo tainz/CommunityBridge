@@ -250,15 +250,6 @@ public final class CommunityBridge extends JavaPlugin
 	}
 
 	/**
-	 * Disables the plugin.
-	 *
-	 */
-	private static void disablePlugin()
-  {
-		Bukkit.getServer().getPluginManager().disablePlugin(instance);
-	}
-
-	/**
 	 * Called by activate() if the auto reminder to register is turned on, this
 	 * method starts up the reminder task.
 	 */
