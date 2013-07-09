@@ -31,16 +31,18 @@ import org.ruhlendavis.mc.utility.Log;
 
 public final class CommunityBridge extends JavaPlugin
 {
-	private static boolean active;
 	public static Configuration config;
+	public static WebApplication webapp = null;
+	public static PermissionHandler permissionHandler;
 	@SuppressWarnings("NonConstantLogger")
 	public static Log log;
 	public static SQL sql;
 	public static Economy economy;
+
+	@SuppressWarnings("PMD.UnusedPrivateField")
 	private static CommunityBridge instance = null;
+	private static boolean active;
 	private static Metrics metrics = null;
-	public static WebApplication webapp = null;
-	public static PermissionHandler permissionHandler;
 
 	/**
 	 * Handles all the set up for the plugin.
