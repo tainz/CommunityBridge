@@ -229,6 +229,7 @@ public class Configuration
 			if (temp)
 			{
 				status = status & checkColumn(sql, "statistics.user-id-column", statisticsTableName, statisticsUserIDColumn);
+				
 				if (statisticsUsesKey)
 				{
 					temp = checkColumn(sql, "statistics.key-column", statisticsTableName, statisticsKeyColumn);
@@ -243,9 +244,7 @@ public class Configuration
 						if (lastonlineEnabled)
 						{
 							checkKeyColumnForKey(sql, "statistics.trackers.last-online.column-or-key-name", statisticsTableName, statisticsKeyColumn,	lastonlineColumnOrKey);
-							if (lastonlineFormattedColumnOrKey.isEmpty())
-							{}
-							else
+							if (!lastonlineFormattedColumnOrKey.isEmpty())
 							{
 								checkKeyColumnForKey(sql, "statistics.trackers.last-online.formatted-column-or-key-name", statisticsTableName, statisticsKeyColumn,	lastonlineFormattedColumnOrKey);
 							}
@@ -253,15 +252,11 @@ public class Configuration
 						if (gametimeEnabled)
 						{
 							checkKeyColumnForKey(sql, "statistics.trackers.game-time.column-or-key-name", statisticsTableName, statisticsKeyColumn,	gametimeColumnOrKey);
-							if (gametimeFormattedColumnOrKey.isEmpty())
-							{}
-							else
+							if (!gametimeFormattedColumnOrKey.isEmpty())
 							{
 								checkKeyColumnForKey(sql, "statistics.trackers.game-time.formatted-column-or-key-name", statisticsTableName, statisticsKeyColumn,	gametimeFormattedColumnOrKey);
 							}
-							if (lastonlineEnabled)
-							{}
-							else
+							if (!lastonlineEnabled)
 							{
 								log.warning("Game time statistic tracker requires last online tracker to be enabled. Temporarily disabling gametime tracker.");
 								gametimeEnabled = false;
@@ -278,9 +273,7 @@ public class Configuration
 						if (currentxpEnabled)
 						{
 							checkKeyColumnForKey(sql, "statistics.trackers.current-xp.column-or-key-name", statisticsTableName, statisticsKeyColumn, currentxpColumnOrKey);
-							if (currentxpFormattedColumnOrKey.isEmpty())
-							{}
-							else
+							if (!currentxpFormattedColumnOrKey.isEmpty())
 							{
 								checkKeyColumnForKey(sql, "statistics.trackers.current-xp.formatted-column-or-key-name", statisticsTableName, statisticsKeyColumn,currentxpFormattedColumnOrKey);
 							}
@@ -292,9 +285,7 @@ public class Configuration
 						if (lifeticksEnabled)
 						{
 							checkKeyColumnForKey(sql, "statistics.trackers.lifeticks.column-or-key-name", statisticsTableName, statisticsKeyColumn,	lifeticksColumnOrKey);
-							if (lifeticksFormattedColumnOrKey.isEmpty())
-							{}
-							else
+							if (!lifeticksFormattedColumnOrKey.isEmpty())
 							{
 								checkKeyColumnForKey(sql, "statistics.trackers.lifeticks.formatted-column-or-key-name", statisticsTableName, statisticsKeyColumn,	lifeticksFormattedColumnOrKey);
 							}
@@ -307,150 +298,90 @@ public class Configuration
 				}
 				else
 				{
-					if (onlineStatusEnabled)
+					if (onlineStatusEnabled && !checkColumn(sql, "statistics.trackers.online-status.column-or-key-name", statisticsTableName,	onlineStatusColumnOrKey))
 					{
-						if(checkColumn(sql, "statistics.trackers.online-status.column-or-key-name", statisticsTableName,	onlineStatusColumnOrKey))
-						{}
-						else
-						{
-							onlineStatusEnabled = false;
-						}
+						onlineStatusEnabled = false;
 					}
 
 					if (lastonlineEnabled)
 					{
-						if(checkColumn(sql, "statistics.trackers.last-online.column-or-key-name", statisticsTableName,	lastonlineColumnOrKey))
-						{}
-						else
+						if(!checkColumn(sql, "statistics.trackers.last-online.column-or-key-name", statisticsTableName,	lastonlineColumnOrKey))
 						{
 							lastonlineEnabled = false;
 						}
-						if (lastonlineFormattedColumnOrKey.isEmpty())
-						{}
-						else
+						if (!lastonlineFormattedColumnOrKey.isEmpty() && !checkColumn(sql, "statistics.trackers.last-online.formatted-column-or-key-name", statisticsTableName, lastonlineFormattedColumnOrKey))
 						{
-							if (checkColumn(sql, "statistics.trackers.last-online.formatted-column-or-key-name", statisticsTableName, lastonlineFormattedColumnOrKey))
-							{}
-							else
-							{
-								lastonlineFormattedColumnOrKey = "";
-							}
+							lastonlineFormattedColumnOrKey = "";
 						}
 					}
 
 					if (gametimeEnabled)
 					{
-						if (checkColumn(sql, "statistics.trackers.game-time.column-or-key-name", statisticsTableName,	gametimeColumnOrKey))
-						{}
-						else
+						if (!checkColumn(sql, "statistics.trackers.game-time.column-or-key-name", statisticsTableName,	gametimeColumnOrKey))
 						{
 							gametimeEnabled = false;
 						}
 
-						if (gametimeFormattedColumnOrKey.isEmpty())
-						{}
-						else
+						if (!gametimeFormattedColumnOrKey.isEmpty() && !checkColumn(sql, "statistics.trackers.game-time.formatted-column-or-key-name", statisticsTableName, gametimeFormattedColumnOrKey))
 						{
-							if(checkColumn(sql, "statistics.trackers.game-time.formatted-column-or-key-name", statisticsTableName, gametimeFormattedColumnOrKey))
-							{}
-							else
-							{
-								gametimeFormattedColumnOrKey = "";
-							}
+							gametimeFormattedColumnOrKey = "";
 						}
-						if (lastonlineEnabled)
-						{}
-						else
+						
+						if (!lastonlineEnabled)
 						{
 							log.warning("Gametime tracker requires lastonline tracker to be enabled. Temporarily disabling gametime tracker.");
 							gametimeEnabled = false;
 							gametimeFormattedColumnOrKey = "";
 						}
 					}
-					if (levelEnabled)
+					
+					if (levelEnabled && !checkColumn(sql, "statistics.trackers.level.column-or-key-name", statisticsTableName,	levelColumnOrKey))
 					{
-						if (checkColumn(sql, "statistics.trackers.level.column-or-key-name", statisticsTableName,	levelColumnOrKey))
-						{}
-						else
-						{
-							levelEnabled = false;
-						}
+						levelEnabled = false;
 					}
-					if (totalxpEnabled)
+
+					if (totalxpEnabled && !checkColumn(sql, "statistics.trackers.total-xp.column-or-key-name", statisticsTableName, totalxpColumnOrKey))
 					{
-						if (checkColumn(sql, "statistics.trackers.total-xp.column-or-key-name", statisticsTableName, totalxpColumnOrKey))
-						{}
-						else
-						{
-							totalxpEnabled = false;
-						}
+						totalxpEnabled = false;
 					}
 
 					if (currentxpEnabled)
 					{
-						if (checkColumn(sql, "statistics.trackers.current-xp.column-or-key-name", statisticsTableName,	currentxpColumnOrKey))
-						{}
-						else
+						if (!checkColumn(sql, "statistics.trackers.current-xp.column-or-key-name", statisticsTableName,	currentxpColumnOrKey))
 						{
 							currentxpEnabled = false;
 						}
-						if (currentxpFormattedColumnOrKey.isEmpty())
-						{}
-						else
+						
+						if (!currentxpFormattedColumnOrKey.isEmpty() && !checkColumn(sql, "statistics.trackers.current-xp.formatted-column-or-key-name", statisticsTableName, currentxpFormattedColumnOrKey))
 						{
-							if (checkColumn(sql, "statistics.trackers.current-xp.formatted-column-or-key-name", statisticsTableName, currentxpFormattedColumnOrKey))
-							{}
-							else
-							{
-								currentxpFormattedColumnOrKey = "";
-							}
+							currentxpFormattedColumnOrKey = "";
 						}
 					}
 
-					if (healthEnabled)
+					if (healthEnabled && !checkColumn(sql, "statistics.trackers.health.column-or-key-name", statisticsTableName, healthColumnOrKey))
 					{
-						if (checkColumn(sql, "statistics.trackers.health.column-or-key-name", statisticsTableName, healthColumnOrKey))
-						{}
-						else
-						{
-							healthEnabled = false;
-						}
+						healthEnabled = false;
 					}
 
 					if (lifeticksEnabled)
 					{
-						if (checkColumn(sql, "statistics.trackers.lifeticks.column-or-key-name", statisticsTableName,	lifeticksColumnOrKey))
-						{}
-						else
+						if (!checkColumn(sql, "statistics.trackers.lifeticks.column-or-key-name", statisticsTableName,	lifeticksColumnOrKey))
 						{
 							lifeticksEnabled = false;
 						}
-						if (lifeticksFormattedColumnOrKey.isEmpty())
-						{}
-						else
+						
+						if (!lifeticksFormattedColumnOrKey.isEmpty() && !checkColumn(sql, "statistics.trackers.lifeticks.formatted-column-or-key-name", statisticsTableName, lifeticksFormattedColumnOrKey))
 						{
-							if (checkColumn(sql, "statistics.trackers.lifeticks.formatted-column-or-key-name", statisticsTableName, lifeticksFormattedColumnOrKey))
-							{}
-							else
-							{
 								lifeticksFormattedColumnOrKey = "";
-							}
 						}
 					}
 
-					if (walletEnabled)
+					if (walletEnabled && !checkColumn(sql, "statistics.trackers.wallet.column-or-key-name", statisticsTableName, walletColumnOrKey))
 					{
-						if (checkColumn(sql, "statistics.trackers.wallet.column-or-key-name", statisticsTableName, walletColumnOrKey))
-						{}
-						else
-						{
-							walletEnabled = false;
-						}
+						walletEnabled = false;
 					}
 
-					if (onlineStatusEnabled || lastonlineEnabled || gametimeEnabled || levelEnabled || totalxpEnabled || currentxpEnabled || healthEnabled || lifeticksEnabled || walletEnabled)
-					{}
-					else
+					if (!(onlineStatusEnabled || lastonlineEnabled || gametimeEnabled || levelEnabled || totalxpEnabled || currentxpEnabled || healthEnabled || lifeticksEnabled || walletEnabled))
 					{
 						log.warning("Statistics tracking is enabled, but none of the individual trackers are enabled. Temporarily disabling statistics tracking.");
 						statisticsEnabled = false;
@@ -511,9 +442,7 @@ public class Configuration
 
 			if (playerData.exists())
 			{
-				if (playerData.isDirectory())
-				{}
-				else
+				if (!playerData.isDirectory())
 				{
 					log.severe("There is a file named Players in the CommunityBridge plugin folder preventing creation of the data directory.");
 					// Here we disable anything that relies on the player data folder.
@@ -525,9 +454,7 @@ public class Configuration
 			else
 			{
 				boolean success = playerData.mkdirs();
-				if (success)
-				{}
-				else
+				if (!success)
 				{
 					log.severe("Error when creating the CommunityBridge/Players folder.");
 					// Here we disable anything that relies on the player data folder.
@@ -563,11 +490,8 @@ public class Configuration
 			result = sql.sqlQuery("SHOW COLUMNS FROM `" + tableName
 							              + "` LIKE '" + columnName + "'");
 
-			if (result == null)
-			{}
-			else
+			if (result != null)
 			{
-
 				if (result.next())
 				{
 					return true;
@@ -661,15 +585,12 @@ public class Configuration
 		{
 			result = sql.sqlQuery("SHOW TABLES LIKE '" + tableName + "'");
 
-			if (result == null)
-			{}
-			else
+			if (result != null)
 			{
-
 				if (result.next())
 				{
 					return true;
-}
+				}
 				log.severe(errorBase + "Table does not exist.");
 			}
 			return false;
@@ -869,7 +790,7 @@ public class Configuration
 		// These are calculated from settings above.
 		groupSynchronizationActive = simpleSynchronizationEnabled && (webappPrimaryGroupEnabled || webappSecondaryGroupEnabled);
 		playerDataRequired = groupSynchronizationActive;
-		permissionsSystemRequired = (!linkingUnregisteredGroup.isEmpty()) || (!linkingRegisteredGroup.isEmpty()) || groupSynchronizationActive;
+		permissionsSystemRequired = !linkingUnregisteredGroup.isEmpty() || !linkingRegisteredGroup.isEmpty() || groupSynchronizationActive;
 	}
 
 	/**
@@ -898,9 +819,7 @@ public class Configuration
 		messagesFile = new File(plugin.getDataFolder(), messageFilename);
 
 		// Make sure the file is there, if not copy the default one.
-		if (messagesFile.exists())
-		{}
-		else
+		if (!messagesFile.exists())
 		{
 			plugin.saveResource(messageFilename, false);
 			messagesFile = new File(plugin.getDataFolder(), messageFilename);
