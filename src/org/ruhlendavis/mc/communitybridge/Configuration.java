@@ -23,7 +23,7 @@ public class Configuration
 {
 	private CommunityBridge plugin;
 	private Log log;
-	public Map<String, String> messages = new HashMap();
+	public Map<String, String> messages = new HashMap<String, String>();
 
 	// General Section
 	public String logLevel;
@@ -141,8 +141,8 @@ public class Configuration
 	public boolean simpleSynchronizationEnabled;
 	public String simpleSynchronizationDirection;
 	public boolean simpleSynchronizationPrimaryGroupNotify;
-	public Map<String, Object> simpleSynchronizationGroupMap = new HashMap();
-	public List<String> simpleSynchronizationGroupsTreatedAsPrimary = new ArrayList();
+	public Map<String, Object> simpleSynchronizationGroupMap = new HashMap<String, Object>();
+	public List<String> simpleSynchronizationGroupsTreatedAsPrimary = new ArrayList<String>();
 
 	// These are not in the config.yml. They are calculated.
 	public boolean playerDataRequired;

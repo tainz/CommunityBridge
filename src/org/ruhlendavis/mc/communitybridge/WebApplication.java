@@ -33,8 +33,8 @@ public class WebApplication
 	private SQL sql;
 	private int maxPlayers;
 
-	private Map<String, String> playerUserIDs = new HashMap();
-	private List<Player> synchronizationLocks = new ArrayList();
+	private Map<String, String> playerUserIDs = new HashMap<String, String>();
+	private List<Player> synchronizationLocks = new ArrayList<Player>();
 
 	public WebApplication(CommunityBridge plugin, Configuration config, Log log, SQL sql)
 	{
@@ -235,7 +235,7 @@ public class WebApplication
 		}
 	}
 
-	public List getUserGroupIDs(String playerName)
+	public List<String> getUserGroupIDs(String playerName)
 	{
 		if (config.webappSecondaryGroupEnabled)
 		{}
@@ -265,7 +265,7 @@ public class WebApplication
 		return null;
 	}
 
-	private List getUserGroupIDsSingleColumn(String playerName)
+	private List<String> getUserGroupIDsSingleColumn(String playerName)
 	{
 		final String errorBase = "Error during WebApplication.getUserGroupIDsSingleColumn(): ";
 		String query;
@@ -280,7 +280,7 @@ public class WebApplication
 
 			if (result.next())
 			{
-				return new ArrayList(Arrays.asList(result.getString(config.webappSecondaryGroupGroupIDColumn).split(config.webappSecondaryGroupGroupIDDelimiter)));
+				return new ArrayList<String>(Arrays.asList(result.getString(config.webappSecondaryGroupGroupIDColumn).split(config.webappSecondaryGroupGroupIDDelimiter)));
 			}
 			else
 			{
@@ -309,7 +309,7 @@ public class WebApplication
 		}
 	}
 
-	private List getUserGroupIDsKeyValue(String playerName)
+	private List<String> getUserGroupIDsKeyValue(String playerName)
 	{
 		final String errorBase = "Error during WebApplication.getUserGroupIDsKeyValue(): ";
 		String query;
@@ -325,7 +325,7 @@ public class WebApplication
 
 			if (result.next())
 			{
-				return new ArrayList(Arrays.asList(result.getString(config.webappSecondaryGroupGroupIDColumn).split(config.webappSecondaryGroupGroupIDDelimiter)));
+				return new ArrayList<String>(Arrays.asList(result.getString(config.webappSecondaryGroupGroupIDColumn).split(config.webappSecondaryGroupGroupIDDelimiter)));
 			}
 			else
 			{
@@ -354,7 +354,7 @@ public class WebApplication
 		}
 	}
 
-	private List getUserGroupIDsJunction(String playerName)
+	private List<String> getUserGroupIDsJunction(String playerName)
 	{
 		final String errorBase = "Error during WebApplication.getUserGroupIDsJunction(): ";
 		String query;
@@ -366,7 +366,7 @@ public class WebApplication
 		try
 		{
 			ResultSet result = sql.sqlQuery(query);
-			List groupIDs = new ArrayList();
+			List<String> groupIDs = new ArrayList<String>();
 
 			while (result.next())
 			{
@@ -396,7 +396,7 @@ public class WebApplication
 		}
 	}
 
-	private List getUserGroupIDsMultipleKeyValue(String playerName)
+	private List<String> getUserGroupIDsMultipleKeyValue(String playerName)
 	{
 		final String errorBase = "Error during WebApplication.getUserGroupIDsKeyValue(): ";
 		String query;
@@ -409,7 +409,7 @@ public class WebApplication
 		try
 		{
 			ResultSet result = sql.sqlQuery(query);
-			List groupIDs = new ArrayList();
+			List<String> groupIDs = new ArrayList<String>();
 
 			while (result.next())
 			{
@@ -890,7 +890,7 @@ public class WebApplication
 				if (result.next())
 				{
 					groupIDs = result.getString(config.webappSecondaryGroupGroupIDColumn);
-					List<String> groupIDsAsList = new ArrayList(Arrays.asList(groupIDs.split(config.webappSecondaryGroupGroupIDDelimiter)));
+					List<String> groupIDsAsList = new ArrayList<String>(Arrays.asList(groupIDs.split(config.webappSecondaryGroupGroupIDDelimiter)));
 					groupIDsAsList.remove(groupID);
 					groupIDs = StringUtilities.joinStrings(groupIDsAsList, config.webappSecondaryGroupGroupIDDelimiter);
 					query = "UPDATE `" + config.webappSecondaryGroupTable + "` "
@@ -911,7 +911,7 @@ public class WebApplication
 				if (result.next())
 				{
 					groupIDs = result.getString(config.webappSecondaryGroupGroupIDColumn);
-					List<String> groupIDsAsList = new ArrayList(Arrays.asList(groupIDs.split(config.webappSecondaryGroupGroupIDDelimiter)));
+					List<String> groupIDsAsList = new ArrayList<String>(Arrays.asList(groupIDs.split(config.webappSecondaryGroupGroupIDDelimiter)));
 					groupIDsAsList.remove(groupID);
 					groupIDs = StringUtilities.joinStrings(groupIDsAsList, config.webappSecondaryGroupGroupIDDelimiter);
 					query = "UPDATE `" + config.webappSecondaryGroupTable + "` "
@@ -1116,7 +1116,7 @@ public class WebApplication
 	 */
 	private void updateStatisticsKeyStyle(String userID, String onlineStatus, int lastonlineTime, String lastonlineFormattedTime, int gameTime, String gameTimeFormatted, int level, int totalxp, float currentxp, String currentxpFormatted, int health, int lifeticks, String lifeticksFormatted, double wallet)
 	{
-		List<String> fields = new ArrayList();
+		List<String> fields = new ArrayList<String>();
 		String query = "UPDATE `" + config.statisticsTableName + "` "
 								 + "SET ";
 
@@ -1238,7 +1238,7 @@ public class WebApplication
 	private void updateStatisticsKeylessStyle(String userID, String onlineStatus, int lastonlineTime, String lastonlineTimeFormatted, int gametime, String gametimeFormatted, int level, int totalxp, float currentxp, String currentxpFormatted, int health, int lifeticks, String lifeticksFormatted, double wallet)
 	{
 		String query;
-		List<String> fields = new ArrayList();
+		List<String> fields = new ArrayList<String>();
 		query = "UPDATE `" + config.statisticsTableName + "` "
 					+ "SET ";
 

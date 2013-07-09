@@ -32,8 +32,8 @@ public class PlayerGroupState
 		this.playerName = playerName;
 		this.fileName = playerName + ".yml";
 		this.playerFolder = playerDataFolder;
-		this.webappGroupIDs = new ArrayList();
-		this.permissionsSystemGroupNames = new ArrayList();
+		this.webappGroupIDs = new ArrayList<String>();
+		this.permissionsSystemGroupNames = new ArrayList<String>();
 	}
 
 	public void generate()
@@ -47,7 +47,7 @@ public class PlayerGroupState
 			permissionsSystemPrimaryGroupName = "";
 		}
 		
-		permissionsSystemGroupNames = new ArrayList(Arrays.asList(CommunityBridge.permissionHandler.getGroups(playerName)));
+		permissionsSystemGroupNames = new ArrayList<String>(Arrays.asList(CommunityBridge.permissionHandler.getGroups(playerName)));
 
 		webappPrimaryGroupID = CommunityBridge.webapp.getUserPrimaryGroupID(playerName);
 		webappGroupIDs = CommunityBridge.webapp.getUserGroupIDs(playerName);
@@ -70,9 +70,9 @@ public class PlayerGroupState
 		{
 			isNewFile = true;
 			webappPrimaryGroupID = "";
-			webappGroupIDs = new ArrayList();
+			webappGroupIDs = new ArrayList<String>();
 			permissionsSystemPrimaryGroupName = "";
-			permissionsSystemGroupNames = new ArrayList();
+			permissionsSystemGroupNames = new ArrayList<String>();
 		}
 	}
 
