@@ -3,6 +3,8 @@ package org.ruhlendavis.mc.communitybridge;
 import de.bananaco.bpermissions.api.ApiLayer;
 import de.bananaco.bpermissions.api.util.CalculableType;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -111,13 +113,23 @@ public class PermissionHandlerBPermissions implements PermissionHandler
 	@Override
 	public String [] getGroupsPure(String playerName)
 	{
-		String[] groups = getGroups(playerName);
-		if (groups.length == 0 || (groups.length == 1 && groups[0].equals("default")))
+		List<String> list = Arrays.asList(getGroups(playerName));
+		
+		for (Iterator<String> iterator = list.iterator(); iterator.hasNext();)
+		{
+			String group = iterator.next();
+			if (group.equalsIgnoreCase("default"))
+			{
+				iterator.remove();
+			}
+		}
+		
+		if (list.isEmpty())
 		{
 			return EMPTY_ARRAY;
 		}
 		
-		return groups;
+		return list.toArray(new String[]{});
 	}
 
 	/**
@@ -265,8 +277,6 @@ public class PermissionHandlerBPermissions implements PermissionHandler
 	 * @param formerGroupName String containing the former group name (will be removed, unless null).
 	 * @return true if the set succeeded, false if it failed for any reason.
 	 */
-	// TODO: Consider how we can add the group in such a way that it is the first
-	//       group on the player's group list.
 	@Override
 	public boolean setPrimaryGroup(String playerName, String groupName, String formerGroupName)
 	{
