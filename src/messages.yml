@@ -9,7 +9,7 @@ cbreload-too-many-arguments: 'Too many arguments. Usage: /cbreload [filename]'
 
 # cbsync
 cbsync: 'Your groups and/or statistics will be synchronized shortly.'
-cbsync-ingame: 'cbsync can only be used while in the game. You can use cbsyncall to force a synchronization for all connected players.'
+cbsync-ingame: "You can only use 'cbsync' when connected as a player. You can use 'cbsyncall' to force a synchronization for all connected players."
 
 # cbsyncall
 cbsyncall: 'Groups and/or statistics will be synchronized for all connected players.'
