@@ -101,7 +101,7 @@ public class PlayerListener implements Listener
 
 			if (!config.groupSynchronizationActive && !config.linkingRegisteredGroup.isEmpty())
 			{
-				if (!config.linkingRegisteredFormerUnregisteredOnly || CommunityBridge.permissionHandler.isMemberOfGroup(playerName, config.linkingUnregisteredGroup) || CommunityBridge.permissionHandler.getGroups(playerName).length == 0)
+				if (!config.linkingRegisteredFormerUnregisteredOnly || CommunityBridge.permissionHandler.isMemberOfGroup(playerName, config.linkingUnregisteredGroup) || CommunityBridge.permissionHandler.getGroupsPure(playerName).length == 0)
 				{
 					CommunityBridge.permissionHandler.removeFromGroup(playerName, config.linkingUnregisteredGroup);
 					CommunityBridge.permissionHandler.addToGroup(playerName, config.linkingRegisteredGroup);

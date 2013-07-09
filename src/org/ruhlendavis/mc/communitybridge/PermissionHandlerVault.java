@@ -42,6 +42,12 @@ public class PermissionHandlerVault implements PermissionHandler
 	}
 
 	@Override
+	public String[] getGroupsPure(String playerName)
+	{
+		return getGroups(playerName);
+	}
+
+	@Override
 	public String getPrimaryGroup(String playerName)
 	{
 		return vault.getPrimaryGroup((String) null, playerName);
