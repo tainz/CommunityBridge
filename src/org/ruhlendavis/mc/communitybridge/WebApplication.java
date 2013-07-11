@@ -656,7 +656,14 @@ public class WebApplication
 	private void synchronizeGroups(Player player)
 	{
 		String playerName = player.getName();
+		String direction = config.simpleSynchronizationDirection;
 		String userID = getUserID(playerName);
+		
+		if (userID.equalsIgnoreCase(config.simpleSynchronizationSuperUserID))
+		{
+			direction = "web";					
+		}
+		
 		File playerFolder = new File(plugin.getDataFolder(), "Players");
 
 		// 1. Retrieve previous group state for forum groups and permissions groups.
@@ -670,7 +677,7 @@ public class WebApplication
 		// 3. Synchronize primary group state
 		if (config.webappPrimaryGroupEnabled)
 		{
-			if (config.simpleSynchronizationDirection.startsWith("two") || config.simpleSynchronizationDirection.startsWith("web") && !previousState.webappPrimaryGroupID.equals(currentState.webappPrimaryGroupID))
+			if (direction.startsWith("two") || direction.startsWith("web") && !previousState.webappPrimaryGroupID.equals(currentState.webappPrimaryGroupID))
 			{
 				String formerGroupName = config.getGroupNameByGroupID(previousState.webappPrimaryGroupID);
 				String newGroupName = config.getGroupNameByGroupID(currentState.webappPrimaryGroupID);
@@ -695,7 +702,7 @@ public class WebApplication
 				}
 			}
 
-			if (CommunityBridge.permissionHandler.supportsPrimaryGroups() && (config.simpleSynchronizationDirection.startsWith("two") || config.simpleSynchronizationDirection.startsWith("min")) && !previousState.permissionsSystemPrimaryGroupName.equals(currentState.permissionsSystemPrimaryGroupName))
+			if (CommunityBridge.permissionHandler.supportsPrimaryGroups() && (direction.startsWith("two") || direction.startsWith("min")) && !previousState.permissionsSystemPrimaryGroupName.equals(currentState.permissionsSystemPrimaryGroupName))
 			{
 				String groupID = config.getWebappGroupIDbyGroupName(currentState.permissionsSystemPrimaryGroupName);
 
@@ -715,13 +722,11 @@ public class WebApplication
 		// 4. Synchronize secondary group state
 		if (config.webappSecondaryGroupEnabled)
 		{
-			if (config.simpleSynchronizationDirection.startsWith("two") || config.simpleSynchronizationDirection.startsWith("web"))
+			if (direction.startsWith("two") || direction.startsWith("web"))
 			{
 				for (String groupName : previousState.permissionsSystemGroupNames)
 				{
-					if (currentState.permissionsSystemGroupNames.contains(groupName) || config.simpleSynchronizationGroupsTreatedAsPrimary.contains(groupName))
-					{}
-					else
+					if (!currentState.permissionsSystemGroupNames.contains(groupName) && !config.simpleSynchronizationGroupsTreatedAsPrimary.contains(groupName))
 					{
 						removeGroup(userID, groupName);
 					}
@@ -754,13 +759,11 @@ public class WebApplication
 				}
 			}
 
-			if (config.simpleSynchronizationDirection.startsWith("two") || config.simpleSynchronizationDirection.startsWith("web"))
+			if (direction.startsWith("two") || direction.startsWith("web"))
 			{
 				for(String groupID : previousState.webappGroupIDs)
 				{
-					if (currentState.webappGroupIDs.contains(groupID))
-					{}
-					else
+					if (!currentState.webappGroupIDs.contains(groupID))
 					{
 						String groupName = config.getGroupNameByGroupID(groupID);
 						CommunityBridge.permissionHandler.removeFromGroup(playerName, groupName);
@@ -771,9 +774,7 @@ public class WebApplication
 				{
 					String groupID = iterator.next();
 
-					if (previousState.webappGroupIDs.contains(groupID))
-					{}
-					else
+					if (!previousState.webappGroupIDs.contains(groupID))
 					{
 						String groupName = config.getGroupNameByGroupID(groupID);
 						

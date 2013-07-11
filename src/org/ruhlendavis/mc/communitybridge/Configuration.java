@@ -63,6 +63,7 @@ public class Configuration
 	public String linkingKeyName;
 	public String linkingKeyColumn;
 	public String linkingValueColumn;
+	public String simpleSynchronizationSuperUserID;
 
 	// Requirements Section
 	public boolean requireAvatar;
@@ -174,7 +175,7 @@ public class Configuration
 	 */
 	public boolean analyzeConfiguration(SQL sql)
 	{
-		boolean status;
+		boolean status = true;
 		boolean temp;
 
 		// Linking table section.
@@ -429,11 +430,11 @@ public class Configuration
 				}
 			}
 		}
-
-		if (webappPrimaryGroupEnabled == false && webappSecondaryGroupEnabled == false && simpleSynchronizationEnabled)
+	
+		if (!checkSuperUserID(sql) || (webappPrimaryGroupEnabled == false && webappSecondaryGroupEnabled == false && simpleSynchronizationEnabled))
 		{
 			simpleSynchronizationEnabled = false;
-			log.warning("Simple synchronization disabled due to prior errors.");
+			log.severe("Simple synchronization disabled due to prior errors.");
 		}
 
 		if (playerDataRequired)
@@ -686,6 +687,8 @@ public class Configuration
 		linkingRegisteredGroup = config.getString("player-user-linking.registered-player-group", "");
 		linkingNotifyPlayerGroup = config.getBoolean("player-user-linking.notify-player-of-group", false);
 		linkingRegisteredFormerUnregisteredOnly = config.getBoolean("player-user-linking.registered-former-unregistered-only", false);
+
+		simpleSynchronizationSuperUserID = config.getString("player-user-linking.super-user-user-id", "");
 
 		linkingUsesKey = config.getBoolean("player-user-linking.uses-key", false);
 		linkingTableName = config.getString("player-user-linking.table-name", "");
@@ -1034,6 +1037,54 @@ public class Configuration
 			log.config(  "Simple synchronization direction     : " + simpleSynchronizationDirection);
 			log.config(  "Simple synchronization notification  : " + simpleSynchronizationPrimaryGroupNotify);
 			log.config(  "Simple synchronization P-Groups      : " + simpleSynchronizationGroupsTreatedAsPrimary.toString());
+		}
+	}
+
+	private boolean checkSuperUserID(SQL sql)
+	{
+		String errorBase = "Error while checking super user user id: ";
+		String query = "SELECT `" + linkingUserIDColumn + "`"
+									 + " FROM `" + linkingTableName + "`"
+									 + " WHERE `" + linkingUserIDColumn + "` = '" + simpleSynchronizationSuperUserID + "'";
+	
+		if (simpleSynchronizationSuperUserID.isEmpty())
+		{
+			log.severe("The super-user's user ID setting is not set.");
+			return false;
+		}
+		
+		try
+		{
+			ResultSet result = sql.sqlQuery(query);
+			if (result.getString(linkingUserIDColumn).isEmpty())
+			{
+				log.severe("The super-user's user ID not found.");
+				return false;
+			}
+			else
+			{
+				return true;
+			}
+		}
+		catch (SQLException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return false;
+		}
+		catch (MalformedURLException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return false;
+		}
+		catch (InstantiationException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return false;
+		}
+		catch (IllegalAccessException error)
+		{
+			log.severe(errorBase + error.getMessage());
+			return false;
 		}
 	}
 }

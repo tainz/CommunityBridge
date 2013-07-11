@@ -109,7 +109,7 @@ player-user-linking:
   # * they have no assigned groups
   # then set this to true.
   registered-former-unregistered-only: false
-
+  
   # This is where we specify how to associate a Minecraft player with a web
   # application user. We do this by matching up the player name with a name
   # stored in the web application's database.
@@ -359,6 +359,20 @@ simple-synchronization:
   # Set this to true if you want the player to be notified when their primary
   # group changes.
   primary-group-change-notify: false
+
+  # This is a safety net. Since CommunityBridge directly modifies group
+  # membership information, there is a risk that a misconfiguration could
+  # cause the main administrative account (e.g. super-user) of a webapp to not
+  # have administrative privileges to the forum, potentially leaving the forum
+  # in a state where it cannot be administered. To protect against this
+  # possibility, provide the user-id of the main administrative account of the
+  # web application here. Generally, this is the account created when the web
+  # application was installed. For this user-id, group changes will not be
+  # synchronized from Minecraft to the web application, that is, the
+  # synchronization for this user will be as if direction was set to
+  # 'web' (see above). Be absolutely sure this user-id is your super-user
+  # all-access administrative account.  
+  super-user-user-id: ''
 
   # If you're using primary group synchronization and a permissions system that
   # does NOT have the notion of primary groups (bPerms, PermissionsBukkit,
