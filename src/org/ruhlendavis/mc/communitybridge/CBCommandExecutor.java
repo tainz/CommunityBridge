@@ -59,7 +59,7 @@ public class CBCommandExecutor implements CommandExecutor
 			}
 			else
 			{
-				filename = null;
+				filename = "config.yml";
 			}
 
 			error = config.reload(filename);
