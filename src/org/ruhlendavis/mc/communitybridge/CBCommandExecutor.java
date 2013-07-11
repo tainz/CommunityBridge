@@ -67,7 +67,10 @@ public class CBCommandExecutor implements CommandExecutor
 			if (error == null)
 			{
 				sendOrLog(sender, config.messages.get("cbreload-success").replace("~FILENAME~", filename), ChatColor.GREEN, false);
-				config.report();
+				if (CommunityBridge.isActive())
+				{
+					config.report();
+				}
 			}
 			else
 			{
