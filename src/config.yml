@@ -41,6 +41,8 @@ general:
   # NOTE: GroupManager will not create groups on the fly. So any groups you
   #       specify in the linking or synchronization sections must already
   #       exist. That is, you need to have used mangadd <groupname>)
+  #       Also, GroupManager announces primary group changes with no option
+  #       to override this behavior.
   permissions-system:
 
   # If ~APPURL~ appears in a message in messages.yml, it will be replaced with
