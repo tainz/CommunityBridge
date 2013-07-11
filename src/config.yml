@@ -108,7 +108,7 @@ player-user-linking:
   # * they are a member of the unregistered-player-group OR
   # * they have no assigned groups
   # then set this to true.
-  registered-former-unregistered-only: false
+  registered-former-unregistered-only: true
   
   # This is where we specify how to associate a Minecraft player with a web
   # application user. We do this by matching up the player name with a name
