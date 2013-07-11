@@ -431,7 +431,7 @@ public class Configuration
 			}
 		}
 	
-		if (!checkSuperUserID(sql) || (webappPrimaryGroupEnabled == false && webappSecondaryGroupEnabled == false && simpleSynchronizationEnabled))
+		if (simpleSynchronizationEnabled && (webappPrimaryGroupEnabled == false && webappSecondaryGroupEnabled == false || checkSuperUserID(sql) == false))
 		{
 			simpleSynchronizationEnabled = false;
 			log.severe("Simple synchronization disabled due to prior errors.");
