@@ -5,24 +5,26 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import org.ruhlendavis.mc.communitybridge.CommunityBridge;
 
-public class SQL {
+public class SQL
+{
 	public String host;
 	private DatabaseHandler manageDB;
 	public String username;
 	public String password;
 	public String database;
 
-	public SQL(String host, String database, String username, String password) {
+	public SQL(String host, String database, String username, String password)
+	{
 		this.database = database;
 		this.host = host;
 		this.username = username;
 		this.password = password;
 	}
 
-	public Boolean initialize()
+	public boolean initialize()
 	{
-		this.manageDB = new DatabaseHandler(this, this.host, this.database, this.username, this.password);
-		return Boolean.valueOf(false);
+		this.manageDB = new DatabaseHandler(this.host, this.database, this.username, this.password);
+		return false;
 	}
 
 	public ResultSet sqlQuery(String query) throws MalformedURLException, InstantiationException, IllegalAccessException
@@ -64,7 +66,7 @@ public class SQL {
 		this.manageDB.closeConnection();
 	}
 
-	public Boolean checkConnection()
+	public boolean checkConnection()
 	{
 		return this.manageDB.checkConnection();
 	}
