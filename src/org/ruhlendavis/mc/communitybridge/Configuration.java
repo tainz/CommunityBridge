@@ -175,7 +175,7 @@ public class Configuration
 	 */
 	public boolean analyzeConfiguration(SQL sql)
 	{
-		boolean status = true;
+		boolean status;
 		boolean temp;
 
 		// Linking table section.
