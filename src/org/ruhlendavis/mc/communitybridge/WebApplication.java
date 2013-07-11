@@ -53,9 +53,7 @@ public class WebApplication
 	 */
 	public String getUserID(String playerName)
 	{
-		if (playerUserIDs.containsKey(playerName))
-		{}
-		else
+		if (!playerUserIDs.containsKey(playerName))
 		{
 			loadUserIDfromDatabase(playerName);
 		}
@@ -176,9 +174,7 @@ public class WebApplication
 	 */
 	public String getUserPrimaryGroupID(String playerName)
 	{
-		if (config.webappPrimaryGroupEnabled)
-		{}
-		else
+		if (!config.webappPrimaryGroupEnabled)
 		{
 			return "";
 		}
@@ -237,9 +233,7 @@ public class WebApplication
 
 	public List<String> getUserGroupIDs(String playerName)
 	{
-		if (config.webappSecondaryGroupEnabled)
-		{}
-		else
+		if (!config.webappSecondaryGroupEnabled)
 		{
 			return null;
 		}
@@ -590,9 +584,7 @@ public class WebApplication
 
 	private void synchronizePlayer(Player player, boolean online)
 	{
-		if (synchronizationLocks.contains(player))
-		{}
-		else
+		if (!synchronizationLocks.contains(player))
 		{
 			synchronizationLocks.add(player);
 			if (config.groupSynchronizationActive)
@@ -1068,7 +1060,7 @@ public class WebApplication
 		int gametime = 0;
 		if (previousLastOnline > 0)
 		{
-			gametime = previousGameTime + (lastonlineTime - previousLastOnline);
+			gametime = previousGameTime + lastonlineTime - previousLastOnline;
 		}
 		String gametimeFormatted = StringUtilities.timeElapsedtoString (gametime);
 
@@ -1140,9 +1132,7 @@ public class WebApplication
 		if (config.lastonlineEnabled)
 		{
 			fields.add("WHEN '" + config.lastonlineColumnOrKey + "' THEN '" + lastonlineTime + "' ");
-			if (config.lastonlineFormattedColumnOrKey.isEmpty())
-			{}
-			else
+			if (!config.lastonlineFormattedColumnOrKey.isEmpty())
 			{
 				fields.add("WHEN '" + config.lastonlineFormattedColumnOrKey + "' THEN '" + lastonlineFormattedTime + "' ");
 			}
@@ -1151,9 +1141,7 @@ public class WebApplication
 		if (config.gametimeEnabled && config.lastonlineEnabled)
 		{
 			fields.add("WHEN '" + config.gametimeColumnOrKey + "' THEN '" + gameTime + "' ");
-			if (config.gametimeFormattedColumnOrKey.isEmpty())
-			{}
-			else
+			if (!config.gametimeFormattedColumnOrKey.isEmpty())
 			{
 				fields.add("WHEN '" + config.gametimeFormattedColumnOrKey + "' THEN '" + gameTimeFormatted + "' ");
 			}
@@ -1169,9 +1157,7 @@ public class WebApplication
 		if (config.currentxpEnabled)
 		{
 			fields.add("WHEN '" + config.levelColumnOrKey + "' THEN '" + currentxp + "' ");
-			if (config.currentxpFormattedColumnOrKey.isEmpty())
-			{}
-			else
+			if (!config.currentxpFormattedColumnOrKey.isEmpty())
 			{
 				fields.add("WHEN '" + config.currentxpFormattedColumnOrKey + "' THEN '" + currentxpFormatted + "' ");
 			}
@@ -1183,9 +1169,7 @@ public class WebApplication
 		if (config.lifeticksEnabled)
 		{
 			fields.add("WHEN '" + config.lifeticksColumnOrKey + "' THEN '" + lifeticks + "' ");
-			if (config.lifeticksFormattedColumnOrKey.isEmpty())
-			{}
-			else
+			if (!config.lifeticksFormattedColumnOrKey.isEmpty())
 			{
 				fields.add("WHEN '" + config.lifeticksFormattedColumnOrKey + "' THEN '" + lifeticksFormatted + "' ");
 			}
@@ -1251,9 +1235,7 @@ public class WebApplication
 		if (config.lastonlineEnabled)
 		{
 			fields.add("`" + config.lastonlineColumnOrKey + "` = '" + lastonlineTime + "'");
-			if (config.lastonlineFormattedColumnOrKey.isEmpty())
-			{}
-			else
+			if (!config.lastonlineFormattedColumnOrKey.isEmpty())
 			{
 				fields.add("`" + config.lastonlineFormattedColumnOrKey + "` = '" + lastonlineTimeFormatted + "'");
 			}
@@ -1262,9 +1244,7 @@ public class WebApplication
 		if (config.gametimeEnabled)
 		{
 			fields.add("`" + config.gametimeColumnOrKey + "` = '" + gametime + "'");
-			if (config.gametimeFormattedColumnOrKey.isEmpty())
-			{}
-			else
+			if (!config.gametimeFormattedColumnOrKey.isEmpty())
 			{
 				fields.add("`" + config.gametimeFormattedColumnOrKey + "` = '" + gametimeFormatted + "'");
 			}
@@ -1283,9 +1263,7 @@ public class WebApplication
 		if (config.currentxpEnabled)
 		{
 			fields.add("`" + config.currentxpColumnOrKey + "` = '" + currentxp + "'");
-			if (config.currentxpFormattedColumnOrKey.isEmpty())
-			{}
-			else
+			if (!config.currentxpFormattedColumnOrKey.isEmpty())
 			{
 				fields.add("`" + config.currentxpFormattedColumnOrKey + "` = '" + currentxpFormatted + "'");
 			}
@@ -1299,9 +1277,7 @@ public class WebApplication
 		if (config.lifeticksEnabled)
 		{
 			fields.add("`" + config.lifeticksColumnOrKey + "` = '" + lifeticks + "'");
-			if (config.lifeticksFormattedColumnOrKey.isEmpty())
-			{}
-			else
+			if (!config.lifeticksFormattedColumnOrKey.isEmpty())
 			{
 				fields.add("`" + config.lifeticksFormattedColumnOrKey + "` = '" + lifeticksFormatted + "'");
 			}
