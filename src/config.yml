@@ -371,8 +371,13 @@ simple-synchronization:
   # the colon put a web application's group ID. On the right side of the colon
   # put the corresponding permissions group name. Only list group IDs and
   # group names you wish to be synchronized.
+  
+  # NOTE: Regarding ladders(promotions/inherited groups): Either ALL of the
+  #       groups that are part of a ladder need to have entries on this table
+  #       and have corresponding group on the web application or NONE of them
+  #       should be on this list. It may be that you want to use the
+  #       unregistered/registered group settings instead. 
   group-mapping:
     '1' : 'guest'
     '2' : 'member'
     '3' : 'premium'
-  
