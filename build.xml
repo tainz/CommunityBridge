@@ -2,9 +2,7 @@
 <project name="CommunityBridge" default="default" basedir=".">
 	<description>Builds, tests, and runs the project CommunityBridge.</description>
 	<import file="nbproject/build-impl.xml"/>
-	<target name="-post-jar">
-		<!-- Copy the jar file into the test server plugin folder -->
-		<copy file="${dist.jar}" flatten="true" todir="..\..\TestServer\plugins" />
+	<target name="-pre-compile">
 		<!-- Increment the build number -->
 		<buildnumber file="build.number"/>
 		<!-- Update the build number in the plugin.yml file -->
@@ -15,5 +13,9 @@
 				<include name="plugin.yml"/>
 			</fileset>
 		</replaceregexp>
+	</target>
+	<target name="-post-jar">
+		<!-- Copy the jar file into the test server plugin folder -->
+		<copy file="${dist.jar}" flatten="true" todir="..\..\TestServer\plugins" />
 	</target>
 </project>
