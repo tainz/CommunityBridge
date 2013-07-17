@@ -211,6 +211,8 @@ statistics:
     # For some trackers, there is a formatted version as well. For those
     # trackers, the formatted version is optional. If you wish to use the
     # formatted version, set the formatted-column-or-key-name appropriately.
+    # If set, the formatted column will be filled in with a human readable
+    # string.
 
     # Online Status: Show a player is playing on the server in the forums.
     online-status:
@@ -224,46 +226,57 @@ statistics:
     # Last Online: Record the time that player was last online
     last-online:
       enabled: false
+      # Numeric column, should be able to store a 32 bit integer. Will be seconds since epoch.
       column-or-key-name:
+      # String (varchar, etc.) column at least 60 characters in length.
       formatted-column-or-key-name:
 
     # Game Time: Record how much time the player has played.
     # Requires the last-online tracker to be turned on as well.
     game-time:
       enabled: false
+      # Numeric column, should be able to store a 32 bit integer. Time played in seconds.
       column-or-key-name:
       formatted-column-or-key-name:
 
     # Player's current level
     level:
       enabled: false
+      # Numeric column, a single byte will be sufficient in most cases.
       column-or-key-name:
 
     # Player's current progress toward next level
     current-xp:
       enabled: false
+      # Numeric floating point column.
       column-or-key-name:
+      # String column with at least 4 characters capacity.
       formatted-column-or-key-name:
 
-    # Player's current XP total
+    # Player's XP total
     total-xp:
       enabled: false
+      # Numeric column, capable of storing a 32 bit integer.
       column-or-key-name:
 
     # Player's current health
     health:
       enabled: false
+      # Numeric column, a single byte should be sufficient.
       column-or-key-name:
 
     # Lifeticks; the amount of time the player has been alive.
     lifeticks:
       enabled: false
+      # Numeric column, capable of storing a 32 bit integer.
       column-or-key-name:
+      # String field with at least 100 characters of storage.
       formatted-column-or-key-name:
 
     # Wallet. The amount of money the player currently has. REQUIRES VAULT.
     wallet:
       enabled: false
+      # Numeric column capable of storing a "double" floating point number.
       column-or-key-name:
 
 #                     Web Application Group Configuration
