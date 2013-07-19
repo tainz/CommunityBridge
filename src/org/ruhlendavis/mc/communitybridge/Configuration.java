@@ -688,8 +688,6 @@ public class Configuration
 		linkingNotifyPlayerGroup = config.getBoolean("player-user-linking.notify-player-of-group", false);
 		linkingRegisteredFormerUnregisteredOnly = config.getBoolean("player-user-linking.registered-former-unregistered-only", false);
 
-		simpleSynchronizationSuperUserID = config.getString("player-user-linking.super-user-user-id", "");
-
 		linkingUsesKey = config.getBoolean("player-user-linking.uses-key", false);
 		linkingTableName = config.getString("player-user-linking.table-name", "");
 		linkingUserIDColumn = config.getString("player-user-linking.user-id-column", "");
@@ -784,6 +782,7 @@ public class Configuration
 		webappSecondaryGroupStorageMethod = config.getString("app-group-config.secondary.storage-method", "").toLowerCase();
 
 		// Simple synchronization
+		simpleSynchronizationSuperUserID = config.getString("simple-synchronization.super-user-user-id", "");
 		simpleSynchronizationEnabled = config.getBoolean("simple-synchronization.enabled", false);
 		simpleSynchronizationDirection = config.getString("simple-synchronization.direction", "two-way").toLowerCase();
 		simpleSynchronizationPrimaryGroupNotify = config.getBoolean("simple-synchronization.primary-group-change-notify", false);
@@ -1056,7 +1055,7 @@ public class Configuration
 		try
 		{
 			ResultSet result = sql.sqlQuery(query);
-			if (result.getString(linkingUserIDColumn).isEmpty())
+			if (!result.next() || result.getString(linkingUserIDColumn).isEmpty())
 			{
 				log.severe("The super-user's user ID not found.");
 				return false;
