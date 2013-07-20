@@ -430,13 +430,20 @@ public class Configuration
 				}
 			}
 		}
-	
-		if (simpleSynchronizationEnabled && (webappPrimaryGroupEnabled == false && webappSecondaryGroupEnabled == false || checkSuperUserID(sql) == false))
+		
+		if (simpleSynchronizationEnabled && webappPrimaryGroupEnabled == false && webappSecondaryGroupEnabled == false)
 		{
 			simpleSynchronizationEnabled = false;
 			log.severe("Simple synchronization disabled due to prior errors.");
 		}
 
+		// This one needs to be performed after the one above, in case the one above disables sync.
+		if (simpleSynchronizationEnabled && checkSuperUserID(sql) == false)
+		{
+			simpleSynchronizationEnabled = false;
+			log.severe("Simple synchronization disabled due to prior errors.");
+		}
+		
 		if (playerDataRequired)
 		{
 			File playerData = new File(plugin.getDataFolder(), "Players");
