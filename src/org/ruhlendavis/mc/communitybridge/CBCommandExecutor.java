@@ -89,7 +89,7 @@ public class CBCommandExecutor implements CommandExecutor
 		{
 			if (sender instanceof Player)
 			{
-				sendOrLog(sender, config.messages.get("manual-synchronize-individual"), ChatColor.GREEN, false);
+				sendOrLog(sender, config.messages.get("cbsync"), ChatColor.GREEN, false);
 				CommunityBridge.webapp.runSynchronizePlayer((Player) sender, true);
 			}
 			else
