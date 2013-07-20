@@ -1055,15 +1055,12 @@ public class Configuration
 		try
 		{
 			ResultSet result = sql.sqlQuery(query);
-			if (!result.next() || result.getString(linkingUserIDColumn).isEmpty())
+			if (result == null || result.next() == false || result.getString(linkingUserIDColumn).isEmpty())
 			{
 				log.severe("The super-user's user ID not found.");
 				return false;
 			}
-			else
-			{
-				return true;
-			}
+			return true;
 		}
 		catch (SQLException error)
 		{
