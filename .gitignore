@@ -15,7 +15,6 @@ nb-configuration.xml
 *.war
 *.ear
 /nbproject/genfiles.properties
-/nbproject/build-impl.xml
 *.log
 *.aux
 /coverage
