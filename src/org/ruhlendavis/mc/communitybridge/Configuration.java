@@ -87,6 +87,7 @@ public class Configuration
 	public boolean statisticsUsesInsert;
 	public String statisticsInsertMethod;
 	public String statisticsThemeID;
+	public String statisticsThemeColumn;
 	
 	public boolean onlineStatusEnabled;
 	public String onlineStatusColumnOrKey;
@@ -743,6 +744,7 @@ public class Configuration
 		if (statisticsUsesInsert)
 		{
 			statisticsInsertMethod = config.getString("statistics.insert.method", "smf");
+			statisticsThemeColumn = config.getString("statistics.insert.theme-id-column", "id_theme");
 			statisticsThemeID = config.getString("statistics.insert.themeID", "1");
 		}
 		
@@ -972,6 +974,7 @@ public class Configuration
 			if (statisticsUsesInsert)
 			{
 				log.config("Tracking insert method               : " + statisticsInsertMethod);
+				log.config("Tracking insert theme column         : " + statisticsThemeColumn);
 				log.config("Tracking insert theme ID             : " + statisticsThemeID);
 			}
 			log.config(  "Tracking Online Status               : " + onlineStatusEnabled);

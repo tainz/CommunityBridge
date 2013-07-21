@@ -209,6 +209,9 @@ statistics:
     enabled: false
     method: smf
     
+    # Required for the 'smf' method. Most likely id_theme.
+    theme-id-column: id_theme
+
     # Required for the 'smf' method. Most likely value is 1.
     theme-id: 1
 
