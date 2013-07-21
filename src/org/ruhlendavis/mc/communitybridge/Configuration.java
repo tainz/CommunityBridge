@@ -238,6 +238,7 @@ public class Configuration
 				if (statisticsUsesInsert)
 				{
 					status = status & checkColumn(sql, "statistics.theme-id-column", statisticsTableName, statisticsThemeIDColumn);
+					checkKeyColumnForKey(sql, "statistics.theme-id", statisticsTableName, statisticsThemeIDColumn, statisticsThemeID);
 				}
 				
 				if (statisticsUsesKey)
@@ -750,7 +751,7 @@ public class Configuration
 		{
 			statisticsInsertMethod = config.getString("statistics.insert.method", "smf");
 			statisticsThemeIDColumn = config.getString("statistics.insert.theme-id-column", "id_theme");
-			statisticsThemeID = config.getString("statistics.insert.themeID", "1");
+			statisticsThemeID = config.getString("statistics.insert.theme-id", "1");
 		}
 		
 		onlineStatusEnabled = config.getBoolean("statistics.trackers.online-status.enabled", false);
