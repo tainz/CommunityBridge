@@ -968,6 +968,12 @@ public class Configuration
 				log.config("Tracking Key Column                  : " + statisticsKeyColumn);
 				log.config("Tracking Value Column                : " + statisticsValueColumn);
 			}
+			log.config(  "Tracking uses insert                 : " + statisticsUsesInsert);
+			if (statisticsUsesInsert)
+			{
+				log.config("Tracking insert method               : " + statisticsInsertMethod);
+				log.config("Tracking insert theme ID             : " + statisticsThemeID);
+			}
 			log.config(  "Tracking Online Status               : " + onlineStatusEnabled);
 			if (onlineStatusEnabled)
 			{
