@@ -714,7 +714,7 @@ public class WebApplication
 		// 4. Synchronize secondary group state
 		if (config.webappSecondaryGroupEnabled)
 		{
-			if (direction.startsWith("two") || direction.startsWith("web"))
+			if (direction.startsWith("two") || direction.startsWith("min"))
 			{
 				for (String groupName : previousState.permissionsSystemGroupNames)
 				{
