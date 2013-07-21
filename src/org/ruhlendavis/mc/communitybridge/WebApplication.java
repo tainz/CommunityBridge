@@ -739,13 +739,21 @@ public class WebApplication
 						{
 							iterator.remove();
 						}
-						else if (CommunityBridge.permissionHandler.supportsPrimaryGroups() && config.simpleSynchronizationGroupsTreatedAsPrimary.contains(groupName))
+						else if (!currentState.webappPrimaryGroupID.equals(groupID))
 						{
-							this.setPrimaryGroup(userID, groupID);
-						}
-						else if (!currentState.webappPrimaryGroupID.equals(groupID) && !currentState.webappGroupIDs.contains(groupID))
-						{
-							addGroup(userID, groupID, currentState.webappGroupIDs.size());
+							if (config.simpleSynchronizationGroupsTreatedAsPrimary.contains(groupName))
+							{
+								this.setPrimaryGroup(userID, groupID);
+							}
+							else if (!currentState.webappGroupIDs.contains(groupID))
+							{
+								this.addGroup(userID, groupID, currentState.webappGroupIDs.size());
+							}
+							else
+							{
+								// This shouldn't happen. But if it does, we need to figure out why.
+								log.warning("We thought we needed to add a secondary group ID " + groupID + "...but we didn't?");
+							}
 						}
 					}
 				}
