@@ -84,7 +84,10 @@ public class Configuration
 	public boolean statisticsUsesKey;
 	public String statisticsKeyColumn;
 	public String statisticsValueColumn;
-
+	public boolean statisticsUsesInsert;
+	public String statisticsInsertMethod;
+	public String statisticsThemeID;
+	
 	public boolean onlineStatusEnabled;
 	public String onlineStatusColumnOrKey;
 	public String onlineStatusValueOffline;
@@ -735,6 +738,14 @@ public class Configuration
 			statisticsValueColumn = config.getString("statistics.value-column", "");
 		}
 
+		statisticsUsesInsert = config.getBoolean("statistics.insert.enabled", false);
+		
+		if (statisticsUsesInsert)
+		{
+			statisticsInsertMethod = config.getString("statistics.insert.method", "smf");
+			statisticsThemeID = config.getString("statistics.insert.themeID", "1");
+		}
+		
 		onlineStatusEnabled = config.getBoolean("statistics.trackers.online-status.enabled", false);
 		onlineStatusColumnOrKey = config.getString("statistics.trackers.online-status.column-or-key-name", "");
 		onlineStatusValueOnline = config.getString("statistics.trackers.online-status.online-value", "");

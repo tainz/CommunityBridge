@@ -205,7 +205,7 @@ statistics:
   # Some web applications require an insert the first time a custom profile
   # field is filled with data (SMF, for example). If that's the case, enable
   # this and provide the required information.
-  insert-config:
+  insert:
     enabled: false
     method: smf
     
