@@ -201,6 +201,16 @@ statistics:
   # uses-key is false.
   key-column:
   value-column:
+    
+  # Some web applications require an insert the first time a custom profile
+  # field is filled with data (SMF, for example). If that's the case, enable
+  # this and provide the required information.
+  insert-config:
+    enabled: false
+    method: smf
+    
+    # Required for the 'smf' method. Most likely value is 1.
+    theme-id: 1
 
   # Individual trackers
   # -------------------
