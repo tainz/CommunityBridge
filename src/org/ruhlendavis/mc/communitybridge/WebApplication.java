@@ -274,7 +274,14 @@ public class WebApplication
 
 			if (result.next())
 			{
-				return new ArrayList<String>(Arrays.asList(result.getString(config.webappSecondaryGroupGroupIDColumn).split(config.webappSecondaryGroupGroupIDDelimiter)));
+				String groupsFromDB = result.getString(config.webappSecondaryGroupGroupIDColumn).trim();
+				
+				if (groupsFromDB.isEmpty())
+				{
+					return new ArrayList<String>();
+				}
+				
+				return new ArrayList<String>(Arrays.asList(groupsFromDB.split(config.webappSecondaryGroupGroupIDDelimiter)));
 			}
 			else
 			{
