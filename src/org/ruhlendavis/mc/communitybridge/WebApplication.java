@@ -810,7 +810,7 @@ public class WebApplication
 		{
 			if (config.webappSecondaryGroupStorageMethod.startsWith("sin"))
 			{
-				if (currentGroupCount > 0)
+				if (currentGroupCount > 1)
 				{
 					groupID = config.webappSecondaryGroupGroupIDDelimiter + groupID;
 				}
