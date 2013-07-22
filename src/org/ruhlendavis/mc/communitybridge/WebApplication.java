@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.netmanagers.api.SQL;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -1124,10 +1126,6 @@ public class WebApplication
 	 */
 	private void updateStatisticsKeyStyle(String userID, String onlineStatus, int lastonlineTime, String lastonlineFormattedTime, int gameTime, String gameTimeFormatted, int level, int totalxp, float currentxp, String currentxpFormatted, int health, int lifeticks, String lifeticksFormatted, double wallet)
 	{
-		List<String> fields = new ArrayList<String>();
-		String query = "UPDATE `" + config.statisticsTableName + "` "
-								 + "SET ";
-
 		/* To collapse multiple MySQL queries into one query, we're using the
 		 * MySQL CASE operator. Recommended reading:
 		 * http://www.karlrixon.co.uk/writing/update-multiple-rows-with-different-values-and-a-single-sql-query/
@@ -1138,70 +1136,120 @@ public class WebApplication
 		 *                   WHEN keyname THEN keyvalue
 		 *                   END
 		 * WHERE useridcolumn = userid;
+		 * 
+		 * insert prototype:
+		 * INSERT INTO tableName (user_idcolumn,theme_idcolumn,keycolumn,valuecolumn) VALUES (user_id,theme_id,keyname1,keyvalue1),(user_id,theme_id,keyname2,keyvalue2)
 		 */
-		query = query + "`" + config.statisticsValueColumn + "` = CASE " + "`" + config.statisticsKeyColumn + "` ";
-		if (config.onlineStatusEnabled)
-		{
-			fields.add("WHEN '" + config.onlineStatusColumnOrKey + "' THEN '" + onlineStatus + "' ");
-		}
-		if (config.lastonlineEnabled)
-		{
-			fields.add("WHEN '" + config.lastonlineColumnOrKey + "' THEN '" + lastonlineTime + "' ");
-			if (!config.lastonlineFormattedColumnOrKey.isEmpty())
-			{
-				fields.add("WHEN '" + config.lastonlineFormattedColumnOrKey + "' THEN '" + lastonlineFormattedTime + "' ");
-			}
-		}
-		// Gametime actually relies on the prior lastonlineTime...
-		if (config.gametimeEnabled && config.lastonlineEnabled)
-		{
-			fields.add("WHEN '" + config.gametimeColumnOrKey + "' THEN '" + gameTime + "' ");
-			if (!config.gametimeFormattedColumnOrKey.isEmpty())
-			{
-				fields.add("WHEN '" + config.gametimeFormattedColumnOrKey + "' THEN '" + gameTimeFormatted + "' ");
-			}
-		}
-		if (config.levelEnabled)
-		{
-			fields.add("WHEN '" + config.levelColumnOrKey + "' THEN '" + level + "' ");
-		}
-		if (config.totalxpEnabled)
-		{
-			fields.add("WHEN '" + config.levelColumnOrKey + "' THEN '" + totalxp + "' ");
-		}
-		if (config.currentxpEnabled)
-		{
-			fields.add("WHEN '" + config.levelColumnOrKey + "' THEN '" + currentxp + "' ");
-			if (!config.currentxpFormattedColumnOrKey.isEmpty())
-			{
-				fields.add("WHEN '" + config.currentxpFormattedColumnOrKey + "' THEN '" + currentxpFormatted + "' ");
-			}
-		}
-		if (config.healthEnabled)
-		{
-			fields.add("WHEN '" + config.healthColumnOrKey + "' THEN '" + health + "' ");
-		}
-		if (config.lifeticksEnabled)
-		{
-			fields.add("WHEN '" + config.lifeticksColumnOrKey + "' THEN '" + lifeticks + "' ");
-			if (!config.lifeticksFormattedColumnOrKey.isEmpty())
-			{
-				fields.add("WHEN '" + config.lifeticksFormattedColumnOrKey + "' THEN '" + lifeticksFormatted + "' ");
-			}
-		}
-		if (config.walletEnabled)
-		{
-			fields.add("WHEN '" + config.walletColumnOrKey + "' THEN '" + wallet + "' ");
-		}
-		query = query + StringUtilities.joinStrings(fields, " ");
-		query = query + "END";
-		query = query + " WHERE `" + config.statisticsUserIDColumn + "` = '" + userID + "'";
 
+		List<String> foundFields = new ArrayList<String>();
 		String errorBase = "Error during updateStatisticsKeyStyle(): ";
-
+		String insertQuery = "INSERT INTO `" + config.statisticsTableName + "` ("
+						           + config.statisticsUserIDColumn + ", "
+						           + config.statisticsThemeIDColumn + ", "
+						           + config.statisticsKeyColumn + ", "
+											 + config.statisticsValueColumn + ") VALUES ";
+		String updateQuery = "UPDATE `" + config.statisticsTableName + "` "
+											 + "SET " + "`" + config.statisticsValueColumn
+											 + "` = CASE " + "`" + config.statisticsKeyColumn + "` ";
 		try
 		{
-			sql.updateQuery(query);
+			if (config.statisticsUsesInsert)
+			{
+				String selectQuery = "SELECT `" + config.statisticsKeyColumn + "` "
+													 + " FROM `" + config.statisticsTableName + "` "
+													 + " WHERE `" + config.statisticsUserIDColumn + "` = '" + userID + "'"
+													 + " AND `" + config.statisticsThemeIDColumn + "` = '" + config.statisticsThemeID + "'";
+				ResultSet result = sql.sqlQuery(selectQuery);
+				while (result.next())
+				{
+					foundFields.add(result.getString(config.statisticsKeyColumn));
+				}
+			}
+
+			FieldTuple fieldTuple = new FieldTuple(foundFields);
+			
+			if (config.onlineStatusEnabled)
+			{
+				fieldTuple.add(userID, config.onlineStatusColumnOrKey, onlineStatus);
+			}
+			
+			if (config.lastonlineEnabled)
+			{
+				fieldTuple.add(userID, config.lastonlineColumnOrKey, Integer.toString(lastonlineTime));
+				if (!config.lastonlineFormattedColumnOrKey.isEmpty())
+				{
+					fieldTuple.add(userID, config.lastonlineFormattedColumnOrKey, lastonlineFormattedTime);
+				}
+			}
+
+			// Gametime actually relies on the prior lastonlineTime...
+			if (config.gametimeEnabled && config.lastonlineEnabled)
+			{
+				fieldTuple.add(userID, config.gametimeColumnOrKey, Integer.toString(gameTime));
+				if (!config.gametimeFormattedColumnOrKey.isEmpty())
+				{
+					fieldTuple.add(userID, config.gametimeFormattedColumnOrKey, gameTimeFormatted);
+				}
+			}
+			
+			if (config.levelEnabled)
+			{
+				fieldTuple.add(userID, config.levelColumnOrKey, Integer.toString(level));
+			}
+			
+			if (config.totalxpEnabled)
+			{
+				fieldTuple.add(userID, config.totalxpColumnOrKey, Integer.toString(totalxp));
+			}
+			
+			if (config.currentxpEnabled)
+			{
+				fieldTuple.add(userID, config.currentxpColumnOrKey, Float.toString(currentxp));
+				if (!config.currentxpFormattedColumnOrKey.isEmpty())
+				{
+					fieldTuple.add(userID, config.currentxpFormattedColumnOrKey, currentxpFormatted);
+				}
+			}
+			
+			if (config.healthEnabled)
+			{
+				fieldTuple.add(userID, config.healthColumnOrKey, Integer.toString(health));
+			}
+			
+			if (config.lifeticksEnabled)
+			{
+				fieldTuple.add(userID, config.lifeticksColumnOrKey, Integer.toString(lifeticks));
+				if (!config.lifeticksFormattedColumnOrKey.isEmpty())
+				{
+					fieldTuple.add(userID, config.lifeticksFormattedColumnOrKey, lifeticksFormatted);
+				}
+			}
+			
+			if (config.walletEnabled)
+			{
+				fieldTuple.add(userID, config.walletColumnOrKey, Double.toString(wallet));
+			}
+
+			if (fieldTuple.insertFields.size() > 0)
+			{
+				insertQuery = insertQuery + StringUtilities.joinStrings(fieldTuple.insertFields, ", ") + ";";
+				sql.insertQuery(insertQuery);
+			}
+			
+			if (fieldTuple.updateFields.size() > 0)
+			{
+				updateQuery = updateQuery + StringUtilities.joinStrings(fieldTuple.updateFields, " ")
+									  + "END"
+										+ " WHERE `" + config.statisticsUserIDColumn + "` = '" + userID + "'"
+										+ " AND `" + config.statisticsKeyColumn + "`"
+								    + " IN (" + StringUtilities.joinStrings(fieldTuple.inFields, ", ") + ");";
+				
+				sql.updateQuery(updateQuery);
+			}
+		}
+		catch (SQLException error)
+		{
+			log.severe(errorBase + error.getMessage());
 		}
 		catch (MalformedURLException error)
 		{
@@ -1214,6 +1262,44 @@ public class WebApplication
 		catch (IllegalAccessException error)
 		{
 			log.severe(errorBase + error.getMessage());
+		}
+	}
+
+	private class FieldTuple
+	{
+		public List<String> insertFields;
+		public List<String> updateFields;
+		public List<String> inFields;
+		List<String> foundFields;
+		
+		FieldTuple(List<String> foundFields)
+		{
+			this.foundFields = foundFields;
+			this.insertFields = new ArrayList<String>();
+			this.updateFields = new ArrayList<String>();
+			this.inFields = new ArrayList<String>();
+		}
+
+		/**
+		 * Adds field data to the appropriate list depending on whether it needs inserted or updated.
+		 * 
+		 * @param foundFields
+		 * @param insertFields
+		 * @param userID
+		 * @param data
+		 * @param updateFields 
+		 */
+		private void add(String userID, String key, String data)
+		{
+			if (config.statisticsUsesInsert && !foundFields.contains(key))
+			{
+				insertFields.add("('" + userID + "', '" + config.statisticsThemeID + "', '" + key + "', '" + data + "')");
+			}
+			else
+			{
+				updateFields.add("WHEN '" + key + "' THEN '" + data + "'");
+				inFields.add("'" + key + "'");
+			}
 		}
 	}
 
