@@ -433,11 +433,11 @@ public class Configuration
 				{
 					checkKeyColumnForKey(sql, "app-group-config.secondary.key-name", webappSecondaryGroupTable, webappSecondaryGroupKeyColumn, webappSecondaryGroupKeyName);
 				}
-				else
-				{
-					webappSecondaryGroupEnabled = false;
-					log.warning("Web application secondary groups disabled due to prior errors.");
-				}
+			}
+			if (!temp)
+			{
+				webappSecondaryGroupEnabled = false;
+				log.warning("Web application secondary groups disabled due to prior errors.");
 			}
 		}
 		
