@@ -718,6 +718,11 @@ public class WebApplication
 					log.fine("Moved player '" + playerName + "' to web application group ID '" + groupID + "'.");
 				}
 			}
+		} // if primarySync is enabled
+		else
+		{
+			currentState.permissionsSystemPrimaryGroupName = previousState.permissionsSystemPrimaryGroupName;
+			currentState.webappPrimaryGroupID = previousState.webappPrimaryGroupID;
 		}
 
 		// 4. Synchronize secondary group state
@@ -802,7 +807,13 @@ public class WebApplication
 				} // for each group ID in currentState
 			} // Synchronization direction check.
 		} // if SecondaryWebapp enabled.
-
+		else
+		{
+			// While secondary synchronization is turned off do not update the our
+			// snapshot of the secondary groups.
+			currentState.permissionsSystemGroupNames = previousState.permissionsSystemGroupNames;
+			currentState.webappGroupIDs = previousState.webappGroupIDs;	
+		}
 		// 5. Save newly created state
 		try
 		{
