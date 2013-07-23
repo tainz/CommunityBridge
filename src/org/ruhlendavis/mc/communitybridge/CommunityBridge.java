@@ -62,32 +62,6 @@ public final class CommunityBridge extends JavaPlugin
 		getCommand("cbsync").setExecutor(new CBCommandExecutor(config, log));
 		getCommand("cbsyncall").setExecutor(new CBCommandExecutor(config, log));
 
-		if (config.statisticsEnabled && config.walletEnabled)
-		{
-	    if (getServer().getPluginManager().getPlugin("Vault") == null)
-			{
-				log.warning("Wallet statistics tracker requires Vault. Temporarily disabling Wallet tracker");
-				config.walletEnabled = false;
-			}
-			else
-			{
-        RegisteredServiceProvider<Economy> rsp = Bukkit.getServicesManager().getRegistration(Economy.class);
-        if (rsp == null)
-				{
-					log.warning("Failure getting economy service registration. Temporarily disabling Wallet tracker");
-					config.walletEnabled = false;
-	      }
-				else
-				{
-	        economy = rsp.getProvider();
-					if (economy == null)
-					{
-						log.warning("Failure getting economy provider. Temporarily disabling Wallet tracker");
-						config.walletEnabled = false;
-					}
-				}
-			}
-		}
 		activate();
 
 		if (CommunityBridge.isActive())
@@ -133,11 +107,6 @@ public final class CommunityBridge extends JavaPlugin
 		webapp.loadOnlineUserIDsFromDatabase();
 		getServer().getPluginManager().registerEvents(new PlayerListener(log, config, webapp), this);
 
-		if (config.linkingAutoRemind)
-		{
-			reminderStart();
-		}
-
 		// If a feature requires a permissions system we load it up here.
 		if (config.permissionsSystemRequired)
 		{
@@ -182,11 +151,43 @@ public final class CommunityBridge extends JavaPlugin
 			}
 		}
 
+		if (config.statisticsEnabled && config.walletEnabled)
+		{
+	    if (getServer().getPluginManager().getPlugin("Vault") == null)
+			{
+				log.warning("Wallet statistics tracker requires Vault. Temporarily disabling Wallet tracker");
+				config.walletEnabled = false;
+			}
+			else
+			{
+        RegisteredServiceProvider<Economy> rsp = Bukkit.getServicesManager().getRegistration(Economy.class);
+        if (rsp == null)
+				{
+					log.warning("Failure getting economy service registration. Is an economy plugin installed? Temporarily disabling Wallet tracker...");
+					config.walletEnabled = false;
+	      }
+				else
+				{
+	        economy = rsp.getProvider();
+					if (economy == null)
+					{
+						log.warning("Failure getting economy provider. Temporarily disabling Wallet tracker");
+						config.walletEnabled = false;
+					}
+				}
+			}
+		}
+
+		if (config.linkingAutoRemind)
+		{
+			reminderStart();
+		}
+
 		if (config.autoSync)
 		{
 			autosyncStart();
 		}
-
+		
 		active = true;
 		log.finest("CommunityBridge activated.");
 	}
@@ -248,6 +249,12 @@ public final class CommunityBridge extends JavaPlugin
 			sql.close();
 			sql = null;
 		}
+		
+		if (economy != null)
+		{
+			economy = null;
+		}
+
 		log.finest("CommunityBridge deactivated.");
 	}
 
