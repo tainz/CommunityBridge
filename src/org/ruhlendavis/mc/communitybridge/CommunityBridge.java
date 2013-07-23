@@ -2,6 +2,7 @@ package org.ruhlendavis.mc.communitybridge;
 
 import java.io.IOException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.milkbowl.vault.economy.Economy;
 import net.netmanagers.api.SQL;
 import org.bukkit.Bukkit;
@@ -232,6 +233,14 @@ public final class CommunityBridge extends JavaPlugin
 
 		if (metrics != null)
 		{
+			try
+			{
+				metrics.disable();
+			}
+			catch (IOException exception)
+			{
+				log.severe("Exception when disabling metrics: " + exception.getMessage());
+			}
 			metrics = null;
 		}
 
