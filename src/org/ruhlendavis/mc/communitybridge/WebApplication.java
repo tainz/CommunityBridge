@@ -1284,7 +1284,7 @@ public class WebApplication
 			if (fieldTuple.updateFields.size() > 0)
 			{
 				updateQuery = updateQuery + StringUtilities.joinStrings(fieldTuple.updateFields, " ")
-									  + "END"
+									  + " END"
 										+ " WHERE `" + config.statisticsUserIDColumn + "` = '" + userID + "'"
 										+ " AND `" + config.statisticsKeyColumn + "`"
 								    + " IN (" + StringUtilities.joinStrings(fieldTuple.inFields, ", ") + ");";
