@@ -13,8 +13,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.netmanagers.api.SQL;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -983,10 +981,26 @@ public class WebApplication
 	 */
 	private void updateStatistics(Player player, boolean online)
 	{
+		SimpleDateFormat dateFormat = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss a");
+		
 		String query;
 		ResultSet result;
 		String playerName = player.getName();
 		String userID = getUserID(playerName);
+		
+		String onlineStatus = "";
+		int lastonlineTime = 0;
+		String lastonlineTimeFormatted = "";
+		int gametime = 0;
+		String gametimeFormatted = "";
+		int level = 0;
+		int totalxp = 0;
+		float currentxp = 0.0f;
+		String currentxpFormatted = "";
+		int health = 0;
+		int lifeticks = 0;
+		String lifeticksFormatted = "";
+		double wallet = 0.0;
 
 		int previousLastOnline = 0;
 		int previousGameTime = 0;
@@ -1067,41 +1081,61 @@ public class WebApplication
 				}
 			}
 		}
-
-		SimpleDateFormat dateFormat = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss a");
-
-		String onlineStatus;
-		if (online)
+		
+		if (config.onlineStatusEnabled)
 		{
-			onlineStatus = config.onlineStatusValueOnline;
+			if (online)
+			{
+				onlineStatus = config.onlineStatusValueOnline;
+			}
+			else
+			{
+				onlineStatus = config.onlineStatusValueOffline;
+			}
 		}
-		else
+		
+		if (config.lastonlineEnabled)
 		{
-			onlineStatus = config.onlineStatusValueOffline;
+			lastonlineTime = (int) (System.currentTimeMillis() / 1000L);
+			lastonlineTimeFormatted = dateFormat.format(new Date());
 		}
 
-		// last online
-		int lastonlineTime = (int) (System.currentTimeMillis() / 1000L);
-		String lastonlineTimeFormatted = dateFormat.format(new Date());
-
-		// game time (time played)
-		int gametime = 0;
-		if (previousLastOnline > 0)
+		if (config.gametimeEnabled)
 		{
-			gametime = previousGameTime + lastonlineTime - previousLastOnline;
+			if (previousLastOnline > 0)
+			{
+				gametime = previousGameTime + lastonlineTime - previousLastOnline;
+			}
+			gametimeFormatted = StringUtilities.timeElapsedtoString(gametime);
 		}
-		String gametimeFormatted = StringUtilities.timeElapsedtoString (gametime);
+		
+		if (config.levelEnabled)
+		{
+			level = player.getLevel();
+		}
+		
+		if (config.totalxpEnabled)
+		{
+			totalxp = player.getTotalExperience();
+		}
+		
+		if (config.currentxpEnabled)
+		{
+			currentxp = player.getExp();
+			currentxpFormatted = ((int)(currentxp * 100)) + "%";
+		}
+		
+		if (config.healthEnabled)
+		{
+			health = player.getHealth();
+		}
+		
+		if (config.lifeticksEnabled)
+		{
+			lifeticks = player.getTicksLived();
+			lifeticksFormatted = StringUtilities.timeElapsedtoString((int)(lifeticks / 20));
+		}
 
-		int level = player.getLevel();
-		int totalxp = player.getTotalExperience();
-		float currentxp = player.getExp();
-		String currentxpFormatted = ((int)(currentxp * 100)) + "%";
-
-		int health = player.getHealth();
-		int lifeticks = player.getTicksLived();
-		String lifeticksFormatted = StringUtilities.timeElapsedtoString((int)(lifeticks / 20));
-
-		double wallet = 0.0;
 		if (config.walletEnabled)
 		{
 			wallet = CommunityBridge.economy.getBalance(playerName);
