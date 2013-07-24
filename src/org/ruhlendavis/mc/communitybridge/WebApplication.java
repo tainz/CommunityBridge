@@ -660,6 +660,15 @@ public class WebApplication
 		
 		if (userID.equalsIgnoreCase(config.simpleSynchronizationSuperUserID))
 		{
+			// If we're configured to have minecraft be 'master' only,
+			// we'll do nothing at all with the super-user.
+			if (direction.startsWith("min"))
+			{
+				return;
+			}
+			
+			// Otherwise, we'll temporarily override the direction to be one-way
+			// for the super-user.
 			direction = "web";					
 		}
 		
