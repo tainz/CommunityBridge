@@ -997,7 +997,7 @@ public class WebApplication
 		int totalxp = 0;
 		float currentxp = 0.0f;
 		String currentxpFormatted = "";
-		int health = 0;
+		double health = 0.0;
 		int lifeticks = 0;
 		String lifeticksFormatted = "";
 		double wallet = 0.0;
@@ -1127,7 +1127,7 @@ public class WebApplication
 		
 		if (config.healthEnabled)
 		{
-			health = player.getHealth();
+			health = (double)player.getHealth();
 		}
 		
 		if (config.lifeticksEnabled)
@@ -1169,7 +1169,7 @@ public class WebApplication
 	 * @param String Formatted amount of time played since last death.
 	 * @param double Current balance of the player.
 	 */
-	private void updateStatisticsKeyStyle(String userID, String onlineStatus, int lastonlineTime, String lastonlineFormattedTime, int gameTime, String gameTimeFormatted, int level, int totalxp, float currentxp, String currentxpFormatted, int health, int lifeticks, String lifeticksFormatted, double wallet)
+	private void updateStatisticsKeyStyle(String userID, String onlineStatus, int lastonlineTime, String lastonlineFormattedTime, int gameTime, String gameTimeFormatted, int level, int totalxp, float currentxp, String currentxpFormatted, double health, int lifeticks, String lifeticksFormatted, double wallet)
 	{
 		/* To collapse multiple MySQL queries into one query, we're using the
 		 * MySQL CASE operator. Recommended reading:
@@ -1258,7 +1258,7 @@ public class WebApplication
 			
 			if (config.healthEnabled)
 			{
-				fieldTuple.add(userID, config.healthColumnOrKey, Integer.toString(health));
+				fieldTuple.add(userID, config.healthColumnOrKey, Integer.toString((int)health));
 			}
 			
 			if (config.lifeticksEnabled)
@@ -1366,7 +1366,7 @@ public class WebApplication
 	 * @param String Formatted amount of time played since last death.
 	 * @param double Current balance of the player.
 	 */
-	private void updateStatisticsKeylessStyle(String userID, String onlineStatus, int lastonlineTime, String lastonlineTimeFormatted, int gametime, String gametimeFormatted, int level, int totalxp, float currentxp, String currentxpFormatted, int health, int lifeticks, String lifeticksFormatted, double wallet)
+	private void updateStatisticsKeylessStyle(String userID, String onlineStatus, int lastonlineTime, String lastonlineTimeFormatted, int gametime, String gametimeFormatted, int level, int totalxp, float currentxp, String currentxpFormatted, double health, int lifeticks, String lifeticksFormatted, double wallet)
 	{
 		String query;
 		List<String> fields = new ArrayList<String>();
@@ -1417,7 +1417,7 @@ public class WebApplication
 
 		if (config.healthEnabled)
 		{
-			fields.add("`" + config.healthColumnOrKey + "` = '" + health + "'");
+			fields.add("`" + config.healthColumnOrKey + "` = '" + (int)health + "'");
 		}
 
 		if (config.lifeticksEnabled)
