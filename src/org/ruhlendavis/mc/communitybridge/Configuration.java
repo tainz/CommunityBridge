@@ -906,7 +906,7 @@ public class Configuration
 		log.config(    "Log level                            : " + logLevel);
 		log.config(    "Plugin metrics enabled               : " + usePluginMetrics);
 		log.config(    "Permissions System                   : " + permissionsSystem);
-		log.config(    "Auto Sync                            : " + autoSync);
+		log.config(    "Autosync                             : " + autoSync);
 		if (autoSync)
 		{
 			log.config(  "Autosync every                       : " + autoSyncEvery + " " + autoEveryUnit);
@@ -965,16 +965,16 @@ public class Configuration
 			log.config(  "Require minimum post count           : " + requirePostsPostCount);
 		}
 
-		log.config(    "Tracking Statistics                  : " + statisticsEnabled);
+		log.config(    "Tracking statistics                  : " + statisticsEnabled);
 		if (statisticsEnabled)
 		{
-			log.config(  "Tracking Table Name                  : " + statisticsTableName);
-			log.config(  "Tracking User ID Column              : " + statisticsUserIDColumn);
-			log.config(  "Tracking Uses Key                    : " + statisticsUsesKey);
+			log.config(  "Tracking table name                  : " + statisticsTableName);
+			log.config(  "Tracking user ID column              : " + statisticsUserIDColumn);
+			log.config(  "Tracking uses key                    : " + statisticsUsesKey);
 			if (statisticsUsesKey)
 			{
-				log.config("Tracking Key Column                  : " + statisticsKeyColumn);
-				log.config("Tracking Value Column                : " + statisticsValueColumn);
+				log.config("Tracking key column                  : " + statisticsKeyColumn);
+				log.config("Tracking value column                : " + statisticsValueColumn);
 			}
 			log.config(  "Tracking uses insert                 : " + statisticsUsesInsert);
 			if (statisticsUsesInsert)
@@ -983,51 +983,51 @@ public class Configuration
 				log.config("Tracking insert theme column         : " + statisticsThemeIDColumn);
 				log.config("Tracking insert theme ID             : " + statisticsThemeID);
 			}
-			log.config(  "Tracking Online Status               : " + onlineStatusEnabled);
+			log.config(  "Tracking online status               : " + onlineStatusEnabled);
 			if (onlineStatusEnabled)
 			{
-				log.config("Tracking Online Status Column/Key    : " + onlineStatusColumnOrKey);
-				log.config("Tracking Online Status Online Value  : " + onlineStatusValueOnline);
-				log.config("Tracking Online Status Offline Value : " + onlineStatusValueOffline);
+				log.config("Tracking online status column/key    : " + onlineStatusColumnOrKey);
+				log.config("Tracking online status online value  : " + onlineStatusValueOnline);
+				log.config("Tracking online status offline value : " + onlineStatusValueOffline);
 			}
-			log.config(  "Tracking Last Online                 : " + lastonlineEnabled);
+			log.config(  "Tracking last online                 : " + lastonlineEnabled);
 			if (lastonlineEnabled)
 			{
-				log.config("Tracking Last Online Column/Key      : " + lastonlineColumnOrKey);
-				log.config("Tracking Last Online Formatted Co/Key: " + lastonlineFormattedColumnOrKey);
+				log.config("Tracking last online column/key      : " + lastonlineColumnOrKey);
+				log.config("Tracking last online formatted co/key: " + lastonlineFormattedColumnOrKey);
 			}
-			log.config(  "Tracking Game Time                   : " + gametimeEnabled);
+			log.config(  "Tracking game time                   : " + gametimeEnabled);
 			if (gametimeEnabled)
 			{
-				log.config("Tracking Game Time Column/Key        : " + gametimeColumnOrKey);
-				log.config("Tracking Game Time Formatted Co/Key  : " + gametimeFormattedColumnOrKey);
+				log.config("Tracking game time column/key        : " + gametimeColumnOrKey);
+				log.config("Tracking game time formatted co/key  : " + gametimeFormattedColumnOrKey);
 			}
-			log.config(  "Tracking Level                       : " + levelEnabled);
+			log.config(  "Tracking level                       : " + levelEnabled);
 			if (levelEnabled)
 			{
-				log.config("Tracking Level Column/Key            : " + levelColumnOrKey);
+				log.config("Tracking level column/key            : " + levelColumnOrKey);
 			}
 			if (totalxpEnabled)
 			{
-				log.config("Tracking Total XP Column/Key         : " + totalxpColumnOrKey);
+				log.config("Tracking total XP column/key         : " + totalxpColumnOrKey);
 			}
 			if (currentxpEnabled)
 			{
-				log.config("Tracking Current XP Column/Key       : " + currentxpColumnOrKey);
-				log.config("Tracking Current XP Formatted Co/Key : " + currentxpFormattedColumnOrKey);
+				log.config("Tracking current XP column/key       : " + currentxpColumnOrKey);
+				log.config("Tracking current XP formatted co/key : " + currentxpFormattedColumnOrKey);
 			}
 			if (lifeticksEnabled)
 			{
-				log.config("Tracking Lifeticks Column/Key        : " + lifeticksColumnOrKey);
-				log.config("Tracking Lifeticks Formatted Co/Key  : " + lifeticksFormattedColumnOrKey);
+				log.config("Tracking lifeticks column/key        : " + lifeticksColumnOrKey);
+				log.config("Tracking lifeticks formatted co/key  : " + lifeticksFormattedColumnOrKey);
 			}
 			if (healthEnabled)
 			{
-				log.config("Tracking Health Column/Key           : " + healthColumnOrKey);
+				log.config("Tracking health column/key           : " + healthColumnOrKey);
 			}
 			if (walletEnabled)
 			{
-				log.config("Tracking Wallet Column/Key           : " + walletColumnOrKey);
+				log.config("Tracking wallet column/key           : " + walletColumnOrKey);
 			}
 		}
 
@@ -1068,7 +1068,7 @@ public class Configuration
 		{
 			log.config(  "Simple synchronization direction     : " + simpleSynchronizationDirection);
 			log.config(  "Simple synchronization notification  : " + simpleSynchronizationPrimaryGroupNotify);
-			log.config(  "Simple synchronization P-Groups      : " + simpleSynchronizationGroupsTreatedAsPrimary.toString());
+			log.config(  "Simple synchronization P-groups      : " + simpleSynchronizationGroupsTreatedAsPrimary.toString());
 		}
 	}
 
