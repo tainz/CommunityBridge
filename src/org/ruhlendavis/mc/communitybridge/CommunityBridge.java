@@ -11,6 +11,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
+import org.mcstats.Metrics.Graph;
 import org.ruhlendavis.mc.utility.Log;
 
 /**
@@ -89,20 +90,6 @@ public final class CommunityBridge extends JavaPlugin
 			return;
 		}
 
-		if (config.usePluginMetrics)
-		{
-			try
-			{
-				metrics = new Metrics(this);
-				metrics.start();
-				log.fine("Plugin Metrics activated.");
-			}
-			catch (IOException e)
-			{
-				log.warning("Plugin Metrics submission failed.");
-			}
-		}
-
 		webapp = new WebApplication(this, config, log, sql);
 		webapp.loadOnlineUserIDsFromDatabase();
 		getServer().getPluginManager().registerEvents(new PlayerListener(log, config, webapp), this);
@@ -150,7 +137,7 @@ public final class CommunityBridge extends JavaPlugin
 				config.disableFeaturesDependentOnPermissions();
 			}
 		}
-
+		
 		if (config.statisticsEnabled && config.walletEnabled)
 		{
 	    if (getServer().getPluginManager().getPlugin("Vault") == null)
@@ -177,6 +164,8 @@ public final class CommunityBridge extends JavaPlugin
 				}
 			}
 		}
+
+		activateMetrics();
 
 		if (config.linkingAutoRemind)
 		{
@@ -427,5 +416,90 @@ public final class CommunityBridge extends JavaPlugin
 		}
 
 		return true;
+	}
+
+	private void activateMetrics()
+	{
+		if (config.usePluginMetrics)
+		{
+			try
+			{
+				metrics = new Metrics(this);
+				Graph permsGraph = metrics.createGraph("Permissions Plugin Used");
+				
+				if (permissionHandler == null)
+				{
+					permsGraph.addPlotter(new Metrics.Plotter("None")
+					{
+						@Override
+						public int getValue()
+						{
+							return 1;
+						}
+					});
+				}
+				else if (config.permissionsSystem.equalsIgnoreCase("bPerms"))
+				{
+					permsGraph.addPlotter(new Metrics.Plotter("bPermissions")
+					{
+						@Override
+						public int getValue()
+						{
+							return 1;
+						}
+					});
+				}
+				else if (config.permissionsSystem.equalsIgnoreCase("GroupManager"))
+				{
+					permsGraph.addPlotter(new Metrics.Plotter("GroupManager")
+					{
+						@Override
+						public int getValue()
+						{
+							return 1;
+						}
+					});
+				}
+				else if (config.permissionsSystem.equalsIgnoreCase("PermsBukkit"))
+				{
+					permsGraph.addPlotter(new Metrics.Plotter("PermissionsBukkit")
+					{
+						@Override
+						public int getValue()
+						{
+							return 1;
+						}
+					});
+				}
+				else if (config.permissionsSystem.equalsIgnoreCase("PEX"))
+				{
+					permsGraph.addPlotter(new Metrics.Plotter("PermissionsEx")
+					{
+						@Override
+						public int getValue()
+						{
+							return 1;
+						}
+					});
+				}
+				else if (config.permissionsSystem.equalsIgnoreCase("Vault"))
+				{
+					permsGraph.addPlotter(new Metrics.Plotter("Vault")
+					{
+						@Override
+						public int getValue()
+						{
+							return 1;
+						}
+					});
+				}
+				metrics.start();
+				log.fine("Plugin Metrics activated.");
+			}
+			catch (IOException e)
+			{
+				log.warning("Plugin Metrics activation failed.");
+			}
+		}
 	}
 }
