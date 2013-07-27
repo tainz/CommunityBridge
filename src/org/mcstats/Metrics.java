@@ -304,6 +304,15 @@ public class Metrics {
             }
         }
     }
+		
+		public void cancelTask()
+		{
+			if (task != null)
+			{
+				task.cancel();
+				task = null;
+			}
+		}
 
     /**
      * Gets the File object of the config file that should be used to store data such as the GUID and opt-out status

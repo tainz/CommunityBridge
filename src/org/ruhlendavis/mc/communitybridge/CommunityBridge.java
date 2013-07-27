@@ -222,14 +222,7 @@ public final class CommunityBridge extends JavaPlugin
 
 		if (metrics != null)
 		{
-			try
-			{
-				metrics.disable();
-			}
-			catch (IOException exception)
-			{
-				log.severe("Exception when disabling metrics: " + exception.getMessage());
-			}
+			metrics.cancelTask();
 			metrics = null;
 		}
 
