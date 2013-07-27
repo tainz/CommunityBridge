@@ -395,6 +395,7 @@ public final class CommunityBridge extends JavaPlugin
 
 		if (sql.checkConnection() == false)
 		{
+			log.severe("Disabling CommunityBridge due to previous error.");
 			return false;
 		}
 
