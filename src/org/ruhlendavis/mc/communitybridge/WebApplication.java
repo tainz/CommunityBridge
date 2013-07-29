@@ -657,6 +657,13 @@ public class WebApplication
 		String playerName = player.getName();
 		String direction = config.simpleSynchronizationDirection;
 		String userID = getUserID(playerName);
+
+		// This can happen if the player disconnects after synchronization has
+		// already begun.
+		if (userID == null)
+		{
+			return;
+		}
 		
 		if (userID.equalsIgnoreCase(config.simpleSynchronizationSuperUserID))
 		{
