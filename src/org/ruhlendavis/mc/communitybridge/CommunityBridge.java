@@ -366,7 +366,7 @@ public final class CommunityBridge extends JavaPlugin
 	 */
   private void remindUnregisteredPlayers()
   {
-    log.fine("Running Auto UnRegistered Auto Reminder");
+    log.fine("Running unRegistered auto reminder");
 
     for (Player player : Bukkit.getOnlinePlayers())
     {
