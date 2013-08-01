@@ -1,34 +1,34 @@
-#                             Player Linking Messages
-# -----------------------------------------------------------------------------
-link-registered-player: Registered Account, Linked to Forums.
-link-registered-player-group: Registered Account, Linked to Forums. You have been placed in the ~GROUPNAME~ group.
-link-unregistered-player: Unregistered Account - Please register at ~APPURL~ for full access.
-link-unregistered-reminder: Just a reminder to visit ~APPURL~ and register today!
+en:
+  #                             Player Linking Messages
+  # -----------------------------------------------------------------------------
+  link-registered-player: Registered Account, Linked to Forums.
+  link-registered-player-group: Registered Account, Linked to Forums. You have been placed in the ~GROUPNAME~ group.
+  link-unregistered-player: Unregistered Account - Please register at ~APPURL~ for full access.
+  link-unregistered-reminder: Just a reminder to visit ~APPURL~ and register today!
+  link-notify-player-group-change: 'You have been placed in the ~GROUPNAME~ group.'
 
-#                            Group Synchronization Messages
-# -----------------------------------------------------------------------------
-group-synchronization-primary-notify-player: Your primary group has been set to the group ~GROUPNAME~.
-group-synchronization-multiple-notify-player: 'You have been placed in the following groups: ~GROUPNAMES~.'
+  #                            Group Synchronization Messages
+  # -----------------------------------------------------------------------------
+  group-synchronization-primary-notify-player: Your primary group has been set to the group ~GROUPNAME~.
+  group-synchronization-multiple-notify-player: 'You have been placed in the following groups: ~GROUPNAMES~.'
 
-#                             Command Interaction Messages
-# -----------------------------------------------------------------------------
-communitybridge-inactive: 'CommunityBridge is NOT active. Only the cbreload command is available.'
+  #                             Command Interaction Messages
+  # -----------------------------------------------------------------------------
+  communitybridge-inactive: 'CommunityBridge is NOT active. Only the cbreload command is available.'
 
-# - cbreload
-cbreload: 'Reloading CommunityBridge configuration...'
-cbreload-success: 'Reload succeeded. Loaded from: ~FILENAME~'
-cbreload-too-many-arguments: 'Too many arguments. Usage: /cbreload [filename]'
+  # - cbreload
+  cbreload: 'Reloading CommunityBridge configuration...'
+  cbreload-success: 'Reload succeeded. Loaded from: ~FILENAME~'
+  cbreload-too-many-arguments: 'Too many arguments. Usage: /cbreload [filename]'
 
-# cbsync
-cbsync: 'Your groups and/or statistics will be synchronized shortly.'
-cbsync-ingame: "You can only use 'cbsync' when connected as a player. You can use 'cbsyncall' to force a synchronization for all connected players."
+  # cbsync
+  cbsync: 'Your groups and/or statistics will be synchronized shortly.'
+  cbsync-ingame: "You can only use 'cbsync' when connected as a player. You can use 'cbsyncall' to force a synchronization for all connected players."
 
-# cbsyncall
-cbsyncall: 'Groups and/or statistics will be synchronized for all connected players.'
+  # cbsyncall
+  cbsyncall: 'Groups and/or statistics will be synchronized for all connected players.'
 
-link-notify-player-group-change: 'You have been placed in the ~GROUPNAME~ group.'
-
-#                            Profile Requirements Messages
-# -----------------------------------------------------------------------------
-require-avatar-message: 'This server requires players to upload an avatar to their profile.'
-require-minimum-posts-message: 'This server requires players to have a minimum of ~MINIMUMPOSTCOUNT~ forum posts.'
+  #                            Profile Requirements Messages
+  # -----------------------------------------------------------------------------
+  require-avatar-message: 'This server requires players to upload an avatar to their profile.'
+  require-minimum-posts-message: 'This server requires players to have a minimum of ~MINIMUMPOSTCOUNT~ forum posts.'

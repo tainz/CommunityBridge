@@ -9,7 +9,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import net.netmanagers.api.SQL;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.ruhlendavis.mc.utility.Log;
@@ -855,9 +857,32 @@ public class Configuration
 
 		messagesConfig = YamlConfiguration.loadConfiguration(messagesFile);
 
-		// Read the key-value pairs from the configuration
-		values = messagesConfig.getValues(false);
+		Set<String> rootSet = messagesConfig.getKeys(false);
+		
+		if (rootSet.isEmpty())
+		{
+			log.severe("The messages.yml file is empty. Replace with a valid file and reload.");
+			return;
+		}
+		else if (rootSet.size() > 1)
+		{
+			log.warning("Multiple top level keys in messages.yml. Assuming the first top level key is the correct one.");
+		}
 
+		String language = rootSet.iterator().next();
+		log.info("Detected language identifier: " + language);
+		
+		ConfigurationSection configSection = messagesConfig.getConfigurationSection(language);
+		
+		// Read the key-value pairs from the configuration
+		values = configSection.getValues(false);
+		
+		if (values.isEmpty())
+		{
+			log.severe("Language identifier found but no message keys found. Replace with a valid file and reload.");
+			return;
+		}
+		
 		messages.clear();
 		// Store them in our own HashMap.
 		for (Map.Entry<String, Object> entry : values.entrySet())
