@@ -895,8 +895,15 @@ public class Configuration
 		}
 	}
 
+	/**
+	 * Reloads the configuration either from config.yml or specified file.
+	 * 
+	 * @param filename File to load from, will default to config.yml if null/empty.
+	 * @return On error, the error message. Otherwise will be null.
+	 */
 	public String reload(String filename)
 	{
+		loadMessages();
 		if (filename == null || filename.isEmpty() || filename.equals("config.yml"))
 		{
 			plugin.deactivate();
