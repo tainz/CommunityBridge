@@ -1,9 +1,9 @@
 en:
   #                             Player Linking Messages
   # -----------------------------------------------------------------------------
-  link-registered-player: Registered Account, Linked to Forums.
-  link-registered-player-group: Registered Account, Linked to Forums. You have been placed in the ~GROUPNAME~ group.
-  link-unregistered-player: Unregistered Account - Please register at ~APPURL~ for full access.
+  link-registered-player: Registered account, linked to forums.
+  link-registered-player-group: Registered account, linked to forums. You have been placed in the ~GROUPNAME~ group.
+  link-unregistered-player: Unregistered account - Please register at ~APPURL~ for full access.
   link-unregistered-reminder: Just a reminder to visit ~APPURL~ and register today!
   link-notify-player-group-change: 'You have been placed in the ~GROUPNAME~ group.'
 
