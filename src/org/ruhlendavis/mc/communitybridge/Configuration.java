@@ -25,6 +25,9 @@ public class Configuration
 {
 	private CommunityBridge plugin;
 	private Log log;
+
+	// Internationalization
+	public String locale;
 	public Map<String, String> messages = new HashMap<String, String>();
 
 	// General Section
@@ -869,10 +872,10 @@ public class Configuration
 			log.warning("Multiple top level keys in messages.yml. Assuming the first top level key is the correct one.");
 		}
 
-		String language = rootSet.iterator().next();
-		log.info("Detected language identifier: " + language);
+		locale = rootSet.iterator().next();
+		log.info("Detected locale: " + locale);
 		
-		ConfigurationSection configSection = messagesConfig.getConfigurationSection(language);
+		ConfigurationSection configSection = messagesConfig.getConfigurationSection(locale);
 		
 		// Read the key-value pairs from the configuration
 		values = configSection.getValues(false);
