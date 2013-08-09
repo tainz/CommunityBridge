@@ -625,7 +625,7 @@ public class WebApplication
 			if (config.webappPrimaryGroupUsesKey)
 			{
 				String query = "UPDATE `" + config.webappPrimaryGroupTable + "` "
-								     + "SET `" + config.webappPrimaryGroupGroupIDColumn + "` = '" + groupID + "' "
+										 + "SET `" + config.webappPrimaryGroupGroupIDColumn + "` = '" + groupID + "' "
 										 + "WHERE `" + config.webappPrimaryGroupKeyColumn + "` = '" + config.webappPrimaryGroupKeyName + "' "
 										 + "AND `" + config.webappPrimaryGroupUserIDColumn + "` = '" + userID + "'";
 				sql.updateQuery(query);
@@ -930,7 +930,7 @@ public class WebApplication
 					groupIDs = StringUtilities.joinStrings(groupIDsAsList, config.webappSecondaryGroupGroupIDDelimiter);
 					query = "UPDATE `" + config.webappSecondaryGroupTable + "` "
 								+ "SET `" + config.webappSecondaryGroupGroupIDColumn + "` = '" + groupIDs + "' "
-							  + "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + userID + "'";
+								+ "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + userID + "'";
 					sql.updateQuery(query);
 				}
 			}
@@ -940,7 +940,7 @@ public class WebApplication
 				String query = "SELECT `" + config.webappSecondaryGroupGroupIDColumn + "` "
 										 + "FROM `" + config.webappSecondaryGroupTable + "` "
 										 + "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' "
-								     + "AND `" + config.webappSecondaryGroupKeyColumn + "` = '" + config.webappSecondaryGroupKeyName + "' ";
+										 + "AND `" + config.webappSecondaryGroupKeyColumn + "` = '" + config.webappSecondaryGroupKeyName + "' ";
 				ResultSet result = sql.sqlQuery(query);
 
 				if (result.next())
@@ -959,14 +959,14 @@ public class WebApplication
 			else if (config.webappSecondaryGroupStorageMethod.startsWith("jun"))
 			{
 				String query = "DELETE FROM `" + config.webappSecondaryGroupTable + "` "
-									   + "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' "
+										 + "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' "
 										 + "AND `" + config.webappSecondaryGroupGroupIDColumn + "` = '" + groupID + "' ";
 				sql.deleteQuery(query);
 			}
 			else if (config.webappSecondaryGroupStorageMethod.startsWith("mul"))
 			{
 				String query = "DELETE FROM `" + config.webappSecondaryGroupTable + "` "
-									   + "WHERE `" + config.webappSecondaryGroupKeyColumn + "` = '" + config.webappSecondaryGroupKeyName + "' "
+										 + "WHERE `" + config.webappSecondaryGroupKeyColumn + "` = '" + config.webappSecondaryGroupKeyName + "' "
 										 + "AND `" + config.webappSecondaryGroupGroupIDColumn + "` = '" + groupID + "' ";
 				sql.deleteQuery(query);
 			}
@@ -1205,9 +1205,9 @@ public class WebApplication
 		List<String> foundFields = new ArrayList<String>();
 		String errorBase = "Error during updateStatisticsKeyStyle(): ";
 		String insertQuery = "INSERT INTO `" + config.statisticsTableName + "` ("
-						           + config.statisticsUserIDColumn + ", "
-						           + config.statisticsThemeIDColumn + ", "
-						           + config.statisticsKeyColumn + ", "
+											 + config.statisticsUserIDColumn + ", "
+											 + (config.statisticsInsertMethod.startsWith("smf") ? config.statisticsThemeIDColumn + ", " : "")
+											 + config.statisticsKeyColumn + ", "
 											 + config.statisticsValueColumn + ") VALUES ";
 		String updateQuery = "UPDATE `" + config.statisticsTableName + "` "
 											 + "SET " + "`" + config.statisticsValueColumn
@@ -1219,7 +1219,8 @@ public class WebApplication
 				String selectQuery = "SELECT `" + config.statisticsKeyColumn + "` "
 													 + " FROM `" + config.statisticsTableName + "` "
 													 + " WHERE `" + config.statisticsUserIDColumn + "` = '" + userID + "'"
-													 + " AND `" + config.statisticsThemeIDColumn + "` = '" + config.statisticsThemeID + "'";
+													 + (config.statisticsInsertMethod.startsWith("smf") ? " AND `" + config.statisticsThemeIDColumn + "` = '" + config.statisticsThemeID + "'" : "");
+
 				ResultSet result = sql.sqlQuery(selectQuery);
 				while (result.next())
 				{
@@ -1300,10 +1301,10 @@ public class WebApplication
 			if (fieldTuple.updateFields.size() > 0)
 			{
 				updateQuery = updateQuery + StringUtilities.joinStrings(fieldTuple.updateFields, " ")
-									  + " END"
+										+ " END"
 										+ " WHERE `" + config.statisticsUserIDColumn + "` = '" + userID + "'"
 										+ " AND `" + config.statisticsKeyColumn + "`"
-								    + " IN (" + StringUtilities.joinStrings(fieldTuple.inFields, ", ") + ");";
+										+ " IN (" + StringUtilities.joinStrings(fieldTuple.inFields, ", ") + ");";
 				
 				sql.updateQuery(updateQuery);
 			}
@@ -1344,17 +1345,21 @@ public class WebApplication
 		/**
 		 * Adds field data to the appropriate list depending on whether it needs inserted or updated.
 		 * 
-		 * @param foundFields
-		 * @param insertFields
 		 * @param userID
 		 * @param data
-		 * @param updateFields 
 		 */
 		private void add(String userID, String key, String data)
 		{
 			if (config.statisticsUsesInsert && !foundFields.contains(key))
 			{
-				insertFields.add("('" + userID + "', '" + config.statisticsThemeID + "', '" + key + "', '" + data + "')");
+				if (config.statisticsInsertMethod.startsWith("gen"))
+				{
+					insertFields.add("('" + userID + "', '" + key + "', '" + data + "')");
+				}
+				else if (config.statisticsInsertMethod.startsWith("smf"))
+				{
+					insertFields.add("('" + userID + "', '" + config.statisticsThemeID + "', '" + key + "', '" + data + "')");
+				}
 			}
 			else
 			{

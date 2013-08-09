@@ -120,7 +120,7 @@ player-user-linking:
   # * they have no assigned groups
   # then set this to true.
   registered-former-unregistered-only: true
-  
+
   # This is where we specify how to associate a Minecraft player with a web
   # application user. We do this by matching up the player name with a name
   # stored in the web application's database.
@@ -204,14 +204,15 @@ statistics:
   # uses-key is false.
   key-column:
   value-column:
-    
+
   # Some web applications require an insert the first time a custom profile
   # field is filled with data (SMF, for example). If that's the case, enable
   # this and provide the required information.
   insert:
     enabled: false
-    method: smf
-    
+    # Options are: generic and smf.
+    method: generic
+
     # Required for the 'smf' method. Most likely id_theme.
     theme-id-column: id_theme
 
@@ -422,7 +423,7 @@ simple-synchronization:
   # the colon put a web application's group ID. On the right side of the colon
   # put the corresponding permissions group name. Only list group IDs and
   # group names you wish to be synchronized.
-  
+
   # NOTE: GroupManager will not create groups on the fly. So any groups you
   #       specify here must already exist. That is, you need to have used
   #       mangadd <groupname>.

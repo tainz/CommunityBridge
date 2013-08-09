@@ -36,8 +36,8 @@ public class Configuration
 
 	public String permissionsSystem;
 
-  public String autoEveryUnit;
-  public boolean autoSync;
+	public String autoEveryUnit;
+	public boolean autoSync;
 	public long autoSyncEvery;
 
 	public String applicationURL;
@@ -50,7 +50,7 @@ public class Configuration
 	public String databasePassword;
 
 	// Linking Section
-  public boolean linkingAutoRemind;
+	public boolean linkingAutoRemind;
 	public long linkingAutoEvery;
 	public boolean linkingNotifyRegistered;
 	public boolean linkingNotifyUnregistered;
@@ -114,8 +114,8 @@ public class Configuration
 	public String totalxpColumnOrKey;
 
 	public boolean currentxpEnabled;
-  public String currentxpColumnOrKey;
-  public String currentxpFormattedColumnOrKey;
+	public String currentxpColumnOrKey;
+	public String currentxpFormattedColumnOrKey;
 
 	public boolean lifeticksEnabled;
 	public String lifeticksColumnOrKey;
@@ -125,7 +125,7 @@ public class Configuration
 	public String healthColumnOrKey;
 
 	public boolean walletEnabled;
-  public String walletColumnOrKey;
+	public String walletColumnOrKey;
 
 	// Web App group configuration
 	// - primary
@@ -240,7 +240,7 @@ public class Configuration
 			{
 				status = status & checkColumn(sql, "statistics.user-id-column", statisticsTableName, statisticsUserIDColumn);
 				
-				if (statisticsUsesInsert)
+				if (statisticsUsesInsert && statisticsInsertMethod.startsWith("smf"))
 				{
 					status = status & checkColumn(sql, "statistics.theme-id-column", statisticsTableName, statisticsThemeIDColumn);
 					checkKeyColumnForKey(sql, "statistics.theme-id", statisticsTableName, statisticsThemeIDColumn, statisticsThemeID);
@@ -410,7 +410,7 @@ public class Configuration
 		{
 			temp = checkTable(sql, "app-group-config.primary.table-name", webappPrimaryGroupTable);
 			temp = temp & checkColumn(sql, "app-group-config.primary.user-id-column", webappPrimaryGroupTable, webappPrimaryGroupUserIDColumn);
-      temp = temp & checkColumn(sql, "app-group-config.primary.group-id-column", webappPrimaryGroupTable, webappPrimaryGroupGroupIDColumn);
+			temp = temp & checkColumn(sql, "app-group-config.primary.group-id-column", webappPrimaryGroupTable, webappPrimaryGroupGroupIDColumn);
 			if (webappPrimaryGroupUsesKey)
 			{
 				temp = temp & checkColumn(sql, "app-group-config.primary.key-column", webappPrimaryGroupTable, webappPrimaryGroupKeyColumn);
@@ -430,7 +430,7 @@ public class Configuration
 		{
 			temp = checkTable(sql, "app-group-config.secondary.table-name", webappSecondaryGroupTable);
 			temp = temp & checkColumn(sql, "app-group-config.secondary.user-id-column", webappSecondaryGroupTable, webappSecondaryGroupUserIDColumn);
-      temp = temp & checkColumn(sql, "app-group-config.secondary.group-id-column", webappSecondaryGroupTable, webappSecondaryGroupGroupIDColumn);
+			temp = temp & checkColumn(sql, "app-group-config.secondary.group-id-column", webappSecondaryGroupTable, webappSecondaryGroupGroupIDColumn);
 			if (webappSecondaryGroupStorageMethod.startsWith("mul") || webappSecondaryGroupStorageMethod.startsWith("key"))
 			{
 				temp = temp & checkColumn(sql, "app-group-config.secondary.key-column", webappSecondaryGroupTable, webappSecondaryGroupKeyColumn);
@@ -500,18 +500,17 @@ public class Configuration
 	 * @param String containing the name of the column.
 	 * @return boolean True if the column exists on the table.
 	 */
-	private boolean checkColumn(SQL sql, String keyName,
-														 String tableName, String columnName)
+	private boolean checkColumn(SQL sql, String keyName, String tableName, String columnName)
 	{
 		ResultSet result;
 		String errorBase;
 		errorBase = "Error while checking '" + keyName
-						  + "' set to '" + columnName + "': ";
+							+ "' set to '" + columnName + "': ";
 
 		try
 		{
 			result = sql.sqlQuery("SHOW COLUMNS FROM `" + tableName
-							              + "` LIKE '" + columnName + "'");
+														+ "` LIKE '" + columnName + "'");
 
 			if (result != null)
 			{
@@ -545,13 +544,11 @@ public class Configuration
 		}
 	}
 
-	private void checkKeyColumnForKey(SQL sql, String yamlKeyName,
-																		String tableName,	String keyColumn,
-																		String keyName)
+	private void checkKeyColumnForKey(SQL sql, String yamlKeyName, String tableName,	String keyColumn,	String keyName)
 	{
 		String errorBase = "Error while checking " + yamlKeyName + ": ";
 		String query = "SELECT COUNT(*) FROM `" + tableName + "` "
-						     + "WHERE `" + keyColumn + "` = '" + keyName + "'";
+								 + "WHERE `" + keyColumn + "` = '" + keyName + "'";
 
 		try
 		{
@@ -602,7 +599,7 @@ public class Configuration
 		ResultSet result;
 		String errorBase;
 		errorBase = "Error while checking '" + keyName
-						  + "' set to '" + tableName + "': ";
+							+ "' set to '" + tableName + "': ";
 
 		try
 		{
@@ -654,7 +651,7 @@ public class Configuration
 				return entry.getKey();
 			}
 		}
-    return null;
+		return null;
 	}
 
 	/**
@@ -696,7 +693,7 @@ public class Configuration
 		databasePort = config.getString("database.port", "");
 		databaseName = config.getString("database.name", "");
 		databaseUsername = config.getString("database.username", "");
-    databasePassword = config.getString("database.password", "");
+		databasePassword = config.getString("database.password", "");
 
 		// Linking Section
 		linkingKickUnregistered = config.getBoolean("player-user-linking.kick-unregistered", false);
@@ -754,7 +751,13 @@ public class Configuration
 		
 		if (statisticsUsesInsert)
 		{
-			statisticsInsertMethod = config.getString("statistics.insert.method", "smf");
+			statisticsInsertMethod = config.getString("statistics.insert.method", "generic").toLowerCase();
+			if (!statisticsInsertMethod.startsWith("gen") && !statisticsInsertMethod.startsWith("smf"))
+			{
+				log.severe("Invalid statistics insert before method: " + statisticsInsertMethod);
+				log.severe("Disabling statistics until the problem is corrected.");
+				statisticsEnabled = false;
+			}
 			statisticsThemeIDColumn = config.getString("statistics.insert.theme-id-column", "id_theme");
 			statisticsThemeID = config.getString("statistics.insert.theme-id", "1");
 		}
