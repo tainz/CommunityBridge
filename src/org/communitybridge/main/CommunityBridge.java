@@ -1,9 +1,8 @@
-package org.ruhlendavis.mc.communitybridge;
+package org.communitybridge.main;
 
 import java.io.IOException;
 import java.util.logging.Level;
 import net.milkbowl.vault.economy.Economy;
-import net.netmanagers.api.SQL;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -12,7 +11,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
 import org.mcstats.Metrics.Graph;
-import org.ruhlendavis.mc.utility.Log;
+import org.communitybridge.utility.Log;
 
 /**
  * Main plugin class

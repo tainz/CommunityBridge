@@ -1,4 +1,4 @@
-package org.ruhlendavis.mc.utility;
+package org.communitybridge.utility;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

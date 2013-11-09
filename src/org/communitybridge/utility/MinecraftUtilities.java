@@ -1,4 +1,4 @@
-package org.ruhlendavis.mc.utility;
+package org.communitybridge.utility;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;

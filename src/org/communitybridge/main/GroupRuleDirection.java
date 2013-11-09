@@ -1,4 +1,4 @@
-package org.ruhlendavis.mc.communitybridge;
+package org.communitybridge.main;
 
 /**
  * Enumeration for possible group synchronization directions

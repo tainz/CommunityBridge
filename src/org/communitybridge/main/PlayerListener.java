@@ -1,4 +1,4 @@
-package org.ruhlendavis.mc.communitybridge;
+package org.communitybridge.main;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -7,7 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.ruhlendavis.mc.utility.Log;
+import org.communitybridge.utility.Log;
 
 public class PlayerListener implements Listener
 {

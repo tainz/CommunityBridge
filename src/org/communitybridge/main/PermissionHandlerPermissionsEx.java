@@ -1,9 +1,9 @@
-package org.ruhlendavis.mc.communitybridge;
+package org.communitybridge.main;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
-import org.ruhlendavis.mc.utility.MinecraftUtilities;
-import org.ruhlendavis.utility.StringUtilities;
+import org.communitybridge.utility.MinecraftUtilities;
+import org.communitybridge.utility.StringUtilities;
 import ru.tehkode.permissions.PermissionGroup;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;

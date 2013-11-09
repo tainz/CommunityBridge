@@ -1,4 +1,4 @@
-package org.ruhlendavis.mc.communitybridge;
+package org.communitybridge.main;
 
 import de.bananaco.bpermissions.api.ApiLayer;
 import de.bananaco.bpermissions.api.util.CalculableType;

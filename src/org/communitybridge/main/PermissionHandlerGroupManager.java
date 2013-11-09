@@ -1,4 +1,4 @@
-package org.ruhlendavis.mc.communitybridge;
+package org.communitybridge.main;
 
 import org.anjocaido.groupmanager.GroupManager;
 import org.anjocaido.groupmanager.data.Group;

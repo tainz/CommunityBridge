@@ -1,4 +1,4 @@
-package org.ruhlendavis.mc.communitybridge;
+package org.communitybridge.main;
 
 /**
  *  Defines a common interface for accessing permission systems information.

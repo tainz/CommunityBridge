@@ -1,4 +1,4 @@
-package org.ruhlendavis.mc.communitybridge;
+package org.communitybridge.main;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -10,11 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import net.netmanagers.api.SQL;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.ruhlendavis.mc.utility.Log;
+import org.communitybridge.utility.Log;
 
 /**
  * Class for storing configuration information loaded from the yaml files.

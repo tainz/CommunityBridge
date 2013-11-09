@@ -1,4 +1,4 @@
-package org.ruhlendavis.utility;
+package org.communitybridge.utility;
 
 import java.util.List;
 

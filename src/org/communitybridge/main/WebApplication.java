@@ -1,4 +1,4 @@
-package org.ruhlendavis.mc.communitybridge;
+package org.communitybridge.main;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,12 +13,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import net.netmanagers.api.SQL;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.ruhlendavis.mc.utility.Log;
-import org.ruhlendavis.utility.StringUtilities;
+import org.communitybridge.utility.Log;
+import org.communitybridge.utility.StringUtilities;
 
 /**
  * Class representing the interface to the web application.

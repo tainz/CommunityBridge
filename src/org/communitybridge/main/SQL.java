@@ -1,9 +1,10 @@
-package net.netmanagers.api;
+package org.communitybridge.main;
 
+import org.communitybridge.main.DatabaseHandler;
 import java.net.MalformedURLException;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import org.ruhlendavis.mc.communitybridge.CommunityBridge;
+import org.communitybridge.main.CommunityBridge;
 
 public class SQL
 {
