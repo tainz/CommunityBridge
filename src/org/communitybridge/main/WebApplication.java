@@ -1252,7 +1252,7 @@ public class WebApplication
 			}
 			else
 			{
-				CommunityBridge.permissionHandler.addToGroup(playerName, newGroupName);
+				CommunityBridge.permissionHandler.switchGroup(playerName, formerGroupName, newGroupName);
 				log.fine("Added pseudo-primary group '" + newGroupName + "' to player '" + playerName + "' list of permissions groups.");							
 			}
 		}
