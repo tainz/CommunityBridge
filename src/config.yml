@@ -1,370 +1,438 @@
-#
-# Community Bridge Configuration File
-#
+#                  Community Bridge Configuration File
+# -----------------------------------------------------------------------------
 
-# Log level controls the degree of detail that is sent to the console/log
-# The possible settings are (in order of quietest to noisiest:
-#   info, config, fine, finer, finest, all
-# - During configuration, I recommend using 'config'.
-# - During normal operation, I recommend using 'info'.
-# - If you want to see the notifications that the synchronize and reminder
-#   notices have been sent, use 'fine'
-# - During troubleshooting of problems, set this to either finest or all.
-log-level: config
+#                             General Settings
+# -----------------------------------------------------------------------------
+general:
+  # Log level controls the degree of detail that is sent to the console/log
+  # The possible settings are (in order of quietest to noisiest:
+  #   info, config, fine, finer, finest, all
+  # - During configuration, I recommend using 'config'.
+  # - During normal operation, I recommend using 'info'.
+  # - If you want to see the notifications that the synchronize and reminder
+  #   notices have been sent, use 'fine'
+  # - During troubleshooting of problems, set this to either finest or all.
+  log-level: config
 
-# Allow plugin metrics to start up for this plugin.
-# Disable for all plugins by editing the plugins/PluginMetrics/config.yml file.
-# They can be viewed at: http://mcstats.org
-plugin-metrics: true
+  # Allow plugin metrics to start up for this plugin. Please turn on
+  # metrics! It helps plugin authors determine what features to include!
+  # For more details see:
+  # http://dev.bukkit.org/bukkit-plugins/communitybridge-fm/pages/why-plugin-metrics/
+  # Enable/Disable for all plugins by editing plugins/PluginMetrics/config.yml
+  # and setting 'opt-out' to false.
+  plugin-metrics: true
 
-# The permissions system (PEX, bPerms, GroupManager, PermsBukkit)
-permissions-system: PEX
+  # Set the unit of measurement for sync and reminder scheduling. Options are:
+  # ticks, seconds, minutes, hours, or days. Note that this applies to both
+  # auto-sync-every and auto-remind-every.
+  auto-every-unit: minutes
 
-# Please ensure if you run your minecraft server on a remote host
-# that your MySQL server allows REMOTE connections.
-#
-# Hostname for your MySQL Server
-db-host: localhost
+  # This is a timer that will check and sync all data with your database at a
+  # set interval. Otherwise group and player statistics will only be
+  # synchronized when the player joins and leaves the Minecraft server.
+  auto-sync: true
 
-# MySQL Port
-db-port: 3306
+  # The interval for the auto-sync timer, this should not be set any lower than
+  # 20 minutes.
+  auto-sync-every: 20
 
-# Database Name
-db-database: databasename
+  # The permissions system you're using. A permissions system is required for
+  # the following features:
+  # * Group Synchronization (both primary and secondary)
+  # * Unregistered/Registered group assignment (sub-features of 'linking')
+  # Current Options are: bPerms, GroupManager, PermsBukkit, PEX, Vault.
+  # NOTE: GroupManager will not create groups on the fly. So any groups you
+  #       specify in the linking or synchronization sections must already
+  #       exist. That is, you need to have used mangadd <groupname>)
+  #       Also, GroupManager announces primary group changes with no option
+  #       to override this behavior.
+  permissions-system:
 
-# Database Username
-db-username: username
+  # If ~APPURL~ appears in a message in messages.yml, it will be replaced with
+  # this:
+  application-url:
 
-# Database Password
-db-password: password
+#                             Database Settings
+# -----------------------------------------------------------------------------
+# Please ensure if you run your Minecraft server on a remote host
+# that your MySQL server allows REMOTE connections. This WILL NOT WORK unless
+# your MySQL server is configured to allow connections from the machine that
+# your Minecraft server is running on. If you don't know what that means,
+# consult your hosting provider on how to configure your MySQL server correctly.
+# All of this information should be the same server and database used by your
+# web-application...
+database:
+  # Hostname for your MySQL Server
+  hostname: localhost
 
-# If set to true it will show a message to the user that they have been placed
-# into a group
-show-primary-group: true
+  # MySQL Port
+  port: 3306
 
-# This message is displayed when show-primary-group is false to registered users
-registered-message: Registered Account, Linked to Server Forums
+  # Database Name
+  name: databasename
 
-# This is shown to users when they connect that arn't registered
-unregistered-message: Unregistered Account - Please Register at YOURFORUMURL for full access
+  # Database Username
+  username: username
 
-# This is shown when auto-sync runs to remind a user to register
-unregistered-messagereminder: Just a reminder to visit YOURFORUMURL and register today!
+  # Database Password
+  password: password
 
-# When true this will not allow un-registered players onto the server, and show
-# the unregistered-message in the form of a kick
-kick-unregistered: false
+#                             Player Linking Settings
+# -----------------------------------------------------------------------------
+# Settings associated with linking a Minecraft player with a web application's
+# user. As this feature is a prerequisite for all other features, it cannot
+# be disabled.
+player-user-linking:
+  # If you want the player disconnected from the game if they haven't
+  # registered, then set this to true. They will be shown the
+  # link-unregistered-player message (in message.yml) on the disconnected
+  # screen.
+  kick-unregistered: false
 
-# Multi-Tables are when you have all your tracking/minecraft usernames in a
-# different table to the users table
-multi-tables: false
+  # This is a timer that will notify unregistered users to register every few
+  # minutes.
+  auto-remind: true
 
-# Forums like XenForo use a table that has rows for each custom field as opposed
-# to columns for each custom field
-multi-tables-use-key: false
+  # The interval for the auto-remind timer, this should be no less than
+  # 5-10 minutes. Note that this uses the units specified above in
+  # auto-every-unit.
+  auto-remind-every: 10
 
-# If set to true it will not allow banned players from your website to connect
-use-banned-field: false
+  # Set these to true to inform players when they log in if they're linked to
+  # the web application. These correspond to the link-unregistered-player and
+  # link-registered-player messages in messages.yml.
+  notify-registered-player: true
+  notify-unregistered-player: true
 
-# Ban List in Seperate Table (Such as PHPBB) If you include a value for reason
-# then it will display that when booting the player
-banlist-table:
+  # If you have a permissions system and you want the player to be placed
+  # in a group based on (un)registered status, set the following.
+  # If left blank the setting won't be used. If a group-synchronization
+  # feature is turned on, the 'registered-player-group' won't be used.
+  # NOTE: GroupManager will not create groups on the fly. So the groups you
+  #       specify here must already exist. That is, you need to have used
+  #       mangadd <groupname>)
+  unregistered-player-group:
+  registered-player-group:
+  notify-player-of-group: true
+
+  # If you want a player to be added to the 'registered-player-group' ONLY if:
+  # * they are a member of the unregistered-player-group OR
+  # * they have no assigned groups
+  # then set this to true.
+  registered-former-unregistered-only: true
+
+  # This is where we specify how to associate a Minecraft player with a web
+  # application user. We do this by matching up the player name with a name
+  # stored in the web application's database.
+  #
+  # If you want your players to use the same name on both the server and the
+  # web application, then you will need to provide the table and column
+  # information where the web application relates its user IDs with the user's
+  # name/login ID/login/username.
+  #
+  # If you want to allow them to use a different name on the web application,
+  # you need to add a custom field or column to your web application's database,
+  # and provide that table and column information here.
+
+  # The name of the table which contains the columns:
+  table-name:
+
+  # Column on the table that contains the user ID. Typically something like
+  # user_id or member_id
+  user-id-column:
+
+  # If the player name is stored in a key-value pair of columns instead of
+  # its own column, set this to true:
+  uses-key: false
+
+  # If you set 'linking-uses-key' to false, then set this to the column that
+  # the playername is stored in. Otherwise, leave it empty.
+  playername-column:
+
+  # If you set 'linking-uses-key' to true, then set the key column, value
+  # column, and the key-name here. Otherwise, leave these fields empty.
+  key-name:
+  key-column:
+  value-column:
+
+#                             Requirements
+# -----------------------------------------------------------------------------
+# Control access to the game on the basis of various settings.
+requirement:
+  avatar:
+    # With this enabled, players that do not have an avatar will be kicked.
     enabled: false
-    table: phpbb_banlist
-    user-id-field: ban_userid
-    reason-field: ban_reason
-
-# Eventually, all settings related to group synchronization will reside here.
-group-synchronization:
-  primary-group:
-    enabled: true
-    # If a user's group ID on the web application side is on this list, it
-    # won't be synchronized. Example: ['1','2','3','115']. [] is an empty list.
-    group-ids-to-ignore: []
-
-    # If a player's group name is on this list the web application group won't
-    # be synchronized over it. (NOT YET IMPLEMENTED)
-    group-names-to-ignore: []
-
-# Groups in Separate Table (Such as PHPBB)
-groups-table:
+    # Table that contains the avatar column
+    table-name:
+    # Column on the avatar table that contains the user ID.
+    user-id-column:
+    # Column on the avatar table that contains the avatar information. If this
+    # column contains data, the user is assumed by CommunityBridge to have an
+    # avatar.
+    avatar-column:
+  minimum-posts:
+    # With this enabled, players that do not have the minimum number of posts
+    # will be kicked.
     enabled: false
-    table: phpbb_users_groups
-    user-id-field: ban_userid
-    group-id-field: ban_reason
+    # Table that contains a user's post count.
+    table-name:
+    # Column containing the user's ID on the post count table.
+    user-id-column:
+    # Column containing the user's post count.
+    post-count-column:
+    # Minimum number of posts to require.
+    post-count:
 
-# If you have a second group level and want to make use of it
-secondary-groups: false
+#                             Statistics Tracking
+# -----------------------------------------------------------------------------
+# In general, to make this work, your web application will need to support
+# custom profile fields or a similar feature. CommunityBridge will put the
+# information in the database. It is up to you to configure your web application
+# so that it displays the information.
+statistics:
+  # Enables statistics tracking. Nothing will be tracked unless you also enable
+  # at least one of the trackers below.
+  enabled: false
+  # Name of the table to insert the tracking information on to.
+  table-name:
+  # Name of the column that contains the player's User ID on the table.
+  user-id-column:
+  # Set this to true if data on the table is stored in key-value pairs.
+  uses-key: false
 
-# This is a timer that will check and sync all data with your database at a set
-# interval
-auto-sync: true
+  # If uses-key is true, set these as well. These settings are not used if
+  # uses-key is false.
+  key-column:
+  value-column:
 
-# Set the unit of measurement for sync and reminder scheduling. Options are:
-# ticks, seconds, minutes, or hours. Note that this applies to both
-# auto-sync-every and auto-remind-every.
-auto-every-unit: minutes
+  # Some web applications require an insert the first time a custom profile
+  # field is filled with data (SMF, for example). If that's the case, enable
+  # this and provide the required information.
+  insert:
+    enabled: false
+    # Options are: generic and smf.
+    method: generic
 
-# The interval for the auto-sync timer, this should be no less than
-# 15-20 minutes.
-auto-sync-every: 20
+    # Required for the 'smf' method. Most likely id_theme.
+    theme-id-column: id_theme
 
-# This is a timer that will notify unregistered users more frequently to
-# register
-auto-remind: true
+    # Required for the 'smf' method. Most likely value is 1.
+    theme-id: 1
 
-# The interval for the auto-remind timer, this should be no less than
-# 5-10 minutes.
-auto-remind-every: 10
+  # Individual trackers
+  # -------------------
+  trackers:
+    # Below each tracker can be enabled and configured. For each tracker:
+    # * If uses key is true, set column-or-key-name to the key name OR
+    #   If uses key is false, set column-or-key-name to the column name
+    # For some trackers, there is a formatted version as well. For those
+    # trackers, the formatted version is optional. If you wish to use the
+    # formatted version, set the formatted-column-or-key-name appropriately.
+    # If set, the formatted column will be filled in with a human readable
+    # string.
 
-# This is for extra features of the bridge plugin that allow you to save age,
-# gametime, last online, health, etc. to the database
-enable-basic-tracking: false
+    # Online Status: Show a player is playing on the server in the forums.
+    online-status:
+      enabled: false
+      column-or-key-name:
+      # Set this to what should be stored in the field when the user is online.
+      online-value:
+      # Set this to what should be stored in the field when the user is offline.
+      offline-value:
 
+    # Last Online: Record the time that player was last online
+    last-online:
+      enabled: false
+      # Numeric column, should be able to store a 32 bit integer. Will be seconds since epoch.
+      column-or-key-name:
+      # String (varchar, etc.) column at least 60 characters in length.
+      formatted-column-or-key-name:
+
+    # Game Time: Record how much time the player has played.
+    # Requires the last-online tracker to be turned on as well.
+    game-time:
+      enabled: false
+      # Numeric column, should be able to store a 32 bit integer. Time played in seconds.
+      column-or-key-name:
+      formatted-column-or-key-name:
+
+    # Player's current level
+    level:
+      enabled: false
+      # Numeric column, a single byte will be sufficient in most cases.
+      column-or-key-name:
+
+    # Player's current progress toward next level
+    current-xp:
+      enabled: false
+      # Numeric floating point column.
+      column-or-key-name:
+      # String column with at least 4 characters capacity.
+      formatted-column-or-key-name:
+
+    # Player's XP total
+    total-xp:
+      enabled: false
+      # Numeric column, capable of storing a 32 bit integer.
+      column-or-key-name:
+
+    # Player's current health
+    health:
+      enabled: false
+      # Numeric column, a single byte should be sufficient.
+      column-or-key-name:
+
+    # Lifeticks; the amount of time the player has been alive.
+    lifeticks:
+      enabled: false
+      # Numeric column, capable of storing a 32 bit integer.
+      column-or-key-name:
+      # String field with at least 100 characters of storage.
+      formatted-column-or-key-name:
+
+    # Wallet. The amount of money the player currently has. REQUIRES VAULT.
+    wallet:
+      enabled: false
+      # Numeric column capable of storing a "double" floating point number.
+      column-or-key-name:
+
+#                     Web Application Group Configuration
+# -----------------------------------------------------------------------------
 #
-# Main Users table configuration
-#
-users-table:
-  # Users Database Table
-  table: ipbog3members
-
-  # The field that contains their Minecraft Username
-  user-name-field: username
-
-  # The field that contains their Unique ID across your site
-  user-id-field: member_id
-
-  # The field that contains their Primary Group
-  groups-id-field: member_group_id
-
-  # The field that contains their Secondary Group
-  secondary-groups-id-field: sub_group_ids
-
-  # The Banned Field should be a 1 or 0
-  banned-field: member_banned
-
-  # The Group Banned Users are placed in on your site
-  banned-users-group: 5
-
-  # The Default Group for when a group can't be found or they are unregistred.
-  # Note that this is the group ID on the web application, not the permissions
-  # group name.
-  default-group: 2
-
-#
-# This is only for multi-table websites where information is not all contained
-# in the users table
-#
-multi-table:
-
-  # Table that contains custom information for MineCraft
-  table: ipbog3pfields_content
-
-  # The field that has their users id
-  field-user-id-field: member_id
-
-  # This is the field that contains the KEY for multi-tables-use-key (XenForo)
-  field-key-field: key_str
-
-  # The value that is to be matched in field-key-field when looking for their
-  # Minecraft Username
-  field-key-value: mcusername
-
-  # This is for when multi-tables-use-key is false (Invision Power Board) it
-  # contains their Minecraft Username
-  field-value-field: field_11
-
-
-#
-# Optional
-# You can place users in the default group if they do not have an Avatar or
-# Minimum Posts or both
-#
-
-profile-requirements:
-
-  # Enable Forced Website Avatar
-  require-avatar: false
-
-  # Message when Avatar Not Found
-  require-avatar-message: This server requires players to upload an avatar to their profile.
-
-  # Table that contains user avatars
-  require-avatar-table: ipbog3profile_portal
-
-  # Field that has their User ID
-  require-avatar-user-id-field: member_id
-
-  # Field that has their Avatar (Empty/null value for no avatar)
-  require-avatar-field: pp_main_photo
-
-  # Enable Forced Minimum Posts
-  require-minposts: false
-
-  # Messages when Minimum Posts not met
-  require-minposts-message: This server requires players to have a minimum of 3 forum posts.
-
-  # Required amount of minimum Posts
-  require-minposts-count: 3
-
-  # Table that contains their post count
-  require-minposts-table: ipbog3members
-
-  # Field that has their User ID
-  require-minposts-user-id-field: member_id
-
-  # Field that has their post count
-  require-minposts-field: posts
-
-
-#
-# Optional
-# This is for Online Status, Health, Age etc...
-#
-
-basic-tracking:
-
-  # Table that contains the custom fields
-  table: ipbog3pfields_content
-
-  # Enable Tracking of Online status
-  field-onlinestatus-enabled: true
-
-  # Value to place in table when online
-  field-onlinestatus-valueonline: 1
-
-  # Value to place in table when offline
-  field-onlinestatus-valueoffline: 0
-
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field
-  field-onlinestatus-key-value: mconlinestatus
-
-  # Multi-Tables / Single Table field for Value
-  field-onlinestatus-field: field_14
-
-  # Enable tracking if player is online or not
-  field-lastonline-enabled: true
-
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field
-  field-lastonline-key-value: mclastonline
-
-  # Multi-Tables / Single Table field for Value
-  field-lastonline-field: field_15
-
-  # If you want to have a profile field that contains the gametime expressed
-  # in words (5 hours, 33 minutes...), create the custom field on your forum
-  # and enter its name here. Otherwise, leave 'blank': ''
-  # Note that for this to work, the field-lastonline-field must also have
-  # field/column and be configured correctly.
-  field-lastonline-formatted-field: ''
-
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field
-  # If you want to have a profile field that contains the gametime expressed
-  # in words (5 hours, 33 minutes...), create the custom field on your forum
-  # and enter its name here. Otherwise, leave 'blank': ''
-  # Note that for this to work, the field-lastonline-key-value must also have
-  # field/column and be configured correctly.
-  field-lastonline-formatted-key-value: ''
-
-  # Enable tracking how much time is spent on server
-  # Note: This relies on 'lastonline' being enabled to work.
-  field-gametime-enabled: true
-
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field
-  field-gametime-key-value: mcgametime
-
-  # Multi-Tables / Single Table field for Value
-  field-gametime-field: field_16
-
-  # If you want to have a profile field that contains the gametime expressed
-  # in words (5 hours, 33 minutes...), create the custom field on your forum
-  # and enter its name here. Otherwise, leave 'blank': ''
-  # Note that for this to work, the field-gametime-field must also be set.
-  field-gametime-formatted-field: ''
-
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field
-  # If you want to have a profile field that contains the gametime expressed
-  # in words (5 hours, 33 minutes...), create the custom field on your forum
-  # and enter its name here. Otherwise, leave 'blank': ''
-  # Note that for this to work, the field-gametime-key-value must also be set.
-  field-gametime-formatted-key-value: ''
-
-  # Enable Total XP earnt tracking
-  field-totalxp-enabled: true
-
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field
-  field-totalxp-key-value: mctotalxp
-
-  # Multi-Tables / Single Table field for Value
-  field-totalxp-field: field_18
-
-  # Enable Current XP tracking (progress to next level)
-  field-currentxp-enabled: true
-
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field
-  field-currentxp-key-value: mccurrentxp
-
-  # Multi-Tables / Single Table field for formatted version.
-  field-currentxp-formatted-field: ''
-
-  # Multi-Tables-Use Key 'field' for formatted version.
-  field-currentxp-formatted-key-value: ''
-
-  # Multi-Tables / Single Table field for Value
-  field-currentxp-field: field_17
-
-  # Enable Level tracking
-  field-level-enabled: true
-
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field
-  field-level-key-value: mclevel
-
-  # Multi-Tables / Single Table field for Value
-  field-level-field: field_19
-
-  # Enable tracking of players health
-  field-health-enabled: true
-
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field
-  field-health-key-value: mchealth
-
-  # Multi-Tables / Single Table field for Value
-  field-health-field: field_20
-
-  # Enable tracking of players time alive since last death
-  field-lifeticks-enabled: true
-
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field
-  field-lifeticks-key-value: mclifeticks
-
-  # Multi-Tables / Single Table field for Value
-  field-lifeticks-field: field_21
-
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field
-  field-lifeticks-formatted-key-value: ''
-
-  # Multi-Tables / Single Table field for Value
-  field-lifeticks-formatted-field: ''
-
-  # Enable Wallet Tracking (NOT IN USE YET)
-  field-wallet-enabled: false
-
-  # Multi-Tables-Use-Key value for multi-tables.field-key-field
-  field-wallet-key-value: mcwallet
-
-  # Multi-Tables / Single Table field for Value
-  field-wallet-field: field_23
-
-#
-# Group Configuration
-# The strings on the left ('1', '2', etc.) is the group ID in the web application's
-# mysql database, the string on the right is the group name in your permissions
-# system.
-#
-groups:
-  '1': validating
-  '2': guest
-  '3': builder
-  '6': moderator
-  '4': admin
-  '5': banned
+# Some terminology:
+# - Primary group: A group setting such that the setting can only be set to
+#   exactly one group. Most web applications have such a feature. Very few
+#   permissions systems have such a feature.
+#   NOTE: If you wish to utilize the primary group synchronization feature and
+#         your permissions system does not support primary groups, then you must
+#         list groups you wish to be synchronized into the web applications
+#         primary group field in the "groups-treated-as-primary" setting (see
+#         the synchronization options below). The permissions systems that this
+#         applies to are: bPerms, PermissionsBukkit, PermissionsEx, and Vault.
+# - Secondary group(s): A group setting such that the setting can be set to
+#   multiple groups or none.
+
+# This section describes to Communitybridge how the web application stores
+# user group/role information.
+app-group-config:
+  # If the web application has a primary group/role feature, configure it here.
+  primary:
+    enabled: false
+    # The table that contains the primary group ID.
+    table-name:
+
+    # The column on the table that contains the user ID.
+    user-id-column:
+
+    # If the primary group is stored in a key-value pair, set this to true.
+    uses-key: false
+
+    # The column that the primary group ID is stored in. If uses-key is true,
+    # this is the column that the "value" of the key-value pair is stored in.
+    group-id-column:
+
+    # If you set uses-key to true, then set the following three settings:
+    # Key name for the key-value pair.
+    key-name:
+    # Column that the key name is in
+    key-column:
+
+  # If the web application has a secondary groups feature, configure it here.
+  secondary:
+    enabled: false
+    # The table that contains the secondary groups.
+    table-name:
+
+    # The column on the table that contains the user ID.
+    user-id-column:
+
+    # Storage method. Set to one of the following:
+    # - single: All the group ids in a single row & column separated by the
+    #           delimiter specified below.
+    # - key-value: All the group ids are in a single row & column, separated
+    #              by the delimiter specified below, on a table that stores
+    #              its data in key-value pairs
+    # - multiple-key-value: Group IDs are stored on a table of key-value pairs,
+    #                    where the key name can appear in multiple rows.
+    # - junction: The table can contain multiple rows for a given user_id,
+    #             each with their own group_id.
+    storage-method: single
+
+    # The column that the group ID(s) are stored in:
+    # (For the key-value method, this is the 'value' column)
+    group-id-column:
+
+    # For single-column or key-value storage methods, the delimiter/separator
+    # that separates the group IDs:
+    # (ignored for junction and multiple-key-value storage method)
+    group-id-delimiter: ','
+
+    # For the key-value storage method:
+    # (ignored for the junction and single methods)
+    # Key name for the key-value pair.
+    key-name:
+    # Column that the key name is in
+    key-column:
+
+# Simple Synchronization Configuration
+# NOTE: If you wish to utilize the primary group synchronization feature and
+#       your permissions system does not support primary groups, then you must
+#       list groups you wish to be synchronized into the web applications
+#       primary group field in the "groups-treated-as-primary" setting. The
+#       permissions systems that this applies to are: bPerms, PermissionsBukkit,
+#       PermissionsEx, and Vault.
+simple-synchronization:
+  # Set this to true for simple synchronization
+  enabled: false
+
+  # Controls the "direction" of synchronization.
+  # Options are: two-way, web-application, or minecraft.
+  # - two-way: Changes on either side are synchronized to the other.
+  # - web-application: Changes made in the web-application are
+  #   synchronized to the Minecraft server.
+  # - minecraft: Changes made in Minecraft are synchronized to the
+  #   web-application.
+  direction: two-way
+
+  # Set this to true if you want the player to be notified when their primary
+  # group changes.
+  primary-group-change-notify: false
+
+  # This is a safety net. Since CommunityBridge directly modifies group
+  # membership information, there is a risk that a misconfiguration could
+  # cause the main administrative account (e.g. super-user) of a webapp to not
+  # have administrative privileges to the forum, potentially leaving the forum
+  # in a state where it cannot be administered. To protect against this
+  # possibility, provide the user-id of the main administrative account of the
+  # web application here. Generally, this is the account created when the web
+  # application was installed. For this user-id, group changes will not be
+  # synchronized from Minecraft to the web application, that is, the
+  # synchronization for this user will be as if direction was set to
+  # 'web' (see above). Be absolutely sure this user-id is your super-user
+  # all-access administrative account.  
+  super-user-user-id: ''
+
+  # If you're using primary group synchronization and a permissions system that
+  # does NOT have the notion of primary groups (bPerms, PermissionsBukkit,
+  # PermissionsEx, Vault) you must list permission group names that you wish to
+  # be synchronized into the user's primary group field on the web application
+  # here. Be sure to include these groups in the group-mapping as well.
+  groups-treated-as-primary: []
+
+  # List groups and group IDs to be synchronized here. On the left side of
+  # the colon put a web application's group ID. On the right side of the colon
+  # put the corresponding permissions group name. Only list group IDs and
+  # group names you wish to be synchronized.
+
+  # NOTE: GroupManager will not create groups on the fly. So any groups you
+  #       specify here must already exist. That is, you need to have used
+  #       mangadd <groupname>.
+  # NOTE: Regarding ladders(promotions/inherited groups): Either ALL of the
+  #       groups that are part of a ladder need to have entries on this table
+  #       and have corresponding group on the web application or NONE of them
+  #       should be on this list. It may be that you want to use the
+  #       unregistered/registered group settings instead. 
+  group-mapping:
+    '1' : 'guest'
+    '2' : 'member'
+    '3' : 'premium'

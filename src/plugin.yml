@@ -1,40 +1,31 @@
 name: CommunityBridge
-version: 1.12.8
+version: 2.0.0.270
 description: Community Bridging plugin based off of ChillerCrafts ForumBridge plugin
-authors: [ChillerCraft, NoRC, Feaelin]
+authors: [Feaelin, NoRC, ChillerCraft]
 website: http://dev.bukkit.org/server-mods/communitybridge-fm/
 
-softdepend: [bPermissions, GroupManager, PermissionsBukkit, PermissionsEx]
-main: net.netmanagers.community.Main
+softdepend: [bPermissions, GroupManager, PermissionsBukkit, PermissionsEx, Vault]
+main: org.communitybridge.main.CommunityBridge
 
-# Note 'usage:' is commented out because as of Bukkit 1.3.1-R2, the message
-# is displayed without the plugin prefix. If this is changed, then a developer
-# can uncomment these and remove the then redundant else's in onCommand.
-# Unfortunately, I was later told this behavior will not change...
 commands:
-  cbban:
-    description: Bans from the forum.
-    #usage: "§cIncorrect usage, use: /cbban <username>"
-    permission: communitybridge.cbban
-    permission-message: "§cYou do not have access to that command."
-  cbunban:
-    description: Unbans from the forum.
-    #usage: "§cIncorrect usage, use: /cbunban <username>"
-    permission: communitybridge.cbunban
-    permission-message: "§cYou do not have access to that command."
-  cbrank:
-    description: Ranks on the forum.
-    #usage: "§cIncorrect usage, use: /cbrank <username> <rank>"
-    permission: communitybridge.cbrank
+#  cbban:
+#    description: Bans from the forum.
+#    permission: communitybridge.cbban
+#    permission-message: "§cYou do not have access to that command."
+#  cbunban:
+#    description: Unbans from the forum.
+#    permission: communitybridge.cbunban
+#    permission-message: "§cYou do not have access to that command."
+  cbreload:
+    description: Reloads CommunityBridge's configuration from disk.
+    permission: communitybridge.cbreload
     permission-message: "§cYou do not have access to that command."
   cbsync:
     description: Syncs to the forum.
-    #usage: "§cIncorrect usage, use: /cbsync"
     permission: communitybridge.cbsync
     permission-message: "§cYou do not have access to that command."
   cbsyncall:
     description: Syncs everyone to the forum.
-    #usage: "§cIncorrect usage, use: /cbsyncall"
     permission: communitybridge.cbsyncall
     permission-message: "§cYou do not have access to that command."
 
@@ -44,6 +35,7 @@ permissions:
     children:
       communitybridge.cbban: true
       communitybridge.cbrank: true
+      communitybridge.cbreload: true
       communitybridge.cbsync: true
       communitybridge.cbsyncall: true
       communitybridge.cbunban: true
@@ -55,6 +47,9 @@ permissions:
     default: op
   communitybridge.cbrank:
     description: Allows use of the /cbrank command.
+    default: op
+  communitybridge.cbreload:
+    description: Allows use of the /cbreload command.
     default: op
   communitybridge.cbsync:
     description: Allows use of the /cbsync command.

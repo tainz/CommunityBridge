@@ -1,1 +1,0 @@
-group-synchronization-primary-notify-player: You have been placed in the primary group '%GROUP%'.

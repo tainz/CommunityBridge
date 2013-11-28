@@ -1,4 +1,0 @@
-# Replace APPURL with your web application's website url.
-link-unregistered-player: Unregistered Account - Please register at APPURL for full access
-link-registered-player: Registered Account, Linked to Forums.
-link-unregistered-reminder: Just a reminder to visit APPURL and register today!
