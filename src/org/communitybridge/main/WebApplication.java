@@ -1211,7 +1211,7 @@ public class WebApplication
 	{
 		if (direction.startsWith("two") || direction.startsWith("web") && !previousState.webappPrimaryGroupID.equals(currentState.webappPrimaryGroupID))
 		{
-			synchronizeGroupsPrimaryWebToGame(playerName, player, previousState, currentState);
+			synchronizeGroupsPrimaryWebToGame(player, previousState, currentState);
 		}
 
 		if (CommunityBridge.permissionHandler.supportsPrimaryGroups() && (direction.startsWith("two") || direction.startsWith("min")) && !previousState.permissionsSystemPrimaryGroupName.equals(currentState.permissionsSystemPrimaryGroupName))
@@ -1233,29 +1233,43 @@ public class WebApplication
 		}
 	}
 
-	private void synchronizeGroupsPrimaryWebToGame(String playerName, Player player, PlayerGroupState previousState, PlayerGroupState currentState)
+	private void synchronizeGroupsPrimaryWebToGame(Player player, PlayerGroupState previousState, PlayerGroupState currentState)
 	{
+		if (previousState.webappPrimaryGroupID.equalsIgnoreCase(currentState.webappPrimaryGroupID))
+		{
+			return;
+		}
+
 		String formerGroupName = config.getGroupNameByGroupID(previousState.webappPrimaryGroupID);
 		String newGroupName = config.getGroupNameByGroupID(currentState.webappPrimaryGroupID);
+		String playerName = player.getName();
+
 		if (newGroupName == null)
 		{
 			log.warning("Not changing permissions group due to permissions system group name lookup failure for web application group ID: " + currentState.webappPrimaryGroupID + ". Player '" + playerName + "' primary group state unchanged.");
 			currentState.webappPrimaryGroupID = previousState.webappPrimaryGroupID;
+			return;
+		}
+
+		if (config.simpleSynchronizationPrimaryGroupNotify)
+		{
+			String message = ChatColor.YELLOW + CommunityBridge.config.messages.get("group-synchronization-primary-notify-player");
+			message = message.replace("~GROUPNAME~", newGroupName);
+			player.sendMessage(message);
+		}
+
+		String pseudo = "";
+		if (CommunityBridge.permissionHandler.supportsPrimaryGroups())
+		{
+			CommunityBridge.permissionHandler.setPrimaryGroup(playerName, newGroupName, formerGroupName);
 		}
 		else
 		{
-			maybeNotifyPlayerOfPrimaryGroupChange(newGroupName, player);
-			if (CommunityBridge.permissionHandler.supportsPrimaryGroups())
-			{
-				CommunityBridge.permissionHandler.setPrimaryGroup(playerName, newGroupName, formerGroupName);
-				log.fine("Moved player '" + playerName + "' to permissions group '" + newGroupName + "'.");
-			}
-			else
-			{
-				CommunityBridge.permissionHandler.switchGroup(playerName, formerGroupName, newGroupName);
-				log.fine("Added pseudo-primary group '" + newGroupName + "' to player '" + playerName + "' list of permissions groups.");							
-			}
+			CommunityBridge.permissionHandler.switchGroup(playerName, formerGroupName, newGroupName);
+			pseudo = "pseudo-primary ";
 		}
+		
+		log.fine("Moved player '" + playerName + "' to " + pseudo + "permissions group '" + newGroupName + "' from '" + formerGroupName + "'.");
 	}
 
 	private void synchronizeGroupsPrimaryGameToWeb(String userID, String playerName, PlayerGroupState previousState, PlayerGroupState currentState)
@@ -1500,16 +1514,6 @@ public class WebApplication
 		catch (IllegalAccessException error)
 		{
 			log.severe(errorBase + error.getMessage());
-		}
-	}
-
-	private void maybeNotifyPlayerOfPrimaryGroupChange(String newGroupName, Player player)
-	{
-		if (config.simpleSynchronizationPrimaryGroupNotify)
-		{
-			String message = ChatColor.YELLOW + CommunityBridge.config.messages.get("group-synchronization-primary-notify-player");
-			message = message.replace("~GROUPNAME~", newGroupName);
-			player.sendMessage(message);
 		}
 	}
 } // WebApplication class
