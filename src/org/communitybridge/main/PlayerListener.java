@@ -153,15 +153,15 @@ public class PlayerListener implements Listener
 			return;
 		}
 		
-		// if this rule is turned out, we won't change groups unless they're
+		// if this rule is turned on, we won't change groups unless they're
 		// a member of the unregistered group or they have no groups.
 		if (config.linkingRegisteredFormerUnregisteredOnly && !CommunityBridge.permissionHandler.isMemberOfGroup(playerName, config.linkingUnregisteredGroup) && CommunityBridge.permissionHandler.getGroupsPure(playerName).length != 0)
 		{
 			return;
 		}
 		
-		CommunityBridge.permissionHandler.removeFromGroup(playerName, config.linkingUnregisteredGroup);
-		CommunityBridge.permissionHandler.addToGroup(playerName, config.linkingRegisteredGroup);
+		CommunityBridge.permissionHandler.switchGroup(playerName, config.linkingUnregisteredGroup, config.linkingRegisteredGroup);
+
 		if (config.linkingNotifyPlayerGroup)
 		{
 			String message = ChatColor.RED + config.messages.get("link-notify-player-group-change");
