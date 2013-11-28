@@ -1354,7 +1354,7 @@ public class WebApplication
 				
 				// Since this group is not in the mapping, we shouldn't record it
 				// This way, if the group is later added, it will be 'new' to us
-				// and we will syncrhonize.
+				// and we will synchronize.
 				if (groupName == null)
 				{
 					iterator.remove();
