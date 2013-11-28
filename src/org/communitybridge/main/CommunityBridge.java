@@ -221,7 +221,14 @@ public final class CommunityBridge extends JavaPlugin
 
 		if (metrics != null)
 		{
-			metrics.cancelTask();
+			try 
+			{
+				metrics.cancelTask();
+			}
+			catch (NoSuchMethodError exception) 
+			{
+				log.warning("Metrics cancelTask() method unavailable.");
+			}
 			metrics = null;
 		}
 

@@ -1,11 +1,11 @@
 name: CommunityBridge
-version: 2.0.0.260
+version: 2.0.0.263
 description: Community Bridging plugin based off of ChillerCrafts ForumBridge plugin
 authors: [Feaelin, NoRC, ChillerCraft]
 website: http://dev.bukkit.org/server-mods/communitybridge-fm/
 
 softdepend: [bPermissions, GroupManager, PermissionsBukkit, PermissionsEx, Vault]
-main: org.ruhlendavis.mc.communitybridge.CommunityBridge
+main: org.communitybridge.main.CommunityBridge
 
 commands:
 #  cbban:
