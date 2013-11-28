@@ -901,6 +901,11 @@ public class WebApplication
 		int previousLastOnline = 0;
 		int previousGameTime = 0;
 
+		if (userID == null) 
+		{
+			return;
+		}
+		
 		// If gametime is enabled, it depends on lastonline. Also, we need to
 		// retrieve previously recorded lastonline time and the previously
 		// recorded gametime to compute the new gametime.
