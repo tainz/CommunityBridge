@@ -14,7 +14,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
  *
  * @author Iain E. Davis <iain@ruhlendavis.org>
  */
-public class PermissionHandlerVault implements PermissionHandler
+public class PermissionHandlerVault extends PermissionHandler
 {
 	private static Permission vault;
 	public PermissionHandlerVault() throws IllegalStateException

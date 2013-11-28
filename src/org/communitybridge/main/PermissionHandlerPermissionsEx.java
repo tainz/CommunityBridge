@@ -13,7 +13,7 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
  *
  * @author Feaelin
  */
-public class PermissionHandlerPermissionsEx implements PermissionHandler
+public class PermissionHandlerPermissionsEx extends PermissionHandler
 {
 	/**
 	 * Actual constructor.

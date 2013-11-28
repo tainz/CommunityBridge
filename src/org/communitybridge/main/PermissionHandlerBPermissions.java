@@ -17,7 +17,7 @@ import org.bukkit.plugin.Plugin;
  *
  * @author Feaelin
  */
-public class PermissionHandlerBPermissions implements PermissionHandler
+public class PermissionHandlerBPermissions extends PermissionHandler
 {
 	/**
 	 * Actual constructor.

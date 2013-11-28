@@ -12,7 +12,7 @@ import org.bukkit.plugin.Plugin;
  *
  * @author Feaelin
  */
-public class PermissionHandlerPermissionsBukkit implements PermissionHandler
+public class PermissionHandlerPermissionsBukkit extends PermissionHandler
 {
 	private static PermissionsPlugin permissions;
 

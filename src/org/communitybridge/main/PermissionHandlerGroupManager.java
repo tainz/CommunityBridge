@@ -8,7 +8,6 @@ import org.anjocaido.groupmanager.permissions.AnjoPermissionsHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import static org.communitybridge.main.PermissionHandler.EMPTY_ARRAY;
 
 /**
  *	Implements the permission handler interface for GroupManager.
@@ -17,7 +16,7 @@ import static org.communitybridge.main.PermissionHandler.EMPTY_ARRAY;
  *
  * @author Feaelin
  */
-public class PermissionHandlerGroupManager implements PermissionHandler
+public class PermissionHandlerGroupManager extends PermissionHandler
 {
 	private static GroupManager groupManager;
 
