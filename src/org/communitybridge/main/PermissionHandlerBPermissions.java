@@ -2,6 +2,7 @@ package org.communitybridge.main;
 
 import de.bananaco.bpermissions.api.ApiLayer;
 import de.bananaco.bpermissions.api.util.CalculableType;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -111,23 +112,23 @@ public class PermissionHandlerBPermissions implements PermissionHandler
 	@Override
 	public String [] getGroupsPure(String playerName)
 	{
-		List<String> list = Arrays.asList(getGroups(playerName));
+		List<String> groupList = Arrays.asList(getGroups(playerName));
+		List<String> finalList = new ArrayList<String>();
 		
-		for (Iterator<String> iterator = list.iterator(); iterator.hasNext();)
+		for (String group : groupList)
 		{
-			String group = iterator.next();
-			if (group.equalsIgnoreCase("default"))
+			if (!group.equalsIgnoreCase("default"))
 			{
-				iterator.remove();
+				finalList.add(group);
 			}
 		}
-		
-		if (list.isEmpty())
+				
+		if (finalList.isEmpty())
 		{
 			return EMPTY_ARRAY;
 		}
 		
-		return list.toArray(new String[]{});
+		return finalList.toArray(new String[]{});
 	}
 
 	/**
