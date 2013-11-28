@@ -8,6 +8,7 @@ import org.anjocaido.groupmanager.permissions.AnjoPermissionsHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import static org.communitybridge.main.PermissionHandler.EMPTY_ARRAY;
 
 /**
  *	Implements the permission handler interface for GroupManager.
@@ -99,14 +100,14 @@ public class PermissionHandlerGroupManager implements PermissionHandler
 
 		if (worldHolder == null)
 		{
-			return null;
+			return EMPTY_ARRAY;
     }
 
 		User user = worldHolder.getUser(playerName);
 
 		if (user == null)
 		{
-				return null;
+				return EMPTY_ARRAY;
 		}
 
 		return user.subGroupListStringCopy().toArray(new String[0]);
