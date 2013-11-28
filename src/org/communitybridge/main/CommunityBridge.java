@@ -227,7 +227,7 @@ public final class CommunityBridge extends JavaPlugin
 			}
 			catch (NoSuchMethodError exception) 
 			{
-				log.warning("Metrics cancelTask() method unavailable.");
+				log.warning("Metrics cancelTask() method unavailable: " + exception.getMessage());
 			}
 			metrics = null;
 		}
