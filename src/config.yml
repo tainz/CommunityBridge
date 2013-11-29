@@ -41,16 +41,24 @@ general:
   sync-during-join: true
   sync-during-quit: true
 
-  # The permissions system you're using. A permissions system is required for
-  # the following features:
-  # * Group Synchronization (both primary and secondary)
-  # * Unregistered/Registered group assignment (sub-features of 'linking')
-  # Current Options are: bPerms, GroupManager, PermsBukkit, PEX, Vault.
   # NOTE: GroupManager will not create groups on the fly. So any groups you
   #       specify in the linking or synchronization sections must already
   #       exist. That is, you need to have used mangadd <groupname>)
   #       Also, GroupManager announces primary group changes with no option
   #       to override this behavior.
+  # NOTE: zPermissions will not create groups on the fly. So any groups you
+  #       specify in the linking or synchronization sections must already
+  #       exist. That is, you need to have used: permissions group <group>
+  #       create. Further, zPermissions lacks a real API. A player's group
+  #       assignment can fail without CommunityBridge being aware of the
+  #       failure.
+  
+  # The permissions system you're using. A permissions system is required for
+  # the following features:
+  # * Group Synchronization (both primary and secondary)
+  # * Unregistered/Registered group assignment (sub-features of 'linking')
+  # Current Options are: bPerms, GroupManager, PermsBukkit, PEX, Vault,
+  #                      zPermissions.
   permissions-system:
 
   # If ~APPURL~ appears in a message in messages.yml, it will be replaced with

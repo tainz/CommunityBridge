@@ -98,45 +98,7 @@ public final class CommunityBridge extends JavaPlugin
 		// If a feature requires a permissions system we load it up here.
 		if (config.permissionsSystemRequired)
 		{
-			try
-			{
-				if (config.permissionsSystem.equalsIgnoreCase("PEX"))
-				{
-					permissionHandler = new PermissionHandlerPermissionsEx();
-					log.config("Permissions System: PermissionsEx (PEX)");
-				}
-				else if (config.permissionsSystem.equalsIgnoreCase("bPerms"))
-				{
-					permissionHandler = new PermissionHandlerBPermissions();
-					log.config("Permissions System: bPermissions (bPerms)");
-				}
-				else if (config.permissionsSystem.equalsIgnoreCase("GroupManager"))
-				{
-					permissionHandler = new PermissionHandlerGroupManager();
-					log.config("Permissions System: GroupManager");
-				}
-				else if (config.permissionsSystem.equalsIgnoreCase("PermsBukkit"))
-				{
-					permissionHandler = new PermissionHandlerPermissionsBukkit();
-					log.config("Permissions System: PermissionsBukkit (PermsBukkit)");
-				}
-				else if (config.permissionsSystem.equalsIgnoreCase("Vault"))
-				{
-					permissionHandler = new PermissionHandlerVault();
-					log.config("Permissions System: Vault");
-				}
-				else
-				{
-					log.severe("Unknown permissions system in config.yml. Features dependent on a permissions system disabled.");
-					config.disableFeaturesDependentOnPermissions();
-				}
-			}
-			catch (IllegalStateException e)
-			{
-				log.severe(e.getMessage());
-				log.severe("Disabling features dependent on a permissions system.");
-				config.disableFeaturesDependentOnPermissions();
-			}
+			selectPermissionsHandler();
 		}
 		
 		if (config.statisticsEnabled && config.walletEnabled)
@@ -502,6 +464,53 @@ public final class CommunityBridge extends JavaPlugin
 			{
 				log.warning("Plugin Metrics activation failed.");
 			}
+		}
+	}
+
+	private void selectPermissionsHandler()
+	{
+		try
+		{
+			if (config.permissionsSystem.equalsIgnoreCase("PEX"))
+			{
+				permissionHandler = new PermissionHandlerPermissionsEx();
+				log.config("Permissions System: PermissionsEx (PEX)");
+			}
+			else if (config.permissionsSystem.equalsIgnoreCase("bPerms"))
+			{
+				permissionHandler = new PermissionHandlerBPermissions();
+				log.config("Permissions System: bPermissions (bPerms)");
+			}
+			else if (config.permissionsSystem.equalsIgnoreCase("GroupManager"))
+			{
+				permissionHandler = new PermissionHandlerGroupManager();
+				log.config("Permissions System: GroupManager");
+			}
+			else if (config.permissionsSystem.equalsIgnoreCase("PermsBukkit"))
+			{
+				permissionHandler = new PermissionHandlerPermissionsBukkit();
+				log.config("Permissions System: PermissionsBukkit (PermsBukkit)");
+			}
+			else if (config.permissionsSystem.equalsIgnoreCase("Vault"))
+			{
+				permissionHandler = new PermissionHandlerVault();
+				log.config("Permissions System: Vault");
+			}
+			else if (config.permissionsSystem.equalsIgnoreCase("zPermissions"))
+			{
+				permissionHandler = new PermissionHandlerZPermissions();
+			}
+			else
+			{
+				log.severe("Unknown permissions system in config.yml. Features dependent on a permissions system disabled.");
+				config.disableFeaturesDependentOnPermissions();
+			}
+		}
+		catch (IllegalStateException e)
+		{
+			log.severe(e.getMessage());
+			log.severe("Disabling features dependent on a permissions system.");
+			config.disableFeaturesDependentOnPermissions();
 		}
 	}
 }
