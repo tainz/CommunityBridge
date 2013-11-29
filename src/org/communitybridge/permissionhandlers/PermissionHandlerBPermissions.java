@@ -1,4 +1,4 @@
-package org.communitybridge.main;
+package org.communitybridge.permissionhandlers;
 
 import de.bananaco.bpermissions.api.ApiLayer;
 import de.bananaco.bpermissions.api.util.CalculableType;
@@ -8,6 +8,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.communitybridge.main.CommunityBridge;
 
 /**
  * Implements the PermissionHandler interface for bPermissions

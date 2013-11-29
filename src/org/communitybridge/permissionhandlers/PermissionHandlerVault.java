@@ -1,4 +1,4 @@
-package org.communitybridge.main;
+package org.communitybridge.permissionhandlers;
 
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;

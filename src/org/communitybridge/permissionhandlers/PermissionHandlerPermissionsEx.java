@@ -1,38 +1,42 @@
-package org.communitybridge.main;
+package org.communitybridge.permissionhandlers;
 
-import com.platymuus.bukkit.permissions.Group;
-import com.platymuus.bukkit.permissions.PermissionsPlugin;
-import java.util.ArrayList;
-import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
+import org.communitybridge.main.CommunityBridge;
+import org.communitybridge.utility.MinecraftUtilities;
+import org.communitybridge.utility.StringUtilities;
+import ru.tehkode.permissions.PermissionGroup;
+import ru.tehkode.permissions.PermissionUser;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 /**
  * Implements the PermissionHandler interface for PermissionsEx.
  *
  * @author Feaelin
  */
-public class PermissionHandlerPermissionsBukkit extends PermissionHandler
+public class PermissionHandlerPermissionsEx extends PermissionHandler
 {
-	private static PermissionsPlugin permissions;
-
 	/**
+	 * Actual constructor.
 	 *
-	 * @throws IllegalStateException When PermissionsBukkit is not present or not enabled.
+	 * @throws IllegalStateException when PermissionsEx is not present or disabled.
 	 */
-	public PermissionHandlerPermissionsBukkit() throws IllegalStateException
+	public PermissionHandlerPermissionsEx() throws IllegalStateException
 	{
-		if (permissions == null)
+		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("PermissionsEx");
+
+		if (plugin == null || !plugin.isEnabled())
 		{
-			Plugin plugin;
-			plugin = Bukkit.getServer().getPluginManager().getPlugin("PermissionsBukkit");
-			if (plugin != null && plugin.isEnabled())
+			throw new IllegalStateException("PermissionsEx is either not present or not enabled.");
+		}
+		String bukkitVersion = Bukkit.getBukkitVersion().replace("R", "");
+		// EXPIRABLE: ST2012-Dec-21: At some point we'll just make these requirements
+		if (StringUtilities.compareVersion(bukkitVersion, "1.4.5.1.0") > -1)
+		{
+			String pexVersion = MinecraftUtilities.getPluginVersion("PermissionsEx");
+			if (StringUtilities.compareVersion("1.19.5", pexVersion) == 1)
 			{
-				permissions = (PermissionsPlugin) plugin;
-			}
-			else
-			{
-				throw new IllegalStateException("PermissionsBukkit is either not present or not enabled.");
+				throw new IllegalStateException("This version of Minecraft is incompatible with PermissionsEx versions earlier than 1.19.5. Disabling CommunityBridge.");
 			}
 		}
 	}
@@ -47,9 +51,17 @@ public class PermissionHandlerPermissionsBukkit extends PermissionHandler
 	@Override
 	public boolean addToGroup(String playerName, String groupName)
 	{
-		return Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-						                                  "permissions player addgroup "
-						                                  + playerName + " " + groupName);
+		PermissionGroup group = PermissionsEx.getPermissionManager().getGroup(groupName);
+		PermissionUser user = PermissionsEx.getPermissionManager().getUser(playerName);
+		if (group == null || user == null)
+		{
+			return false;
+		}
+		else
+		{
+			user.addGroup(group);
+			return true;
+		}
 	}
 
 	/**
@@ -61,14 +73,7 @@ public class PermissionHandlerPermissionsBukkit extends PermissionHandler
 	@Override
 	public String[] getGroups(String playerName)
 	{
-		List<String> groupNames = new ArrayList<String>();
-
-		for (Group group : permissions.getAllGroups())
-		{
-			groupNames.add(group.getName());
-		}
-
-		return groupNames.toArray(new String[0]);
+		return PermissionsEx.getPermissionManager().getUser(playerName).getGroupsNames();
 	}
 
 	/**
@@ -80,26 +85,39 @@ public class PermissionHandlerPermissionsBukkit extends PermissionHandler
 	@Override
 	public String [] getGroupsPure(String playerName)
 	{
-		return getGroups(playerName);
+		String[] groups = getGroups(playerName);
+		
+		if (groups.length == 0)
+		{
+			return EMPTY_ARRAY;
+		}
+		
+		if (groups.length == 1 && groups[0].equalsIgnoreCase("default"))
+		{
+			return EMPTY_ARRAY;
+		}
+		
+		return groups;
 	}
 
 	/**
-	 * Retrieves the player's primary group.
+	 * Retrieves a player's primary group. For PermissionsEx this is merely the
+	 * first group on the list.
 	 *
-	 * @param playerName String containing name of the player to look up.
-	 * @return empty String if the player does not exist, has no groups, or some
-	 *         other error, otherwise a String containing the group's name.
+	 * @param playerName String containing the player's name
+	 * @return null if the player does not exist or has no groups, otherwise a
+	 *         String containing the group's name.
 	 */
 	@Override
 	public String getPrimaryGroup(String playerName)
 	{
-		if (permissions.getPlayerInfo(playerName) == null
-		 || permissions.getPlayerInfo(playerName).getGroups() == null
-		 || permissions.getPlayerInfo(playerName).getGroups().isEmpty())
+		PermissionUser permissionUser = PermissionsEx.getUser(playerName);
+		if (permissionUser == null || permissionUser.getGroupsNames().length == 0)
 		{
 			return "";
 		}
-		String group = permissions.getPlayerInfo(playerName).getGroups().get(0).getName();
+
+		String group = permissionUser.getGroupsNames()[0];
 		if (group == null)
 		{
 			return "";
@@ -110,7 +128,7 @@ public class PermissionHandlerPermissionsBukkit extends PermissionHandler
 		}
 	}
 
- /**
+  /**
 	 * Asks permissions system if a player is the member of a given group.
 	 *
 	 * @param groupName String containing name of group to check
@@ -120,14 +138,23 @@ public class PermissionHandlerPermissionsBukkit extends PermissionHandler
 	@Override
 	public boolean isMemberOfGroup(String playerName, String groupName)
 	{
-		Group group = permissions.getGroup(groupName);
-
-		if (group == null)
+		try
 		{
-			return false;
+			PermissionUser permissionUser = PermissionsEx.getUser(playerName);
+
+			if (permissionUser == null)
+			{
+				return false;
+			}
+
+			return permissionUser.inGroup(groupName, false);
+		}
+		catch (Error e)
+		{
+			CommunityBridge.log.severe(e.getMessage());
 		}
 
-		return group.getPlayers().contains(playerName.toLowerCase());
+		return false;
 	}
 
 	/**
@@ -154,16 +181,16 @@ public class PermissionHandlerPermissionsBukkit extends PermissionHandler
 	@Override
 	public boolean removeFromGroup(String playerName, String groupName)
 	{
-		return Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-						                                  "permissions player removegroup "
-						                                + playerName + " " + groupName);
+		PermissionsEx.getPermissionManager().getUser(playerName).removeGroup(groupName);
+		return true;
 	}
 
 	/**
-	 * Sets a player's primary group. PermissionsBukkit doesn't have a primary group, so this calls AddToGroup.
+	 * Sets a player's primary group. PermissionsEx doesn't have a notion of
+	 * a primary group, so for now this simply calls addToGroup()
 	 *
-	 * @param playerName String containing player's name to set
-	 * @param groupName  String containing group name to set player's primary group to.
+	 * @param playerName String containing player's name.
+	 * @param groupName  String containing the group name.
 	 * @return true if the set succeeded, false if it failed for any reason.
 	 */
 	@Override

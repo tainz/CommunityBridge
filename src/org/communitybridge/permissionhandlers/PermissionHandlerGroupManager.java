@@ -1,4 +1,4 @@
-package org.communitybridge.main;
+package org.communitybridge.permissionhandlers;
 
 import org.anjocaido.groupmanager.GroupManager;
 import org.anjocaido.groupmanager.data.Group;
