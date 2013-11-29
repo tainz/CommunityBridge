@@ -1,10 +1,8 @@
 package org.communitybridge.main;
 
-import org.communitybridge.main.DatabaseHandler;
 import java.net.MalformedURLException;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import org.communitybridge.main.CommunityBridge;
 
 public class SQL
 {
