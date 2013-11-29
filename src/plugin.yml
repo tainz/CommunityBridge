@@ -1,5 +1,5 @@
 name: CommunityBridge
-version: 2.0.0.275
+version: 2.0.0.277
 description: Community Bridging plugin based off of ChillerCrafts ForumBridge plugin
 authors: [Feaelin, NoRC, ChillerCraft]
 website: http://dev.bukkit.org/server-mods/communitybridge-fm/
@@ -54,6 +54,9 @@ permissions:
   communitybridge.cbsync:
     description: Allows use of the /cbsync command.
     default: true
+  communitybridge.cbsynctarget:
+    description: Allows use of the /cbsync <player> command.
+    default: op
   communitybridge.cbsyncall:
     description: Allows use of the /cbsyncall command.
     default: op

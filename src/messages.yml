@@ -24,7 +24,9 @@ en:
   # cbsync
   cbsync: 'Your groups and/or statistics will be synchronized shortly.'
   cbsync-ingame: "You can only use 'cbsync' when connected as a player. You can use 'cbsyncall' to force a synchronization for all connected players."
-
+  cbsync-target: "Synchronizing '~PLAYERNAME~'."
+  cbsync-target-not-found: "'~PLAYERNAME~' is either offline or not a player."
+  
   # cbsyncall
   cbsyncall: 'Groups and/or statistics will be synchronized for all connected players.'
 

@@ -1,5 +1,6 @@
 package org.communitybridge.main;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -38,44 +39,12 @@ public class CBCommandExecutor implements CommandExecutor
 	 * @return false if the fail message needs to be shown.
 	 */
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label,
-	                         String[] arguments)
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] arguments)
 	{
 		label = label.toLowerCase();
 		if (label.equals("cbreload"))
 		{
-			if (arguments.length > 1)
-			{
-				sendOrLog(sender, config.messages.get("cbreload-too-many-arguments"), ChatColor.RED, false);
-			}
-
-			sendAndLog(sender, config.messages.get("cbreload"), ChatColor.GREEN, true);
-
-			String error;
-			String filename;
-			if (arguments.length == 1)
-			{
-				filename = arguments[0];
-			}
-			else
-			{
-				filename = "config.yml";
-			}
-
-			error = config.reload(filename);
-
-			if (error == null)
-			{
-				sendOrLog(sender, config.messages.get("cbreload-success").replace("~FILENAME~", filename), ChatColor.GREEN, false);
-				if (CommunityBridge.isActive())
-				{
-					config.report();
-				}
-			}
-			else
-			{
-				sendOrLog(sender, error, ChatColor.RED, false);
-			}
+			commandReload(arguments, sender);
 			return true;
 		}
 
@@ -87,22 +56,20 @@ public class CBCommandExecutor implements CommandExecutor
 		
 		if (label.equals("cbsync"))
 		{
-			if (sender instanceof Player)
+			if (arguments.length == 1 && (!(sender instanceof Player) || ((Player)sender).hasPermission("communitybridge.cbsynctarget")))
 			{
-				sendOrLog(sender, config.messages.get("cbsync"), ChatColor.GREEN, false);
-				CommunityBridge.webapp.runSynchronizePlayer((Player) sender, true);
+				commandSyncTarget(sender, arguments[0]);
 			}
 			else
 			{
-				sendOrLog(sender, config.messages.get("cbsync-ingame"), ChatColor.RED, false);
+				commandSync(sender);
 			}
 			return true;
 		}
 		
 		if (label.equals("cbsyncall"))
 		{
-			sendAndLog(sender, config.messages.get("cbsyncall"), ChatColor.GREEN, true);
-			CommunityBridge.webapp.runSynchronizeAll();
+			commandSyncAll(sender);
 			return true;
 		}
 
@@ -116,8 +83,7 @@ public class CBCommandExecutor implements CommandExecutor
 	* @param message String containing the message to send
 	* @param color   ChatColor for message text, not used for console/log
   */
-	private void sendAndLog(CommandSender sender, String message, ChatColor color,
-					                boolean who)
+	private void sendAndLog(CommandSender sender, String message, ChatColor color, boolean who)
   {
 		if (sender instanceof Player)
 		{
@@ -140,8 +106,7 @@ public class CBCommandExecutor implements CommandExecutor
 	* @param color   ChatColor for message text, not used for console/log
 	* @param who     True to include sender's name  in the console/log output
   */
-	private void sendOrLog(CommandSender sender, String message, ChatColor color,
-					               boolean who)
+	private void sendOrLog(CommandSender sender, String message, ChatColor color, boolean who)
   {
     if (sender instanceof Player)
     {
@@ -154,6 +119,77 @@ public class CBCommandExecutor implements CommandExecutor
 				message = "(" + sender.getName() + ") " + message;
 			}
       log.info(message);
+		}
+	}
+
+	private void commandReload(String[] arguments, CommandSender sender)
+	{
+		if (arguments.length > 1)
+		{
+			sendOrLog(sender, config.messages.get("cbreload-too-many-arguments"), ChatColor.RED, false);
+		}
+
+		sendAndLog(sender, config.messages.get("cbreload"), ChatColor.GREEN, true);
+
+		String error;
+		String filename;
+		if (arguments.length == 1)
+		{
+			filename = arguments[0];
+		}
+		else
+		{
+			filename = "config.yml";
+		}
+
+		error = config.reload(filename);
+
+		if (error == null)
+		{
+			sendOrLog(sender, config.messages.get("cbreload-success").replace("~FILENAME~", filename), ChatColor.GREEN, false);
+			if (CommunityBridge.isActive())
+			{
+				config.report();
+			}
+		}
+		else
+		{
+			sendOrLog(sender, error, ChatColor.RED, false);
+		}
+	}
+
+	private void commandSync(CommandSender sender)
+	{
+		if (sender instanceof Player)
+		{
+			sendOrLog(sender, config.messages.get("cbsync"), ChatColor.GREEN, false);
+			CommunityBridge.webapp.runSynchronizePlayer((Player) sender, true);
+		}
+		else
+		{
+			sendOrLog(sender, config.messages.get("cbsync-ingame"), ChatColor.RED, false);
+		}		
+	}
+	
+	private void commandSyncAll(CommandSender sender)
+	{
+		sendAndLog(sender, config.messages.get("cbsyncall"), ChatColor.GREEN, true);
+		CommunityBridge.webapp.runSynchronizeAll();
+	}
+	
+	private void commandSyncTarget(CommandSender sender, String playerName)
+	{
+		Player player  = Bukkit.getServer().getPlayerExact(playerName);
+		if (player == null)
+		{
+			String message = config.messages.get("cbsync-target-not-found").replace("~PLAYERNAME~", playerName);
+			sendOrLog(sender, message, ChatColor.RED, false);
+		}
+		else
+		{
+			String message = config.messages.get("cbsync-target").replace("~PLAYERNAME~", player.getName());
+			sendAndLog(sender, message, ChatColor.GREEN, true);
+			CommunityBridge.webapp.runSynchronizePlayer(player, true);
 		}
 	}
 }
