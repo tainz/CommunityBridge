@@ -189,6 +189,13 @@ public class PlayerListener implements Listener
 
 	private void setJoinMessage(PlayerJoinEvent event, String message)
 	{
-		event.setJoinMessage(message);
+		if (config.linkingUsesJoin)
+		{
+			event.setJoinMessage(message);
+		}
+		else
+		{
+			event.getPlayer().sendMessage(message);
+		}
 	}
 } // PlayerListener class

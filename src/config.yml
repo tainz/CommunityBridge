@@ -98,6 +98,11 @@ player-user-linking:
   # auto-every-unit.
   auto-remind-every: 10
 
+  # When true, the login messages from CommunityBridge will replace the default
+  # join message. When false, it doesn't, but the linking messages will come
+  # before the join message.
+  use-join-message: true
+  
   # Set these to true to inform players when they log in if they're linked to
   # the web application. These correspond to the link-unregistered-player and
   # link-registered-player messages in messages.yml.
