@@ -67,7 +67,7 @@ public class PlayerListener implements Listener
 			if (config.linkingNotifyRegistered)
 			{
 				String message = ChatColor.GREEN + config.messages.get("link-registered-player");
-				event.setJoinMessage(message);
+				setJoinMessage(event, message);
 			}
 
 			if (!config.groupSynchronizationActive && !config.linkingRegisteredGroup.isEmpty())
@@ -81,7 +81,7 @@ public class PlayerListener implements Listener
 			if (config.linkingNotifyUnregistered)
 			{
 				String message = ChatColor.RED + config.messages.get("link-unregistered-player");
-				event.setJoinMessage(message);
+				setJoinMessage(event, message);
 			} // if config.linkingNotifyUnregistered
 
 			if (!config.linkingUnregisteredGroup.isEmpty())
@@ -185,5 +185,10 @@ public class PlayerListener implements Listener
 		{
 			kickPlayerForInsufficientPosts(event);
 		}
+	}
+
+	private void setJoinMessage(PlayerJoinEvent event, String message)
+	{
+		event.setJoinMessage(message);
 	}
 } // PlayerListener class
