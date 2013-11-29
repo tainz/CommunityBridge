@@ -15,7 +15,6 @@ public class PlayerListener implements Listener
 	private Log log;
 	private WebApplication webapp;
 
-
 	/**
 	 * Constructor
 	 *
@@ -45,40 +44,12 @@ public class PlayerListener implements Listener
 
 		if (webapp.isPlayerRegistered(playerName))
 		{
-			log.fine(playerName + " linked to web application user ID #" + webapp.getUserID(playerName) + ".");
-
-			if (config.requireAvatar && webapp.playerHasAvatar(playerName) == false)
-			{
-				event.setKickMessage(config.messages.get("require-avatar-message"));
-				event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
-			}
-
-			if (config.requireMinimumPosts && webapp.getUserPostCount(playerName) < config.requirePostsPostCount)
-			{
-				event.setKickMessage(config.messages.get("require-minimum-posts-message"));
-				event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
-			}
-		} // if isPlayerRegistered
+			preLoginRegisteredPlayer(playerName, event);
+		}
 		else
 		{
-			if (config.linkingKickUnregistered)
-			{
-				event.setKickMessage(config.messages.get("link-unregistered-player"));
-				event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST);
-			} // if config.linkingKickUnregistered
-
-			if (config.requireAvatar)
-			{
-				event.setKickMessage(config.messages.get("require-avatar-message"));
-				event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
-			}
-
-			if (config.requireMinimumPosts)
-			{
-				event.setKickMessage(config.messages.get("require-minimum-posts-message"));
-				event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
-			}
-		} // if isPlayerRegistered
+			preLoginUnregisteredPlayer(event);
+		}
 	} // onPlayerPreLogin
 
 	/**
@@ -167,6 +138,52 @@ public class PlayerListener implements Listener
 			String message = ChatColor.RED + config.messages.get("link-notify-player-group-change");
 			message = message.replace("~GROUPNAME~", config.linkingRegisteredGroup);
 			player.sendMessage(message);
+		}
+	}
+	
+	private void kickPlayerForInsufficientPosts(AsyncPlayerPreLoginEvent event)
+	{
+		event.setKickMessage(config.messages.get("require-minimum-posts-message"));
+		event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
+	}
+
+	private void kickPlayerLackingAvatar(AsyncPlayerPreLoginEvent event)
+	{
+		event.setKickMessage(config.messages.get("require-avatar-message"));
+		event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
+	}
+
+	private void preLoginRegisteredPlayer(String playerName, AsyncPlayerPreLoginEvent event)
+	{
+		log.fine(playerName + " linked to web application user ID #" + webapp.getUserID(playerName) + ".");
+
+		if (config.requireAvatar && webapp.playerHasAvatar(playerName) == false)
+		{
+			kickPlayerLackingAvatar(event);
+		}
+
+		if (config.requireMinimumPosts && webapp.getUserPostCount(playerName) < config.requirePostsPostCount)
+		{
+			kickPlayerForInsufficientPosts(event);
+		}
+	}
+
+	private void preLoginUnregisteredPlayer(AsyncPlayerPreLoginEvent event)
+	{
+		if (config.linkingKickUnregistered)
+		{
+			event.setKickMessage(config.messages.get("link-unregistered-player"));
+			event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST);
+		}
+
+		if (config.requireAvatar)
+		{
+			kickPlayerLackingAvatar(event);
+		}
+
+		if (config.requireMinimumPosts)
+		{
+			kickPlayerForInsufficientPosts(event);
 		}
 	}
 } // PlayerListener class
