@@ -27,7 +27,7 @@ public class Configuration
 
 	// Internationalization
 	public String locale;
-	public Map<String, String> messages = new HashMap<String, String>();
+	public Messages messages = new Messages();
 
 	// General Section
 	public String logLevel;
@@ -857,14 +857,15 @@ public class Configuration
 		File messagesFile;
 		FileConfiguration messagesConfig;
 		Map<String, Object> values;
+		final File dataFolder = plugin.getDataFolder();
 
-		messagesFile = new File(plugin.getDataFolder(), messageFilename);
+		messagesFile = new File(dataFolder, messageFilename);
 
 		// Make sure the file is there, if not copy the default one.
 		if (!messagesFile.exists())
 		{
 			plugin.saveResource(messageFilename, false);
-			messagesFile = new File(plugin.getDataFolder(), messageFilename);
+			messagesFile = new File(dataFolder, messageFilename);
 		}
 
 		messagesConfig = YamlConfiguration.loadConfiguration(messagesFile);
