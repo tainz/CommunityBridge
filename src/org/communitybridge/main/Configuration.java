@@ -38,6 +38,9 @@ public class Configuration
 	public String autoEveryUnit;
 	public boolean autoSync;
 	public long autoSyncEvery;
+	
+	public boolean syncDuringJoin;
+	public boolean syncDuringQuit;
 
 	public String applicationURL;
 
@@ -685,6 +688,8 @@ public class Configuration
 		autoEveryUnit = config.getString("general.auto-every-unit", "ticks").toLowerCase();
 		autoSync = config.getBoolean("general.auto-sync", false);
 		autoSyncEvery = config.getLong("general.auto-sync-every", 24000L);
+		syncDuringJoin = config.getBoolean("general.sync-during-join", true);
+		syncDuringQuit = config.getBoolean("general.sync-during-quit", true);
 
 		applicationURL = config.getString("general.application-url", "http://www.example.org/");
 
@@ -950,7 +955,10 @@ public class Configuration
 		{
 			log.config(  "Autosync every                       : " + autoSyncEvery + " " + autoEveryUnit);
 		}
-
+		
+		log.config(    "Synchronize during join event        : " + syncDuringJoin);
+		log.config(    "Synchronize during quit event        : " + syncDuringQuit);
+		
 		log.config(    "Application url                      : " + applicationURL);
 
 		// Database Section

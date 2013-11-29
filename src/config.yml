@@ -35,6 +35,11 @@ general:
   # The interval for the auto-sync timer, this should not be set any lower than
   # 20 minutes.
   auto-sync-every: 20
+  
+  # Enables/disables synchronization during join and quit events. Recommend both
+  # being set to true.
+  sync-during-join: true
+  sync-during-quit: true
 
   # The permissions system you're using. A permissions system is required for
   # the following features:

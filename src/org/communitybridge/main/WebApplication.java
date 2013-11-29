@@ -536,7 +536,10 @@ public class WebApplication
 	 */
 	public void onJoin(final Player player)
 	{
-		runSynchronizePlayer(player, true);
+		if (config.syncDuringJoin)
+		{
+			runSynchronizePlayer(player, true);
+		}
 	}
 
 	/**
@@ -546,7 +549,10 @@ public class WebApplication
 	 */
 	public void onQuit(Player player)
 	{
-		runSynchronizePlayer(player, false);
+		if (config.syncDuringQuit)
+		{
+			runSynchronizePlayer(player, false);
+		}
 	}
 
 	/**
