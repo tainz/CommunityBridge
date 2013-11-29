@@ -1,17 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package org.communitybridge.main;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- *
- * @author Iain E. Davis <iain@ruhlendavis.org>
- */
 public class Messages
 {
 		private Map<String, String> messages = new HashMap<String, String>();
