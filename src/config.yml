@@ -64,6 +64,9 @@ general:
   # If ~APPURL~ appears in a message in messages.yml, it will be replaced with
   # this:
   application-url:
+  
+  # Set the date format for any of the dates used by CommunityBridge.
+  date-format: "yyyy-MM-dd hh:mm:ss a"
 
 #                             Database Settings
 # -----------------------------------------------------------------------------

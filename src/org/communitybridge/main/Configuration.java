@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +44,8 @@ public class Configuration
 	public boolean syncDuringQuit;
 
 	public String applicationURL;
+	private String dateFormatString;
+	public SimpleDateFormat dateFormat;
 
 	// Database Section
 	public String databaseHost;
@@ -692,7 +695,9 @@ public class Configuration
 		syncDuringQuit = config.getBoolean("general.sync-during-quit", true);
 
 		applicationURL = config.getString("general.application-url", "http://www.example.org/");
-
+		
+		loadDateFormat(config);
+		
 		// Database Section
 		databaseHost = config.getString("database.hostname", "");
 		databasePort = config.getString("database.port", "");
@@ -961,6 +966,7 @@ public class Configuration
 		log.config(    "Synchronize during quit event        : " + syncDuringQuit);
 		
 		log.config(    "Application url                      : " + applicationURL);
+		log.config(    "Date Format                          : " + dateFormatString);
 
 		// Database Section
 		log.config(    "Database hostname                    : " + databaseHost);
@@ -1163,6 +1169,21 @@ public class Configuration
 		{
 			log.severe(errorBase + error.getMessage());
 			return false;
+		}
+	}
+
+	private void loadDateFormat(FileConfiguration config)
+	{
+		dateFormatString = config.getString("general.date-format", "yyyy-MM-dd hh:mm:ss a");
+		try
+		{
+			dateFormat = new SimpleDateFormat(dateFormatString);
+		}
+		catch (IllegalArgumentException exception)
+		{
+			log.warning("Invalid date format: " + exception.getMessage());
+			dateFormatString = "yyyy-MM-dd hh:mm:ss a";
+			dateFormat = new SimpleDateFormat(dateFormatString);
 		}
 	}
 }

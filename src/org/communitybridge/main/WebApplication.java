@@ -883,8 +883,6 @@ public class WebApplication
 	 */
 	private void updateStatistics(Player player, boolean online)
 	{
-		SimpleDateFormat dateFormat = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss a");
-		
 		String query;
 		ResultSet result;
 		String playerName = player.getName();
@@ -1004,7 +1002,7 @@ public class WebApplication
 		if (config.lastonlineEnabled)
 		{
 			lastonlineTime = (int) (System.currentTimeMillis() / 1000L);
-			lastonlineTimeFormatted = dateFormat.format(new Date());
+			lastonlineTimeFormatted = config.dateFormat.format(new Date());
 		}
 
 		if (config.gametimeEnabled)
