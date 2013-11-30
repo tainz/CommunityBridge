@@ -57,12 +57,14 @@ public final class CommunityBridge extends JavaPlugin
 		log = new Log(this.getLogger(), Level.CONFIG);
 		config = new Configuration(this, log);
 
+		CBCommandExecutor command = new CBCommandExecutor(config, log);
+		getCommand("cbreload").setExecutor(command);
+		getCommand("cbsync").setExecutor(command);
+		getCommand("cbsyncall").setExecutor(command);
+
 //		getCommand("cbban").setExecutor(new CBCommandExecutor(config, log));
 //		getCommand("cbunban").setExecutor(new CBCommandExecutor(config, log));
 //		getCommand("cbrank").setExecutor(new CBCommandExecutor(config, log));
-		getCommand("cbreload").setExecutor(new CBCommandExecutor(config, log));
-		getCommand("cbsync").setExecutor(new CBCommandExecutor(config, log));
-		getCommand("cbsyncall").setExecutor(new CBCommandExecutor(config, log));
 
 		activate();
 
