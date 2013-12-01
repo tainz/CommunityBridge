@@ -33,6 +33,8 @@ public class Configuration
 	// General Section
 	public String logLevel;
 	public boolean usePluginMetrics;
+	
+	public boolean useAchievements;
 
 	public String permissionsSystem;
 
@@ -685,6 +687,7 @@ public class Configuration
 		log.setLevel(logLevel);
 
 		usePluginMetrics = config.getBoolean("general.plugin-metrics", true);
+		useAchievements = config.getBoolean("general.use-achievements", false);
 
 		permissionsSystem = config.getString("general.permissions-system", "");
 
@@ -955,6 +958,7 @@ public class Configuration
 		// General Section
 		log.config(    "Log level                            : " + logLevel);
 		log.config(    "Plugin metrics enabled               : " + usePluginMetrics);
+		log.config(    "Use achievements                     : " + useAchievements);
 		log.config(    "Permissions System                   : " + permissionsSystem);
 		log.config(    "Autosync                             : " + autoSync);
 		if (autoSync)

@@ -21,6 +21,10 @@ general:
   # Enable/Disable for all plugins by editing plugins/PluginMetrics/config.yml
   # and setting 'opt-out' to false.
   plugin-metrics: true
+  
+  # Turns on the achievements (rewards) system. See achievements.yml for more
+  # information.
+  use-achievements: false
 
   # Set the unit of measurement for sync and reminder scheduling. Options are:
   # ticks, seconds, minutes, hours, or days. Note that this applies to both
