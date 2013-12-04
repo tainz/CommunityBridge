@@ -20,16 +20,7 @@ public class PermissionHandlerVault extends PermissionHandler
 	public PermissionHandlerVault() throws IllegalStateException
 	{
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Vault");
-
-		if (plugin == null)
-		{
-			throw new IllegalStateException("Vault not found.");
-		}
-		
-		if (!plugin.isEnabled())
-		{
-			throw new IllegalStateException("Vault is not enabled.");
-		}
+		validateHandler(plugin, "Vault");
 		RegisteredServiceProvider<Permission> rsp = Bukkit.getServer().getServicesManager().getRegistration(Permission.class);
 		vault = rsp.getProvider();
 	}

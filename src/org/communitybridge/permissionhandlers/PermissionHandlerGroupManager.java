@@ -27,16 +27,11 @@ public class PermissionHandlerGroupManager extends PermissionHandler
 	 */
 	public PermissionHandlerGroupManager() throws IllegalStateException
 	{
-		Plugin groupManagerPlugin = Bukkit.getServer().getPluginManager().getPlugin("GroupManager");
+		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("GroupManager");
 
-		if (groupManagerPlugin != null && groupManagerPlugin.isEnabled())
-		{
-			groupManager = (GroupManager)groupManagerPlugin;
-		}
-		else
-		{
-			throw new IllegalStateException("GroupManager is either not present or not enabled.");
-		}
+		validateHandler(plugin, "GroupManager");
+		
+		groupManager = (GroupManager)plugin;
 	}
 
 	/**

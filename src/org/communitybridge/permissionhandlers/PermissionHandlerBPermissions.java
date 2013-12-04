@@ -28,10 +28,7 @@ public class PermissionHandlerBPermissions extends PermissionHandler
 	{
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("bPermissions");
 
-		if (plugin == null || !plugin.isEnabled())
-		{
-			throw new IllegalStateException("bPermissions is either not present or not enabled.");
-		}
+		validateHandler(plugin, "bPermissions");
 	}
 
 	/**
