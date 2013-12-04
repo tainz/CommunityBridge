@@ -238,10 +238,10 @@ statistics:
     # Options are: generic and smf.
     method: generic
 
-    # Required for the 'smf' method. Most likely id_theme.
+    # Required for the 'smf' method, ignored for other methods. Most likely id_theme.
     theme-id-column: id_theme
 
-    # Required for the 'smf' method. Most likely value is 1.
+    # Required for the 'smf' method, ignored for other methods. Most likely value is 1.
     theme-id: 1
 
   # Individual trackers
