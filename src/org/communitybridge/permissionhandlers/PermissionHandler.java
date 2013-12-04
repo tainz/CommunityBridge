@@ -1,5 +1,7 @@
 package org.communitybridge.permissionhandlers;
 
+import org.bukkit.plugin.Plugin;
+
 /**
  *  Defines a common interface for accessing permission systems information.
  *
@@ -94,5 +96,18 @@ public abstract class PermissionHandler
 	{
 		removeFromGroup(playerName, formerGroupName);
 		addToGroup(playerName, newGroupName);
+	}
+
+	protected void validateHandler(Plugin plugin, String name) throws IllegalStateException
+	{
+		if (plugin == null)
+		{
+			throw new IllegalStateException(name + " not found.");
+		}
+		
+		if (!plugin.isEnabled())
+		{
+			throw new IllegalStateException(name + " is not enabled.");
+		}
 	}
 }

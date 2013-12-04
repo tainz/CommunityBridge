@@ -25,10 +25,8 @@ public class PermissionHandlerPermissionsEx extends PermissionHandler
 	{
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("PermissionsEx");
 
-		if (plugin == null || !plugin.isEnabled())
-		{
-			throw new IllegalStateException("PermissionsEx is either not present or not enabled.");
-		}
+		validateHandler(plugin, "PermissionsEx");
+
 		String bukkitVersion = Bukkit.getBukkitVersion().replace("R", "");
 		// EXPIRABLE: ST2012-Dec-21: At some point we'll just make these requirements
 		if (StringUtilities.compareVersion(bukkitVersion, "1.4.5.1.0") > -1)
