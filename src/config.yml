@@ -438,6 +438,7 @@ simple-synchronization:
   # PermissionsEx, Vault) you must list permission group names that you wish to
   # be synchronized into the user's primary group field on the web application
   # here. Be sure to include these groups in the group-mapping as well.
+  # Sample: groups-treated-as-primary: [guest, member, premium]
   groups-treated-as-primary: []
 
   # List groups and group IDs to be synchronized here. On the left side of
