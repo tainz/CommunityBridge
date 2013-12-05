@@ -30,11 +30,6 @@ public class PermissionHandlerTest
 		permissionHandler = new TestablePermissionHandler();
 	}
 	
-	@After
-	public void tearDown()
-	{
-	}
-
 	@Test
 	public void validateHandlerDoesNotThrowErrorWithValidPlugin()
 	{
