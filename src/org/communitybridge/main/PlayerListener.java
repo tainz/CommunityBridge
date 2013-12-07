@@ -64,17 +64,7 @@ public class PlayerListener implements Listener
 	{
 		Player player = event.getPlayer();
 		String playerName = player.getName();
-				
-		File playerFolder = new File("plugins\\CommunityBridge\\Players");
-
-		PlayerAchievementState ach = new PlayerAchievementState(playerName, playerFolder);
-		ach.load();
-		ach.avatarIncrement();
-		ach.groupIncrement("food");
-		ach.postCountIncrement("100");
-		ach.sectionPostCountIncrement("15", 100);
-		try {ach.save();}catch(Exception e){}
-		
+						
 		if (webapp.isPlayerRegistered(playerName))
 		{
 			if (config.linkingNotifyRegistered)
