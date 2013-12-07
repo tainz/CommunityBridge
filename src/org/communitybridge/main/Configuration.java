@@ -178,6 +178,7 @@ public class Configuration
 		this.log = log;
 		load();
 		loadMessages();
+		loadAchievements();
 		report();
 	}
 
@@ -863,7 +864,7 @@ public class Configuration
 		final String messageFilename = "messages.yml";
 		Map<String, Object> values;
 
-		FileConfiguration messagesConfig = obtainYamlConfigurationHandle(messageFilename);
+		YamlConfiguration messagesConfig = obtainYamlConfigurationHandle(messageFilename);
 
 		Set<String> rootSet = messagesConfig.getKeys(false);
 		
@@ -902,6 +903,32 @@ public class Configuration
 			messages.put(entry.getKey(), message);
 		}
 	}
+	
+	private void loadAchievements()
+	{
+		final String filename = "achievements.yml";
+		YamlConfiguration achievementConfig;
+
+		achievementConfig = obtainYamlConfigurationHandle(filename);
+
+		Set<String> rootSet = achievementConfig.getKeys(false);
+		
+		if (rootSet.isEmpty())
+		{
+			log.warning("The achievements.yml file is empty.");
+			return;
+		}
+		
+		Achievement achievement;
+		for (String key : rootSet)
+		{
+			if (key.equalsIgnoreCase("avatar"))
+			{
+				achievement = new AvatarAchievement();
+				achievement.loadFromYamlPath(achievementConfig, key);
+			}
+		}
+	}
 
 	/**
 	 * Reloads the configuration either from config.yml or specified file.
@@ -912,6 +939,7 @@ public class Configuration
 	public String reload(String filename)
 	{
 		loadMessages();
+		loadAchievements();
 		if (filename == null || filename.isEmpty() || filename.equals("config.yml"))
 		{
 			plugin.deactivate();
@@ -1177,7 +1205,7 @@ public class Configuration
 		}
 	}
 
-	private FileConfiguration obtainYamlConfigurationHandle(final String filename)
+	private YamlConfiguration obtainYamlConfigurationHandle(final String filename)
 	{
 		final File dataFolder = plugin.getDataFolder();
 		File file = new File(dataFolder, filename);
