@@ -1,5 +1,6 @@
 package org.communitybridge.main;
 
+import java.io.File;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -7,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.communitybridge.achievement.PlayerAchievementState;
 import org.communitybridge.utility.Log;
 
 public class PlayerListener implements Listener
@@ -62,6 +64,17 @@ public class PlayerListener implements Listener
 	{
 		Player player = event.getPlayer();
 		String playerName = player.getName();
+				
+		File playerFolder = new File("plugins\\CommunityBridge\\Players");
+
+		PlayerAchievementState ach = new PlayerAchievementState(playerName, playerFolder);
+		ach.load();
+		ach.avatarIncrement();
+		ach.groupIncrement("food");
+		ach.postCountIncrement("100");
+		ach.sectionPostCountIncrement("15", 100);
+		try {ach.save();}catch(Exception e){}
+		
 		if (webapp.isPlayerRegistered(playerName))
 		{
 			if (config.linkingNotifyRegistered)
@@ -95,6 +108,7 @@ public class PlayerListener implements Listener
 				}
 			}
 		} // if isPlayerRegistered
+
 	}
 
 	/**
