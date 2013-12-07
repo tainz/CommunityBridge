@@ -35,6 +35,7 @@ public class Configuration
 	public boolean usePluginMetrics;
 	
 	public boolean useAchievements;
+	public List<Achievement> achievements = new ArrayList<Achievement>();
 
 	public String permissionsSystem;
 
@@ -860,21 +861,9 @@ public class Configuration
 	private void loadMessages()
 	{
 		final String messageFilename = "messages.yml";
-		File messagesFile;
-		FileConfiguration messagesConfig;
 		Map<String, Object> values;
-		final File dataFolder = plugin.getDataFolder();
 
-		messagesFile = new File(dataFolder, messageFilename);
-
-		// Make sure the file is there, if not copy the default one.
-		if (!messagesFile.exists())
-		{
-			plugin.saveResource(messageFilename, false);
-			messagesFile = new File(dataFolder, messageFilename);
-		}
-
-		messagesConfig = YamlConfiguration.loadConfiguration(messagesFile);
+		FileConfiguration messagesConfig = obtainYamlConfigurationHandle(messageFilename);
 
 		Set<String> rootSet = messagesConfig.getKeys(false);
 		
@@ -1186,5 +1175,19 @@ public class Configuration
 			dateFormatString = "yyyy-MM-dd hh:mm:ss a";
 			dateFormat = new SimpleDateFormat(dateFormatString);
 		}
+	}
+
+	private FileConfiguration obtainYamlConfigurationHandle(final String filename)
+	{
+		final File dataFolder = plugin.getDataFolder();
+		File file = new File(dataFolder, filename);
+		
+		if (!file.exists())
+		{
+			plugin.saveResource(filename, false);
+			file = new File(dataFolder, filename);
+		}
+		
+		return YamlConfiguration.loadConfiguration(file);
 	}
 }
