@@ -1,8 +1,6 @@
 package org.communitybridge.main;
 
-import org.communitybridge.achievement.Achievement;
-import org.communitybridge.achievement.AchievementGroup;
-import org.communitybridge.achievement.AchievementAvatar;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
@@ -18,6 +16,10 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.communitybridge.utility.Log;
+import org.communitybridge.achievement.Achievement;
+import org.communitybridge.achievement.AchievementAvatar;
+import org.communitybridge.achievement.AchievementGroup;
+import org.communitybridge.achievement.AchievementPostCount;
 
 /**
  * Class for storing configuration information loaded from the yaml files.
@@ -943,6 +945,22 @@ public class Configuration
 					AchievementGroup achievement = new AchievementGroup();
 					achievement.setGroupName(groupName);
 					achievement.loadFromYamlPath(achievementConfig, key + "." + groupName);
+					achievements.add(achievement);
+				}
+			}
+			else if (key.equalsIgnoreCase("post-counts"))
+			{
+				ConfigurationSection postCountSection = achievementConfig.getConfigurationSection(key);
+				if (postCountSection == null)
+				{
+					continue;
+				}
+				Set<String> postCounts = postCountSection.getKeys(false);
+				for (String postCount : postCounts)
+				{
+					AchievementPostCount achievement = new AchievementPostCount();
+					achievement.setPostCount(postCount);
+					achievement.loadFromYamlPath(achievementConfig, key + "." + postCount);
 					achievements.add(achievement);
 				}
 			}

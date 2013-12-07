@@ -1,5 +1,24 @@
 Avatar:
   Limit: 1
-  Money: 10
+  Money: 0.0
   Items:
-    - EMERALD
+    EMERALD: 1
+Groups:
+  Premium:
+    Limit: 1
+    Money: 100.0
+    Items:
+      EMERALD: 5  
+Post-Counts:
+  10:
+    Limit: 1
+    Money: 0.0
+    Items:
+      EMERALD: 1
+      COAL: 1
+  100:
+    Limit: 1
+    Money: 0.0
+    Items:
+      EMERALD: 10
+      COAL: 64
