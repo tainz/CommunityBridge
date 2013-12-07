@@ -58,7 +58,7 @@ public class PermissionHandlerVault extends PermissionHandler
 	@Override
 	public boolean isPrimaryGroup(String playerName, String groupName)
 	{
-		throw new UnsupportedOperationException("Not supported yet.");
+		throw new UnsupportedOperationException("Vault does not support primary groups.");
 	}
 
 	@Override
