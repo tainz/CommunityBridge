@@ -101,7 +101,7 @@ public abstract class PermissionHandler
 		addToGroup(playerName, newGroupName);
 	}
 
-	protected void validateHandler(Plugin plugin, String name) throws IllegalStateException
+	protected void validate(Plugin plugin, String name) throws IllegalStateException
 	{
 		if (plugin == null)
 		{

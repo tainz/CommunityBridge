@@ -36,7 +36,7 @@ public class PermissionHandlerTest
 		String name = "someplugin";
 		try
 		{
-			permissionHandler.validateHandler(plugin, name);
+			permissionHandler.validate(plugin, name);
 		}
 		catch (Exception exception)
 		{
@@ -52,7 +52,7 @@ public class PermissionHandlerTest
 		String name = "someplugin";
 		try
 		{
-			permissionHandler.validateHandler(plugin, name);
+			permissionHandler.validate(plugin, name);
 			fail("Failed to throw an exception.");
 		}
 		catch (IllegalStateException exception)
@@ -75,7 +75,7 @@ public class PermissionHandlerTest
 		String name = "someplugin";
 		try
 		{
-			permissionHandler.validateHandler(plugin, name);
+			permissionHandler.validate(plugin, name);
 			fail("Failed to throw an exception.");
 		}
 		catch (IllegalStateException exception)

@@ -25,7 +25,7 @@ public class PermissionHandlerPermissionsEx extends PermissionHandler
 	{
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("PermissionsEx");
 
-		validateHandler(plugin, "PermissionsEx");
+		validate(plugin, "PermissionsEx");
 
 		String bukkitVersion = Bukkit.getBukkitVersion().replace("R", "");
 		// EXPIRABLE: ST2012-Dec-21: At some point we'll just make these requirements
