@@ -1,5 +1,8 @@
 package org.communitybridge.main;
 
+import org.communitybridge.achievement.Achievement;
+import org.communitybridge.achievement.AchievementGroup;
+import org.communitybridge.achievement.AchievementAvatar;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
@@ -919,13 +922,29 @@ public class Configuration
 			return;
 		}
 		
-		Achievement achievement;
 		for (String key : rootSet)
 		{
 			if (key.equalsIgnoreCase("avatar"))
 			{
-				achievement = new AvatarAchievement();
+				AchievementAvatar achievement = new AchievementAvatar();
 				achievement.loadFromYamlPath(achievementConfig, key);
+				achievements.add(achievement);
+			}
+			else if (key.equalsIgnoreCase("groups"))
+			{
+				ConfigurationSection groupsSection = achievementConfig.getConfigurationSection(key);
+				if (groupsSection == null)
+				{
+					continue;
+				}
+				Set<String> groupNames = groupsSection.getKeys(false);
+				for (String groupName : groupNames)
+				{
+					AchievementGroup achievement = new AchievementGroup();
+					achievement.setGroupName(groupName);
+					achievement.loadFromYamlPath(achievementConfig, key + "." + groupName);
+					achievements.add(achievement);
+				}
 			}
 		}
 	}

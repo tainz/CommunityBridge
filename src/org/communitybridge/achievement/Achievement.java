@@ -1,4 +1,4 @@
-package org.communitybridge.main;
+package org.communitybridge.achievement;
 
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -10,6 +10,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.communitybridge.main.CommunityBridge;
 
 public abstract class Achievement
 {
@@ -19,7 +20,7 @@ public abstract class Achievement
 	
 	public abstract boolean playerQualifies(Player player);
 
-	void loadFromYamlPath(YamlConfiguration config, String path)
+	public void loadFromYamlPath(YamlConfiguration config, String path)
 	{
 		limit = config.getInt(path + ".Limit", 1);
 		cashReward = config.getDouble(path + ".Money", 0.0);
