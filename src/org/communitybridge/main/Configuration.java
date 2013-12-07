@@ -20,6 +20,7 @@ import org.communitybridge.achievement.Achievement;
 import org.communitybridge.achievement.AchievementAvatar;
 import org.communitybridge.achievement.AchievementGroup;
 import org.communitybridge.achievement.AchievementPostCount;
+import org.communitybridge.achievement.AchievementSectionPostCount;
 
 /**
  * Class for storing configuration information loaded from the yaml files.
@@ -962,6 +963,32 @@ public class Configuration
 					achievement.setPostCount(postCount);
 					achievement.loadFromYamlPath(achievementConfig, key + "." + postCount);
 					achievements.add(achievement);
+				}
+			}
+			else if (key.equalsIgnoreCase("section-post-counts"))
+			{
+				ConfigurationSection sectionsSection = achievementConfig.getConfigurationSection(key);
+				if (sectionsSection == null)
+				{
+					continue;
+				}
+				Set<String> sections = sectionsSection.getKeys(false);
+				for (String sectionID : sections)
+				{
+					ConfigurationSection postCountSection = sectionsSection.getConfigurationSection(sectionID);
+					if (postCountSection == null)
+					{
+						continue;
+					}
+					Set<String> postCounts = postCountSection.getKeys(false);
+					for (String postCount : postCounts)
+					{
+						AchievementSectionPostCount achievement = new AchievementSectionPostCount();
+						achievement.setPostCount(postCount);
+						achievement.setSectionID(sectionID);
+						achievement.loadFromYamlPath(achievementConfig, key + "." + sectionID + "." + postCount);
+						achievements.add(achievement);
+					}
 				}
 			}
 		}
