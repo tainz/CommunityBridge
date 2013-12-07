@@ -22,7 +22,7 @@ public class PermissionHandlerZPermissions extends PermissionHandler
 	public PermissionHandlerZPermissions() throws IllegalStateException
 	{
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("zPermissions");
-		validateHandler(plugin, "zPermissions");
+		validate(plugin, "zPermissions");
 		service = Bukkit.getServer().getServicesManager().load(ZPermissionsService.class);
 		
 		if (service == null)

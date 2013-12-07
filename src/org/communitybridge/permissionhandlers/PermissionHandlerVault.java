@@ -20,7 +20,7 @@ public class PermissionHandlerVault extends PermissionHandler
 	public PermissionHandlerVault() throws IllegalStateException
 	{
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Vault");
-		validateHandler(plugin, "Vault");
+		validate(plugin, "Vault");
 		RegisteredServiceProvider<Permission> rsp = Bukkit.getServer().getServicesManager().getRegistration(Permission.class);
 		vault = rsp.getProvider();
 	}
@@ -58,7 +58,7 @@ public class PermissionHandlerVault extends PermissionHandler
 	@Override
 	public boolean isPrimaryGroup(String playerName, String groupName)
 	{
-		throw new UnsupportedOperationException("Not supported yet.");
+		throw new UnsupportedOperationException("Vault does not support primary groups.");
 	}
 
 	@Override

@@ -28,7 +28,7 @@ public class PermissionHandlerBPermissions extends PermissionHandler
 	{
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("bPermissions");
 
-		validateHandler(plugin, "bPermissions");
+		validate(plugin, "bPermissions");
 	}
 
 	/**

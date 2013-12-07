@@ -59,7 +59,6 @@ public class Configuration
 	// Linking Section
 	public boolean linkingAutoRemind;
 	public long linkingAutoEvery;
-	public boolean linkingUsesJoin;
 	public boolean linkingNotifyRegistered;
 	public boolean linkingNotifyUnregistered;
 	public boolean linkingKickUnregistered;
@@ -712,7 +711,6 @@ public class Configuration
 		linkingKickUnregistered = config.getBoolean("player-user-linking.kick-unregistered", false);
 		linkingAutoRemind = config.getBoolean("player-user-linking.auto-remind", false);
 		linkingAutoEvery = config.getLong("player-user-linking.auto-remind-every", 12000L);
-		linkingUsesJoin = config.getBoolean("player-user-linking.use-join-message", true);
 		linkingNotifyRegistered = config.getBoolean("player-user-linking.notify-registered-player", true);
 		linkingNotifyUnregistered = config.getBoolean("player-user-linking.notify-unregistered-player", true);
 
@@ -984,7 +982,6 @@ public class Configuration
 		{
 			log.config(  "Linking auto reminder every          : " + linkingAutoEvery + " " + autoEveryUnit);
 		}
-		log.config(    "Linking uses join messages           : " + linkingUsesJoin);
 		log.config(    "Linking notify registered            : " + linkingNotifyRegistered);
 		log.config(    "Linking notify unregistered          : " + linkingNotifyUnregistered);
 		log.config(    "Linking kick unregistered            : " + linkingKickUnregistered);

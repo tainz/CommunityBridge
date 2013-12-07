@@ -9,6 +9,9 @@ import org.bukkit.plugin.Plugin;
  */
 public abstract class PermissionHandler
 {
+	protected final String NOT_FOUND = " not found.";
+	protected final String NOT_ENABLED = " is not enabled.";
+	
 	/**
 	 * Returned by getGroups or getGroupsPure when there are no groups.
 	 */
@@ -98,16 +101,16 @@ public abstract class PermissionHandler
 		addToGroup(playerName, newGroupName);
 	}
 
-	protected void validateHandler(Plugin plugin, String name) throws IllegalStateException
+	protected void validate(Plugin plugin, String name) throws IllegalStateException
 	{
 		if (plugin == null)
 		{
-			throw new IllegalStateException(name + " not found.");
+			throw new IllegalStateException(name + NOT_FOUND);
 		}
 		
 		if (!plugin.isEnabled())
 		{
-			throw new IllegalStateException(name + " is not enabled.");
+			throw new IllegalStateException(name + NOT_ENABLED);
 		}
 	}
 }
