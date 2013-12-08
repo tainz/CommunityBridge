@@ -103,7 +103,7 @@ public final class CommunityBridge extends JavaPlugin
 			selectPermissionsHandler();
 		}
 		
-		if (config.statisticsEnabled && config.walletEnabled)
+		if ((config.statisticsEnabled && config.walletEnabled) || config.economyEnabled)
 		{
 	    if (getServer().getPluginManager().getPlugin("Vault") == null)
 			{
@@ -115,7 +115,8 @@ public final class CommunityBridge extends JavaPlugin
         RegisteredServiceProvider<Economy> rsp = Bukkit.getServicesManager().getRegistration(Economy.class);
         if (rsp == null)
 				{
-					log.warning("Failure getting economy service registration. Is an economy plugin installed? Temporarily disabling Wallet tracker...");
+					log.warning("Failure getting economy service registration. Is an economy plugin installed? Temporarily disabling economy based features.");
+					config.economyEnabled = false;
 					config.walletEnabled = false;
 	      }
 				else
@@ -123,7 +124,8 @@ public final class CommunityBridge extends JavaPlugin
 	        economy = rsp.getProvider();
 					if (economy == null)
 					{
-						log.warning("Failure getting economy provider. Temporarily disabling Wallet tracker");
+						log.warning("Failure getting economy provider. Temporarily disabling economy based features.");
+						config.economyEnabled = false;
 						config.walletEnabled = false;
 					}
 				}

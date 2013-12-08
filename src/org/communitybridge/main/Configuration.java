@@ -177,6 +177,7 @@ public class Configuration
 	public boolean playerDataRequired;
 	public boolean permissionsSystemRequired;
 	public boolean groupSynchronizationActive;
+	public boolean economyEnabled;
 
 	/**
 	 * Constructor for the configuration class.
@@ -711,7 +712,10 @@ public class Configuration
 
 		usePluginMetrics = config.getBoolean("general.plugin-metrics", true);
 		useAchievements = config.getBoolean("general.use-achievements", false);
-
+		if (useAchievements)
+		{
+			economyEnabled = true;
+		}
 		permissionsSystem = config.getString("general.permissions-system", "");
 
 		autoEveryUnit = config.getString("general.auto-every-unit", "ticks").toLowerCase();
@@ -1057,7 +1061,8 @@ public class Configuration
 		log.config(    "Log level                            : " + logLevel);
 		log.config(    "Plugin metrics enabled               : " + usePluginMetrics);
 		log.config(    "Use achievements                     : " + useAchievements);
-		log.config(    "Permissions System                   : " + permissionsSystem);
+		log.config(    "Permissions system                   : " + permissionsSystem);
+		log.config(    "Economy enabled                      : " + economyEnabled);
 		log.config(    "Autosync                             : " + autoSync);
 		if (autoSync)
 		{

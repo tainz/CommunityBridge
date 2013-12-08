@@ -25,7 +25,12 @@ public abstract class Achievement
 	public abstract boolean playerQualifies(Player player, PlayerAchievementState state);
 	
 	public void rewardPlayer(Player player, PlayerAchievementState state)
-	{						
+	{
+		if (CommunityBridge.config.economyEnabled)
+		{
+			CommunityBridge.economy.depositPlayer(player.getName(), cashReward);
+		}
+		
 		for (Entry<Material, Integer> entry : itemRewards.entrySet())
 		{
 			ItemStack stack = new ItemStack(entry.getKey(), entry.getValue());
