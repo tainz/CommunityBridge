@@ -84,11 +84,14 @@ public class Configuration
 	public String linkingValueColumn;
 	public String simpleSynchronizationSuperUserID;
 
+	// avatar config
+	public boolean avatarEnabled;
+	public String	avatarTableName;
+	public String	avatarUserIDColumn;
+	public String	avatarAvatarColumn;
+	
 	// Requirements Section
 	public boolean requireAvatar;
-	public String	requireAvatarTableName;
-	public String	requireAvatarUserIDColumn;
-	public String	requireAvatarAvatarColumn;
 
 	public boolean requireMinimumPosts;
 	public String	requirePostsTableName;
@@ -224,14 +227,19 @@ public class Configuration
 			}
 		}
 
-		if (requireAvatar)
+		if (avatarEnabled)
 		{
-			temp = checkTable(sql, "requirement.avatar.table-name", requireAvatarTableName);
-			status = status & temp;
+			temp = checkTable(sql, "app-avatar-config.table-name", avatarTableName);
 			if (temp)
 			{
-				status = status & checkColumn(sql, "requirement.avatar.user-id-column", requireAvatarTableName, requireAvatarUserIDColumn);
-				status = status & checkColumn(sql, "requirement.avatar.avatar-column", requireAvatarTableName, requireAvatarAvatarColumn);
+				temp = temp & checkColumn(sql, "app-avatar-config.user-id-column", avatarTableName, avatarUserIDColumn);
+				temp = temp & checkColumn(sql, "app-avatar-config.avatar-column", avatarTableName, avatarAvatarColumn);
+			}
+			if (!temp)
+			{
+				log.warning("Temporarily disabling avatar features due to previous error(s).");
+				avatarEnabled = false;
+				requireAvatar = false;
 			}
 		}
 
@@ -736,14 +744,16 @@ public class Configuration
 		linkingKeyColumn = config.getString("player-user-linking.key-column", "");
 		linkingValueColumn = config.getString("player-user-linking.value-column", "");
 
-		// Requirements Section
-		requireAvatar = config.getBoolean("requirement.avatar.enabled", false);
-		if (requireAvatar)
+		avatarEnabled = config.getBoolean("app-avatar-config.enabled");
+		if (avatarEnabled)
 		{
-			requireAvatarTableName = config.getString("requirement.avatar.table-name", "");
-			requireAvatarUserIDColumn = config.getString("requirement.avatar.user-id-column", "");
-			requireAvatarAvatarColumn = config.getString("requirement.avatar.avatar-column", "");
+			avatarTableName = config.getString("app-avatar-config.table-name", "");
+			avatarUserIDColumn = config.getString("app-avatar-config.user-id-column", "");
+			avatarAvatarColumn = config.getString("app-avatar-config.avatar-column", "");
 		}
+
+		// Requirements Section
+		requireAvatar = config.getBoolean("requirement.avatar", false) && avatarEnabled;
 
 		requireMinimumPosts = config.getBoolean("requirement.minimum-posts.enabled", false);
 		if (requireMinimumPosts)
@@ -1085,14 +1095,15 @@ public class Configuration
 			log.config(  "Linking player name column           : " + linkingPlayerNameColumn);
 		}
 
-		log.config(    "Require avatars                      : " + requireAvatar);
-		if (requireAvatar)
+		log.config(    "Avatars config enabled               : " + avatarEnabled);
+		if (avatarEnabled)
 		{
-			log.config(  "Require avatar table name            : " + requireAvatarTableName);
-			log.config(  "Require avatar user ID column        : " + requireAvatarUserIDColumn);
-			log.config(  "Require avatar avatar column         : " + requireAvatarAvatarColumn);
+			log.config(  "Avatar table name                    : " + avatarTableName);
+			log.config(  "Avatar user ID column                : " + avatarUserIDColumn);
+			log.config(  "Avatar avatar column                 : " + avatarAvatarColumn);
 		}
 
+		log.config(    "Require avatars                      : " + requireAvatar);
 		log.config(    "Require minimum posts                : " + requireMinimumPosts);
 		if (requireMinimumPosts)
 		{

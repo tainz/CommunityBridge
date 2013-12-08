@@ -69,9 +69,9 @@ public class WebApplication
 		final String errorBase = "Error during WebApplication.playerHasAvatar(): ";
 		String query;
 
-		query = "SELECT `" + config.requireAvatarTableName + "`.`" + config.requireAvatarAvatarColumn + "` "
-					+ "FROM `" + config.requireAvatarTableName + "` "
-					+ "WHERE `" + config.requireAvatarUserIDColumn + "` = '" + getUserID(playerName) + "'";
+		query = "SELECT `" + config.avatarTableName + "`.`" + config.avatarAvatarColumn + "` "
+					+ "FROM `" + config.avatarTableName + "` "
+					+ "WHERE `" + config.avatarUserIDColumn + "` = '" + getUserID(playerName) + "'";
 
 		try
 		{
@@ -80,7 +80,7 @@ public class WebApplication
 
 			if (result.next())
 			{
-				avatar = result.getString(config.requireAvatarAvatarColumn);
+				avatar = result.getString(config.avatarAvatarColumn);
 			}
 
 			if (avatar == null || avatar.isEmpty())

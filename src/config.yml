@@ -175,21 +175,23 @@ player-user-linking:
   key-column:
   value-column:
 
+# Used either for requiring and avatar or rewarding the existence of an avatar.
+app-avatar-config:
+  enabled: false
+  # Table that contains the avatar column
+  table-name:
+  # Column on the avatar table that contains the user ID.
+  user-id-column:
+  # Column on the avatar table that contains the avatar information. If this
+  # column contains data, the user is assumed by CommunityBridge to have an
+  # avatar.
+  avatar-column: 
+
 #                             Requirements
 # -----------------------------------------------------------------------------
 # Control access to the game on the basis of various settings.
 requirement:
-  avatar:
-    # With this enabled, players that do not have an avatar will be kicked.
-    enabled: false
-    # Table that contains the avatar column
-    table-name:
-    # Column on the avatar table that contains the user ID.
-    user-id-column:
-    # Column on the avatar table that contains the avatar information. If this
-    # column contains data, the user is assumed by CommunityBridge to have an
-    # avatar.
-    avatar-column:
+  avatar: false
   minimum-posts:
     # With this enabled, players that do not have the minimum number of posts
     # will be kicked.
