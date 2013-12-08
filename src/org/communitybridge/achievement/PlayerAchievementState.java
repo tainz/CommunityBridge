@@ -6,9 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.communitybridge.main.CommunityBridge;
 
 public class PlayerAchievementState
 {
@@ -45,7 +48,7 @@ public class PlayerAchievementState
 		}
 	}
 	
-	public void save() throws IOException
+	public void save()
 	{
 		File playerFile = new File(playerFolder, fileName);
 
@@ -56,8 +59,14 @@ public class PlayerAchievementState
 		saveGroupAchievements(playerData);
 		savePostCountAchievements(playerData);
 		saveSectionPostCountAchievements(playerData);
-
-		playerData.save(playerFile);
+		try
+		{
+			playerData.save(playerFile);
+		}
+		catch (IOException exception)
+		{
+			CommunityBridge.log.severe("Error when saving achivement data for player:" + exception.getMessage());
+		}
 	}
 
 	private void loadGroupAchievementCounts(YamlConfiguration playerData)
@@ -179,5 +188,26 @@ public class PlayerAchievementState
 		}
 		
 		sectionPostCountAchievements.put(spt, count);
+	}
+
+	public int getAvatarAchievements()
+	{
+		return avatarAchievements;
+	}
+
+	public Integer getGroupAchievement(String groupName)
+	{
+		return groupAchievements.get(groupName);
+	}
+
+	public Integer getPostCountAchievements(String postCount)
+	{
+		return postCountAchievements.get(postCount);
+	}
+
+	public Integer getSectionPostCountAchievements(String sectionID, int postCount)
+	{
+		SectionPostCountTuple spt = new SectionPostCountTuple(sectionID, postCount);
+		return sectionPostCountAchievements.get(spt);
 	}
 }

@@ -11,7 +11,7 @@ public class AchievementGroup extends Achievement
 	private String groupName;
 	
 	@Override
-	public boolean playerQualifies(Player player)
+	public boolean playerQualifies(Player player, PlayerAchievementState state)
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
@@ -25,5 +25,4 @@ public class AchievementGroup extends Achievement
 	{
 		this.groupName = groupName;
 	}
-	
 }

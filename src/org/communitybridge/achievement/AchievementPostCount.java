@@ -11,7 +11,7 @@ public class AchievementPostCount extends Achievement
 	private int postCount;
 	
 	@Override
-	public boolean playerQualifies(Player player)
+	public boolean playerQualifies(Player player, PlayerAchievementState state)
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}

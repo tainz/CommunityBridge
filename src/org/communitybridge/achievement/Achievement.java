@@ -4,21 +4,52 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.communitybridge.main.CommunityBridge;
 
 public abstract class Achievement
 {
-	private int limit;
-	private double cashReward;
-	private Map<Material, Integer> itemRewards = new EnumMap<Material, Integer>(Material.class);
+	protected int limit;
+	protected double cashReward;
+	protected Map<Material, Integer> itemRewards = new EnumMap<Material, Integer>(Material.class);
 	
-	public abstract boolean playerQualifies(Player player);
+	public abstract boolean playerQualifies(Player player, PlayerAchievementState state);
+	
+	public void rewardPlayer(Player player, PlayerAchievementState state)
+	{						
+		for (Entry<Material, Integer> entry : itemRewards.entrySet())
+		{
+			ItemStack stack = new ItemStack(entry.getKey(), entry.getValue());
+			player.getInventory().addItem(stack);
+		}
+		player.updateInventory();
+	}
+	
+	protected boolean canRewardAllItemRewards(Player player)
+	{
+		final Inventory testInventory = Bukkit.getServer().createInventory(null, player.getInventory().getType());
+    testInventory.setContents(player.getInventory().getContents());
+		
+		for (Entry<Material, Integer> entry : itemRewards.entrySet())
+		{
+			ItemStack stack = new ItemStack(entry.getKey(), entry.getValue());
+			if (!testInventory.addItem(stack).isEmpty())
+			{
+				return false;
+			}
+		}
+		
+		return true;
+	}
 
 	public void loadFromYamlPath(YamlConfiguration config, String path)
 	{

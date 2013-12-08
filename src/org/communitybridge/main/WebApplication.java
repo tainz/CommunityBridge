@@ -15,6 +15,8 @@ import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.communitybridge.achievement.Achievement;
+import org.communitybridge.achievement.PlayerAchievementState;
 import org.communitybridge.utility.Log;
 import org.communitybridge.utility.StringUtilities;
 
@@ -605,6 +607,10 @@ public class WebApplication
 			if (config.statisticsEnabled)
 			{
 				updateStatistics(player, online);
+			}
+			if (config.useAchievements)
+			{
+				rewardAchievements(player);
 			}
 			synchronizationLocks.remove(player);
 		}
@@ -1373,6 +1379,20 @@ public class WebApplication
 				} // Check for null/primaryalreadyset/secondaryalreadyset
 			} // if previousState contains group ID
 		} // for each group ID in currentState
+	}
+
+	private void rewardAchievements(Player player)
+	{
+		PlayerAchievementState state = new PlayerAchievementState(player.getName(), new File(plugin.getDataFolder(), "Players"));
+		state.load();
+		for (Achievement achievement : config.achievements)
+		{
+			if (achievement.playerQualifies(player, state))
+			{
+				achievement.rewardPlayer(player, state);
+			}
+		}
+		state.save();
 	}
 
 	private class FieldTuple
