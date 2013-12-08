@@ -125,9 +125,9 @@ public class WebApplication
 		final String errorBase = "Error during WebApplication.getUserPostCount(): ";
 		String query;
 
-		query = "SELECT `" + config.requirePostsTableName + "`.`" + config.requirePostsPostCountColumn + "` "
-					+ "FROM `" + config.requirePostsTableName + "` "
-					+ "WHERE `" + config.requirePostsUserIDColumn + "` = '" + getUserID(playerName) + "'";
+		query = "SELECT `" + config.postCountTableName + "`.`" + config.postCountPostCountColumn + "` "
+					+ "FROM `" + config.postCountTableName + "` "
+					+ "WHERE `" + config.postCountUserIDColumn + "` = '" + getUserID(playerName) + "'";
 
 		try
 		{
@@ -135,7 +135,7 @@ public class WebApplication
 
 			if (result.next())
 			{
-				return result.getInt(config.requirePostsPostCountColumn);
+				return result.getInt(config.postCountPostCountColumn);
 			}
 			else
 			{

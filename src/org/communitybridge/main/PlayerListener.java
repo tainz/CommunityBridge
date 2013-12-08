@@ -161,12 +161,12 @@ public class PlayerListener implements Listener
 	{
 		log.fine(playerName + " linked to web application user ID #" + webapp.getUserID(playerName) + ".");
 
-		if (config.requireAvatar && webapp.playerHasAvatar(playerName) == false)
+		if (config.avatarEnabled && config.requireAvatar && webapp.playerHasAvatar(playerName) == false)
 		{
 			kickPlayerLackingAvatar(event);
 		}
 
-		if (config.requireMinimumPosts && webapp.getUserPostCount(playerName) < config.requirePostsPostCount)
+		if (config.postCountEnabled && config.requireMinimumPosts && webapp.getUserPostCount(playerName) < config.requirePostsPostCount)
 		{
 			kickPlayerForInsufficientPosts(event);
 		}

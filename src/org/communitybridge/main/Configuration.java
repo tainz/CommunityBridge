@@ -84,19 +84,21 @@ public class Configuration
 	public String linkingValueColumn;
 	public String simpleSynchronizationSuperUserID;
 
-	// avatar config
+	// Avatar config
 	public boolean avatarEnabled;
 	public String	avatarTableName;
 	public String	avatarUserIDColumn;
 	public String	avatarAvatarColumn;
 	
+	// Post count config
+	public boolean postCountEnabled;
+	public String	postCountTableName;
+	public String	postCountUserIDColumn;
+	public String postCountPostCountColumn;
+	
 	// Requirements Section
 	public boolean requireAvatar;
-
 	public boolean requireMinimumPosts;
-	public String	requirePostsTableName;
-	public String	requirePostsUserIDColumn;
-	public String requirePostsPostCountColumn;
 	public int requirePostsPostCount;
 
 	// Statistics Tracking Settings
@@ -243,14 +245,20 @@ public class Configuration
 			}
 		}
 
-		if (requireMinimumPosts)
+		if (postCountEnabled)
 		{
-			temp = checkTable(sql, "requirement.minimum-posts.table-name", requirePostsTableName);
+			temp = checkTable(sql, "app-post-count-config.table-name", postCountTableName);
 			status = status & temp;
 			if (temp)
 			{
-				status = status & checkColumn(sql, "requirement.minimum-posts.user-id-column", requirePostsTableName, requirePostsUserIDColumn);
-				status = status & checkColumn(sql, "requirement.minimum-posts.post-count-column", requirePostsTableName, requirePostsPostCountColumn);
+				temp = temp & checkColumn(sql, "app-post-count-config.user-id-column", postCountTableName, postCountUserIDColumn);
+				temp = temp & checkColumn(sql, "app-post-count-config.post-count-column", postCountTableName, postCountPostCountColumn);
+			}
+			if (!temp)
+			{
+				postCountEnabled = false;
+				requireMinimumPosts = false;
+				log.warning("Temporarily disabling features dependent on post count config due to previous errors.");
 			}
 
 		}
@@ -752,17 +760,18 @@ public class Configuration
 			avatarAvatarColumn = config.getString("app-avatar-config.avatar-column", "");
 		}
 
+		postCountEnabled = config.getBoolean("app-post-count-config.enabled", false);
+		if (postCountEnabled)
+		{
+			postCountTableName = config.getString("app-post-count-config.table-name", "");
+			postCountUserIDColumn = config.getString("app-post-count-config.user-id-column", "");
+			postCountPostCountColumn = config.getString("app-post-count-config.post-count-column", "");
+		}
+
 		// Requirements Section
 		requireAvatar = config.getBoolean("requirement.avatar", false) && avatarEnabled;
-
-		requireMinimumPosts = config.getBoolean("requirement.minimum-posts.enabled", false);
-		if (requireMinimumPosts)
-		{
-			requirePostsTableName = config.getString("requirement.minimum-posts.table-name", "");
-			requirePostsUserIDColumn = config.getString("requirement.minimum-posts.user-id-column", "");
-			requirePostsPostCountColumn = config.getString("requirement.minimum-posts.post-count-column", "");
-			requirePostsPostCount = config.getInt("requirement.minimum-posts.post-count", 0);
-		}
+		requireMinimumPosts = config.getBoolean("requirement.post-count.enabled", false) && postCountEnabled;
+		requirePostsPostCount = config.getInt("requirement.post-count.minimum", 0);
 
 		// Statistics Tracking Settings
 		statisticsEnabled = config.getBoolean("statistics.enabled", false);
@@ -1102,14 +1111,17 @@ public class Configuration
 			log.config(  "Avatar user ID column                : " + avatarUserIDColumn);
 			log.config(  "Avatar avatar column                 : " + avatarAvatarColumn);
 		}
+		
+		log.config(    "Post count config enabled            : " + postCountEnabled);
+		if (postCountEnabled)
+			log.config(  "Post count table name                : " + postCountTableName);
+			log.config(  "Post count user ID column            : " + postCountUserIDColumn);
+			log.config(  "Post count post count column         : " + postCountPostCountColumn);
 
 		log.config(    "Require avatars                      : " + requireAvatar);
 		log.config(    "Require minimum posts                : " + requireMinimumPosts);
 		if (requireMinimumPosts)
 		{
-			log.config(  "Require minimum posts table name     : " + requirePostsTableName);
-			log.config(  "Require minimum posts user ID column : " + requirePostsUserIDColumn);
-			log.config(  "Require minimum posts avatar column  : " + requirePostsPostCountColumn);
 			log.config(  "Require minimum post count           : " + requirePostsPostCount);
 		}
 

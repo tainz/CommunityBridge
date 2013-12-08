@@ -185,25 +185,30 @@ app-avatar-config:
   # Column on the avatar table that contains the avatar information. If this
   # column contains data, the user is assumed by CommunityBridge to have an
   # avatar.
-  avatar-column: 
+  avatar-column:
 
+# Used for post count awards or for requiring a post count.
+app-post-count-config:
+  enabled: false
+  # Table that contains the avatar column
+  table-name:
+  # Column on the avatar table that contains the user ID.
+  user-id-column:
+  # Column containing the user's post count.
+  post-count-column:
+    
 #                             Requirements
 # -----------------------------------------------------------------------------
-# Control access to the game on the basis of various settings.
 requirement:
+  # Set this to true to require an avatar to be set to access the game.
+  # Requires app-avatar-config settings to be enabled and configured correctly.
   avatar: false
-  minimum-posts:
-    # With this enabled, players that do not have the minimum number of posts
-    # will be kicked.
+  # Require the player to have at least this many posts before being able to
+  # play. Requires app-post-count-config settings to be enabled and configured
+  # correctly.
+  post-count:
     enabled: false
-    # Table that contains a user's post count.
-    table-name:
-    # Column containing the user's ID on the post count table.
-    user-id-column:
-    # Column containing the user's post count.
-    post-count-column:
-    # Minimum number of posts to require.
-    post-count:
+    minimum: 0
 
 #                             Statistics Tracking
 # -----------------------------------------------------------------------------
