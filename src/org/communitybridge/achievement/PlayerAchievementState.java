@@ -143,50 +143,23 @@ public class PlayerAchievementState
 	
 	public void groupIncrement(String groupName)
 	{
-		Integer count = groupAchievements.get(groupName);
-		
-		if (count == null)
-		{
-			count = new Integer(1);
-		}
-		else
-		{
-			count++;
-		}
-		
+		Integer count = getGroupAchievement(groupName);
+		count++;
 		groupAchievements.put(groupName, count);
 	}
 	
 	public void postCountIncrement(String postCount)
 	{
-		Integer count = postCountAchievements.get(postCount);
-		
-		if (count == null)
-		{
-			count = new Integer(1);
-		}
-		else
-		{
-			count++;
-		}
-		
+		Integer count = getPostCountAchievements(postCount);
+		count++;
 		postCountAchievements.put(postCount, count);
 	}
 	
 	public void sectionPostCountIncrement(String sectionID, int postCount)
 	{
 		SectionPostCountTuple spt = new SectionPostCountTuple(sectionID, postCount);
-		Integer count = sectionPostCountAchievements.get(spt);
-		
-		if (count == null)
-		{
-			count = new Integer(1);
-		}
-		else
-		{
-			count++;
-		}
-		
+		Integer count = getSectionPostCountAchievements(spt);
+		count++;
 		sectionPostCountAchievements.put(spt, count);
 	}
 
@@ -197,17 +170,43 @@ public class PlayerAchievementState
 
 	public Integer getGroupAchievement(String groupName)
 	{
-		return groupAchievements.get(groupName);
+		Integer count = groupAchievements.get(groupName);
+		
+		if (count == null)
+		{
+			count = new Integer(0);
+		}
+		
+		return count;
 	}
 
 	public Integer getPostCountAchievements(String postCount)
 	{
-		return postCountAchievements.get(postCount);
+		Integer count = postCountAchievements.get(postCount);
+		
+		if (count == null)
+		{
+			count = new Integer(0);
+		}
+		
+		return count;
 	}
 
 	public Integer getSectionPostCountAchievements(String sectionID, int postCount)
 	{
 		SectionPostCountTuple spt = new SectionPostCountTuple(sectionID, postCount);
-		return sectionPostCountAchievements.get(spt);
+		return getSectionPostCountAchievements(spt);
+	}
+
+	private Integer getSectionPostCountAchievements(SectionPostCountTuple spt)
+	{
+		Integer count = sectionPostCountAchievements.get(spt);
+		
+		if (count == null)
+		{
+			count = new Integer(0);
+		}
+		
+		return count;
 	}
 }
