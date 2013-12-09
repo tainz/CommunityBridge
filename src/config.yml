@@ -407,7 +407,7 @@ app-group-config:
 #       list groups you wish to be synchronized into the web applications
 #       primary group field in the "groups-treated-as-primary" setting. The
 #       permissions systems that this applies to are: bPerms, PermissionsBukkit,
-#       PermissionsEx, and Vault.
+#       PermissionsEx, Vault, and zPermissions.
 simple-synchronization:
   # Set this to true for simple synchronization
   enabled: false
@@ -464,3 +464,29 @@ simple-synchronization:
     '1' : 'guest'
     '2' : 'member'
     '3' : 'premium'
+
+ban-synchronization:
+  enabled: false
+  # If your web application stores banned users in a group, set this to group
+  # otherwise set it to table.
+  method: table
+  # If method is 'group' above, fill in the group-ids for the ban group(s)
+  # here. Otherwise, fill in table-name, banned-user-id-column,
+  # ban-reason-column, etc. below...
+  ban-group-ids: []
+  
+  # Settings for table method...
+  # Name of the table that holds ban information for your web application
+  table-name:
+  # Column that contains the user ID of the banee. Leave blank if your web
+  # application doesn't use it.
+  banned-user-id-column:
+  # The column containing the reason for the ban. Leave blank if your web
+  # application does not support this.
+  ban-reason-column:
+  # The column containing the ban start time (systime expected). Leave blank
+  # if your application does not support this.
+  ban-start-column:
+  # The column containing the ban end time (systime expected). Leave blank
+  # if your application does not support this.
+  ban-end-column:
