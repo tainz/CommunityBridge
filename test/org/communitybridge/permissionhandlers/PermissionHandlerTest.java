@@ -3,7 +3,10 @@ package org.communitybridge.permissionhandlers;
 import com.avaje.ebean.EbeanServer;
 import java.io.File;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -19,7 +22,11 @@ import static org.junit.Assert.*;
 
 public class PermissionHandlerTest
 {
-	PermissionHandler permissionHandler = new TestablePermissionHandler();
+	private final String playerName = "somePlayer";
+	private final String groupOne = "groupOne";
+	private final String groupTwo = "groupTwo";
+	
+	TestablePermissionHandler permissionHandler = new TestablePermissionHandler();
 	
 	@Before
 	public void setUp()
@@ -27,6 +34,22 @@ public class PermissionHandlerTest
 		permissionHandler = new TestablePermissionHandler();
 	}
 	
+	@Test
+	public void switchGroupCallsRemoveGroup()
+	{
+		permissionHandler.switchGroup(playerName, groupOne, groupTwo);
+		assertEquals(playerName, permissionHandler.removePlayer);
+		assertEquals(groupOne, permissionHandler.removeGroup);
+	}
+	
+	@Test
+	public void switchGroupCallsAddGroup()
+	{
+		permissionHandler.switchGroup(playerName, groupOne, groupTwo);
+		assertEquals(playerName, permissionHandler.addPlayer);
+		assertEquals(groupTwo, permissionHandler.addGroup);
+	}
+
 	@Test
 	public void validateHandlerDoesNotThrowErrorWithValidPlugin()
 	{
@@ -90,16 +113,25 @@ public class PermissionHandlerTest
 	
 	public class TestablePermissionHandler extends PermissionHandler
 	{
+		public String addPlayer;
+		public String addGroup;
+		public String removePlayer;
+		public String removeGroup;
+		
 		@Override
 		public boolean addToGroup(String playerName, String groupName)
 		{
-			throw new UnsupportedOperationException("No implementation needed for tests."); 
+			addPlayer = playerName;
+			addGroup = groupName;
+			return true;
 		}
 
 		@Override
 		public boolean removeFromGroup(String playerName, String groupName)
 		{
-			throw new UnsupportedOperationException("No implementation needed for tests."); 
+			removePlayer = playerName;
+			removeGroup = groupName;
+			return true;
 		}
 		
 		@Override
