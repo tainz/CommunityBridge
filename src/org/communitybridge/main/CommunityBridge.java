@@ -14,6 +14,7 @@ import org.mcstats.Metrics;
 import org.mcstats.Metrics.Graph;
 import org.communitybridge.utility.Log;
 import org.communitybridge.permissionhandlers.*;
+import org.communitybridge.utility.StringUtilities;
 
 /**
  * Main plugin class
@@ -222,46 +223,34 @@ public final class CommunityBridge extends JavaPlugin
 		return active;
 	}
 
+	private void startTask(long every, Runnable runnable)
+	{
+		if (StringUtilities.compareVersion(Bukkit.getBukkitVersion(), "1.4.6") > 0)
+		{
+			Bukkit.getScheduler().runTaskTimerAsynchronously(this, runnable, every, every);		
+		}
+		else
+		{
+			Bukkit.getScheduler().scheduleAsyncRepeatingTask(this, runnable, every, every);
+		}
+	}
+	
 	/**
 	 * Called by activate() if the auto reminder to register is turned on, this
 	 * method starts up the reminder task.
 	 */
 	private void reminderStart()
   {
-    long every;
-
-    if (config.autoEveryUnit.startsWith("sec"))
-    {
-      every = config.linkingAutoEvery * 20; // 20 ticks per second.
-    }
-    else if (config.autoEveryUnit.startsWith("min"))
-    {
-      every = config.linkingAutoEvery * 1200; // 20 ticks per second, 60 sec/minute
-    }
-    else if (config.autoEveryUnit.startsWith("hou"))
-    {
-      every = config.linkingAutoEvery * 72000; // 20 ticks/s 60s/m, 60m/h
-    }
-		else if (config.autoEveryUnit.startsWith("day"))
-		{
-			every = config.linkingAutoEvery * 1728000;
-		}
-		else
-		{
-			// Defaulting to ticks.
-			every = config.linkingAutoEvery;
-		}
-
-		Bukkit.getScheduler().runTaskTimerAsynchronously(this,
-																										new Runnable()
-																										{
-																											@Override
-																											public void run()
-																											{
-																												remindUnregisteredPlayers();
-																											}
-																										},
-																										every, every);
+		startTask(calculateTaskTicks(config.linkingAutoEvery),
+						  new Runnable()
+							{
+								@Override
+								public void run()
+								{
+									remindUnregisteredPlayers();
+								}
+							}
+						 );
 		log.fine("Auto reminder started.");
   }
 
@@ -271,40 +260,16 @@ public final class CommunityBridge extends JavaPlugin
 	 */
 	private void autosyncStart()
   {
-    long every;
-
-    if (config.autoEveryUnit.startsWith("sec"))
-    {
-      every = config.autoSyncEvery * 20; // 20 ticks per second.
-    }
-    else if (config.autoEveryUnit.startsWith("min"))
-    {
-      every = config.autoSyncEvery * 1200; // 20 ticks per second, 60 sec/minute
-    }
-    else if (config.autoEveryUnit.startsWith("hou"))
-    {
-      every = config.autoSyncEvery * 72000; // 20 ticks/s 60s/m, 60m/h
-    }
-		else if (config.autoEveryUnit.startsWith("day"))
-		{
-			every = config.autoSyncEvery * 1728000; // 20 ticks/s 60s/m, 60m/h, 24h/day
-		}
-		else
-		{
-			// Effectively defaulting to ticks.
-			every = config.autoSyncEvery;
-		}
-
-		Bukkit.getScheduler().runTaskTimerAsynchronously(this,
-																										new Runnable()
-																										{
-																											@Override
-																											public void run()
-																											{
-																												webapp.synchronizeAll();
-																											}
-																										},
-																										every, every);
+		startTask(calculateTaskTicks(config.autoSyncEvery),
+							new Runnable()
+							{
+								@Override
+								public void run()
+								{
+									webapp.synchronizeAll();
+								}
+							}
+						 );
 		log.fine("Auto synchronization started.");
   }
 
@@ -515,6 +480,31 @@ public final class CommunityBridge extends JavaPlugin
 			log.severe(e.getMessage());
 			log.severe("Disabling features dependent on a permissions system.");
 			config.disableFeaturesDependentOnPermissions();
+		}
+	}
+
+	private long calculateTaskTicks(final long every)
+	{
+		if (config.autoEveryUnit.startsWith("sec"))
+		{
+			return every * 20; // 20 ticks per second.
+		}
+		else if (config.autoEveryUnit.startsWith("min"))
+		{
+			return every * 1200; // 20 ticks per second, 60 sec/minute
+		}
+		else if (config.autoEveryUnit.startsWith("hou"))
+		{
+			return every * 72000; // 20 ticks/s 60s/m, 60m/h
+		}
+		else if (config.autoEveryUnit.startsWith("day"))
+		{
+			return every * 1728000; // 20 ticks/s 60s/m, 60m/h, 24h/day
+		}
+		else
+		{
+			// Effectively defaulting to ticks.
+			return every;
 		}
 	}
 }
