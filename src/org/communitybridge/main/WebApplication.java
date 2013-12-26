@@ -1105,7 +1105,7 @@ public class WebApplication
 		String errorBase = "Error during updateStatisticsKeyStyle(): ";
 		String insertQuery = "INSERT INTO `" + config.statisticsTableName + "` ("
 											 + config.statisticsUserIDColumn + ", "
-											 + ((config.statisticsUsesInsert && config.statisticsInsertMethod.startsWith("smf")) ? config.statisticsThemeIDColumn + ", " : "")
+											 + (config.statisticsUsesInsert && config.statisticsInsertMethod.startsWith("smf") ? config.statisticsThemeIDColumn + ", " : "")
 											 + config.statisticsKeyColumn + ", "
 											 + config.statisticsValueColumn + ") VALUES ";
 		String updateQuery = "UPDATE `" + config.statisticsTableName + "` "
