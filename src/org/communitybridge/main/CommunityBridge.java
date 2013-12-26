@@ -14,6 +14,7 @@ import org.mcstats.Metrics;
 import org.mcstats.Metrics.Graph;
 import org.communitybridge.utility.Log;
 import org.communitybridge.permissionhandlers.*;
+import org.communitybridge.utility.MinecraftUtilities;
 import org.communitybridge.utility.StringUtilities;
 
 /**
@@ -223,34 +224,23 @@ public final class CommunityBridge extends JavaPlugin
 		return active;
 	}
 
-	private void startTask(long every, Runnable runnable)
-	{
-		if (StringUtilities.compareVersion(Bukkit.getBukkitVersion(), "1.4.6") > 0)
-		{
-			Bukkit.getScheduler().runTaskTimerAsynchronously(this, runnable, every, every);		
-		}
-		else
-		{
-			Bukkit.getScheduler().scheduleAsyncRepeatingTask(this, runnable, every, every);
-		}
-	}
-	
 	/**
 	 * Called by activate() if the auto reminder to register is turned on, this
 	 * method starts up the reminder task.
 	 */
 	private void reminderStart()
   {
-		startTask(calculateTaskTicks(config.linkingAutoEvery),
-						  new Runnable()
-							{
-								@Override
-								public void run()
-								{
-									remindUnregisteredPlayers();
-								}
-							}
-						 );
+		MinecraftUtilities.startTaskTimer(this,
+																			calculateTaskTicks(config.linkingAutoEvery),
+																			new Runnable()
+																			{
+																				@Override
+																				public void run()
+																				{
+																					remindUnregisteredPlayers();
+																				}
+																			}
+																		 );
 		log.fine("Auto reminder started.");
   }
 
@@ -260,16 +250,17 @@ public final class CommunityBridge extends JavaPlugin
 	 */
 	private void autosyncStart()
   {
-		startTask(calculateTaskTicks(config.autoSyncEvery),
-							new Runnable()
-							{
-								@Override
-								public void run()
-								{
-									webapp.synchronizeAll();
-								}
-							}
-						 );
+		MinecraftUtilities.startTaskTimer(this,
+																			calculateTaskTicks(config.autoSyncEvery),
+																			new Runnable()
+																			{
+																				@Override
+																				public void run()
+																				{
+																					webapp.synchronizeAll();
+																				}
+																			}
+																		 );
 		log.fine("Auto synchronization started.");
   }
 
