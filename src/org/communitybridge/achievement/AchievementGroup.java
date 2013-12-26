@@ -14,17 +14,9 @@ public class AchievementGroup extends Achievement
 	@Override
 	public boolean playerQualifies(Player player, PlayerAchievementState state)
 	{
-		if (CommunityBridge.permissionHandler.isMemberOfGroup(player.getName(), groupName))
-		{
-			if (state.getGroupAchievement(groupName) < limit)
-			{
-				if (canRewardAllItemRewards(player))
-				{
-					return true;
-				}
-			}
-		}
-		return false;
+		return CommunityBridge.permissionHandler.isMemberOfGroup(player.getName(), groupName)
+				&& state.getGroupAchievement(groupName) < limit
+				&& canRewardAllItemRewards(player);
 	}
 	
 	@Override
