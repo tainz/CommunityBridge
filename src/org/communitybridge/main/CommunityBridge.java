@@ -104,11 +104,12 @@ public final class CommunityBridge extends JavaPlugin
 			selectPermissionsHandler();
 		}
 		
-		if ((config.statisticsEnabled && config.walletEnabled) || config.economyEnabled)
+		if (config.economyEnabled || config.statisticsEnabled && config.walletEnabled)
 		{
 	    if (getServer().getPluginManager().getPlugin("Vault") == null)
 			{
-				log.warning("Wallet statistics tracker requires Vault. Temporarily disabling Wallet tracker");
+				log.warning("Vault not present. Temporarily disabling economy based features.");
+				config.economyEnabled = false;
 				config.walletEnabled = false;
 			}
 			else
