@@ -14,20 +14,10 @@ public class AchievementPostCount extends Achievement
 	@Override
 	public boolean playerQualifies(Player player, PlayerAchievementState state)
 	{
-		if (CommunityBridge.config.postCountEnabled)
-		{			
-			if (CommunityBridge.webapp.getUserPostCount(player.getName()) >= postCount)
-			{
-				if (state.getPostCountAchievements(Integer.toString(postCount))< limit)
-				{
-					if (canRewardAllItemRewards(player))
-					{
-						return true;
-					}
-				}
-			}
-		}
-		return false;
+		return CommunityBridge.config.postCountEnabled
+				&& CommunityBridge.webapp.getUserPostCount(player.getName()) >= postCount
+				&& state.getPostCountAchievements(Integer.toString(postCount))< limit
+				&& canRewardAllItemRewards(player);
 	}
 	
 	@Override

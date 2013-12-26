@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 import org.communitybridge.achievement.Achievement;
 import org.communitybridge.achievement.PlayerAchievementState;
 import org.communitybridge.utility.Log;
+import org.communitybridge.utility.MinecraftUtilities;
 import org.communitybridge.utility.StringUtilities;
 
 /**
@@ -564,26 +565,30 @@ public class WebApplication
 	 */
 	public void runSynchronizePlayer(final Player player, final boolean online)
 	{
-		Bukkit.getScheduler().runTaskAsynchronously(plugin,	new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				synchronizePlayer(player, online);
-			}
-		});
+		MinecraftUtilities.startTask(plugin,
+																	new Runnable()
+																	{
+																		@Override
+																		public void run()
+																		{
+																			synchronizePlayer(player, online);
+																		}
+																	}
+																);
 	}
 
 	public void runSynchronizeAll()
 	{
-		Bukkit.getScheduler().runTaskAsynchronously(plugin,	new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				synchronizeAll();
-			}
-		});
+		MinecraftUtilities.startTask(plugin,
+																	new Runnable()
+																	{
+																		@Override
+																		public void run()
+																		{
+																			synchronizeAll();
+																		}
+																	}
+																);
 	}
 
 	public void synchronizeAll()
@@ -1100,7 +1105,7 @@ public class WebApplication
 		String errorBase = "Error during updateStatisticsKeyStyle(): ";
 		String insertQuery = "INSERT INTO `" + config.statisticsTableName + "` ("
 											 + config.statisticsUserIDColumn + ", "
-											 + ((config.statisticsUsesInsert && config.statisticsInsertMethod.startsWith("smf")) ? config.statisticsThemeIDColumn + ", " : "")
+											 + (config.statisticsUsesInsert && config.statisticsInsertMethod.startsWith("smf") ? config.statisticsThemeIDColumn + ", " : "")
 											 + config.statisticsKeyColumn + ", "
 											 + config.statisticsValueColumn + ") VALUES ";
 		String updateQuery = "UPDATE `" + config.statisticsTableName + "` "
