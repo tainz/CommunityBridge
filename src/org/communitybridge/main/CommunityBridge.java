@@ -15,7 +15,6 @@ import org.mcstats.Metrics.Graph;
 import org.communitybridge.utility.Log;
 import org.communitybridge.permissionhandlers.*;
 import org.communitybridge.utility.MinecraftUtilities;
-import org.communitybridge.utility.StringUtilities;
 
 /**
  * Main plugin class
