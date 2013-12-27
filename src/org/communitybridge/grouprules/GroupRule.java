@@ -1,4 +1,4 @@
-package org.communitybridge.main;
+package org.communitybridge.grouprules;
 
 /**
  *
