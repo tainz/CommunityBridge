@@ -157,8 +157,9 @@ player-user-linking:
   # The name of the table which contains the columns:
   table-name:
 
-  # Column on the table that contains the user ID. Typically something like
-  # user_id or member_id
+  # Column on the table that contains the user ID. Typically, the column will be
+  # named something like user_id or member_id and contains a unique number for each
+  # user.
   user-id-column:
 
   # If the player name is stored in a key-value pair of columns instead of
