@@ -144,31 +144,20 @@ public class DatabaseHandler
 		return null;
 	}
 
-	public ResultSet sqlQuery(String query) throws MalformedURLException, InstantiationException, IllegalAccessException
+	public ResultSet sqlQuery(String query) throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
-		try
+		Connection connectionLocal = getConnection();
+
+		if (connectionLocal == null)
 		{
-			Connection connectionLocal = getConnection();
-			
-			if (connectionLocal == null)
-			{
-				return null;
-			}
-			
-			Statement statement = connectionLocal.createStatement();
-
-			statement.setQueryTimeout(10);
-
-			ResultSet result = statement.executeQuery(query);
-
-			return result;
+			return null;
 		}
-		catch (SQLException exception)
-		{
-			CommunityBridge.log.warning("Error at SQL Query: " + exception.getMessage());
-		}
-		
-		return null;
+
+		Statement statement = connectionLocal.createStatement();
+
+		statement.setQueryTimeout(10);
+
+		return statement.executeQuery(query);
 	}
 
 	public void insertQuery(String query) throws MalformedURLException, InstantiationException, IllegalAccessException
@@ -263,10 +252,16 @@ public class DatabaseHandler
 			
 			CommunityBridge.log.warning("Error at SQL Query: " + exception.getMessage());
 		}
-
-		if (sqlQuery("SELECT * FROM " + table) == null)
+		try
 		{
-			return true;
+			if (sqlQuery("SELECT * FROM " + table) == null)
+			{
+				return true;
+			}
+		}
+		catch (SQLException exception)
+		{
+			CommunityBridge.log.warning("Error at SQL Query: " + exception.getMessage());
 		}
 		return false;
 	}

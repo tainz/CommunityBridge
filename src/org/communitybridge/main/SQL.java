@@ -3,6 +3,7 @@ package org.communitybridge.main;
 import java.net.MalformedURLException;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class SQL
 {
@@ -26,7 +27,7 @@ public class SQL
 		return false;
 	}
 
-	public ResultSet sqlQuery(String query) throws MalformedURLException, InstantiationException, IllegalAccessException
+	public ResultSet sqlQuery(String query) throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
 		CommunityBridge.log.finest(query);
 		return this.manageDB.sqlQuery(query);

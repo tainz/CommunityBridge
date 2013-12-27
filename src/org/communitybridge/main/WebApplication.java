@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -499,10 +498,11 @@ public class WebApplication
 			String userID = null;
 			ResultSet result = sql.sqlQuery(query);
 
-			if (result.next())
+			if (result != null && result.next())
 			{
 				userID = result.getString(config.linkingUserIDColumn);
 			}
+			
 			if (userID == null)
 			{
 				log.finest("User ID for " + playerName + " not found.");

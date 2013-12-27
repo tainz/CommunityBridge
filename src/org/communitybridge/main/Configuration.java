@@ -565,20 +565,25 @@ public class Configuration
 		errorBase = "Error while checking '" + keyName
 							+ "' set to '" + columnName + "': ";
 
+		if (columnName.isEmpty())
+		{
+			log.severe(errorBase + "Empty column name.");
+			return false;
+		}
+		
 		try
 		{
-			result = sql.sqlQuery("SHOW COLUMNS FROM `" + tableName
-														+ "` LIKE '" + columnName + "'");
+			result = sql.sqlQuery("SHOW COLUMNS FROM `" + tableName	+ "` LIKE '" + columnName + "'");
 
-			if (result != null)
+			if (result != null && result.next())
 			{
-				if (result.next())
-				{
-					return true;
-				}
-				log.severe(errorBase + "Column does not exist.");
+				return true;
 			}
-			return false;
+			else
+			{
+				log.severe(errorBase + "Column does not exist.");
+				return false;
+			}
 		}
 		catch (SQLException e)
 		{
@@ -1063,11 +1068,13 @@ public class Configuration
 	{
 		loadMessages();
 		loadAchievements();
+		
 		if (filename == null || filename.isEmpty() || filename.equals("config.yml"))
 		{
 			plugin.deactivate();
 			plugin.reloadConfig();
 			load();
+			
 			plugin.activate();
 			return null;
 		}
