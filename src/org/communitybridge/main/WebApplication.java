@@ -1024,7 +1024,6 @@ public class WebApplication
 		if (config.currentxpEnabled)
 		{
 			playerStatistics.setCurrentXP(player.getExp());
-			playerStatistics.setCurrentXPFormatted(((int)(playerStatistics.getCurrentXP() * 100)) + "%");
 		}
 		
 		if (config.healthEnabled)

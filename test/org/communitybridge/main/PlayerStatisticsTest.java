@@ -26,6 +26,13 @@ public class PlayerStatisticsTest
 		assertEquals("0 seconds", playerStatistics.getGameTimeFormatted());
 	}
 
+	@Test
+	public void testGetCurrentXPFormatted()
+	{
+		playerStatistics.setCurrentXP(0);
+		assertEquals("0%", playerStatistics.getCurrentXPFormatted());
+	}
+
 //	@Test
 //	public void testGetLastOnlineTimeFormatted()
 //	{
@@ -37,19 +44,7 @@ public class PlayerStatisticsTest
 //		// TODO review the generated test code and remove the default call to fail.
 //		fail("The test case is a prototype.");
 //	}
-//
-//	@Test
-//	public void testGetCurrentXPFormatted()
-//	{
-//		System.out.println("getCurrentXPFormatted");
-//		PlayerStatistics instance = new PlayerStatistics();
-//		String expResult = "";
-//		String result = instance.getCurrentXPFormatted();
-//		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
-//	}
-//
+
 //	@Test
 //	public void testGetLifeTicksFormatted()
 //	{

@@ -105,12 +105,7 @@ public class PlayerStatistics
 
 	public String getCurrentXPFormatted()
 	{
-		return currentXPFormatted;
-	}
-
-	public void setCurrentXPFormatted(String currentxpFormatted)
-	{
-		this.currentXPFormatted = currentxpFormatted;
+		return ((int)(getCurrentXP() * 100)) + "%";
 	}
 
 	public double getHealth()
