@@ -893,7 +893,7 @@ public class WebApplication
 	 */
 	private void updateStatistics(Player player, boolean online)
 	{
-		PlayerStatistics playerStatistics = new PlayerStatistics();
+		PlayerStatistics playerStatistics = new PlayerStatistics(config.dateFormat);
 		
 		String query;
 		ResultSet result;
@@ -1000,7 +1000,6 @@ public class WebApplication
 		if (config.lastonlineEnabled)
 		{
 			playerStatistics.setLastOnlineTime((int) (System.currentTimeMillis() / 1000L));
-			playerStatistics.setLastOnlineTimeFormatted(config.dateFormat.format(new Date()));
 		}
 
 		if (config.gametimeEnabled)

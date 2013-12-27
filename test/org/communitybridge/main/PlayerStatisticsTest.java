@@ -4,6 +4,7 @@
  */
 package org.communitybridge.main;
 
+import java.text.SimpleDateFormat;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -13,7 +14,7 @@ import static org.junit.Assert.*;
  */
 public class PlayerStatisticsTest
 {
-	private	PlayerStatistics playerStatistics = new PlayerStatistics();
+	private	PlayerStatistics playerStatistics = new PlayerStatistics(new SimpleDateFormat());
 
 	@Test
 	public void testGetGameTimeFormatted()
@@ -29,17 +30,13 @@ public class PlayerStatisticsTest
 		assertEquals("0%", playerStatistics.getCurrentXPFormatted());
 	}
 
-//	@Test
-//	public void testGetLastOnlineTimeFormatted()
-//	{
-//		System.out.println("getLastOnlineTimeFormatted");
-//		PlayerStatistics instance = new PlayerStatistics();
-//		String expResult = "";
-//		String result = instance.getLastOnlineTimeFormatted();
-//		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
-//	}
+	// TODO: Make this test work on all time zones.
+	@Test
+	public void testGetLastOnlineTimeFormatted()
+	{
+		playerStatistics.setLastOnlineTime(0);
+		assertEquals("12/31/69 6:00 PM", playerStatistics.getLastOnlineTimeFormatted());
+	}
 
 	@Test
 	public void testGetLifeTicksFormatted()

@@ -1,22 +1,27 @@
 package org.communitybridge.main;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import org.communitybridge.utility.StringUtilities;
 
 public class PlayerStatistics
 {
+	private final SimpleDateFormat dateFormat;
 	private String userID;
 	private String onlineStatus;
 	private int lastOnlineTime;
-	private String lastOnlineTimeFormatted;
 	private int gameTime;
 	private int level;
 	private int totalXP;
 	private float currentXP;
-	private String currentXPFormatted;
 	private double health;
 	private int lifeTicks;
-	private String lifeTicksFormatted;
 	private double wallet;
+
+	PlayerStatistics(SimpleDateFormat dateFormat)
+	{
+		this.dateFormat = dateFormat;
+	}
 
 	public String getUserID()
 	{
@@ -45,17 +50,12 @@ public class PlayerStatistics
 
 	public String getLastOnlineTimeFormatted()
 	{
-		return lastOnlineTimeFormatted;
+		return dateFormat.format(new Date(getLastOnlineTime()));
 	}
 
 	public void setLastOnlineTime(int lastonlineTime)
 	{
 		this.lastOnlineTime = lastonlineTime;
-	}
-
-	public void setLastOnlineTimeFormatted(String lastonlineFormattedTime)
-	{
-		this.lastOnlineTimeFormatted = lastonlineFormattedTime;
 	}
 
 	public int getGameTime()
