@@ -1009,7 +1009,6 @@ public class WebApplication
 			{
 				playerStatistics.setGameTime(previousGameTime + playerStatistics.getLastOnlineTime() - previousLastOnline);
 			}
-			playerStatistics.setGameTimeFormatted(StringUtilities.timeElapsedtoString(playerStatistics.getGameTime()));
 		}
 		
 		if (config.levelEnabled)

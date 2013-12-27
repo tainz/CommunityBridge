@@ -1,5 +1,7 @@
 package org.communitybridge.main;
 
+import org.communitybridge.utility.StringUtilities;
+
 public class PlayerStatistics
 {
 	private String userID;
@@ -7,7 +9,6 @@ public class PlayerStatistics
 	private int lastOnlineTime;
 	private String lastOnlineTimeFormatted;
 	private int gameTime;
-	private String gameTimeFormatted;
 	private int level;
 	private int totalXP;
 	private float currentXP;
@@ -69,12 +70,7 @@ public class PlayerStatistics
 
 	public String getGameTimeFormatted()
 	{
-		return gameTimeFormatted;
-	}
-
-	public void setGameTimeFormatted(String gameTimeFormatted)
-	{
-		this.gameTimeFormatted = gameTimeFormatted;
+		return StringUtilities.timeElapsedtoString(getGameTime());
 	}
 
 	public int getLevel()
