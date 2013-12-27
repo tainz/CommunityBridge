@@ -893,29 +893,17 @@ public class WebApplication
 	 */
 	private void updateStatistics(Player player, boolean online)
 	{
+		PlayerStatistics playerStatistics = new PlayerStatistics();
+		
 		String query;
 		ResultSet result;
-		String playerName = player.getName();
-		String userID = getUserID(playerName);
 		
-		String onlineStatus = "";
-		int lastonlineTime = 0;
-		String lastonlineTimeFormatted = "";
-		int gametime = 0;
-		String gametimeFormatted = "";
-		int level = 0;
-		int totalxp = 0;
-		float currentxp = 0.0f;
-		String currentxpFormatted = "";
-		double health = 0.0;
-		int lifeticks = 0;
-		String lifeticksFormatted = "";
-		double wallet = 0.0;
-
 		int previousLastOnline = 0;
 		int previousGameTime = 0;
 
-		if (userID == null) 
+		String playerName = player.getName();
+		playerStatistics.setUserID(getUserID(playerName));
+		if (playerStatistics.getUserID() == null) 
 		{
 			return;
 		}
@@ -929,7 +917,7 @@ public class WebApplication
 			{
 				query = "SELECT `" + config.statisticsKeyColumn +  "`, `" + config.statisticsValueColumn + "` "
 							+ "FROM `" + config.statisticsTableName + "` "
-							+ "WHERE `" + config.statisticsUserIDColumn + "` = '" + userID + "'";
+							+ "WHERE `" + config.statisticsUserIDColumn + "` = '" + playerStatistics.getUserID() + "'";
 				try
 				{
 					result = sql.sqlQuery(query);
@@ -967,7 +955,7 @@ public class WebApplication
 			{
 				query = "SELECT `" + config.lastonlineColumnOrKey + "`, `" + config.gametimeColumnOrKey + "`"
 							+ " FROM `" + config.statisticsTableName + "`"
-							+ " WHERE `" + config.statisticsUserIDColumn + "` = '" + userID + "'";
+							+ " WHERE `" + config.statisticsUserIDColumn + "` = '" + playerStatistics.getUserID() + "'";
 				try
 				{
 					result = sql.sqlQuery(query);
@@ -1001,90 +989,77 @@ public class WebApplication
 		{
 			if (online)
 			{
-				onlineStatus = config.onlineStatusValueOnline;
+				playerStatistics.setOnlineStatus(config.onlineStatusValueOnline);
 			}
 			else
 			{
-				onlineStatus = config.onlineStatusValueOffline;
+				playerStatistics.setOnlineStatus(config.onlineStatusValueOffline);
 			}
 		}
 		
 		if (config.lastonlineEnabled)
 		{
-			lastonlineTime = (int) (System.currentTimeMillis() / 1000L);
-			lastonlineTimeFormatted = config.dateFormat.format(new Date());
+			playerStatistics.setLastOnlineTime((int) (System.currentTimeMillis() / 1000L));
+			playerStatistics.setLastOnlineTimeFormatted(config.dateFormat.format(new Date()));
 		}
 
 		if (config.gametimeEnabled)
 		{
 			if (previousLastOnline > 0)
 			{
-				gametime = previousGameTime + lastonlineTime - previousLastOnline;
+				playerStatistics.setGameTime(previousGameTime + playerStatistics.getLastOnlineTime() - previousLastOnline);
 			}
-			gametimeFormatted = StringUtilities.timeElapsedtoString(gametime);
+			playerStatistics.setGameTimeFormatted(StringUtilities.timeElapsedtoString(playerStatistics.getGameTime()));
 		}
 		
 		if (config.levelEnabled)
 		{
-			level = player.getLevel();
+			playerStatistics.setLevel(player.getLevel());
 		}
 		
 		if (config.totalxpEnabled)
 		{
-			totalxp = player.getTotalExperience();
+			playerStatistics.setTotalXP(player.getTotalExperience());
 		}
 		
 		if (config.currentxpEnabled)
 		{
-			currentxp = player.getExp();
-			currentxpFormatted = ((int)(currentxp * 100)) + "%";
+			playerStatistics.setCurrentXP(player.getExp());
+			playerStatistics.setCurrentXPFormatted(((int)(playerStatistics.getCurrentXP() * 100)) + "%");
 		}
 		
 		if (config.healthEnabled)
 		{
-			health = (double)player.getHealth();
+			playerStatistics.setHealth((double)player.getHealth());
 		}
 		
 		if (config.lifeticksEnabled)
 		{
-			lifeticks = player.getTicksLived();
-			lifeticksFormatted = StringUtilities.timeElapsedtoString((int)(lifeticks / 20));
+			playerStatistics.setLifeticks(player.getTicksLived());
+			playerStatistics.setLifeTicksFormatted(StringUtilities.timeElapsedtoString((int)(playerStatistics.getLifeticks() / 20)));
 		}
 
 		if (config.walletEnabled)
 		{
-			wallet = CommunityBridge.economy.getBalance(playerName);
+			playerStatistics.setWallet(CommunityBridge.economy.getBalance(playerName));
 		}
 
 		if (config.statisticsUsesKey)
 		{
-			updateStatisticsKeyStyle(userID, onlineStatus, lastonlineTime, lastonlineTimeFormatted, gametime, gametimeFormatted, level, totalxp, currentxp, currentxpFormatted, health, lifeticks, lifeticksFormatted, wallet);
+			updateStatisticsKeyStyle(playerStatistics);
 		}
 		else
 		{
-			updateStatisticsKeylessStyle(userID, onlineStatus, lastonlineTime, lastonlineTimeFormatted, gametime, gametimeFormatted, level, totalxp, currentxp, currentxpFormatted, health, lifeticks, lifeticksFormatted, wallet);
+			updateStatisticsKeylessStyle(playerStatistics);
 		}
 	}
 
 	/**
 	 * Called by updateStatistics() to update a statistics table that uses Key-Value Pairs.
 	 *
-	 * @param String Player's forum user ID.
-	 * @param String Set to the appropriate value representing player's online status.
-	 * @param int systime value for the last time the player was last online
-	 * @param String A formatted version of the systime value of when the player was last online.
-	 * @param int Amount of time the player has played in seconds.
-	 * @param String Amount of time the player has played formatted nicely.
-	 * @param int Level of the player
-	 * @param int Total amount of XP the player currently has.
-	 * @param float Amount of progress the player has towards the next level as a percentage.
-	 * @param String Readable version of the percentage the player has towards the next level.
-	 * @param int Player's current health level.
-	 * @param int Amount of time played since last death, in ticks.
-	 * @param String Formatted amount of time played since last death.
-	 * @param double Current balance of the player.
+	 * @param PlayerStatistics Bean containing the player's statistics
 	 */
-	private void updateStatisticsKeyStyle(String userID, String onlineStatus, int lastonlineTime, String lastonlineFormattedTime, int gameTime, String gameTimeFormatted, int level, int totalxp, float currentxp, String currentxpFormatted, double health, int lifeticks, String lifeticksFormatted, double wallet)
+	private void updateStatisticsKeyStyle(PlayerStatistics playerStatistics)
 	{
 		/* To collapse multiple MySQL queries into one query, we're using the
 		 * MySQL CASE operator. Recommended reading:
@@ -1117,7 +1092,8 @@ public class WebApplication
 			{
 				String selectQuery = "SELECT `" + config.statisticsKeyColumn + "` "
 													 + " FROM `" + config.statisticsTableName + "` "
-													 + " WHERE `" + config.statisticsUserIDColumn + "` = '" + userID + "'"
+													 + " WHERE `" + config.statisticsUserIDColumn + "` = '"
+													 + playerStatistics.getUserID() + "'"
 													 + (config.statisticsInsertMethod.startsWith("smf") ? " AND `" + config.statisticsThemeIDColumn + "` = '" + config.statisticsThemeID + "'" : "");
 
 				ResultSet result = sql.sqlQuery(selectQuery);
@@ -1131,64 +1107,64 @@ public class WebApplication
 			
 			if (config.onlineStatusEnabled)
 			{
-				fieldTuple.add(userID, config.onlineStatusColumnOrKey, onlineStatus);
+				fieldTuple.add(playerStatistics.getUserID(), config.onlineStatusColumnOrKey, playerStatistics.getOnlineStatus());
 			}
 			
 			if (config.lastonlineEnabled)
 			{
-				fieldTuple.add(userID, config.lastonlineColumnOrKey, Integer.toString(lastonlineTime));
+				fieldTuple.add(playerStatistics.getUserID(), config.lastonlineColumnOrKey, Integer.toString(playerStatistics.getLastOnlineTime()));
 				if (!config.lastonlineFormattedColumnOrKey.isEmpty())
 				{
-					fieldTuple.add(userID, config.lastonlineFormattedColumnOrKey, lastonlineFormattedTime);
+					fieldTuple.add(playerStatistics.getUserID(), config.lastonlineFormattedColumnOrKey, playerStatistics.getLastOnlineTimeFormatted());
 				}
 			}
 
 			// Gametime actually relies on the prior lastonlineTime...
 			if (config.gametimeEnabled && config.lastonlineEnabled)
 			{
-				fieldTuple.add(userID, config.gametimeColumnOrKey, Integer.toString(gameTime));
+				fieldTuple.add(playerStatistics.getUserID(), config.gametimeColumnOrKey, Integer.toString(playerStatistics.getGameTime()));
 				if (!config.gametimeFormattedColumnOrKey.isEmpty())
 				{
-					fieldTuple.add(userID, config.gametimeFormattedColumnOrKey, gameTimeFormatted);
+					fieldTuple.add(playerStatistics.getUserID(), config.gametimeFormattedColumnOrKey, playerStatistics.getGameTimeFormatted());
 				}
 			}
 			
 			if (config.levelEnabled)
 			{
-				fieldTuple.add(userID, config.levelColumnOrKey, Integer.toString(level));
+				fieldTuple.add(playerStatistics.getUserID(), config.levelColumnOrKey, Integer.toString(playerStatistics.getLevel()));
 			}
 			
 			if (config.totalxpEnabled)
 			{
-				fieldTuple.add(userID, config.totalxpColumnOrKey, Integer.toString(totalxp));
+				fieldTuple.add(playerStatistics.getUserID(), config.totalxpColumnOrKey, Integer.toString(playerStatistics.getTotalXP()));
 			}
 			
 			if (config.currentxpEnabled)
 			{
-				fieldTuple.add(userID, config.currentxpColumnOrKey, Float.toString(currentxp));
+				fieldTuple.add(playerStatistics.getUserID(), config.currentxpColumnOrKey, Float.toString(playerStatistics.getCurrentXP()));
 				if (!config.currentxpFormattedColumnOrKey.isEmpty())
 				{
-					fieldTuple.add(userID, config.currentxpFormattedColumnOrKey, currentxpFormatted);
+					fieldTuple.add(playerStatistics.getUserID(), config.currentxpFormattedColumnOrKey, playerStatistics.getCurrentXPFormatted());
 				}
 			}
 			
 			if (config.healthEnabled)
 			{
-				fieldTuple.add(userID, config.healthColumnOrKey, Integer.toString((int)health));
+				fieldTuple.add(playerStatistics.getUserID(), config.healthColumnOrKey, Integer.toString((int)playerStatistics.getHealth()));
 			}
 			
 			if (config.lifeticksEnabled)
 			{
-				fieldTuple.add(userID, config.lifeticksColumnOrKey, Integer.toString(lifeticks));
+				fieldTuple.add(playerStatistics.getUserID(), config.lifeticksColumnOrKey, Integer.toString(playerStatistics.getLifeticks()));
 				if (!config.lifeticksFormattedColumnOrKey.isEmpty())
 				{
-					fieldTuple.add(userID, config.lifeticksFormattedColumnOrKey, lifeticksFormatted);
+					fieldTuple.add(playerStatistics.getUserID(), config.lifeticksFormattedColumnOrKey, playerStatistics.getLifeTicksFormatted());
 				}
 			}
 			
 			if (config.walletEnabled)
 			{
-				fieldTuple.add(userID, config.walletColumnOrKey, Double.toString(wallet));
+				fieldTuple.add(playerStatistics.getUserID(), config.walletColumnOrKey, Double.toString(playerStatistics.getWallet()));
 			}
 
 			if (fieldTuple.insertFields.size() > 0)
@@ -1201,7 +1177,8 @@ public class WebApplication
 			{
 				updateQuery = updateQuery + StringUtilities.joinStrings(fieldTuple.updateFields, " ")
 										+ " END"
-										+ " WHERE `" + config.statisticsUserIDColumn + "` = '" + userID + "'"
+										+ " WHERE `" + config.statisticsUserIDColumn + "` = '"
+										+ playerStatistics.getUserID() + "'"
 										+ " AND `" + config.statisticsKeyColumn + "`"
 										+ " IN (" + StringUtilities.joinStrings(fieldTuple.inFields, ", ") + ");";
 				
@@ -1445,22 +1422,9 @@ public class WebApplication
 	/**
 	 * Called by updateStatistics when updating a table that columns (instead of keyvalue pairs).
 	 *
-	 * @param String Player's forum user ID.
-	 * @param String Set to the appropriate value representing player's online status.
-	 * @param int systime value for the last time the player was last online
-	 * @param String A formatted version of the systime value of when the player was last online.
-	 * @param int Amount of time the player has played in seconds.
-	 * @param String Amount of time the player has played formatted nicely.
-	 * @param int Level of the player
-	 * @param int Total amount of XP the player currently has.
-	 * @param float Amount of progress the player has towards the next level as a percentage.
-	 * @param String Readable version of the percentage the player has towards the next level.
-	 * @param int Player's current health level.
-	 * @param int Amount of time played since last death, in ticks.
-	 * @param String Formatted amount of time played since last death.
-	 * @param double Current balance of the player.
+	 * @param PlayerStatistics Bean containing the player's statistics
 	 */
-	private void updateStatisticsKeylessStyle(String userID, String onlineStatus, int lastonlineTime, String lastonlineTimeFormatted, int gametime, String gametimeFormatted, int level, int totalxp, float currentxp, String currentxpFormatted, double health, int lifeticks, String lifeticksFormatted, double wallet)
+	private void updateStatisticsKeylessStyle(PlayerStatistics playerStatistics)
 	{
 		String query;
 		List<String> fields = new ArrayList<String>();
@@ -1469,66 +1433,66 @@ public class WebApplication
 
 		if (config.onlineStatusEnabled)
 		{
-			fields.add("`" + config.onlineStatusColumnOrKey + "` = '" + onlineStatus +  "'");
+			fields.add("`" + config.onlineStatusColumnOrKey + "` = '" + playerStatistics.getOnlineStatus() +  "'");
 		}
 
 		if (config.lastonlineEnabled)
 		{
-			fields.add("`" + config.lastonlineColumnOrKey + "` = '" + lastonlineTime + "'");
+			fields.add("`" + config.lastonlineColumnOrKey + "` = '" + playerStatistics.getLastOnlineTime() + "'");
 			if (!config.lastonlineFormattedColumnOrKey.isEmpty())
 			{
-				fields.add("`" + config.lastonlineFormattedColumnOrKey + "` = '" + lastonlineTimeFormatted + "'");
+				fields.add("`" + config.lastonlineFormattedColumnOrKey + "` = '" + playerStatistics.getLastOnlineTimeFormatted() + "'");
 			}
 		}
 
 		if (config.gametimeEnabled)
 		{
-			fields.add("`" + config.gametimeColumnOrKey + "` = '" + gametime + "'");
+			fields.add("`" + config.gametimeColumnOrKey + "` = '" + playerStatistics.getGameTime() + "'");
 			if (!config.gametimeFormattedColumnOrKey.isEmpty())
 			{
-				fields.add("`" + config.gametimeFormattedColumnOrKey + "` = '" + gametimeFormatted + "'");
+				fields.add("`" + config.gametimeFormattedColumnOrKey + "` = '" + playerStatistics.getGameTimeFormatted() + "'");
 			}
 		}
 
 		if (config.levelEnabled)
 		{
-			fields.add("`" + config.levelColumnOrKey + "` = '" + level + "'");
+			fields.add("`" + config.levelColumnOrKey + "` = '" + playerStatistics.getLevel() + "'");
 		}
 
 		if (config.totalxpEnabled)
 		{
-			fields.add("`" + config.totalxpColumnOrKey + "` = '" + totalxp + "'");
+			fields.add("`" + config.totalxpColumnOrKey + "` = '" + playerStatistics.getTotalXP() + "'");
 		}
 
 		if (config.currentxpEnabled)
 		{
-			fields.add("`" + config.currentxpColumnOrKey + "` = '" + currentxp + "'");
+			fields.add("`" + config.currentxpColumnOrKey + "` = '" + playerStatistics.getCurrentXP() + "'");
 			if (!config.currentxpFormattedColumnOrKey.isEmpty())
 			{
-				fields.add("`" + config.currentxpFormattedColumnOrKey + "` = '" + currentxpFormatted + "'");
+				fields.add("`" + config.currentxpFormattedColumnOrKey + "` = '" + playerStatistics.getCurrentXPFormatted() + "'");
 			}
 		}
 
 		if (config.healthEnabled)
 		{
-			fields.add("`" + config.healthColumnOrKey + "` = '" + (int)health + "'");
+			fields.add("`" + config.healthColumnOrKey + "` = '" + (int)playerStatistics.getHealth() + "'");
 		}
 
 		if (config.lifeticksEnabled)
 		{
-			fields.add("`" + config.lifeticksColumnOrKey + "` = '" + lifeticks + "'");
+			fields.add("`" + config.lifeticksColumnOrKey + "` = '" + playerStatistics.getLifeticks() + "'");
 			if (!config.lifeticksFormattedColumnOrKey.isEmpty())
 			{
-				fields.add("`" + config.lifeticksFormattedColumnOrKey + "` = '" + lifeticksFormatted + "'");
+				fields.add("`" + config.lifeticksFormattedColumnOrKey + "` = '" + playerStatistics.getLifeTicksFormatted() + "'");
 			}
 		}
 
 		if (config.walletEnabled)
 		{
-			fields.add("`" + config.walletColumnOrKey + "` = '" + wallet + "'");
+			fields.add("`" + config.walletColumnOrKey + "` = '" + playerStatistics.getWallet() + "'");
 		}
 
-		query = query + StringUtilities.joinStrings(fields, ", ") + " WHERE `" + config.statisticsUserIDColumn + "` = '" + userID + "'";
+		query = query + StringUtilities.joinStrings(fields, ", ") + " WHERE `" + config.statisticsUserIDColumn + "` = '" + playerStatistics.getUserID() + "'";
 
 		String errorBase = "Error during updateStatisticsKeylessStyle(): ";
 
