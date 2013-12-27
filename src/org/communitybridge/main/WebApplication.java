@@ -1033,8 +1033,7 @@ public class WebApplication
 		
 		if (config.lifeticksEnabled)
 		{
-			playerStatistics.setLifeticks(player.getTicksLived());
-			playerStatistics.setLifeTicksFormatted(StringUtilities.timeElapsedtoString((int)(playerStatistics.getLifeticks() / 20)));
+			playerStatistics.setLifeTicks(player.getTicksLived());
 		}
 
 		if (config.walletEnabled)
@@ -1153,7 +1152,7 @@ public class WebApplication
 			
 			if (config.lifeticksEnabled)
 			{
-				fieldTuple.add(playerStatistics.getUserID(), config.lifeticksColumnOrKey, Integer.toString(playerStatistics.getLifeticks()));
+				fieldTuple.add(playerStatistics.getUserID(), config.lifeticksColumnOrKey, Integer.toString(playerStatistics.getLifeTicks()));
 				if (!config.lifeticksFormattedColumnOrKey.isEmpty())
 				{
 					fieldTuple.add(playerStatistics.getUserID(), config.lifeticksFormattedColumnOrKey, playerStatistics.getLifeTicksFormatted());
@@ -1478,7 +1477,7 @@ public class WebApplication
 
 		if (config.lifeticksEnabled)
 		{
-			fields.add("`" + config.lifeticksColumnOrKey + "` = '" + playerStatistics.getLifeticks() + "'");
+			fields.add("`" + config.lifeticksColumnOrKey + "` = '" + playerStatistics.getLifeTicks() + "'");
 			if (!config.lifeticksFormattedColumnOrKey.isEmpty())
 			{
 				fields.add("`" + config.lifeticksFormattedColumnOrKey + "` = '" + playerStatistics.getLifeTicksFormatted() + "'");

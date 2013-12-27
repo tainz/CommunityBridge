@@ -43,14 +43,14 @@ public class PlayerStatistics
 		return lastOnlineTime;
 	}
 
-	public void setLastOnlineTime(int lastonlineTime)
-	{
-		this.lastOnlineTime = lastonlineTime;
-	}
-
 	public String getLastOnlineTimeFormatted()
 	{
 		return lastOnlineTimeFormatted;
+	}
+
+	public void setLastOnlineTime(int lastonlineTime)
+	{
+		this.lastOnlineTime = lastonlineTime;
 	}
 
 	public void setLastOnlineTimeFormatted(String lastonlineFormattedTime)
@@ -63,14 +63,14 @@ public class PlayerStatistics
 		return gameTime;
 	}
 
-	public void setGameTime(int gameTime)
-	{
-		this.gameTime = gameTime;
-	}
-
 	public String getGameTimeFormatted()
 	{
 		return StringUtilities.timeElapsedtoString(getGameTime());
+	}
+
+	public void setGameTime(int gameTime)
+	{
+		this.gameTime = gameTime;
 	}
 
 	public int getLevel()
@@ -98,14 +98,14 @@ public class PlayerStatistics
 		return currentXP;
 	}
 
-	public void setCurrentXP(float currentxp)
-	{
-		this.currentXP = currentxp;
-	}
-
 	public String getCurrentXPFormatted()
 	{
 		return ((int)(getCurrentXP() * 100)) + "%";
+	}
+
+	public void setCurrentXP(float currentxp)
+	{
+		this.currentXP = currentxp;
 	}
 
 	public double getHealth()
@@ -118,24 +118,19 @@ public class PlayerStatistics
 		this.health = health;
 	}
 
-	public int getLifeticks()
+	public int getLifeTicks()
 	{
 		return lifeTicks;
 	}
 
-	public void setLifeticks(int lifeticks)
-	{
-		this.lifeTicks = lifeticks;
-	}
-
 	public String getLifeTicksFormatted()
 	{
-		return lifeTicksFormatted;
+		return StringUtilities.timeElapsedtoString((int)(getLifeTicks() / 20));
 	}
 
-	public void setLifeTicksFormatted(String lifeticksFormatted)
+	public void setLifeTicks(int lifeticks)
 	{
-		this.lifeTicksFormatted = lifeticksFormatted;
+		this.lifeTicks = lifeticks;
 	}
 
 	public double getWallet()

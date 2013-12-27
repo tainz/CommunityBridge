@@ -4,10 +4,6 @@
  */
 package org.communitybridge.main;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -45,16 +41,10 @@ public class PlayerStatisticsTest
 //		fail("The test case is a prototype.");
 //	}
 
-//	@Test
-//	public void testGetLifeTicksFormatted()
-//	{
-//		System.out.println("getLifeTicksFormatted");
-//		PlayerStatistics instance = new PlayerStatistics();
-//		String expResult = "";
-//		String result = instance.getLifeTicksFormatted();
-//		assertEquals(expResult, result);
-//		// TODO review the generated test code and remove the default call to fail.
-//		fail("The test case is a prototype.");
-//	}
-//
+	@Test
+	public void testGetLifeTicksFormatted()
+	{
+		playerStatistics.setLifeTicks(0);
+		assertEquals("0 seconds", playerStatistics.getLifeTicksFormatted());
+	}
 }
