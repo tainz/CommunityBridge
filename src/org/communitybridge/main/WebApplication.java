@@ -1099,7 +1099,7 @@ public class WebApplication
 				}
 			}
 
-			FieldTuple fieldTuple = new FieldTuple(foundFields);
+			FieldBuilder fieldTuple = new FieldBuilder(foundFields);
 			
 			if (config.onlineStatusEnabled)
 			{
@@ -1108,7 +1108,7 @@ public class WebApplication
 			
 			if (config.lastonlineEnabled)
 			{
-				fieldTuple.add(playerStatistics.getUserID(), config.lastonlineColumnOrKey, Integer.toString(playerStatistics.getLastOnlineTime()));
+				fieldTuple.add(playerStatistics.getUserID(), config.lastonlineColumnOrKey, playerStatistics.getLastOnlineTime());
 				if (!config.lastonlineFormattedColumnOrKey.isEmpty())
 				{
 					fieldTuple.add(playerStatistics.getUserID(), config.lastonlineFormattedColumnOrKey, playerStatistics.getLastOnlineTimeFormatted());
@@ -1118,7 +1118,7 @@ public class WebApplication
 			// Gametime actually relies on the prior lastonlineTime...
 			if (config.gametimeEnabled && config.lastonlineEnabled)
 			{
-				fieldTuple.add(playerStatistics.getUserID(), config.gametimeColumnOrKey, Integer.toString(playerStatistics.getGameTime()));
+				fieldTuple.add(playerStatistics.getUserID(), config.gametimeColumnOrKey, playerStatistics.getGameTime());
 				if (!config.gametimeFormattedColumnOrKey.isEmpty())
 				{
 					fieldTuple.add(playerStatistics.getUserID(), config.gametimeFormattedColumnOrKey, playerStatistics.getGameTimeFormatted());
@@ -1127,17 +1127,17 @@ public class WebApplication
 			
 			if (config.levelEnabled)
 			{
-				fieldTuple.add(playerStatistics.getUserID(), config.levelColumnOrKey, Integer.toString(playerStatistics.getLevel()));
+				fieldTuple.add(playerStatistics.getUserID(), config.levelColumnOrKey, playerStatistics.getLevel());
 			}
 			
 			if (config.totalxpEnabled)
 			{
-				fieldTuple.add(playerStatistics.getUserID(), config.totalxpColumnOrKey, Integer.toString(playerStatistics.getTotalXP()));
+				fieldTuple.add(playerStatistics.getUserID(), config.totalxpColumnOrKey, playerStatistics.getTotalXP());
 			}
 			
 			if (config.currentxpEnabled)
 			{
-				fieldTuple.add(playerStatistics.getUserID(), config.currentxpColumnOrKey, Float.toString(playerStatistics.getCurrentXP()));
+				fieldTuple.add(playerStatistics.getUserID(), config.currentxpColumnOrKey, playerStatistics.getCurrentXP());
 				if (!config.currentxpFormattedColumnOrKey.isEmpty())
 				{
 					fieldTuple.add(playerStatistics.getUserID(), config.currentxpFormattedColumnOrKey, playerStatistics.getCurrentXPFormatted());
@@ -1146,12 +1146,12 @@ public class WebApplication
 			
 			if (config.healthEnabled)
 			{
-				fieldTuple.add(playerStatistics.getUserID(), config.healthColumnOrKey, Integer.toString((int)playerStatistics.getHealth()));
+				fieldTuple.add(playerStatistics.getUserID(), config.healthColumnOrKey, (int)playerStatistics.getHealth());
 			}
 			
 			if (config.lifeticksEnabled)
 			{
-				fieldTuple.add(playerStatistics.getUserID(), config.lifeticksColumnOrKey, Integer.toString(playerStatistics.getLifeTicks()));
+				fieldTuple.add(playerStatistics.getUserID(), config.lifeticksColumnOrKey, playerStatistics.getLifeTicks());
 				if (!config.lifeticksFormattedColumnOrKey.isEmpty())
 				{
 					fieldTuple.add(playerStatistics.getUserID(), config.lifeticksFormattedColumnOrKey, playerStatistics.getLifeTicksFormatted());
@@ -1160,7 +1160,7 @@ public class WebApplication
 			
 			if (config.walletEnabled)
 			{
-				fieldTuple.add(playerStatistics.getUserID(), config.walletColumnOrKey, Double.toString(playerStatistics.getWallet()));
+				fieldTuple.add(playerStatistics.getUserID(), config.walletColumnOrKey, playerStatistics.getWallet());
 			}
 
 			if (fieldTuple.insertFields.size() > 0)
@@ -1373,14 +1373,14 @@ public class WebApplication
 		state.save();
 	}
 
-	private class FieldTuple
+	private class FieldBuilder
 	{
 		public List<String> insertFields;
 		public List<String> updateFields;
 		public List<String> inFields;
 		List<String> foundFields;
 		
-		FieldTuple(List<String> foundFields)
+		FieldBuilder(List<String> foundFields)
 		{
 			this.foundFields = foundFields;
 			this.insertFields = new ArrayList<String>();
@@ -1412,6 +1412,21 @@ public class WebApplication
 				updateFields.add("WHEN '" + key + "' THEN '" + data + "'");
 				inFields.add("'" + key + "'");
 			}
+		}
+		
+		private void add(String userID, String key, int data)
+		{
+			add(userID, key, Integer.toString(data));
+		}
+		
+		private void add(String userID, String key, double data)
+		{
+			add(userID, key, Double.toString(data));
+		}
+
+		private void add(String userID, String key, float data)
+		{
+			add(userID, key, Float.toString(data));
 		}
 	}
 
