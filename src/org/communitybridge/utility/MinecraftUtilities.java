@@ -41,7 +41,7 @@ public final class MinecraftUtilities
 	 */
 	public static void startTask(Plugin plugin, Runnable runnable)
 	{
-		if (StringUtilities.compareVersion(Bukkit.getBukkitVersion(), "1.4.6") > 0)
+		if (StringUtilities.compareVersion(Bukkit.getBukkitVersion().replace("R", ""), "1.4.6") > 0)
 		{
 			Bukkit.getScheduler().runTaskAsynchronously(plugin, runnable);		
 		}
@@ -60,7 +60,7 @@ public final class MinecraftUtilities
 	 */
 	public static void startTaskTimer(Plugin plugin, long every, Runnable runnable)
 	{
-		if (StringUtilities.compareVersion(Bukkit.getBukkitVersion(), "1.4.6") > 0)
+		if (StringUtilities.compareVersion(Bukkit.getBukkitVersion().replace("R", ""), "1.4.6") > 0)
 		{
 			Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, runnable, every, every);		
 		}
