@@ -27,6 +27,7 @@ import org.communitybridge.utility.StringUtilities;
  */
 public class WebApplication
 {
+	private final Boolean synchronizationLock = true;
 	private CommunityBridge plugin;
 	private Configuration config;
 	private Log log;
@@ -34,7 +35,7 @@ public class WebApplication
 	private int maxPlayers;
 
 	private Map<String, String> playerUserIDs = new HashMap<String, String>();
-	private List<Player> synchronizationLocks = new ArrayList<Player>();
+	private List<Player> playerLocks = new ArrayList<Player>();
 
 	public WebApplication(CommunityBridge plugin, Configuration config, Log log, SQL sql)
 	{
@@ -602,9 +603,9 @@ public class WebApplication
 
 	private void synchronizePlayer(Player player, boolean online)
 	{
-		if (!synchronizationLocks.contains(player))
+		if (!playerLocks.contains(player))
 		{
-			synchronizationLocks.add(player);
+			synchronized (synchronizationLock) { playerLocks.add(player);}
 			if (config.groupSynchronizationActive)
 			{
 				synchronizeGroups(player);
@@ -617,7 +618,7 @@ public class WebApplication
 			{
 				rewardAchievements(player);
 			}
-			synchronizationLocks.remove(player);
+			synchronized (synchronizationLock) { playerLocks.remove(player); }
 		}
 	}
 
