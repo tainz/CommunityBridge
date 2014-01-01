@@ -702,6 +702,9 @@ public class WebApplication
 		PlayerGroupState currentState = new PlayerGroupState(playerName, playerFolder);
 		currentState.generate();
 
+		if(config.simpleSynchronizationFirstDirection.startsWith("web") && previousState.isNewFile) {
+			direction = "web";
+		}
 		if (config.webappPrimaryGroupEnabled)
 		{
 			synchronizeGroupsPrimary(direction, previousState, currentState, playerName, player, userID);
