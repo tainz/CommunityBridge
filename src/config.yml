@@ -422,6 +422,9 @@ simple-synchronization:
   #   web-application.
   direction: two-way
 
+  # If player dosen't have been before on server, getting permissions from web:
+  first-direction: web-application
+  
   # Set this to true if you want the player to be notified when their primary
   # group changes.
   primary-group-change-notify: false
