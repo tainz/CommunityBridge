@@ -1540,4 +1540,114 @@ public class WebApplication
 			log.severe(errorBase + exception.getMessage());
 		}
 	}
+	
+	private void synchronizeBansGameToWeb()
+	{
+		for (OfflinePlayer player : Bukkit.getServer().getBannedPlayers())
+		{
+			synchronizeBanGameToWeb(player.getName());
+		}
+	}
+	
+	private void synchronizeBanGameToWeb(String playerName)
+	{
+		if (config.banSynchronizationMethod.startsWith("tab"))
+		{
+			synchronizeBanGameToWebTable(playerName);
+		}
+	}
+	
+	private void synchronizeBanGameToWebTable(String playerName)
+	{
+		String userID = getUserID(playerName);
+				
+		if (userID != null && isPlayerBanned(userID) == false)
+		{
+			banPlayerWebTable(userID);
+		}
+	}
+	
+	private void banPlayerWebTable(String userID)
+	{
+		String errorBase = "Error during banPlayerWebTable: ";
+		String columns =  "`" + config.banSynchronizationUserIDColumn + "`, ";
+		String values = userID + ", ";
+		
+		if (!config.banSynchronizationReasonColumn.isEmpty())
+		{
+			columns = columns + "`" + config.banSynchronizationReasonColumn + "`, ";
+			values = values + "'banned via minecraft server', ";
+		}
+		
+		if (!config.banSynchronizationStartTimeColumn.isEmpty())
+		{
+			columns = columns + "`" + config.banSynchronizationStartTimeColumn + "`, ";
+			values = values + (System.currentTimeMillis() / 1000) + ", ";
+		}
+		
+		if (!config.banSynchronizationEndTimeColumn.isEmpty())
+		{
+			columns = columns + "`" + config.banSynchronizationEndTimeColumn + "`, ";
+			values = values + "2147483647, ";
+		}
+
+		columns = columns.substring(0, columns.length() - 2);
+		values = values.substring(0, values.length() - 2);
+		
+		String query = "INSERT INTO `" + config.banSynchronizationTableName + "` (" + columns + ") "
+						     + "VALUES (" + values + ")";
+		try
+		{
+			sql.insertQuery(query);
+		}
+		catch (MalformedURLException exception)
+		{
+			log.severe(errorBase + exception.getMessage());
+		}
+		catch (InstantiationException exception)
+		{
+			log.severe(errorBase + exception.getMessage());
+		}
+		catch (IllegalAccessException exception)
+		{
+			log.severe(errorBase + exception.getMessage());
+		}
+		catch (SQLException exception)
+		{
+			log.severe(errorBase + exception.getMessage());
+		}
+	}
+	
+	private boolean isPlayerBanned(String userID)
+	{
+		String errorBase = "Error during isBanned: ";
+		String query = "SELECT * FROM `" + config.banSynchronizationTableName + "` "
+								 + "WHERE `" + config.banSynchronizationTableName + "`.`"
+								 + config.banSynchronizationUserIDColumn + "` = '" + userID + "'";
+		try
+		{
+			ResultSet result = sql.sqlQuery(query);
+			return result != null && result.next();
+		}
+		catch (MalformedURLException exception)
+		{
+			log.severe(errorBase + exception.getMessage());
+			return false;
+		}
+		catch (InstantiationException exception)
+		{
+			log.severe(errorBase + exception.getMessage());
+			return false;
+		}
+		catch (IllegalAccessException exception)
+		{
+			log.severe(errorBase + exception.getMessage());
+			return false;
+		}
+		catch (SQLException exception)
+		{
+			log.severe(errorBase + exception.getMessage());
+			return false;
+		}
+	}
 } // WebApplication class
