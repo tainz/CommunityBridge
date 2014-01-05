@@ -472,10 +472,11 @@ simple-synchronization:
     '3' : 'premium'
 
 ban-synchronization:
-  enabled: true
+  enabled: false
   # If your web application stores banned users in a group, set this to group
   # otherwise set it to table.
   method: table
+  
   # If method is 'group' above, fill in the group-ids for the ban group(s)
   # here. Otherwise, fill in table-name, banned-user-id-column,
   # ban-reason-column, etc. below...
