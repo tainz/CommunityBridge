@@ -33,7 +33,7 @@ public class SQL
 		return this.manageDB.sqlQuery(query);
 	}
 
-	public void insertQuery(String query) throws MalformedURLException, InstantiationException, IllegalAccessException
+	public void insertQuery(String query) throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
 		CommunityBridge.log.finest(query);
 		this.manageDB.insertQuery(query);

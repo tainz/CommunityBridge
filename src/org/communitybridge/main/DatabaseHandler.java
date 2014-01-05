@@ -160,7 +160,7 @@ public class DatabaseHandler
 		return statement.executeQuery(query);
 	}
 
-	public void insertQuery(String query) throws MalformedURLException, InstantiationException, IllegalAccessException
+	public void insertQuery(String query) throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
 		try
 		{
@@ -176,7 +176,7 @@ public class DatabaseHandler
 		{
 			if (!exception.toString().contains("not return ResultSet"))
 			{
-				CommunityBridge.log.warning("Error at SQL INSERT Query: " + exception);
+				throw exception;
 			}
 		}
 	}

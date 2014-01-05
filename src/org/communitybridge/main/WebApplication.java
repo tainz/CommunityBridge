@@ -7,12 +7,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.communitybridge.achievement.Achievement;
 import org.communitybridge.achievement.PlayerAchievementState;
@@ -95,24 +99,24 @@ public class WebApplication
 				return true;
 			}
 		}
-		catch (SQLException error)
+		catch (SQLException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 			return false;
 		}
-		catch (MalformedURLException error)
+		catch (MalformedURLException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 			return false;
 		}
-		catch (InstantiationException error)
+		catch (InstantiationException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 			return false;
 		}
-		catch (IllegalAccessException error)
+		catch (IllegalAccessException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 			return false;
 		}
 	}
@@ -145,24 +149,24 @@ public class WebApplication
 				return 0;
 			}
 		}
-		catch (SQLException error)
+		catch (SQLException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 			return 0;
 		}
-		catch (MalformedURLException error)
+		catch (MalformedURLException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 			return 0;
 		}
-		catch (InstantiationException error)
+		catch (InstantiationException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 			return 0;
 		}
-		catch (IllegalAccessException error)
+		catch (IllegalAccessException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 			return 0;
 		}
 	}
@@ -210,24 +214,24 @@ public class WebApplication
 				return "";
 			}
 		}
-		catch (SQLException error)
+		catch (SQLException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 			return "";
 		}
-		catch (MalformedURLException error)
+		catch (MalformedURLException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 			return "";
 		}
-		catch (InstantiationException error)
+		catch (InstantiationException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 			return "";
 		}
-		catch (IllegalAccessException error)
+		catch (IllegalAccessException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 			return "";
 		}
 	}
@@ -289,24 +293,24 @@ public class WebApplication
 				return null;
 			}
 		}
-		catch (SQLException error)
+		catch (SQLException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 			return null;
 		}
-		catch (MalformedURLException error)
+		catch (MalformedURLException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 			return null;
 		}
-		catch (InstantiationException error)
+		catch (InstantiationException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 			return null;
 		}
-		catch (IllegalAccessException error)
+		catch (IllegalAccessException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 			return null;
 		}
 	}
@@ -334,24 +338,24 @@ public class WebApplication
 				return null;
 			}
 		}
-		catch (SQLException error)
+		catch (SQLException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 			return null;
 		}
-		catch (MalformedURLException error)
+		catch (MalformedURLException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 			return null;
 		}
-		catch (InstantiationException error)
+		catch (InstantiationException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 			return null;
 		}
-		catch (IllegalAccessException error)
+		catch (IllegalAccessException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 			return null;
 		}
 	}
@@ -376,24 +380,24 @@ public class WebApplication
 			}
 			return groupIDs;
 		}
-		catch (SQLException error)
+		catch (SQLException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 			return null;
 		}
-		catch (MalformedURLException error)
+		catch (MalformedURLException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 			return null;
 		}
-		catch (InstantiationException error)
+		catch (InstantiationException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 			return null;
 		}
-		catch (IllegalAccessException error)
+		catch (IllegalAccessException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 			return null;
 		}
 	}
@@ -419,24 +423,24 @@ public class WebApplication
 			}
 			return groupIDs;
 		}
-		catch (SQLException error)
+		catch (SQLException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 			return null;
 		}
-		catch (MalformedURLException error)
+		catch (MalformedURLException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 			return null;
 		}
-		catch (InstantiationException error)
+		catch (InstantiationException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 			return null;
 		}
-		catch (IllegalAccessException error)
+		catch (IllegalAccessException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 			return null;
 		}
 	}
@@ -514,21 +518,21 @@ public class WebApplication
 				playerUserIDs.put(playerName, userID);
 			}
 		}
-		catch (SQLException error)
+		catch (SQLException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 		}
-		catch (MalformedURLException error)
+		catch (MalformedURLException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 		}
-		catch (InstantiationException error)
+		catch (InstantiationException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 		}
-		catch (IllegalAccessException error)
+		catch (IllegalAccessException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 		}
 	} // loadUserIDfromDatabase()
 
@@ -599,6 +603,10 @@ public class WebApplication
 		{
 			synchronizePlayer(player, true);
 		}
+		if (config.banSynchronizationEnabled)
+		{
+			synchronizeBansGameToWeb();
+		}
 	}
 
 	private void synchronizePlayer(Player player, boolean online)
@@ -654,17 +662,17 @@ public class WebApplication
 				sql.updateQuery(query);
 			}
 		}
-		catch (MalformedURLException error)
+		catch (MalformedURLException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 		}
-		catch (InstantiationException error)
+		catch (InstantiationException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 		}
-		catch (IllegalAccessException error)
+		catch (IllegalAccessException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 		}
 	}
 
@@ -733,9 +741,9 @@ public class WebApplication
 		{
 			currentState.save();
 		}
-		catch (IOException error)
+		catch (IOException exception)
 		{
-			log.severe("Error when saving group state for player " + playerName + ": " + error.getMessage());
+			log.severe("Error when saving group state for player " + playerName + ": " + exception.getMessage());
 		}
 	}
 
@@ -788,17 +796,21 @@ public class WebApplication
 				sql.insertQuery(query);
 			}
 		}
-		catch (MalformedURLException error)
+		catch (MalformedURLException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 		}
-		catch (InstantiationException error)
+		catch (InstantiationException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 		}
-		catch (IllegalAccessException error)
+		catch (IllegalAccessException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
+		}
+		catch (SQLException exception)
+		{
+			log.severe(errorBase + exception.getMessage());
 		}
 	}
 
@@ -871,21 +883,21 @@ public class WebApplication
 				sql.deleteQuery(query);
 			}
 		}
-		catch (SQLException error)
+		catch (SQLException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 		}
-		catch (MalformedURLException error)
+		catch (MalformedURLException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 		}
-		catch (InstantiationException error)
+		catch (InstantiationException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 		}
-		catch (IllegalAccessException error)
+		catch (IllegalAccessException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 		}
 	}
 
@@ -938,21 +950,21 @@ public class WebApplication
 						}
 					}
 				}
-				catch (SQLException error)
+				catch (SQLException exception)
 				{
-					log.severe("Error in UpdateStatistics() during retrieval: " + error.getMessage());
+					log.severe("Error in UpdateStatistics() during retrieval: " + exception.getMessage());
 				}
-				catch (MalformedURLException error)
+				catch (MalformedURLException exception)
 				{
-					log.severe("Error in UpdateStatistics() during retrieval: " + error.getMessage());
+					log.severe("Error in UpdateStatistics() during retrieval: " + exception.getMessage());
 				}
-				catch (InstantiationException error)
+				catch (InstantiationException exception)
 				{
-					log.severe("Error in UpdateStatistics() during retrieval: " + error.getMessage());
+					log.severe("Error in UpdateStatistics() during retrieval: " + exception.getMessage());
 				}
-				catch (IllegalAccessException error)
+				catch (IllegalAccessException exception)
 				{
-					log.severe("Error in UpdateStatistics() during retrieval: " + error.getMessage());
+					log.severe("Error in UpdateStatistics() during retrieval: " + exception.getMessage());
 				}
 			}
 			else
@@ -970,21 +982,21 @@ public class WebApplication
 						previousGameTime = result.getInt(config.gametimeColumnOrKey);
 					}
 				}
-				catch (SQLException error)
+				catch (SQLException exception)
 				{
-					log.severe("Error in UpdateStatistics() during retrieval: " + error.getMessage());
+					log.severe("Error in UpdateStatistics() during retrieval: " + exception.getMessage());
 				}
-				catch (MalformedURLException error)
+				catch (MalformedURLException exception)
 				{
-					log.severe("Error in UpdateStatistics() during retrieval: " + error.getMessage());
+					log.severe("Error in UpdateStatistics() during retrieval: " + exception.getMessage());
 				}
-				catch (InstantiationException error)
+				catch (InstantiationException exception)
 				{
-					log.severe("Error in UpdateStatistics() during retrieval: " + error.getMessage());
+					log.severe("Error in UpdateStatistics() during retrieval: " + exception.getMessage());
 				}
-				catch (IllegalAccessException error)
+				catch (IllegalAccessException exception)
 				{
-					log.severe("Error in UpdateStatistics() during retrieval: " + error.getMessage());
+					log.severe("Error in UpdateStatistics() during retrieval: " + exception.getMessage());
 				}
 			}
 		}
@@ -1185,21 +1197,21 @@ public class WebApplication
 				sql.updateQuery(updateQuery);
 			}
 		}
-		catch (SQLException error)
+		catch (SQLException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 		}
-		catch (MalformedURLException error)
+		catch (MalformedURLException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 		}
-		catch (InstantiationException error)
+		catch (InstantiationException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 		}
-		catch (IllegalAccessException error)
+		catch (IllegalAccessException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 		}
 	}
 
@@ -1515,17 +1527,17 @@ public class WebApplication
 		{
 			sql.updateQuery(query);
 		}
-		catch (MalformedURLException error)
+		catch (MalformedURLException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 		}
-		catch (InstantiationException error)
+		catch (InstantiationException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 		}
-		catch (IllegalAccessException error)
+		catch (IllegalAccessException exception)
 		{
-			log.severe(errorBase + error.getMessage());
+			log.severe(errorBase + exception.getMessage());
 		}
 	}
 } // WebApplication class
