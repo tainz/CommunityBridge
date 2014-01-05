@@ -903,7 +903,7 @@ public class Configuration
 		banSynchronizationEnabled = config.getBoolean("ban-synchronization.enabled", false);
 		banSynchronizationMethod = config.getString("ban-synchronization.method", "table").toLowerCase();
 		banSynchronizationGroupIDs = config.getStringList("ban-synchronization.ban-group-ids");
-		banSynchronizationTableName = config.getString("ban-synchronization.table", "");
+		banSynchronizationTableName = config.getString("ban-synchronization.table-name", "");
 		banSynchronizationUserIDColumn = config.getString("ban-synchronization.banned-user-id-column", "");
 		banSynchronizationReasonColumn = config.getString("ban-synchronization.ban-reason-column", "");
 		banSynchronizationStartTimeColumn = config.getString("ban-synchronization.ban-start-column", "");
