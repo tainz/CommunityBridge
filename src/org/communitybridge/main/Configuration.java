@@ -1277,6 +1277,7 @@ public class Configuration
 		if (simpleSynchronizationEnabled)
 		{
 			log.config(  "Simple synchronization direction     : " + simpleSynchronizationDirection);
+			log.config(  "Simple synchronization firstdirection: " + simpleSynchronizationFirstDirection);
 			log.config(  "Simple synchronization notification  : " + simpleSynchronizationPrimaryGroupNotify);
 			log.config(  "Simple synchronization P-groups      : " + simpleSynchronizationGroupsTreatedAsPrimary.toString());
 		}
