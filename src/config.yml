@@ -422,7 +422,9 @@ simple-synchronization:
   #   web-application.
   direction: two-way
 
-  # If player dosen't have been before on server, getting permissions from web:
+  # If player hasn't been seen before on server, CommunityBridge will use this
+  # setting to determine the direction of the synchronization. 'web-application'
+  # is the only option available at this time.
   first-direction: web-application
   
   # Set this to true if you want the player to be notified when their primary
