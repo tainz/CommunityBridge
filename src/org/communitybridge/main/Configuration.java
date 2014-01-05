@@ -169,6 +169,7 @@ public class Configuration
 
 	public boolean simpleSynchronizationEnabled;
 	public String simpleSynchronizationDirection;
+	public String simpleSynchronizationFirstDirection;
 	public boolean simpleSynchronizationPrimaryGroupNotify;
 	public Map<String, Object> simpleSynchronizationGroupMap = new HashMap<String, Object>();
 	public List<String> simpleSynchronizationGroupsTreatedAsPrimary = new ArrayList<String>();
@@ -893,6 +894,7 @@ public class Configuration
 		simpleSynchronizationSuperUserID = config.getString("simple-synchronization.super-user-user-id", "");
 		simpleSynchronizationEnabled = config.getBoolean("simple-synchronization.enabled", false);
 		simpleSynchronizationDirection = config.getString("simple-synchronization.direction", "two-way").toLowerCase();
+		simpleSynchronizationFirstDirection = config.getString("simple-synchronization.first-direction", "two-way").toLowerCase();
 		simpleSynchronizationPrimaryGroupNotify = config.getBoolean("simple-synchronization.primary-group-change-notify", false);
 		simpleSynchronizationGroupMap = config.getConfigurationSection("simple-synchronization.group-mapping").getValues(false);
 		simpleSynchronizationGroupsTreatedAsPrimary = config.getStringList("simple-synchronization.groups-treated-as-primary");
