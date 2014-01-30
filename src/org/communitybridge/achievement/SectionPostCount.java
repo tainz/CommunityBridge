@@ -1,11 +1,11 @@
 package org.communitybridge.achievement;
 
-class SectionPostCountTuple
+class SectionPostCount
 {
 	private String sectionID;
 	private int postCount;
 
-	public SectionPostCountTuple(String sectionID, int postCount)
+	public SectionPostCount(String sectionID, int postCount)
 	{
 		this.sectionID = sectionID;
 		this.postCount = postCount;
@@ -18,7 +18,7 @@ class SectionPostCountTuple
 		{
 			return false;
 		}
-		return this.equals((SectionPostCountTuple)other);
+		return this.equals((SectionPostCount)other);
 	}
 
 	@Override
@@ -30,7 +30,7 @@ class SectionPostCountTuple
 		return hash;
 	}
 	
-	public boolean equals(SectionPostCountTuple other)
+	public boolean equals(SectionPostCount other)
 	{
 		return this.sectionID.equals(other.sectionID) && this.postCount == other.postCount;
 	}
