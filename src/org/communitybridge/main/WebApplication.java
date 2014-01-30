@@ -1294,6 +1294,7 @@ public class WebApplication
 			}
 		}
 
+		int addedCount = 0;
 		for (Iterator<String> iterator = currentState.permissionsSystemGroupNames.iterator(); iterator.hasNext();)
 		{
 			String groupName = iterator.next();
@@ -1317,7 +1318,8 @@ public class WebApplication
 					}
 					else if (!currentState.webappGroupIDs.contains(groupID))
 					{
-						this.addGroup(userID, groupID, currentState.webappGroupIDs.size());
+						this.addGroup(userID, groupID, currentState.webappGroupIDs.size() + addedCount);
+						addedCount++;
 					}
 					else
 					{
