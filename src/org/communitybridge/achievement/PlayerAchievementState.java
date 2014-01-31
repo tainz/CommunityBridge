@@ -20,7 +20,7 @@ public class PlayerAchievementState
 	private int avatarAchievements;
 	private Map<String, Integer> groupAchievements = new HashMap<String, Integer>();
 	private Map<String, Integer> postCountAchievements = new HashMap<String, Integer>();
-	private Map<SectionPostCountTuple, Integer> sectionPostCountAchievements = new HashMap<SectionPostCountTuple, Integer>();
+	private Map<SectionPostCount, Integer> sectionPostCountAchievements = new HashMap<SectionPostCount, Integer>();
 	
 	public PlayerAchievementState(String playerName, File playerDataFolder)
 	{
@@ -70,41 +70,50 @@ public class PlayerAchievementState
 	private void loadGroupAchievementCounts(YamlConfiguration playerData)
 	{
 		ConfigurationSection groupsSection = playerData.getConfigurationSection("groups");
-		Set<String> groupNames = groupsSection.getKeys(false);
-		
-		for (String groupName : groupNames)
+		if (groupsSection != null)
 		{
-			int count = groupsSection.getInt(groupName);
-			groupAchievements.put(groupName, count);
+			Set<String> groupNames = groupsSection.getKeys(false);
+
+			for (String groupName : groupNames)
+			{
+				int count = groupsSection.getInt(groupName);
+				groupAchievements.put(groupName, count);
+			}
 		}
 	}
 
 	private void loadPostCountAchievementCounts(YamlConfiguration playerData) throws NumberFormatException
 	{
 		ConfigurationSection postCountSection = playerData.getConfigurationSection("post-counts");
-		Set<String> postCounts = postCountSection.getKeys(false);
 		
-		for (String postCount : postCounts)
+		if (postCountSection != null)
 		{
-			int count = postCountSection.getInt(postCount);
-			postCountAchievements.put(postCount, count);
+			Set<String> postCounts = postCountSection.getKeys(false);
+
+			for (String postCount : postCounts)
+			{
+				int count = postCountSection.getInt(postCount);
+				postCountAchievements.put(postCount, count);
+			}
 		}
 	}
 
 	private void loadSectionPostCountAchievementCounts(YamlConfiguration playerData) throws NumberFormatException
 	{
 		ConfigurationSection sectionPostCountSection = playerData.getConfigurationSection("section-post-counts");
-		Set<String> sectionIDs = sectionPostCountSection.getKeys(false);
-		for (String sectionID : sectionIDs)
-		{
-			ConfigurationSection postCountSection = sectionPostCountSection.getConfigurationSection(sectionID);
-			Set<String> postCounts = postCountSection.getKeys(false);
-		
-			for (String postCount : postCounts)
+		if (sectionPostCountSection != null) {	
+			Set<String> sectionIDs = sectionPostCountSection.getKeys(false);
+			for (String sectionID : sectionIDs)
 			{
-				SectionPostCountTuple sectionPostCount = new SectionPostCountTuple(sectionID, Integer.parseInt(postCount));
-				int count = postCountSection.getInt(postCount);
-				sectionPostCountAchievements.put(sectionPostCount, count);
+				ConfigurationSection postCountSection = sectionPostCountSection.getConfigurationSection(sectionID);
+				Set<String> postCounts = postCountSection.getKeys(false);
+
+				for (String postCount : postCounts)
+				{
+					SectionPostCount sectionPostCount = new SectionPostCount(sectionID, Integer.parseInt(postCount));
+					int count = postCountSection.getInt(postCount);
+					sectionPostCountAchievements.put(sectionPostCount, count);
+				}
 			}
 		}
 	}
@@ -127,7 +136,7 @@ public class PlayerAchievementState
 
 	private void saveSectionPostCountAchievements(FileConfiguration playerData)
 	{
-		for (Entry<SectionPostCountTuple, Integer>  entry : sectionPostCountAchievements.entrySet())
+		for (Entry<SectionPostCount, Integer>  entry : sectionPostCountAchievements.entrySet())
 		{
 			String path = "section-post-counts." + entry.getKey().getSectionID() + "." + entry.getKey().getPostCount();
 			playerData.set(path, entry.getValue());
@@ -155,7 +164,7 @@ public class PlayerAchievementState
 	
 	public void sectionPostCountIncrement(String sectionID, int postCount)
 	{
-		SectionPostCountTuple spt = new SectionPostCountTuple(sectionID, postCount);
+		SectionPostCount spt = new SectionPostCount(sectionID, postCount);
 		Integer count = getSectionPostCountAchievements(spt);
 		count++;
 		sectionPostCountAchievements.put(spt, count);
@@ -192,11 +201,11 @@ public class PlayerAchievementState
 
 	public Integer getSectionPostCountAchievements(String sectionID, int postCount)
 	{
-		SectionPostCountTuple spt = new SectionPostCountTuple(sectionID, postCount);
+		SectionPostCount spt = new SectionPostCount(sectionID, postCount);
 		return getSectionPostCountAchievements(spt);
 	}
 
-	private Integer getSectionPostCountAchievements(SectionPostCountTuple spt)
+	private Integer getSectionPostCountAchievements(SectionPostCount spt)
 	{
 		Integer count = sectionPostCountAchievements.get(spt);
 		
