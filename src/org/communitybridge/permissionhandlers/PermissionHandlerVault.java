@@ -28,13 +28,13 @@ public class PermissionHandlerVault extends PermissionHandler
 	@Override
 	public boolean addToGroup(String playerName, String groupName)
 	{
-		return vault.playerAddGroup((String)null, playerName, groupName);
+		return vault.playerAddGroup(determineWorld(playerName), playerName, groupName);
 	}
 
 	@Override
 	public String[] getGroups(String playerName)
 	{
-		return vault.getPlayerGroups((String) null, playerName);
+		return vault.getPlayerGroups(determineWorld(playerName), playerName);
 	}
 
 	@Override
@@ -46,13 +46,13 @@ public class PermissionHandlerVault extends PermissionHandler
 	@Override
 	public String getPrimaryGroup(String playerName)
 	{
-		return vault.getPrimaryGroup((String) null, playerName);
+		return vault.getPrimaryGroup(determineWorld(playerName), playerName);
 	}
 
 	@Override
 	public boolean isMemberOfGroup(String playerName, String groupName)
 	{
-		return vault.playerInGroup((String) null, playerName, groupName);
+		return vault.playerInGroup(determineWorld(playerName), playerName, groupName);
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class PermissionHandlerVault extends PermissionHandler
 	@Override
 	public boolean removeFromGroup(String playerName, String groupName)
 	{
-		return vault.playerRemoveGroup((String) null, playerName, groupName);
+		return vault.playerRemoveGroup(determineWorld(playerName), playerName, groupName);
 	}
 
 	@Override

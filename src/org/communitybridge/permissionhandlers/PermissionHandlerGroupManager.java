@@ -129,20 +129,7 @@ public class PermissionHandlerGroupManager extends PermissionHandler
 	@Override
 	public String getPrimaryGroup(String playerName)
 	{
-		String worldName;
-
-		Player player = Bukkit.getServer().getPlayerExact(playerName);
-
-		if (player == null)
-		{
-			worldName = Bukkit.getServer().getWorlds().get(0).getName();
-		}
-		else
-		{
-			worldName = player.getWorld().getName();
-		}
-
-		AnjoPermissionsHandler handler = groupManager.getWorldsHolder().getWorldPermissions(worldName);
+		AnjoPermissionsHandler handler = groupManager.getWorldsHolder().getWorldPermissions(determineWorld(playerName));
 
 		if (handler == null)
 		{
@@ -172,20 +159,7 @@ public class PermissionHandlerGroupManager extends PermissionHandler
 	@Override
 	public boolean isMemberOfGroup(String playerName, String groupName) throws RuntimeException
 	{
-		String worldName;
-
-		Player player = Bukkit.getServer().getPlayerExact(playerName);
-
-		if (player == null)
-		{
-			worldName = Bukkit.getServer().getWorlds().get(0).getName();
-		}
-		else
-		{
-			worldName = player.getWorld().getName();
-		}
-
-		AnjoPermissionsHandler handler = groupManager.getWorldsHolder().getWorldPermissions(worldName);
+		AnjoPermissionsHandler handler = groupManager.getWorldsHolder().getWorldPermissions(determineWorld(playerName));
 
 		if (handler == null)
 		{

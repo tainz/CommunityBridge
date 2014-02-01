@@ -1,5 +1,7 @@
 package org.communitybridge.permissionhandlers;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -112,5 +114,20 @@ public abstract class PermissionHandler
 		{
 			throw new IllegalStateException(name + NOT_ENABLED);
 		}
+	}
+
+	protected String determineWorld(String playerName)
+	{
+		String worldName;
+		Player player = Bukkit.getServer().getPlayerExact(playerName);
+		if (player == null)
+		{
+			worldName = Bukkit.getServer().getWorlds().get(0).getName();
+		}
+		else
+		{
+			worldName = player.getWorld().getName();
+		}
+		return worldName;
 	}
 }
