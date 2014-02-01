@@ -41,22 +41,9 @@ public class PermissionHandlerBPermissions extends PermissionHandler
 	@Override
 	public boolean addToGroup(String playerName, String groupName)
 	{
-		String worldName;
-
-		Player player = Bukkit.getServer().getPlayerExact(playerName);
-
-		if (player == null)
-		{
-			worldName = Bukkit.getServer().getWorlds().get(0).getName();
-		}
-		else
-		{
-			worldName = player.getWorld().getName();
-		}
-
 		try
 		{
-			ApiLayer.addGroup(worldName, CalculableType.USER, playerName, groupName);
+			ApiLayer.addGroup(determineWorld(playerName), CalculableType.USER, playerName, groupName);
 		}
 		catch (Error e)
 		{
@@ -75,22 +62,11 @@ public class PermissionHandlerBPermissions extends PermissionHandler
 	@Override
 	public String [] getGroups(String playerName)
 	{
-		String worldName;
 		String [] groups = {};
-		Player player = Bukkit.getServer().getPlayerExact(playerName);
-
-		if (player == null)
-		{
-			worldName = Bukkit.getServer().getWorlds().get(0).getName();
-		}
-		else
-		{
-			worldName = player.getWorld().getName();
-		}
 
 		try
 		{
-			groups = ApiLayer.getGroups(worldName, CalculableType.USER, playerName);
+			groups = ApiLayer.getGroups(determineWorld(playerName), CalculableType.USER, playerName);
 		}
 		catch (Error e)
 		{
@@ -141,23 +117,11 @@ public class PermissionHandlerBPermissions extends PermissionHandler
 	@Override
 	public String getPrimaryGroup(String playerName)
 	{
-		String worldName;
 		String [] groups;
-
-		Player player = Bukkit.getServer().getPlayerExact(playerName);
-
-		if (player == null)
-		{
-			worldName = Bukkit.getServer().getWorlds().get(0).getName();
-		}
-		else
-		{
-			worldName = player.getWorld().getName();
-		}
 
 		try
 		{
-			groups = ApiLayer.getGroups(worldName, CalculableType.USER, playerName);
+			groups = ApiLayer.getGroups(determineWorld(playerName), CalculableType.USER, playerName);
 		}
 		catch(Error e)
 		{
@@ -187,23 +151,11 @@ public class PermissionHandlerBPermissions extends PermissionHandler
 	@Override
 	public boolean isMemberOfGroup(String playerName, String groupName)
 	{
-		String worldName;
 		String [] groups;
-
-		Player player = Bukkit.getServer().getPlayerExact(playerName);
-
-		if (player == null)
-		{
-			worldName = Bukkit.getServer().getWorlds().get(0).getName();
-		}
-		else
-		{
-			worldName = player.getWorld().getName();
-		}
 
 		try
 		{
-			groups = ApiLayer.getGroups(worldName, CalculableType.USER, playerName);
+			groups = ApiLayer.getGroups(determineWorld(playerName), CalculableType.USER, playerName);
 		}
 		catch (Error e)
 		{
@@ -238,22 +190,9 @@ public class PermissionHandlerBPermissions extends PermissionHandler
 	@Override
 	public boolean removeFromGroup(String playerName, String groupName)
 	{
-		String worldName;
-
-		Player player = Bukkit.getServer().getPlayerExact(playerName);
-
-		if (player == null)
-		{
-			worldName = Bukkit.getServer().getWorlds().get(0).getName();
-		}
-		else
-		{
-			worldName = player.getWorld().getName();
-		}
-
 		try
 		{
-			ApiLayer.removeGroup(worldName, CalculableType.USER, playerName, groupName);
+			ApiLayer.removeGroup(determineWorld(playerName), CalculableType.USER, playerName, groupName);
 		}
 		catch (Error e)
 		{
