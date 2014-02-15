@@ -1,6 +1,7 @@
 package org.communitybridge.utility;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * A small collection of string related methods that don't belong anywhere else.
@@ -31,8 +32,9 @@ public final class StringUtilities
 		{
 			throw new IllegalArgumentException();
 		}
-		leftVersion = leftVersion.replace("-", ".");
-		rightVersion = rightVersion.replace("-", ".");
+		
+		leftVersion = leftVersion.replace("-", ".").replaceAll("[^0-9\\.]", "");
+		rightVersion = rightVersion.replace("-", ".").replaceAll("[^0-9\\.]", "");
 		String[] leftParts = leftVersion.split("\\.");
 		String[] rightParts = rightVersion.split("\\.");
 		int leftLength = leftParts.length;

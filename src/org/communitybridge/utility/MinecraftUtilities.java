@@ -34,6 +34,16 @@ public final class MinecraftUtilities
 	}
 	
 	/**
+	 * Given a pluginName string returns that plugin's version string.
+	 * @param String Name of the plugin
+	 * @return String containing the plugin's version.
+	 */
+	public static String getBukkitVersion()
+	{
+    return Bukkit.getBukkitVersion();
+	}
+	
+	/**
 	 * Start a Minecraft asynchronous task using the correct method based on version.
 	 * 
 	 * @param plugin The plugin object to pass to the task
@@ -41,7 +51,7 @@ public final class MinecraftUtilities
 	 */
 	public static void startTask(Plugin plugin, Runnable runnable)
 	{
-		if (StringUtilities.compareVersion(Bukkit.getBukkitVersion().replace("R", ""), "1.4.6") > 0)
+		if (StringUtilities.compareVersion(MinecraftUtilities.getBukkitVersion(), "1.4.6") > 0)
 		{
 			Bukkit.getScheduler().runTaskAsynchronously(plugin, runnable);		
 		}
@@ -60,7 +70,7 @@ public final class MinecraftUtilities
 	 */
 	public static void startTaskTimer(Plugin plugin, long every, Runnable runnable)
 	{
-		if (StringUtilities.compareVersion(Bukkit.getBukkitVersion().replace("R", ""), "1.4.6") > 0)
+		if (StringUtilities.compareVersion(MinecraftUtilities.getBukkitVersion(), "1.4.6") > 0)
 		{
 			Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, runnable, every, every);		
 		}
