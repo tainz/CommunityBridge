@@ -7,19 +7,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Map.Entry;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.communitybridge.achievement.Achievement;
 import org.communitybridge.achievement.PlayerAchievementState;
+import org.communitybridge.bansynchronizer.BanSynchronizer;
 import org.communitybridge.utility.Log;
 import org.communitybridge.utility.MinecraftUtilities;
 import org.communitybridge.utility.StringUtilities;
@@ -36,6 +34,7 @@ public class WebApplication
 	private Configuration config;
 	private Log log;
 	private SQL sql;
+	private BanSynchronizer banSynchronizer;
 	private int maxPlayers;
 
 	private Map<String, String> playerUserIDs = new HashMap<String, String>();
@@ -47,7 +46,11 @@ public class WebApplication
 		this.plugin = plugin;
 		this.log = log;
 		setSQL(sql);
-		this.maxPlayers = Bukkit.getMaxPlayers();
+		maxPlayers = Bukkit.getMaxPlayers();
+		if (config.banSynchronizationEnabled)
+		{
+			banSynchronizer = new BanSynchronizer(log, plugin.getDataFolder(), config, this, sql);
+		}
 	}
 
 	/**
@@ -603,9 +606,10 @@ public class WebApplication
 		{
 			synchronizePlayer(player, true);
 		}
+		
 		if (config.banSynchronizationEnabled)
 		{
-			synchronizeBansGameToWeb();
+			banSynchronizer.synchronize();
 		}
 	}
 
@@ -1115,84 +1119,84 @@ public class WebApplication
 				}
 			}
 
-			FieldBuilder fieldTuple = new FieldBuilder(foundFields);
+			FieldBuilder builder = new FieldBuilder(foundFields);
 			
 			if (config.onlineStatusEnabled)
 			{
-				fieldTuple.add(playerStatistics.getUserID(), config.onlineStatusColumnOrKey, playerStatistics.getOnlineStatus());
+				builder.add(playerStatistics.getUserID(), config.onlineStatusColumnOrKey, playerStatistics.getOnlineStatus());
 			}
 			
 			if (config.lastonlineEnabled)
 			{
-				fieldTuple.add(playerStatistics.getUserID(), config.lastonlineColumnOrKey, playerStatistics.getLastOnlineTime());
+				builder.add(playerStatistics.getUserID(), config.lastonlineColumnOrKey, playerStatistics.getLastOnlineTime());
 				if (!config.lastonlineFormattedColumnOrKey.isEmpty())
 				{
-					fieldTuple.add(playerStatistics.getUserID(), config.lastonlineFormattedColumnOrKey, playerStatistics.getLastOnlineTimeFormatted());
+					builder.add(playerStatistics.getUserID(), config.lastonlineFormattedColumnOrKey, playerStatistics.getLastOnlineTimeFormatted());
 				}
 			}
 
 			// Gametime actually relies on the prior lastonlineTime...
 			if (config.gametimeEnabled && config.lastonlineEnabled)
 			{
-				fieldTuple.add(playerStatistics.getUserID(), config.gametimeColumnOrKey, playerStatistics.getGameTime());
+				builder.add(playerStatistics.getUserID(), config.gametimeColumnOrKey, playerStatistics.getGameTime());
 				if (!config.gametimeFormattedColumnOrKey.isEmpty())
 				{
-					fieldTuple.add(playerStatistics.getUserID(), config.gametimeFormattedColumnOrKey, playerStatistics.getGameTimeFormatted());
+					builder.add(playerStatistics.getUserID(), config.gametimeFormattedColumnOrKey, playerStatistics.getGameTimeFormatted());
 				}
 			}
 			
 			if (config.levelEnabled)
 			{
-				fieldTuple.add(playerStatistics.getUserID(), config.levelColumnOrKey, playerStatistics.getLevel());
+				builder.add(playerStatistics.getUserID(), config.levelColumnOrKey, playerStatistics.getLevel());
 			}
 			
 			if (config.totalxpEnabled)
 			{
-				fieldTuple.add(playerStatistics.getUserID(), config.totalxpColumnOrKey, playerStatistics.getTotalXP());
+				builder.add(playerStatistics.getUserID(), config.totalxpColumnOrKey, playerStatistics.getTotalXP());
 			}
 			
 			if (config.currentxpEnabled)
 			{
-				fieldTuple.add(playerStatistics.getUserID(), config.currentxpColumnOrKey, playerStatistics.getCurrentXP());
+				builder.add(playerStatistics.getUserID(), config.currentxpColumnOrKey, playerStatistics.getCurrentXP());
 				if (!config.currentxpFormattedColumnOrKey.isEmpty())
 				{
-					fieldTuple.add(playerStatistics.getUserID(), config.currentxpFormattedColumnOrKey, playerStatistics.getCurrentXPFormatted());
+					builder.add(playerStatistics.getUserID(), config.currentxpFormattedColumnOrKey, playerStatistics.getCurrentXPFormatted());
 				}
 			}
 			
 			if (config.healthEnabled)
 			{
-				fieldTuple.add(playerStatistics.getUserID(), config.healthColumnOrKey, (int)playerStatistics.getHealth());
+				builder.add(playerStatistics.getUserID(), config.healthColumnOrKey, (int)playerStatistics.getHealth());
 			}
 			
 			if (config.lifeticksEnabled)
 			{
-				fieldTuple.add(playerStatistics.getUserID(), config.lifeticksColumnOrKey, playerStatistics.getLifeTicks());
+				builder.add(playerStatistics.getUserID(), config.lifeticksColumnOrKey, playerStatistics.getLifeTicks());
 				if (!config.lifeticksFormattedColumnOrKey.isEmpty())
 				{
-					fieldTuple.add(playerStatistics.getUserID(), config.lifeticksFormattedColumnOrKey, playerStatistics.getLifeTicksFormatted());
+					builder.add(playerStatistics.getUserID(), config.lifeticksFormattedColumnOrKey, playerStatistics.getLifeTicksFormatted());
 				}
 			}
 			
 			if (config.walletEnabled)
 			{
-				fieldTuple.add(playerStatistics.getUserID(), config.walletColumnOrKey, playerStatistics.getWallet());
+				builder.add(playerStatistics.getUserID(), config.walletColumnOrKey, playerStatistics.getWallet());
 			}
 
-			if (fieldTuple.insertFields.size() > 0)
+			if (builder.insertFields.size() > 0)
 			{
-				insertQuery = insertQuery + StringUtilities.joinStrings(fieldTuple.insertFields, ", ") + ";";
+				insertQuery = insertQuery + StringUtilities.joinStrings(builder.insertFields, ", ") + ";";
 				sql.insertQuery(insertQuery);
 			}
 			
-			if (fieldTuple.updateFields.size() > 0)
+			if (builder.updateFields.size() > 0)
 			{
-				updateQuery = updateQuery + StringUtilities.joinStrings(fieldTuple.updateFields, " ")
+				updateQuery = updateQuery + StringUtilities.joinStrings(builder.updateFields, " ")
 										+ " END"
 										+ " WHERE `" + config.statisticsUserIDColumn + "` = '"
 										+ playerStatistics.getUserID() + "'"
 										+ " AND `" + config.statisticsKeyColumn + "`"
-										+ " IN (" + StringUtilities.joinStrings(fieldTuple.inFields, ", ") + ");";
+										+ " IN (" + StringUtilities.joinStrings(builder.inFields, ", ") + ");";
 				
 				sql.updateQuery(updateQuery);
 			}
@@ -1391,6 +1395,77 @@ public class WebApplication
 		state.save();
 	}
 
+	public String getPlayerName(String userID)
+	{
+		for (Entry<String, String> entry : playerUserIDs.entrySet())
+		{
+			if (userID.equals(entry.getValue()))
+			{
+				return entry.getKey();
+			}
+		}
+		
+		String playerName = loadPlayerNameFromDatabase(userID);
+		return playerName;
+	}
+	
+	private String loadPlayerNameFromDatabase(String userID)
+	{
+		final String errorBase = "Error during WebApplication.getPlayerName(): ";
+		String query;
+		
+		if (config.linkingUsesKey)
+		{
+			query = "SELECT `" + config.linkingValueColumn + "` "
+						+ "FROM `" + config.linkingTableName + "` "
+						+ "WHERE `" + config.linkingKeyColumn + "` = '" + config.linkingKeyName + "' "
+						+ "AND `" + config.linkingUserIDColumn + "` = '" + userID + "'";
+		}
+		else
+		{
+			query = "SELECT `" + config.linkingPlayerNameColumn + "` "
+						+ "FROM `" + config.linkingTableName + "` "
+						+ "WHERE `" + config.linkingUserIDColumn + "` = '" + userID + "'";
+		}
+
+		try
+		{
+			String playerName = null;
+			ResultSet result = sql.sqlQuery(query);
+
+			if (result != null && result.next())
+			{
+				playerName = result.getString(1);
+			}
+			
+			if (playerName == null)
+			{
+				log.finest("Player name for " + userID + " not found.");
+			}
+			return playerName;
+		}
+		catch (SQLException exception)
+		{
+			log.severe(errorBase + exception.getMessage());
+			return null;
+		}
+		catch (MalformedURLException exception)
+		{
+			log.severe(errorBase + exception.getMessage());
+			return null;
+		}
+		catch (InstantiationException exception)
+		{
+			log.severe(errorBase + exception.getMessage());
+			return null;
+		}
+		catch (IllegalAccessException exception)
+		{
+			log.severe(errorBase + exception.getMessage());
+			return null;
+		}		
+	}
+
 	private class FieldBuilder
 	{
 		public List<String> insertFields;
@@ -1540,116 +1615,6 @@ public class WebApplication
 		catch (IllegalAccessException exception)
 		{
 			log.severe(errorBase + exception.getMessage());
-		}
-	}
-	
-	private void synchronizeBansGameToWeb()
-	{
-		for (OfflinePlayer player : Bukkit.getServer().getBannedPlayers())
-		{
-			synchronizeBanGameToWeb(player.getName());
-		}
-	}
-	
-	private void synchronizeBanGameToWeb(String playerName)
-	{
-		if (config.banSynchronizationMethod.startsWith("tab"))
-		{
-			synchronizeBanGameToWebTable(playerName);
-		}
-	}
-	
-	private void synchronizeBanGameToWebTable(String playerName)
-	{
-		String userID = getUserID(playerName);
-				
-		if (userID != null && isPlayerBanned(userID) == false)
-		{
-			banPlayerWebTable(userID);
-		}
-	}
-	
-	private void banPlayerWebTable(String userID)
-	{
-		String errorBase = "Error during banPlayerWebTable: ";
-		String columns =  "`" + config.banSynchronizationUserIDColumn + "`, ";
-		String values = userID + ", ";
-		
-		if (!config.banSynchronizationReasonColumn.isEmpty())
-		{
-			columns = columns + "`" + config.banSynchronizationReasonColumn + "`, ";
-			values = values + "'banned via minecraft server', ";
-		}
-		
-		if (!config.banSynchronizationStartTimeColumn.isEmpty())
-		{
-			columns = columns + "`" + config.banSynchronizationStartTimeColumn + "`, ";
-			values = values + (System.currentTimeMillis() / 1000) + ", ";
-		}
-		
-		if (!config.banSynchronizationEndTimeColumn.isEmpty())
-		{
-			columns = columns + "`" + config.banSynchronizationEndTimeColumn + "`, ";
-			values = values + "2147483647, ";
-		}
-
-		columns = columns.substring(0, columns.length() - 2);
-		values = values.substring(0, values.length() - 2);
-		
-		String query = "INSERT INTO `" + config.banSynchronizationTableName + "` (" + columns + ") "
-						     + "VALUES (" + values + ")";
-		try
-		{
-			sql.insertQuery(query);
-		}
-		catch (MalformedURLException exception)
-		{
-			log.severe(errorBase + exception.getMessage());
-		}
-		catch (InstantiationException exception)
-		{
-			log.severe(errorBase + exception.getMessage());
-		}
-		catch (IllegalAccessException exception)
-		{
-			log.severe(errorBase + exception.getMessage());
-		}
-		catch (SQLException exception)
-		{
-			log.severe(errorBase + exception.getMessage());
-		}
-	}
-	
-	private boolean isPlayerBanned(String userID)
-	{
-		String errorBase = "Error during isBanned: ";
-		String query = "SELECT * FROM `" + config.banSynchronizationTableName + "` "
-								 + "WHERE `" + config.banSynchronizationTableName + "`.`"
-								 + config.banSynchronizationUserIDColumn + "` = '" + userID + "'";
-		try
-		{
-			ResultSet result = sql.sqlQuery(query);
-			return result != null && result.next();
-		}
-		catch (MalformedURLException exception)
-		{
-			log.severe(errorBase + exception.getMessage());
-			return false;
-		}
-		catch (InstantiationException exception)
-		{
-			log.severe(errorBase + exception.getMessage());
-			return false;
-		}
-		catch (IllegalAccessException exception)
-		{
-			log.severe(errorBase + exception.getMessage());
-			return false;
-		}
-		catch (SQLException exception)
-		{
-			log.severe(errorBase + exception.getMessage());
-			return false;
 		}
 	}
 } // WebApplication class
