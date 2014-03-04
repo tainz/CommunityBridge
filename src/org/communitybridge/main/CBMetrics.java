@@ -25,7 +25,7 @@
  * authors and contributors and should not be interpreted as representing official policies,
  * either expressed or implied, of anybody else.
  */
-package org.mcstats;
+package org.communitybridge.main;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -55,7 +55,7 @@ import java.util.logging.Level;
 import java.util.zip.GZIPOutputStream;
 import org.communitybridge.utility.StringUtilities;
 
-public class Metrics {
+public class CBMetrics {
 
     /**
      * The current revision number
@@ -117,7 +117,7 @@ public class Metrics {
      */
     private volatile BukkitTask task = null;
 
-    public Metrics(final Plugin plugin) throws IOException {
+    public CBMetrics(final Plugin plugin) throws IOException {
         if (plugin == null) {
             throw new IllegalArgumentException("Plugin cannot be null");
         }
