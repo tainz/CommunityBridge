@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Properties;
 
 public class DatabaseHandler
 {
@@ -14,13 +15,15 @@ public class DatabaseHandler
 	private String username;
 	private String password;
 	private String database;
+	private String localAddress;
 
-	public DatabaseHandler(String dbLocation, String database, String username, String password)
+	public DatabaseHandler(String dbLocation, String database, String username, String password, String localAddress)
 	{
 		this.dblocation = dbLocation;
 		this.database = database;
 		this.username = username;
 		this.password = password;
+		this.localAddress = localAddress;
 	}
 
 	private void openConnection() throws MalformedURLException, InstantiationException, IllegalAccessException
@@ -28,17 +31,24 @@ public class DatabaseHandler
 		try
 		{
 			Class.forName("com.mysql.jdbc.Driver");
-			this.connection = DriverManager.getConnection("jdbc:mysql://" + this.dblocation + "/" + this.database, this.username, this.password);
+			Properties properties = new Properties();
+			properties.setProperty("user", username);
+			properties.setProperty("password", password);
+			if (!localAddress.isEmpty())
+			{
+				properties.setProperty("localSocketAddress", localAddress);
+			}
+			connection = DriverManager.getConnection("jdbc:mysql://" + dblocation + "/" + database, properties);
 		}
 		catch (ClassNotFoundException exception)
 		{
 			CommunityBridge.log.severe("No MySQL Driver Found:" + exception.getMessage());
-			this.connection = null;
+			connection = null;
 		}
 		catch (SQLException exception)
 		{
 			CommunityBridge.log.severe("Could not connect to MySQL Server:" + exception.getMessage());
-			this.connection = null;
+			connection = null;
 		}
 	}
 

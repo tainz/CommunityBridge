@@ -320,7 +320,7 @@ public final class CommunityBridge extends JavaPlugin
 		sql = new SQL(config.databaseHost + ":" + config.databasePort,
 									config.databaseName + "",
 									config.databaseUsername + "",
-									config.databasePassword + "");
+									config.databasePassword + "", Bukkit.getIp());
 		sql.initialize();
 
 		if (sql.checkConnection() == false)

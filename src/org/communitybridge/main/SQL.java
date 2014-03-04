@@ -7,23 +7,25 @@ import java.sql.SQLException;
 
 public class SQL
 {
-	public String host;
+	private String host;
 	private DatabaseHandler manageDB;
-	public String username;
-	public String password;
-	public String database;
+	private String username;
+	private String password;
+	private String database;
+	private String localAddress;
 
-	public SQL(String host, String database, String username, String password)
+	public SQL(String host, String database, String username, String password, String localAddress)
 	{
 		this.database = database;
 		this.host = host;
 		this.username = username;
 		this.password = password;
+		this.localAddress = localAddress;
 	}
 
 	public boolean initialize()
 	{
-		this.manageDB = new DatabaseHandler(this.host, this.database, this.username, this.password);
+		this.manageDB = new DatabaseHandler(host, database, username, password, localAddress);
 		return false;
 	}
 
