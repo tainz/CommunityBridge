@@ -10,8 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.mcstats.Metrics;
-import org.mcstats.Metrics.Graph;
+import org.communitybridge.main.CBMetrics.Graph;
 import org.communitybridge.utility.Log;
 import org.communitybridge.permissionhandlers.*;
 import org.communitybridge.utility.MinecraftUtilities;
@@ -45,7 +44,7 @@ public final class CommunityBridge extends JavaPlugin
 	@SuppressWarnings("PMD.UnusedPrivateField")
 	private static CommunityBridge instance = null;
 	private static boolean active;
-	private static Metrics metrics = null;
+	private static CBMetrics metrics = null;
 
 	/**
 	 * Handles all the set up for the plugin.
@@ -348,12 +347,12 @@ public final class CommunityBridge extends JavaPlugin
 		{
 			try
 			{
-				metrics = new Metrics(this);
+				metrics = new CBMetrics(this);
 				Graph permsGraph = metrics.createGraph("Permissions Plugin Used");
 				
 				if (permissionHandler == null)
 				{
-					permsGraph.addPlotter(new Metrics.Plotter("None")
+					permsGraph.addPlotter(new CBMetrics.Plotter("None")
 					{
 						@Override
 						public int getValue()
@@ -364,7 +363,7 @@ public final class CommunityBridge extends JavaPlugin
 				}
 				else if (config.permissionsSystem.equalsIgnoreCase("bPerms"))
 				{
-					permsGraph.addPlotter(new Metrics.Plotter("bPermissions")
+					permsGraph.addPlotter(new CBMetrics.Plotter("bPermissions")
 					{
 						@Override
 						public int getValue()
@@ -375,7 +374,7 @@ public final class CommunityBridge extends JavaPlugin
 				}
 				else if (config.permissionsSystem.equalsIgnoreCase("GroupManager"))
 				{
-					permsGraph.addPlotter(new Metrics.Plotter("GroupManager")
+					permsGraph.addPlotter(new CBMetrics.Plotter("GroupManager")
 					{
 						@Override
 						public int getValue()
@@ -386,7 +385,7 @@ public final class CommunityBridge extends JavaPlugin
 				}
 				else if (config.permissionsSystem.equalsIgnoreCase("PermsBukkit"))
 				{
-					permsGraph.addPlotter(new Metrics.Plotter("PermissionsBukkit")
+					permsGraph.addPlotter(new CBMetrics.Plotter("PermissionsBukkit")
 					{
 						@Override
 						public int getValue()
@@ -397,7 +396,7 @@ public final class CommunityBridge extends JavaPlugin
 				}
 				else if (config.permissionsSystem.equalsIgnoreCase("PEX"))
 				{
-					permsGraph.addPlotter(new Metrics.Plotter("PermissionsEx")
+					permsGraph.addPlotter(new CBMetrics.Plotter("PermissionsEx")
 					{
 						@Override
 						public int getValue()
@@ -408,7 +407,7 @@ public final class CommunityBridge extends JavaPlugin
 				}
 				else if (config.permissionsSystem.equalsIgnoreCase("Vault"))
 				{
-					permsGraph.addPlotter(new Metrics.Plotter("Vault")
+					permsGraph.addPlotter(new CBMetrics.Plotter("Vault")
 					{
 						@Override
 						public int getValue()
