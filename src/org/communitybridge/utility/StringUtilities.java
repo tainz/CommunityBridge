@@ -1,7 +1,6 @@
 package org.communitybridge.utility;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * A small collection of string related methods that don't belong anywhere else.
@@ -27,14 +26,27 @@ public final class StringUtilities
 	 */
 	public static int compareVersion(String leftVersion, String rightVersion) throws IllegalArgumentException
 	{
-		if (leftVersion == null || rightVersion == null
-			||leftVersion.isEmpty() || rightVersion.isEmpty())
+		if (leftVersion == null || rightVersion == null)
 		{
 			throw new IllegalArgumentException();
 		}
 		
 		leftVersion = leftVersion.replace("-", ".").replaceAll("[^0-9\\.]", "");
 		rightVersion = rightVersion.replace("-", ".").replaceAll("[^0-9\\.]", "");
+
+		if (leftVersion.isEmpty() && rightVersion.isEmpty()) 
+		{
+			return 0;
+		}
+		else if (leftVersion.isEmpty())
+		{
+			return -1;
+		}
+		else if (rightVersion.isEmpty())
+		{
+			return 1;
+		}
+		
 		String[] leftParts = leftVersion.split("\\.");
 		String[] rightParts = rightVersion.split("\\.");
 		int leftLength = leftParts.length;
