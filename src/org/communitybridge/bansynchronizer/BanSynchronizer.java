@@ -41,7 +41,7 @@ public class BanSynchronizer
 		{
 			if (!current.getWebBannedUserIDs().contains(userID))
 			{
-				// unBanUserID
+				unbanPlayerWeb(userID);
 			}
 		}
 		
@@ -57,7 +57,7 @@ public class BanSynchronizer
 		{
 			if (!current.getGameBannedPlayerNames().contains(playerName))
 			{
-				// unBanPlayerName
+				unbanPlayerGame(playerName);
 			}
 		}
 		
@@ -70,7 +70,13 @@ public class BanSynchronizer
 		}
 	}
 
-	void banPlayerGame(String playerName)
+	private void unbanPlayerGame(String playerName)
+	{
+		OfflinePlayer playerOffline = Bukkit.getOfflinePlayer(playerName);
+		playerOffline.setBanned(false);
+	}
+
+	private void banPlayerGame(String playerName)
 	{
 		Player player = Bukkit.getPlayerExact(playerName);
 		if (player == null)
@@ -85,6 +91,14 @@ public class BanSynchronizer
 		}
 	}
 
+	private void unbanPlayerWeb(String userID)
+	{
+		if (config.banSynchronizationMethod.startsWith("tab"))
+		{
+			unbanPlayerWebTable(userID);
+		}
+	}
+
 	private void banPlayerWeb(String userID)
 	{
 		if (config.banSynchronizationMethod.startsWith("tab"))
@@ -93,7 +107,7 @@ public class BanSynchronizer
 		}
 	}
 	
-	void banPlayerWebTable(String userID)
+	private void banPlayerWebTable(String userID)
 	{
 		String errorBase = "Error during banPlayerWebTable: ";
 		String columns = "`" + config.banSynchronizationUserIDColumn + "`, ";
@@ -140,34 +154,27 @@ public class BanSynchronizer
 		}
 	}
 
-	boolean isPlayerBanned(String userID, WebApplication webApplication)
+	private void unbanPlayerWebTable(String userID)
 	{
-		String errorBase = "Error during isBanned: ";
-		String query = "SELECT * FROM `" + config.banSynchronizationTableName + "` " + "WHERE `" + config.banSynchronizationTableName + "`.`" + config.banSynchronizationUserIDColumn + "` = '" + userID + "'";
+		String errorBase = "Error during unbanPlayerWebTable: ";
+		String query = "DELETE FROM `" + config.banSynchronizationTableName
+							+ "`  WHERE `" + config.banSynchronizationUserIDColumn	+ "` = '" + userID + "'";
+		
 		try
 		{
-			ResultSet result = sql.sqlQuery(query);
-			return result != null && result.next();
+			sql.deleteQuery(query);
 		}
 		catch (MalformedURLException exception)
 		{
 			log.severe(errorBase + exception.getMessage());
-			return false;
 		}
 		catch (InstantiationException exception)
 		{
 			log.severe(errorBase + exception.getMessage());
-			return false;
 		}
 		catch (IllegalAccessException exception)
 		{
 			log.severe(errorBase + exception.getMessage());
-			return false;
-		}
-		catch (SQLException exception)
-		{
-			log.severe(errorBase + exception.getMessage());
-			return false;
 		}
 	}
 }
