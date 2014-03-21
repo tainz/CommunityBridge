@@ -2,7 +2,6 @@ package org.communitybridge.bansynchronizer;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
