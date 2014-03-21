@@ -1,17 +1,9 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.communitybridge.main;
 
 import java.text.SimpleDateFormat;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- *
- * @author Iain E. Davis <iain@ruhlendavis.org>
- */
 public class PlayerStatisticsTest
 {
 	private	PlayerStatistics playerStatistics = new PlayerStatistics(new SimpleDateFormat());
