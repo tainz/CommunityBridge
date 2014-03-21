@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -1121,6 +1122,8 @@ public class Configuration
 		log.config(    "Date Format                          : " + dateFormatString);
 
 		// Database Section
+		String bindingAddress = Bukkit.getIp();
+		log.config(    "Minecraft binding address            : " + bindingAddress);
 		log.config(    "Database hostname                    : " + databaseHost);
 		log.config(    "Database port                        : " + databasePort);
 		log.config(    "Database name                        : " + databaseName);
