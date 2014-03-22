@@ -57,6 +57,7 @@ public class BanState
 
 	private void collectGameBans()
 	{
+		gameBannedPlayerNames.clear();
 		for (OfflinePlayer player : Bukkit.getServer().getBannedPlayers())
 		{
 			gameBannedPlayerNames.add(player.getName());
@@ -65,6 +66,7 @@ public class BanState
 
 	private void collectWebBans()
 	{
+		webBannedUserIDs.clear();
 		if (storageMethod.startsWith("tab"))
 		{
 			collectWebBansTableMethod();

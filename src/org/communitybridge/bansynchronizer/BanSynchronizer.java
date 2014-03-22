@@ -1,8 +1,11 @@
 package org.communitybridge.bansynchronizer;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -40,7 +43,7 @@ public class BanSynchronizer
 		{
 			if (!current.getWebBannedUserIDs().contains(userID))
 			{
-				unbanPlayerWeb(userID);
+				unbanPlayerGame(webApplication.getPlayerName(userID));
 			}
 		}
 		
@@ -56,7 +59,7 @@ public class BanSynchronizer
 		{
 			if (!current.getGameBannedPlayerNames().contains(playerName))
 			{
-				unbanPlayerGame(playerName);
+				unbanPlayerWeb(webApplication.getUserID(playerName));
 			}
 		}
 		
@@ -66,6 +69,15 @@ public class BanSynchronizer
 			{
 				banPlayerWeb(webApplication.getUserID(playerName));
 			}
+		}
+		current.generate();
+		try
+		{
+			current.save();
+		}
+		catch (IOException exception)
+		{
+			log.severe("Error while saving ban synchronization state: " + exception.getMessage());
 		}
 	}
 
