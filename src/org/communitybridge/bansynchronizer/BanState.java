@@ -71,6 +71,10 @@ public class BanState
 		{
 			collectWebBansTableMethod();
 		}
+		else if (storageMethod.startsWith("use"))
+		{
+			collectWebBansUserMethod();
+		}
 	}
 
 	private void collectWebBansTableMethod()
@@ -122,5 +126,39 @@ public class BanState
 	public void setWebBannedUserIDs(List<String> webBannedUserIDs)
 	{
 		this.webBannedUserIDs = webBannedUserIDs;
+	}
+
+	private void collectWebBansUserMethod()
+	{
+		String errorBase = "Error in collectWebBansUser: ";
+		String query = "SELECT * FROM `" + CommunityBridge.config.banSynchronizationTableName + "`";
+		
+		try
+		{
+			ResultSet result = CommunityBridge.sql.sqlQuery(query);
+			while(result.next())
+			{
+				if (result.getString(CommunityBridge.config.banSynchronizationBanColumn).equals(CommunityBridge.config.banSynchronizationValueBanned))
+				{
+					webBannedUserIDs.add(result.getString(CommunityBridge.config.banSynchronizationUserIDColumn));
+				}
+			}
+		}
+		catch (MalformedURLException exception)
+		{
+			log.severe(errorBase + exception.getMessage());
+		}
+		catch (InstantiationException exception)
+		{
+			log.severe(errorBase + exception.getMessage());
+		}
+		catch (IllegalAccessException exception)
+		{
+			log.severe(errorBase + exception.getMessage());
+		}
+		catch (SQLException exception)
+		{
+			log.severe(errorBase + exception.getMessage());
+		}
 	}
 }
