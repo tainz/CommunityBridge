@@ -474,14 +474,26 @@ simple-synchronization:
 ban-synchronization:
   enabled: false
   
-  # Currently the only option implemented is 'table'
+  # Method options:
+  # - table: Banned users will be inserted and deleted from a table that is a list of bans
+  # - user: A column on the users/members table designates whether a user is banned.
   method: table
 
-  # Settings for table method...
   # Name of the table that holds ban information for your web application
   table-name:
+
   # Column that contains the user ID of the banee.
   banned-user-id-column:
+
+  # Settings for the user method. Only needed if method above is set to user
+  # The value parameters can be strings, numbers, whatever your web application
+  # uses to indicate the user is banned or not.
+  ban-column: 
+  value-banned:
+  value-notbanned:
+    
+  # Settings for table method. Only needed if method above is 'table'. Set
+  # options that seem relevant to your web application.
   # The column containing the reason for the ban. Leave blank if your web
   # application does not support this.
   ban-reason-column:

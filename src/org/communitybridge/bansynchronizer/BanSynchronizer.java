@@ -106,6 +106,10 @@ public class BanSynchronizer
 		{
 			unbanPlayerWebTable(userID);
 		}
+		else if (config.banSynchronizationMethod.startsWith("use"))
+		{
+			unbanPlayerWebUser(userID);
+		}
 	}
 
 	private void banPlayerWeb(String userID)
@@ -113,6 +117,61 @@ public class BanSynchronizer
 		if (config.banSynchronizationMethod.startsWith("tab"))
 		{
 			banPlayerWebTable(userID);
+		}
+		else if (config.banSynchronizationMethod.startsWith("use"))
+		{
+			banPlayerWebUser(userID);
+		}
+	}
+	
+	
+	private void banPlayerWebUser(String userID)
+	{
+		String errorBase = "Error during banPlayerWebUser: ";
+		String query = "UPDATE `" + config.banSynchronizationTableName + "` "
+						     + "SET `" + config.banSynchronizationBanColumn + "` = '" + config.banSynchronizationValueBanned + "' "
+								 + "WHERE `" + config.banSynchronizationUserIDColumn + "` = '" + userID + "'";
+		
+		try
+		{
+			sql.updateQuery(query);
+		}
+		catch (MalformedURLException exception)
+		{
+			log.severe(errorBase + exception.getMessage());
+		}
+		catch (InstantiationException exception)
+		{
+			log.severe(errorBase + exception.getMessage());
+		}
+		catch (IllegalAccessException exception)
+		{
+			log.severe(errorBase + exception.getMessage());
+		}
+	}
+	
+	private void unbanPlayerWebUser(String userID)
+	{
+		String errorBase = "Error during unbanPlayerWebUser: ";
+		String query = "UPDATE `" + config.banSynchronizationTableName + "` "
+						     + "SET `" + config.banSynchronizationBanColumn + "` = '" + config.banSynchronizationValueNotBanned + "' "
+								 + "WHERE `" + config.banSynchronizationUserIDColumn + "` = '" + userID + "'";
+		
+		try
+		{
+			sql.updateQuery(query);
+		}
+		catch (MalformedURLException exception)
+		{
+			log.severe(errorBase + exception.getMessage());
+		}
+		catch (InstantiationException exception)
+		{
+			log.severe(errorBase + exception.getMessage());
+		}
+		catch (IllegalAccessException exception)
+		{
+			log.severe(errorBase + exception.getMessage());
 		}
 	}
 	

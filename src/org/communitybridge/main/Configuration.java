@@ -182,6 +182,13 @@ public class Configuration
 	public List<String> banSynchronizationGroupIDs = new ArrayList<String>();
 	
 	public String banSynchronizationTableName;
+	
+	// User Method
+	public String banSynchronizationBanColumn;
+	public String banSynchronizationValueBanned;
+	public String banSynchronizationValueNotBanned;
+	
+	// Table Method
 	public String banSynchronizationUserIDColumn;
 	public String banSynchronizationReasonColumn;
 	public String banSynchronizationStartTimeColumn;
@@ -507,14 +514,21 @@ public class Configuration
 			log.severe("Simple synchronization disabled due to prior errors.");
 		}
 		
-		if (banSynchronizationEnabled && banSynchronizationMethod.startsWith("tab"))
+		if (banSynchronizationEnabled)
 		{
 			temp = checkTable(sql, "ban-synchronization.table-name", banSynchronizationTableName);
 			temp = temp & checkColumn(sql, "ban-synchronization.banned-user-id-column", banSynchronizationTableName, banSynchronizationUserIDColumn);
-			temp = temp & checkColumn(sql, "ban-synchronization.ban-reason-column", banSynchronizationTableName, banSynchronizationReasonColumn);
-			temp = temp & checkColumn(sql, "ban-synchronization.ban-start-column", banSynchronizationTableName, banSynchronizationStartTimeColumn);
-			temp = temp & checkColumn(sql, "ban-synchronization.ban-end-column", banSynchronizationTableName, banSynchronizationEndTimeColumn);
-			temp = temp & checkColumn(sql, "ban-synchronization.ban-group-id-column", banSynchronizationTableName, banSynchronizationBanGroupIDColumn);
+			if (banSynchronizationMethod.startsWith("tab"))
+			{
+				temp = temp & checkColumn(sql, "ban-synchronization.ban-reason-column", banSynchronizationTableName, banSynchronizationReasonColumn);
+				temp = temp & checkColumn(sql, "ban-synchronization.ban-start-column", banSynchronizationTableName, banSynchronizationStartTimeColumn);
+				temp = temp & checkColumn(sql, "ban-synchronization.ban-end-column", banSynchronizationTableName, banSynchronizationEndTimeColumn);
+				temp = temp & checkColumn(sql, "ban-synchronization.ban-group-id-column", banSynchronizationTableName, banSynchronizationBanGroupIDColumn);
+			}
+			else if (banSynchronizationMethod.startsWith("use"))
+			{
+				temp = temp & checkColumn(sql, "ban-synchronization.ban-column", banSynchronizationTableName, banSynchronizationBanColumn);
+			}
 			if (!temp)
 			{
 				log.severe("Temporarily disabling ban synchronization due to previous errors.");
@@ -904,17 +918,29 @@ public class Configuration
 		simpleSynchronizationGroupsTreatedAsPrimary = config.getStringList("simple-synchronization.groups-treated-as-primary");
 
 		// Ban synchronization
+		banSynchronizationGroupIDs = config.getStringList("ban-synchronization.ban-group-ids");
+
 		banSynchronizationEnabled = config.getBoolean("ban-synchronization.enabled", false);
 		banSynchronizationMethod = config.getString("ban-synchronization.method", "table").toLowerCase();
-		banSynchronizationGroupIDs = config.getStringList("ban-synchronization.ban-group-ids");
+		
 		banSynchronizationTableName = config.getString("ban-synchronization.table-name", "");
 		banSynchronizationUserIDColumn = config.getString("ban-synchronization.banned-user-id-column", "");
-		banSynchronizationReasonColumn = config.getString("ban-synchronization.ban-reason-column", "");
-		banSynchronizationStartTimeColumn = config.getString("ban-synchronization.ban-start-column", "");
-		banSynchronizationEndTimeColumn = config.getString("ban-synchronization.ban-end-column", "");
-		banSynchronizationBanGroupIDColumn = config.getString("ban-synchronization.ban-group-id-column", "");
-		banSynchronizationBanGroupID = config.getString("ban-synchronization.ban-group-id", "");
-				
+
+		if (banSynchronizationMethod.startsWith("use"))
+		{
+			banSynchronizationBanColumn = config.getString("ban-synchronization.ban-column", "");
+			banSynchronizationValueBanned = config.getString("ban-synchronization.value-banned", "");
+			banSynchronizationValueNotBanned = config.getString("ban-synchronization.value-notbanned", "");
+		}
+		else if (banSynchronizationMethod.startsWith("tab"))
+		{
+			banSynchronizationReasonColumn = config.getString("ban-synchronization.ban-reason-column", "");
+			banSynchronizationStartTimeColumn = config.getString("ban-synchronization.ban-start-column", "");
+			banSynchronizationEndTimeColumn = config.getString("ban-synchronization.ban-end-column", "");
+			banSynchronizationBanGroupIDColumn = config.getString("ban-synchronization.ban-group-id-column", "");
+			banSynchronizationBanGroupID = config.getString("ban-synchronization.ban-group-id", "");
+		}
+		
 		// These are calculated from settings above.
 		groupSynchronizationActive = simpleSynchronizationEnabled && (webappPrimaryGroupEnabled || webappSecondaryGroupEnabled);
 		playerDataRequired = groupSynchronizationActive;
@@ -1297,11 +1323,20 @@ public class Configuration
 			log.config(  "Ban synchronization group IDs        : " + banSynchronizationGroupIDs);
 			log.config(  "Ban synchronization table name       : " + banSynchronizationTableName);
 			log.config(  "Ban synchronization user ID column   : " + banSynchronizationUserIDColumn);
-			log.config(  "Ban synchronization reason column    : " + banSynchronizationReasonColumn);
-			log.config(  "Ban synchronization start time column: " + banSynchronizationStartTimeColumn);
-			log.config(  "Ban synchronization end time column  : " + banSynchronizationEndTimeColumn);
-			log.config(  "Ban synchronization group id column  : " + banSynchronizationBanGroupIDColumn);
-			log.config(  "Ban synchronization group id         : " + banSynchronizationBanGroupID);
+			if (banSynchronizationMethod.startsWith("tab"))
+			{
+				log.config("Ban synchronization reason column    : " + banSynchronizationReasonColumn);
+				log.config("Ban synchronization start time column: " + banSynchronizationStartTimeColumn);
+				log.config("Ban synchronization end time column  : " + banSynchronizationEndTimeColumn);
+				log.config("Ban synchronization group id column  : " + banSynchronizationBanGroupIDColumn);
+				log.config("Ban synchronization group id         : " + banSynchronizationBanGroupID);
+			}
+			else if (banSynchronizationMethod.startsWith("use"))
+			{
+				log.config("Ban synchronization ban column       : " + banSynchronizationBanColumn);
+				log.config("Ban synchronization banned value     : " + banSynchronizationValueBanned);
+				log.config("Ban synchronization not banned value : " + banSynchronizationValueNotBanned);				
+			}
 		}
 	}
 
