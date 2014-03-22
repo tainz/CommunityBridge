@@ -1,5 +1,5 @@
 name: CommunityBridge
-version: 2.1.3.345
+version: 2.2.0.347
 description: Community Bridging plugin based off of ChillerCrafts ForumBridge plugin
 authors: [Feaelin, NoRC, ChillerCraft]
 website: http://dev.bukkit.org/server-mods/communitybridge-fm/
@@ -8,24 +8,20 @@ softdepend: [bPermissions, GroupManager, PermissionsBukkit, PermissionsEx, Vault
 main: org.communitybridge.main.CommunityBridge
 
 commands:
-#  cbban:
-#    description: Bans from the forum.
-#    permission: communitybridge.cbban
-#    permission-message: "§cYou do not have access to that command."
-#  cbunban:
-#    description: Unbans from the forum.
-#    permission: communitybridge.cbunban
-#    permission-message: "§cYou do not have access to that command."
   cbreload:
     description: Reloads CommunityBridge's configuration from disk.
     permission: communitybridge.cbreload
     permission-message: "§cYou do not have access to that command."
   cbsync:
-    description: Syncs to the forum.
+    description: Synchronizes yourself.
+    permission: communitybridge.cbsync
+    permission-message: "§cYou do not have access to that command."
+  cbsynctarget:
+    description: Synchronizes the specified player.
     permission: communitybridge.cbsync
     permission-message: "§cYou do not have access to that command."
   cbsyncall:
-    description: Syncs everyone to the forum.
+    description: Synchronizes all players.
     permission: communitybridge.cbsyncall
     permission-message: "§cYou do not have access to that command."
 
@@ -33,18 +29,11 @@ permissions:
   communitybridge.*:
     description: Grants access to all CommunityBridge commands
     children:
-      communitybridge.cbban: true
       communitybridge.cbrank: true
       communitybridge.cbreload: true
       communitybridge.cbsync: true
+      communitybridge.cbsynctarget: true
       communitybridge.cbsyncall: true
-      communitybridge.cbunban: true
-  communitybridge.cbban:
-    description: Allows use of the /cbban command.
-    default: op
-  communitybridge.cbunban:
-    description: Allows use of the /cbunban command.
-    default: op
   communitybridge.cbrank:
     description: Allows use of the /cbrank command.
     default: op
