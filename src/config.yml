@@ -491,3 +491,8 @@ ban-synchronization:
   # The column containing the ban end time (systime expected). Leave blank
   # if your application does not support this.
   ban-end-column:
+  # The column containing ban-group-id. Leave blank if your web application
+  # does not support this.
+  ban-group-id-column:
+  # The ban-group-id. Leave blank if your web application does not support this.
+  ban-group-id:

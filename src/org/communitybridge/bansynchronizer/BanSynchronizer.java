@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -139,6 +137,12 @@ public class BanSynchronizer
 			columns = columns + "`" + config.banSynchronizationEndTimeColumn + "`, ";
 			values = values + "2147483647, ";
 		}
+		if (!config.banSynchronizationBanGroupIDColumn.isEmpty() && !config.banSynchronizationBanGroupID.isEmpty())
+		{
+			columns = columns + "`" + config.banSynchronizationBanGroupIDColumn + "`, ";
+			values = values + "'" + config.banSynchronizationBanGroupID + "', ";
+		}
+		
 		columns = columns.substring(0, columns.length() - 2);
 		values = values.substring(0, values.length() - 2);
 		String query = "INSERT INTO `" + config.banSynchronizationTableName + "` (" + columns + ") " + "VALUES (" + values + ")";

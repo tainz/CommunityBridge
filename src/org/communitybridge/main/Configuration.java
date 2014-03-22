@@ -186,6 +186,8 @@ public class Configuration
 	public String banSynchronizationReasonColumn;
 	public String banSynchronizationStartTimeColumn;
 	public String banSynchronizationEndTimeColumn;
+	public String banSynchronizationBanGroupIDColumn;
+	public String banSynchronizationBanGroupID;
 	
 	// These are not in the config.yml. They are calculated.
 	public boolean playerDataRequired;
@@ -512,6 +514,7 @@ public class Configuration
 			temp = temp & checkColumn(sql, "ban-synchronization.ban-reason-column", banSynchronizationTableName, banSynchronizationReasonColumn);
 			temp = temp & checkColumn(sql, "ban-synchronization.ban-start-column", banSynchronizationTableName, banSynchronizationStartTimeColumn);
 			temp = temp & checkColumn(sql, "ban-synchronization.ban-end-column", banSynchronizationTableName, banSynchronizationEndTimeColumn);
+			temp = temp & checkColumn(sql, "ban-synchronization.ban-group-id-column", banSynchronizationTableName, banSynchronizationBanGroupIDColumn);
 			if (!temp)
 			{
 				log.severe("Temporarily disabling ban synchronization due to previous errors.");
@@ -909,7 +912,9 @@ public class Configuration
 		banSynchronizationReasonColumn = config.getString("ban-synchronization.ban-reason-column", "");
 		banSynchronizationStartTimeColumn = config.getString("ban-synchronization.ban-start-column", "");
 		banSynchronizationEndTimeColumn = config.getString("ban-synchronization.ban-end-column", "");
-		
+		banSynchronizationBanGroupIDColumn = config.getString("ban-synchronization.ban-group-id-column", "");
+		banSynchronizationBanGroupID = config.getString("ban-synchronization.ban-group-id", "");
+				
 		// These are calculated from settings above.
 		groupSynchronizationActive = simpleSynchronizationEnabled && (webappPrimaryGroupEnabled || webappSecondaryGroupEnabled);
 		playerDataRequired = groupSynchronizationActive;
@@ -1295,6 +1300,8 @@ public class Configuration
 			log.config(  "Ban synchronization reason column    : " + banSynchronizationReasonColumn);
 			log.config(  "Ban synchronization start time column: " + banSynchronizationStartTimeColumn);
 			log.config(  "Ban synchronization end time column  : " + banSynchronizationEndTimeColumn);
+			log.config(  "Ban synchronization group id column  : " + banSynchronizationBanGroupIDColumn);
+			log.config(  "Ban synchronization group id         : " + banSynchronizationBanGroupID);
 		}
 	}
 
