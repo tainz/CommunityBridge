@@ -1,28 +1,26 @@
-package org.communitybridge.main;
+package org.communitybridge.dao;
 
+import org.communitybridge.dao.WebGroupDao;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.apache.commons.lang.RandomStringUtils;
+import org.communitybridge.main.Configuration;
+import org.communitybridge.main.SQL;
 import org.communitybridge.utility.Log;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
-import org.junit.runner.RunWith;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
-import static org.powermock.api.mockito.PowerMockito.verifyNew;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(WebGroupDao.class)
 public class WebGroupDaoTest
 {
 	private static final String EXCEPTION_MESSAGE = "test message";
+	private static final String USER_ID = RandomStringUtils.randomNumeric(2);
+	private static final String GROUP_ID = RandomStringUtils.randomNumeric(2);
 	private WebGroupDao webGroupDao;
 	private Configuration configuration;
 	private Log log;
@@ -50,7 +48,7 @@ public class WebGroupDaoTest
 	public void getPrimaryGroupReturnsBlankWithPrimaryDisabled()
 	{
 		configuration.webappPrimaryGroupEnabled = false;
-		assertEquals("", webGroupDao.getPrimary("1"));
+		assertEquals("", webGroupDao.getPrimary(USER_ID));
 	}
 	
 	@Test
@@ -59,7 +57,7 @@ public class WebGroupDaoTest
 		configuration.webappPrimaryGroupEnabled = true;
 		configuration.webappPrimaryGroupUsesKey = true;
 		when(sql.sqlQuery(anyString())).thenReturn(result);
-		assertEquals("", webGroupDao.getPrimary("1"));
+		assertEquals("", webGroupDao.getPrimary(USER_ID));
 	}
 	
 	@Test
@@ -68,7 +66,7 @@ public class WebGroupDaoTest
 		configuration.webappPrimaryGroupEnabled = true;
 		configuration.webappPrimaryGroupUsesKey = false;
 		when(sql.sqlQuery(anyString())).thenReturn(result);
-		assertEquals("", webGroupDao.getPrimary("1"));
+		assertEquals("", webGroupDao.getPrimary(USER_ID));
 	}
 	
 	@Test
@@ -79,8 +77,8 @@ public class WebGroupDaoTest
 		configuration.webappPrimaryGroupGroupIDColumn = "group_id";
 		when(sql.sqlQuery(anyString())).thenReturn(result);
 		when(result.next()).thenReturn(Boolean.TRUE);
-		when(result.getString(configuration.webappPrimaryGroupGroupIDColumn)).thenReturn("Monkeys");
-		assertEquals("Monkeys", webGroupDao.getPrimary("1"));
+		when(result.getString(configuration.webappPrimaryGroupGroupIDColumn)).thenReturn(GROUP_ID);
+		assertEquals(GROUP_ID, webGroupDao.getPrimary(USER_ID));
 	}
 	
 	@Test
@@ -117,7 +115,7 @@ public class WebGroupDaoTest
 		configuration.webappPrimaryGroupUsesKey = true;
 		configuration.webappPrimaryGroupGroupIDColumn = "group_id";
 		when(sql.sqlQuery(anyString())).thenThrow(exception);
-		assertEquals("", webGroupDao.getPrimary("1"));
+		assertEquals("", webGroupDao.getPrimary(USER_ID));
 		verify(log).severe(WebGroupDao.EXCEPTION_MESSAGE_GETPRIMARY + exception.getMessage());
 	}
 
@@ -129,7 +127,7 @@ public class WebGroupDaoTest
 		}
 
 		@Override
-		public List<String> getSecondaryGroups()
+		public List<String> getSecondaryGroups(String userID)
 		{
 			return null;
 		}

@@ -1,18 +1,20 @@
-package org.communitybridge.main;
+package org.communitybridge.dao;
 
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import org.communitybridge.main.Configuration;
+import org.communitybridge.main.SQL;
 import org.communitybridge.utility.Log;
 
 public abstract class WebGroupDao
 {
 	public static final String EXCEPTION_MESSAGE_GETPRIMARY = "Exception during WebGroupDao.getPrimaryGroup: ";
-	private Configuration configuration;
-	private SQL sql;
-	private Log log;
-	private ResultSet result;
+	protected Configuration configuration;
+	protected SQL sql;
+	protected Log log;
+	protected ResultSet result;
 	
 	WebGroupDao(Configuration configuration, SQL sql, Log log)
 	{
@@ -64,7 +66,7 @@ public abstract class WebGroupDao
 		}
 	}
 	
-	abstract public List<String> getSecondaryGroups();
+	abstract public List<String> getSecondaryGroups(String userID);
 
 	private String determinePrimaryGroupQuery(String userID)
 	{
