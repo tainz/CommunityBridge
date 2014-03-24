@@ -18,6 +18,11 @@ import org.bukkit.entity.Player;
 import org.communitybridge.achievement.Achievement;
 import org.communitybridge.achievement.PlayerAchievementState;
 import org.communitybridge.bansynchronizer.BanSynchronizer;
+import org.communitybridge.dao.JunctionWebGroupDao;
+import org.communitybridge.dao.KeyValueWebGroupDao;
+import org.communitybridge.dao.MultipleKeyValueWebGroupDao;
+import org.communitybridge.dao.SingleWebGroupDao;
+import org.communitybridge.dao.WebGroupDao;
 import org.communitybridge.utility.Log;
 import org.communitybridge.utility.MinecraftUtilities;
 import org.communitybridge.utility.StringUtilities;
@@ -35,6 +40,7 @@ public class WebApplication
 	private Log log;
 	private SQL sql;
 	private BanSynchronizer banSynchronizer;
+	private WebGroupDao webGroupDao;
 	private int maxPlayers;
 
 	private Map<String, String> playerUserIDs = new HashMap<String, String>();
@@ -47,6 +53,7 @@ public class WebApplication
 		this.log = log;
 		setSQL(sql);
 		maxPlayers = Bukkit.getMaxPlayers();
+		configureDao();
 		if (config.banSynchronizationEnabled)
 		{
 			banSynchronizer = new BanSynchronizer(log, plugin.getDataFolder(), config, this, sql);
@@ -182,61 +189,7 @@ public class WebApplication
 	 */
 	public String getUserPrimaryGroupID(String playerName)
 	{
-		if (!config.webappPrimaryGroupEnabled)
-		{
-			return "";
-		}
-
-		final String exceptionBase = "Exception during WebApplication.getUserPrimaryGroupID(): ";
-		String query;
-
-		if (config.webappPrimaryGroupUsesKey)
-		{
-			query = "SELECT `" + config.webappPrimaryGroupGroupIDColumn + "` "
-						+ "FROM `" + config.webappPrimaryGroupTable + "` "
-						+ "WHERE `" + config.webappPrimaryGroupUserIDColumn + "` = '" + getUserID(playerName) + "' "
-						+ "AND `" + config.webappPrimaryGroupKeyColumn + "` = '" + config.webappPrimaryGroupKeyName + "' ";
-		}
-		else
-		{
-			query = "SELECT `" + config.webappPrimaryGroupGroupIDColumn + "` "
-						+ "FROM `" + config.webappPrimaryGroupTable + "` "
-						+ "WHERE `" + config.webappPrimaryGroupUserIDColumn + "` = '" + getUserID(playerName) + "'";
-		}
-
-		try
-		{
-			ResultSet result = sql.sqlQuery(query);
-
-			if (result.next())
-			{
-				return result.getString(config.webappPrimaryGroupGroupIDColumn);
-			}
-			else
-			{
-				return "";
-			}
-		}
-		catch (SQLException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-			return "";
-		}
-		catch (MalformedURLException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-			return "";
-		}
-		catch (InstantiationException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-			return "";
-		}
-		catch (IllegalAccessException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-			return "";
-		}
+		return webGroupDao.getPrimaryGroupID(getUserID(playerName));
 	}
 
 	public List<String> getUserGroupIDs(String playerName)
@@ -1476,6 +1429,26 @@ public class WebApplication
 			log.severe(exceptionBase + exception.getMessage());
 			return null;
 		}		
+	}
+
+	private void configureDao()
+	{
+		if (config.webappSecondaryGroupStorageMethod.startsWith("sin"))
+		{
+			webGroupDao = new SingleWebGroupDao(config, sql, log);
+		}
+		else if (config.webappSecondaryGroupStorageMethod.startsWith("jun"))
+		{
+			webGroupDao = new JunctionWebGroupDao(config, sql, log);
+		}
+		else if (config.webappSecondaryGroupStorageMethod.startsWith("key"))
+		{
+			webGroupDao = new KeyValueWebGroupDao(config, sql, log);
+		}
+		else if (config.webappSecondaryGroupStorageMethod.startsWith("mul"))
+		{
+			webGroupDao = new MultipleKeyValueWebGroupDao(config, sql, log);
+		}
 	}
 
 	private class FieldBuilder

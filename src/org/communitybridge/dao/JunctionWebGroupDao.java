@@ -8,7 +8,7 @@ import org.communitybridge.utility.Log;
 public class JunctionWebGroupDao extends WebGroupDao
 {
 	
-	JunctionWebGroupDao(Configuration configuration, SQL sql, Log log)
+	public JunctionWebGroupDao(Configuration configuration, SQL sql, Log log)
 	{
 		super(configuration, sql, log);
 	}

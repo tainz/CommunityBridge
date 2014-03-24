@@ -23,7 +23,7 @@ public abstract class WebGroupDao
 		this.log = log;
 	}
 	
-	public String getPrimary(String userID)
+	public String getPrimaryGroupID(String userID)
 	{
 		if (!configuration.webappPrimaryGroupEnabled)
 		{

@@ -40,14 +40,14 @@ public class WebGroupDaoTest
 	@Test
 	public void getPrimaryGroupNeverReturnsNull()
 	{
-		assertNotNull(webGroupDao.getPrimary(""));
+		assertNotNull(webGroupDao.getPrimaryGroupID(""));
 	}
 
 	@Test
 	public void getPrimaryGroupReturnsBlankWithPrimaryDisabled()
 	{
 		configuration.webappPrimaryGroupEnabled = false;
-		assertEquals("", webGroupDao.getPrimary(USER_ID));
+		assertEquals("", webGroupDao.getPrimaryGroupID(USER_ID));
 	}
 	
 	@Test
@@ -56,7 +56,7 @@ public class WebGroupDaoTest
 		configuration.webappPrimaryGroupEnabled = true;
 		configuration.webappPrimaryGroupUsesKey = true;
 		when(sql.sqlQuery(anyString())).thenReturn(result);
-		assertEquals("", webGroupDao.getPrimary(USER_ID));
+		assertEquals("", webGroupDao.getPrimaryGroupID(USER_ID));
 	}
 	
 	@Test
@@ -65,7 +65,7 @@ public class WebGroupDaoTest
 		configuration.webappPrimaryGroupEnabled = true;
 		configuration.webappPrimaryGroupUsesKey = false;
 		when(sql.sqlQuery(anyString())).thenReturn(result);
-		assertEquals("", webGroupDao.getPrimary(USER_ID));
+		assertEquals("", webGroupDao.getPrimaryGroupID(USER_ID));
 	}
 	
 	@Test
@@ -77,7 +77,7 @@ public class WebGroupDaoTest
 		when(sql.sqlQuery(anyString())).thenReturn(result);
 		when(result.next()).thenReturn(Boolean.TRUE);
 		when(result.getString(configuration.webappPrimaryGroupGroupIDColumn)).thenReturn(GROUP_ID);
-		assertEquals(GROUP_ID, webGroupDao.getPrimary(USER_ID));
+		assertEquals(GROUP_ID, webGroupDao.getPrimaryGroupID(USER_ID));
 	}
 	
 	@Test
@@ -114,7 +114,7 @@ public class WebGroupDaoTest
 		configuration.webappPrimaryGroupUsesKey = true;
 		configuration.webappPrimaryGroupGroupIDColumn = "group_id";
 		when(sql.sqlQuery(anyString())).thenThrow(exception);
-		assertEquals("", webGroupDao.getPrimary(USER_ID));
+		assertEquals("", webGroupDao.getPrimaryGroupID(USER_ID));
 		verify(log).severe(WebGroupDao.EXCEPTION_MESSAGE_GETPRIMARY + exception.getMessage());
 	}
 
