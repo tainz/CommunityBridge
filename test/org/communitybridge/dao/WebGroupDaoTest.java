@@ -131,5 +131,23 @@ public class WebGroupDaoTest
 		{
 			return null;
 		}
+
+		@Override
+		public List<String> getGroupMembers(String groupID)
+		{
+			return null;
+		}
+
+		@Override
+		public List<String> getPrimaryGroupUserIDs(String groupID)
+		{
+			return null;
+		}
+
+		@Override
+		public List<String> getSecondaryGroupUserIDs(String groupID)
+		{
+			return null;
+		}
 	}
 }

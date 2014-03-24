@@ -11,7 +11,8 @@ import org.communitybridge.utility.Log;
 
 public class SingleMethodWebGroupDao extends WebGroupDao
 {
-	public static final String EXCEPTION_MESSAGE_GETSECONDARY = "Error during WebApplication.getUserGroupIDsSingleColumn(): ";
+	public static final String EXCEPTION_MESSAGE_GETSECONDARY = "Exception during SingleMethodWebGroupDao.getSecondaryGroups(): ";
+	private static final String EXCEPTION_MESSAGE_GETMEMBERS = "Exception during SingleMethodWebGroupDao.getMembers(): ";
 	public SingleMethodWebGroupDao(Configuration configuration, SQL sql, Log log)
 	{
 		super(configuration, sql, log);
@@ -67,6 +68,115 @@ public class SingleMethodWebGroupDao extends WebGroupDao
 		{
 			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
 			return groupIDs;
+		}
+	}
+
+	@Override
+	public List<String> getGroupMembers(String groupID)
+	{
+		return getPrimaryGroupUserIDs(groupID);
+	}
+
+	@Override
+	public List<String> getPrimaryGroupUserIDs(String groupID)
+	{
+		List<String> userIDs = new ArrayList<String>();
+		
+		if (!configuration.webappPrimaryGroupEnabled)
+		{
+			return userIDs;
+		}
+		
+		String query =
+						"SELECT `" + configuration.webappPrimaryGroupUserIDColumn + "` "
+						+ "FROM `" + configuration.webappPrimaryGroupTable + "` "
+						+ "WHERE `" + configuration.webappPrimaryGroupGroupIDColumn + "` = '" + groupID + "' ";
+		try
+		{
+			result = sql.sqlQuery(query);
+			while(result.next())
+			{
+				userIDs.add(result.getString(configuration.webappPrimaryGroupUserIDColumn));
+			}
+			return userIDs;
+		}
+		catch (SQLException exception)
+		{
+			log.severe(EXCEPTION_MESSAGE_GETMEMBERS + exception.getMessage());
+			return userIDs;
+		}
+		catch (MalformedURLException exception)
+		{
+			log.severe(EXCEPTION_MESSAGE_GETMEMBERS + exception.getMessage());
+			return userIDs;
+		}
+		catch (InstantiationException exception)
+		{
+			log.severe(EXCEPTION_MESSAGE_GETMEMBERS + exception.getMessage());
+			return userIDs;
+		}
+		catch (IllegalAccessException exception)
+		{
+			log.severe(EXCEPTION_MESSAGE_GETMEMBERS + exception.getMessage());
+			return userIDs;
+		}
+	}
+
+	@Override
+	public List<String> getSecondaryGroupUserIDs(String groupID)
+	{
+		List<String> userIDs = new ArrayList<String>();
+		
+		if (!configuration.webappSecondaryGroupEnabled)
+		{
+			return userIDs;
+		}
+		
+		String query =
+						"SELECT `" + configuration.webappSecondaryGroupUserIDColumn + "`, `" + configuration.webappSecondaryGroupGroupIDColumn + "` "
+						+ "FROM `" + configuration.webappSecondaryGroupTable + "` ";
+		try
+		{
+			result = sql.sqlQuery(query);
+			while(result.next())
+			{
+				String groupIDs = result.getString(configuration.webappSecondaryGroupGroupIDColumn);
+				if (groupIDs != null)
+				{
+					groupIDs = groupIDs.trim();
+					if (!groupIDs.isEmpty())
+					{
+						for (String id : groupIDs.split(configuration.webappSecondaryGroupGroupIDDelimiter))
+						{
+							if (id.equals(groupID))
+							{
+								userIDs.add(result.getString(configuration.webappSecondaryGroupUserIDColumn));
+							}
+						}
+					}
+				}
+			}
+			return userIDs;
+		}
+		catch (SQLException exception)
+		{
+			log.severe(EXCEPTION_MESSAGE_GETMEMBERS + exception.getMessage());
+			return userIDs;
+		}
+		catch (MalformedURLException exception)
+		{
+			log.severe(EXCEPTION_MESSAGE_GETMEMBERS + exception.getMessage());
+			return userIDs;
+		}
+		catch (InstantiationException exception)
+		{
+			log.severe(EXCEPTION_MESSAGE_GETMEMBERS + exception.getMessage());
+			return userIDs;
+		}
+		catch (IllegalAccessException exception)
+		{
+			log.severe(EXCEPTION_MESSAGE_GETMEMBERS + exception.getMessage());
+			return userIDs;
 		}
 	}
 }

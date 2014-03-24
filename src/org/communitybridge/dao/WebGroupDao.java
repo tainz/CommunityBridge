@@ -67,6 +67,9 @@ public abstract class WebGroupDao
 	}
 	
 	abstract public List<String> getSecondaryGroups(String userID);
+	abstract public List<String> getGroupMembers(String groupID);
+	abstract public List<String> getPrimaryGroupUserIDs(String groupID);
+	abstract public List<String> getSecondaryGroupUserIDs(String groupID);
 
 	private String determinePrimaryGroupQuery(String userID)
 	{
