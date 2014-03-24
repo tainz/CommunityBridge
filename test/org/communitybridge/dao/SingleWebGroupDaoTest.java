@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class SingleMethodWebGroupDaoTest
+public class SingleWebGroupDaoTest
 {
 	private static final String EXCEPTION_MESSAGE = "test message";
 	private final String USER_ID = RandomStringUtils.randomNumeric(2);
@@ -34,7 +34,7 @@ public class SingleMethodWebGroupDaoTest
 		configuration = mock(Configuration.class);
 		log = mock(Log.class);
 		sql = mock(SQL.class);
-		webGroupDao = new SingleMethodWebGroupDao(configuration,sql,log);
+		webGroupDao = new SingleWebGroupDao(configuration,sql,log);
 		
 		result = mock(ResultSet.class);
 		configuration.webappPrimaryGroupEnabled = true;
@@ -142,7 +142,7 @@ public class SingleMethodWebGroupDaoTest
 	{
 		when(sql.sqlQuery(anyString())).thenThrow(exception);
 		assertEquals(0, webGroupDao.getSecondaryGroups(USER_ID).size());
-		verify(log).severe(SingleMethodWebGroupDao.EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
+		verify(log).severe(SingleWebGroupDao.EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
 	}
 	
 	@Test
@@ -218,7 +218,7 @@ public class SingleMethodWebGroupDaoTest
 	{
 		when(sql.sqlQuery(anyString())).thenThrow(exception);
 		assertEquals(0, webGroupDao.getGroupUserIDsPrimary(USER_ID).size());
-		verify(log).severe(SingleMethodWebGroupDao.EXCEPTION_MESSAGE_GETPRIMARY_USERIDS + exception.getMessage());
+		verify(log).severe(SingleWebGroupDao.EXCEPTION_MESSAGE_GETPRIMARY_USERIDS + exception.getMessage());
 	}
 	
 	@Test
@@ -318,7 +318,7 @@ public class SingleMethodWebGroupDaoTest
 	{
 		when(sql.sqlQuery(anyString())).thenThrow(exception);
 		assertEquals(0, webGroupDao.getGroupUserIDsSecondary(USER_ID).size());
-		verify(log).severe(SingleMethodWebGroupDao.EXCEPTION_MESSAGE_GETSECONDARY_USERIDS + exception.getMessage());
+		verify(log).severe(SingleWebGroupDao.EXCEPTION_MESSAGE_GETSECONDARY_USERIDS + exception.getMessage());
 	}
 	
 	@Test

@@ -9,12 +9,12 @@ import org.communitybridge.main.Configuration;
 import org.communitybridge.main.SQL;
 import org.communitybridge.utility.Log;
 
-public class SingleMethodWebGroupDao extends WebGroupDao
+public class SingleWebGroupDao extends WebGroupDao
 {
 	public static final String EXCEPTION_MESSAGE_GETSECONDARY = "Exception during SingleMethodWebGroupDao.getSecondaryGroups(): ";
 	public static final String EXCEPTION_MESSAGE_GETPRIMARY_USERIDS = "Exception during SingleMethodWebGroupDao.getPrimaryGroupUserIDs(): ";
 	public static final String EXCEPTION_MESSAGE_GETSECONDARY_USERIDS = "Exception during SingleMethodWebGroupDao.getSecondaryGroupUserIDs(): ";
-	public SingleMethodWebGroupDao(Configuration configuration, SQL sql, Log log)
+	public SingleWebGroupDao(Configuration configuration, SQL sql, Log log)
 	{
 		super(configuration, sql, log);
 	}
