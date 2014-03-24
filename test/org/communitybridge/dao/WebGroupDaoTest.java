@@ -1,6 +1,5 @@
 package org.communitybridge.dao;
 
-import org.communitybridge.dao.WebGroupDao;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -133,19 +132,19 @@ public class WebGroupDaoTest
 		}
 
 		@Override
-		public List<String> getGroupMembers(String groupID)
+		public List<String> getGroupUserIDs(String groupID)
 		{
 			return null;
 		}
 
 		@Override
-		public List<String> getPrimaryGroupUserIDs(String groupID)
+		public List<String> getGroupUserIDsPrimary(String groupID)
 		{
 			return null;
 		}
 
 		@Override
-		public List<String> getSecondaryGroupUserIDs(String groupID)
+		public List<String> getGroupUserIDsSecondary(String groupID)
 		{
 			return null;
 		}

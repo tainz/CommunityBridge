@@ -3,6 +3,7 @@ package org.communitybridge.dao;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.RandomStringUtils;
 import org.communitybridge.main.Configuration;
@@ -108,35 +109,36 @@ public class SingleMethodWebGroupDaoTest
 		configuration.webappSecondaryGroupEnabled = false;
 		assertEquals(0, webGroupDao.getSecondaryGroups("").size());
 	}
-		@Test
-	public void getPrimaryHandlesSQLException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	
+	@Test
+	public void getSecondaryHandlesSQLException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
 		SQLException exception = new SQLException(EXCEPTION_MESSAGE);
-		testException(exception);
+		testSecondaryGroupsException(exception);
 	}
 	
 	@Test
-	public void getPrimaryHandlesMalformedURLException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	public void getSecondaryHandlesMalformedURLException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
 		MalformedURLException exception = new MalformedURLException(EXCEPTION_MESSAGE);
-		testException(exception);
+		testSecondaryGroupsException(exception);
 	}
 		
 	@Test
-	public void getPrimaryHandlesInstantiationException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	public void getSecondaryHandlesInstantiationException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
 		InstantiationException exception = new InstantiationException(EXCEPTION_MESSAGE);
-		testException(exception);
+		testSecondaryGroupsException(exception);
 	}
 	
 	@Test
-	public void getPrimaryHandlesIllegalAccessException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	public void getSecondaryHandlesIllegalAccessException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
 		IllegalAccessException exception = new IllegalAccessException(EXCEPTION_MESSAGE);
-		testException(exception);
+		testSecondaryGroupsException(exception);
 	}
 	
-	private void testException(Exception exception) throws SQLException, InstantiationException, IllegalAccessException, MalformedURLException
+	private void testSecondaryGroupsException(Exception exception) throws SQLException, InstantiationException, IllegalAccessException, MalformedURLException
 	{
 		when(sql.sqlQuery(anyString())).thenThrow(exception);
 		assertEquals(0, webGroupDao.getSecondaryGroups(USER_ID).size());
@@ -146,27 +148,27 @@ public class SingleMethodWebGroupDaoTest
 	@Test
 	public void getPrimaryGroupUserIDsNeverReturnNull()
 	{
-		assertNotNull(webGroupDao.getPrimaryGroupUserIDs(GROUP_ID));
+		assertNotNull(webGroupDao.getGroupUserIDsPrimary(GROUP_ID));
 	}
 
 	@Test
 	public void getPrimaryGroupUserIDsWhenPrimaryDisabledReturnsEmptyList()
 	{
 		configuration.webappPrimaryGroupEnabled = false;
-		assertEquals(0, webGroupDao.getPrimaryGroupUserIDs(GROUP_ID).size());
+		assertEquals(0, webGroupDao.getGroupUserIDsPrimary(GROUP_ID).size());
 	}
 	
 	@Test
 	public void getPrimaryGroupUserIDsWhenNoMembersReturnsEmptyList() throws SQLException
 	{
 		when(result.next()).thenReturn(false);
-		assertEquals(0, webGroupDao.getPrimaryGroupUserIDs(GROUP_ID).size());
+		assertEquals(0, webGroupDao.getGroupUserIDsPrimary(GROUP_ID).size());
 	}
 
 	@Test
 	public void getPrimaryGroupUserIDsReturnUserIDForMemberOFPrimaryGroup() throws SQLException
 	{
-		List<String> groupMembers = webGroupDao.getPrimaryGroupUserIDs(GROUP_ID);
+		List<String> groupMembers = webGroupDao.getGroupUserIDsPrimary(GROUP_ID);
 		assertEquals(1, groupMembers.size());
 		assertEquals(USER_ID, groupMembers.get(0));
 	}
@@ -178,29 +180,65 @@ public class SingleMethodWebGroupDaoTest
 		when(result.next()).thenReturn(true, true, false);
 		when(result.getString(configuration.webappPrimaryGroupUserIDColumn)).thenReturn(USER_ID, userID2);
 
-		List<String> groupMembers = webGroupDao.getPrimaryGroupUserIDs(GROUP_ID);
+		List<String> groupMembers = webGroupDao.getGroupUserIDsPrimary(GROUP_ID);
 		assertEquals(2, groupMembers.size());
 		assertEquals(USER_ID, groupMembers.get(0));
 		assertEquals(userID2, groupMembers.get(1));
-	}	
+	}
+	
+	@Test
+	public void getPrimaryGroupUserIDsHandlesSQLException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		SQLException exception = new SQLException(EXCEPTION_MESSAGE);
+		testPrimaryGroupUserIDsGroupsException(exception);
+	}
+	
+	@Test
+	public void getPrimaryGroupUserIDsHandlesMalformedURLException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		MalformedURLException exception = new MalformedURLException(EXCEPTION_MESSAGE);
+		testPrimaryGroupUserIDsGroupsException(exception);
+	}
+		
+	@Test
+	public void getPrimaryGroupUserIDsHandlesInstantiationException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		InstantiationException exception = new InstantiationException(EXCEPTION_MESSAGE);
+		testPrimaryGroupUserIDsGroupsException(exception);
+	}
+	
+	@Test
+	public void getPrimaryGroupUserIDsHandlesIllegalAccessException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		IllegalAccessException exception = new IllegalAccessException(EXCEPTION_MESSAGE);
+		testPrimaryGroupUserIDsGroupsException(exception);
+	}
+	
+	private void testPrimaryGroupUserIDsGroupsException(Exception exception) throws SQLException, InstantiationException, IllegalAccessException, MalformedURLException
+	{
+		when(sql.sqlQuery(anyString())).thenThrow(exception);
+		assertEquals(0, webGroupDao.getGroupUserIDsPrimary(USER_ID).size());
+		verify(log).severe(SingleMethodWebGroupDao.EXCEPTION_MESSAGE_GETPRIMARY_USERIDS + exception.getMessage());
+	}
+	
 	@Test
 	public void getSecondaryGroupUserIDsNeverReturnNull()
 	{
-		assertNotNull(webGroupDao.getSecondaryGroupUserIDs(GROUP_ID));
+		assertNotNull(webGroupDao.getGroupUserIDsSecondary(GROUP_ID));
 	}
 
 	@Test
 	public void getSecondaryGroupUserIDsWhenSecondaryDisabledReturnsEmptyList()
 	{
 		configuration.webappSecondaryGroupEnabled = false;
-		assertEquals(0, webGroupDao.getSecondaryGroupUserIDs(GROUP_ID).size());
+		assertEquals(0, webGroupDao.getGroupUserIDsSecondary(GROUP_ID).size());
 	}
 	
 	@Test
 	public void getSecondaryGroupUserIDsWhenNoQueryResultsReturnsEmptyList() throws SQLException
 	{
 		when(result.next()).thenReturn(false);
-		assertEquals(0, webGroupDao.getSecondaryGroupUserIDs(GROUP_ID).size());
+		assertEquals(0, webGroupDao.getGroupUserIDsSecondary(GROUP_ID).size());
 	}
 	
 	@Test
@@ -208,7 +246,7 @@ public class SingleMethodWebGroupDaoTest
 	{
 		groups = "";
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
-		List<String> secondaryGroups = webGroupDao.getSecondaryGroupUserIDs(GROUP_ID);
+		List<String> secondaryGroups = webGroupDao.getGroupUserIDsSecondary(GROUP_ID);
 		assertEquals(0, secondaryGroups.size());
 	}
 	
@@ -217,7 +255,7 @@ public class SingleMethodWebGroupDaoTest
 	{
 		groups = "              ";
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
-		List<String> secondaryGroups = webGroupDao.getSecondaryGroupUserIDs(GROUP_ID);
+		List<String> secondaryGroups = webGroupDao.getGroupUserIDsSecondary(GROUP_ID);
 		assertEquals(0, secondaryGroups.size());
 	}
 	
@@ -227,7 +265,7 @@ public class SingleMethodWebGroupDaoTest
 		groups = RandomStringUtils.randomNumeric(2);
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
 		when(result.getString(configuration.webappSecondaryGroupUserIDColumn)).thenReturn(USER_ID);
-		List<String> secondaryGroups = webGroupDao.getSecondaryGroupUserIDs(groups);
+		List<String> secondaryGroups = webGroupDao.getGroupUserIDsSecondary(groups);
 		assertEquals(1, secondaryGroups.size());
 		assertEquals(USER_ID, secondaryGroups.get(0));
 	}
@@ -242,9 +280,66 @@ public class SingleMethodWebGroupDaoTest
 		when(result.next()).thenReturn(true, true, false);
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
 		when(result.getString(configuration.webappSecondaryGroupUserIDColumn)).thenReturn(USER_ID, userID2);
-		List<String> secondaryGroups = webGroupDao.getSecondaryGroupUserIDs(group1);
+		List<String> secondaryGroups = webGroupDao.getGroupUserIDsSecondary(group1);
 		assertEquals(2, secondaryGroups.size());
-		assertEquals(USER_ID, secondaryGroups.get(0));
-		assertEquals(userID2, secondaryGroups.get(1));
+		assertTrue(secondaryGroups.contains(USER_ID));
+		assertTrue(secondaryGroups.contains(userID2));
+	}
+	
+	@Test
+	public void getSecondaryGroupUserIDsHandlesSQLException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		SQLException exception = new SQLException(EXCEPTION_MESSAGE);
+		testSecondaryGroupUserIDsGroupsException(exception);
+	}
+	
+	@Test
+	public void getSecondaryGroupUserIDsHandlesMalformedURLException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		MalformedURLException exception = new MalformedURLException(EXCEPTION_MESSAGE);
+		testSecondaryGroupUserIDsGroupsException(exception);
+	}
+		
+	@Test
+	public void getSecondaryGroupUserIDsHandlesInstantiationException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		InstantiationException exception = new InstantiationException(EXCEPTION_MESSAGE);
+		testSecondaryGroupUserIDsGroupsException(exception);
+	}
+	
+	@Test
+	public void getSecondaryGroupUserIDsHandlesIllegalAccessException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		IllegalAccessException exception = new IllegalAccessException(EXCEPTION_MESSAGE);
+		testSecondaryGroupUserIDsGroupsException(exception);
+	}
+	
+	private void testSecondaryGroupUserIDsGroupsException(Exception exception) throws SQLException, InstantiationException, IllegalAccessException, MalformedURLException
+	{
+		when(sql.sqlQuery(anyString())).thenThrow(exception);
+		assertEquals(0, webGroupDao.getGroupUserIDsSecondary(USER_ID).size());
+		verify(log).severe(SingleMethodWebGroupDao.EXCEPTION_MESSAGE_GETSECONDARY_USERIDS + exception.getMessage());
+	}
+	
+	@Test
+	public void getGroupUserIDs() throws SQLException
+	{
+		String group1 = RandomStringUtils.randomNumeric(3);
+		String group2 = RandomStringUtils.randomNumeric(3);
+		String userID2 = RandomStringUtils.randomNumeric(2);
+		String primaryID1 = RandomStringUtils.randomNumeric(2);
+		String primaryID2 = RandomStringUtils.randomNumeric(2);
+		when(result.next()).thenReturn(true, true, false, true, true, false);
+		when(result.getString(configuration.webappPrimaryGroupUserIDColumn)).thenReturn(primaryID1, primaryID2);
+
+		groups = group1 + "," + group2;
+		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
+		when(result.getString(configuration.webappSecondaryGroupUserIDColumn)).thenReturn(USER_ID, userID2);
+		List<String> secondaryGroups = webGroupDao.getGroupUserIDs(group1);
+		assertEquals(4, secondaryGroups.size());
+		assertTrue(secondaryGroups.contains(primaryID1));
+		assertTrue(secondaryGroups.contains(primaryID2));
+		assertTrue(secondaryGroups.contains(USER_ID));
+		assertTrue(secondaryGroups.contains(userID2));
 	}
 }

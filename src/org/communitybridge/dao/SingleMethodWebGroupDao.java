@@ -12,7 +12,8 @@ import org.communitybridge.utility.Log;
 public class SingleMethodWebGroupDao extends WebGroupDao
 {
 	public static final String EXCEPTION_MESSAGE_GETSECONDARY = "Exception during SingleMethodWebGroupDao.getSecondaryGroups(): ";
-	private static final String EXCEPTION_MESSAGE_GETMEMBERS = "Exception during SingleMethodWebGroupDao.getMembers(): ";
+	public static final String EXCEPTION_MESSAGE_GETPRIMARY_USERIDS = "Exception during SingleMethodWebGroupDao.getPrimaryGroupUserIDs(): ";
+	public static final String EXCEPTION_MESSAGE_GETSECONDARY_USERIDS = "Exception during SingleMethodWebGroupDao.getSecondaryGroupUserIDs(): ";
 	public SingleMethodWebGroupDao(Configuration configuration, SQL sql, Log log)
 	{
 		super(configuration, sql, log);
@@ -72,13 +73,16 @@ public class SingleMethodWebGroupDao extends WebGroupDao
 	}
 
 	@Override
-	public List<String> getGroupMembers(String groupID)
+	public List<String> getGroupUserIDs(String groupID)
 	{
-		return getPrimaryGroupUserIDs(groupID);
+		List<String> userIDs = getGroupUserIDsPrimary(groupID);
+		userIDs.addAll(getGroupUserIDsSecondary(groupID));
+		
+		return userIDs;
 	}
 
 	@Override
-	public List<String> getPrimaryGroupUserIDs(String groupID)
+	public List<String> getGroupUserIDsPrimary(String groupID)
 	{
 		List<String> userIDs = new ArrayList<String>();
 		
@@ -102,28 +106,28 @@ public class SingleMethodWebGroupDao extends WebGroupDao
 		}
 		catch (SQLException exception)
 		{
-			log.severe(EXCEPTION_MESSAGE_GETMEMBERS + exception.getMessage());
+			log.severe(EXCEPTION_MESSAGE_GETPRIMARY_USERIDS + exception.getMessage());
 			return userIDs;
 		}
 		catch (MalformedURLException exception)
 		{
-			log.severe(EXCEPTION_MESSAGE_GETMEMBERS + exception.getMessage());
+			log.severe(EXCEPTION_MESSAGE_GETPRIMARY_USERIDS + exception.getMessage());
 			return userIDs;
 		}
 		catch (InstantiationException exception)
 		{
-			log.severe(EXCEPTION_MESSAGE_GETMEMBERS + exception.getMessage());
+			log.severe(EXCEPTION_MESSAGE_GETPRIMARY_USERIDS + exception.getMessage());
 			return userIDs;
 		}
 		catch (IllegalAccessException exception)
 		{
-			log.severe(EXCEPTION_MESSAGE_GETMEMBERS + exception.getMessage());
+			log.severe(EXCEPTION_MESSAGE_GETPRIMARY_USERIDS + exception.getMessage());
 			return userIDs;
 		}
 	}
 
 	@Override
-	public List<String> getSecondaryGroupUserIDs(String groupID)
+	public List<String> getGroupUserIDsSecondary(String groupID)
 	{
 		List<String> userIDs = new ArrayList<String>();
 		
@@ -160,22 +164,22 @@ public class SingleMethodWebGroupDao extends WebGroupDao
 		}
 		catch (SQLException exception)
 		{
-			log.severe(EXCEPTION_MESSAGE_GETMEMBERS + exception.getMessage());
+			log.severe(EXCEPTION_MESSAGE_GETSECONDARY_USERIDS + exception.getMessage());
 			return userIDs;
 		}
 		catch (MalformedURLException exception)
 		{
-			log.severe(EXCEPTION_MESSAGE_GETMEMBERS + exception.getMessage());
+			log.severe(EXCEPTION_MESSAGE_GETSECONDARY_USERIDS + exception.getMessage());
 			return userIDs;
 		}
 		catch (InstantiationException exception)
 		{
-			log.severe(EXCEPTION_MESSAGE_GETMEMBERS + exception.getMessage());
+			log.severe(EXCEPTION_MESSAGE_GETSECONDARY_USERIDS + exception.getMessage());
 			return userIDs;
 		}
 		catch (IllegalAccessException exception)
 		{
-			log.severe(EXCEPTION_MESSAGE_GETMEMBERS + exception.getMessage());
+			log.severe(EXCEPTION_MESSAGE_GETSECONDARY_USERIDS + exception.getMessage());
 			return userIDs;
 		}
 	}
