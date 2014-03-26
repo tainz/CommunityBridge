@@ -19,7 +19,7 @@ public class KeyValueWebGroupDao extends WebGroupDao
 	}
 
 	@Override
-	public List<String> getSecondaryGroups(String userID)
+	public List<String> getUserSecondaryGroupIDs(String userID)
 	{
 		List<String> groupIDs = new ArrayList<String>();
 		String query =

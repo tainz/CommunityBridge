@@ -56,7 +56,7 @@ public class SingleWebGroupDaoTest
 	{
 		groups = "";
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
-		List<String> secondaryGroups = webGroupDao.getSecondaryGroups(USER_ID);
+		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
 		assertEquals(0, secondaryGroups.size());
 	}
 
@@ -65,7 +65,7 @@ public class SingleWebGroupDaoTest
 	{
 		groups = "          ";
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
-		List<String> secondaryGroups = webGroupDao.getSecondaryGroups(USER_ID);
+		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
 		assertEquals(0, secondaryGroups.size());
 	}
 	
@@ -74,7 +74,7 @@ public class SingleWebGroupDaoTest
 	{
 		groups = "          ";
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(null);
-		List<String> secondaryGroups = webGroupDao.getSecondaryGroups(USER_ID);
+		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
 		assertEquals(0, secondaryGroups.size());
 	}
 	
@@ -83,7 +83,7 @@ public class SingleWebGroupDaoTest
 	{
 		groups = RandomStringUtils.randomNumeric(2);
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
-		List<String> secondaryGroups = webGroupDao.getSecondaryGroups(USER_ID);
+		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
 		assertEquals(1, secondaryGroups.size());
 		assertEquals(groups, secondaryGroups.get(0));
 	}
@@ -93,7 +93,7 @@ public class SingleWebGroupDaoTest
 	{
 		groups = group1 + "," + group2;
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
-		List<String> secondaryGroups = webGroupDao.getSecondaryGroups(USER_ID);
+		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
 		assertEquals(2, secondaryGroups.size());
 		assertEquals(group1, secondaryGroups.get(0));
 		assertEquals(group2, secondaryGroups.get(1));
@@ -104,7 +104,7 @@ public class SingleWebGroupDaoTest
 	{
 		groups = group1 + " , " + group2;
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
-		List<String> secondaryGroups = webGroupDao.getSecondaryGroups(USER_ID);
+		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
 		assertEquals(2, secondaryGroups.size());
 		assertEquals(group1, secondaryGroups.get(0));
 		assertEquals(group2, secondaryGroups.get(1));
@@ -115,7 +115,7 @@ public class SingleWebGroupDaoTest
 	{
 		groups = " , " + group2;
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
-		List<String> secondaryGroups = webGroupDao.getSecondaryGroups(USER_ID);
+		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
 		assertEquals(1, secondaryGroups.size());
 		assertTrue(secondaryGroups.contains(group2));
 	}
@@ -124,7 +124,7 @@ public class SingleWebGroupDaoTest
 	public void getSecondaryGroupsWhenSecondaryDisableReturnsEmptyList()
 	{
 		configuration.webappSecondaryGroupEnabled = false;
-		assertEquals(0, webGroupDao.getSecondaryGroups("").size());
+		assertEquals(0, webGroupDao.getUserSecondaryGroupIDs("").size());
 	}
 	
 	@Test
@@ -158,7 +158,7 @@ public class SingleWebGroupDaoTest
 	private void testSecondaryGroupsException(Exception exception) throws SQLException, InstantiationException, IllegalAccessException, MalformedURLException
 	{
 		when(sql.sqlQuery(anyString())).thenThrow(exception);
-		assertEquals(0, webGroupDao.getSecondaryGroups(USER_ID).size());
+		assertEquals(0, webGroupDao.getUserSecondaryGroupIDs(USER_ID).size());
 		verify(log).severe(SingleWebGroupDao.EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
 	}
 	

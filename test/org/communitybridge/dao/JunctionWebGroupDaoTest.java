@@ -52,14 +52,14 @@ public class JunctionWebGroupDaoTest
 	@Test
 	public void getSecondaryGroupsShouldNeverReturnNull()
 	{
-		assertNotNull(webGroupDao.getSecondaryGroups(USER_ID));
+		assertNotNull(webGroupDao.getUserSecondaryGroupIDs(USER_ID));
 	}
 
 	@Test
 	public void getSecondaryGroupsWhenSecondaryDisableReturnsEmptyList()
 	{
 		configuration.webappSecondaryGroupEnabled = false;
-		assertEquals(0, webGroupDao.getSecondaryGroups("").size());
+		assertEquals(0, webGroupDao.getUserSecondaryGroupIDs("").size());
 	}
 
 	@Test
@@ -67,7 +67,7 @@ public class JunctionWebGroupDaoTest
 	{
 		group1 = "";
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(group1);
-		List<String> secondaryGroups = webGroupDao.getSecondaryGroups(USER_ID);
+		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
 		assertEquals(0, secondaryGroups.size());
 	}
 
@@ -76,7 +76,7 @@ public class JunctionWebGroupDaoTest
 	{
 		group1 = "          ";
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(group1);
-		List<String> secondaryGroups = webGroupDao.getSecondaryGroups(USER_ID);
+		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
 		assertEquals(0, secondaryGroups.size());
 	}
 
@@ -84,7 +84,7 @@ public class JunctionWebGroupDaoTest
 	public void getSecondaryGroupsWithNullReturnsEmptyList() throws SQLException
 	{
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(null);
-		List<String> secondaryGroups = webGroupDao.getSecondaryGroups(USER_ID);
+		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
 		assertEquals(0, secondaryGroups.size());
 	}
 	
@@ -92,7 +92,7 @@ public class JunctionWebGroupDaoTest
 	public void getSecondaryGroupsReturnsOneGroupID() throws SQLException
 	{
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(group1);
-		List<String> secondaryGroups = webGroupDao.getSecondaryGroups(USER_ID);
+		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
 		assertEquals(1, secondaryGroups.size());
 		assertTrue(secondaryGroups.contains(group1));
 	}
@@ -102,7 +102,7 @@ public class JunctionWebGroupDaoTest
 	{
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(group1, group2);
 		when(result.next()).thenReturn(true, true, false);
-		List<String> secondaryGroups = webGroupDao.getSecondaryGroups(USER_ID);
+		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
 		assertEquals(2, secondaryGroups.size());
 		assertTrue(secondaryGroups.contains(group1));
 		assertTrue(secondaryGroups.contains(group2));
@@ -113,7 +113,7 @@ public class JunctionWebGroupDaoTest
 	{
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(group1 + "  ", group2);
 		when(result.next()).thenReturn(true, true, false);
-		List<String> secondaryGroups = webGroupDao.getSecondaryGroups(USER_ID);
+		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
 		assertEquals(2, secondaryGroups.size());
 		assertTrue(secondaryGroups.contains(group1));
 		assertTrue(secondaryGroups.contains(group2));
@@ -124,7 +124,7 @@ public class JunctionWebGroupDaoTest
 	{
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn("  ", group2);
 		when(result.next()).thenReturn(true, true, false);
-		List<String> secondaryGroups = webGroupDao.getSecondaryGroups(USER_ID);
+		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
 		assertEquals(1, secondaryGroups.size());
 		assertTrue(secondaryGroups.contains(group2));
 	}
@@ -159,7 +159,7 @@ public class JunctionWebGroupDaoTest
 	private void testSecondaryGroupsException(Exception exception) throws SQLException, InstantiationException, IllegalAccessException, MalformedURLException
 	{
 		when(sql.sqlQuery(anyString())).thenThrow(exception);
-		assertEquals(0, webGroupDao.getSecondaryGroups(USER_ID).size());
+		assertEquals(0, webGroupDao.getUserSecondaryGroupIDs(USER_ID).size());
 		verify(log).severe(JunctionWebGroupDao.EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
 	}
 }

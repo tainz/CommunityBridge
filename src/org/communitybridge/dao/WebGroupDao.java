@@ -25,7 +25,7 @@ public abstract class WebGroupDao
 		this.log = log;
 	}
 	
-	public String getPrimaryGroupID(String userID)
+	public String getUserPrimaryGroupID(String userID)
 	{
 		if (!configuration.webappPrimaryGroupEnabled)
 		{
@@ -68,7 +68,7 @@ public abstract class WebGroupDao
 		}
 	}
 	
-	abstract public List<String> getSecondaryGroups(String userID);
+	abstract public List<String> getUserSecondaryGroupIDs(String userID);
 	abstract public List<String> getGroupUserIDs(String groupID);
 	abstract public List<String> getGroupUserIDsPrimary(String groupID);
 	abstract public List<String> getGroupUserIDsSecondary(String groupID);

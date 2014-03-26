@@ -20,7 +20,7 @@ public class SingleWebGroupDao extends WebGroupDao
 	}
 
 	@Override
-	public List<String> getSecondaryGroups(String userID)
+	public List<String> getUserSecondaryGroupIDs(String userID)
 	{
 		if (!configuration.webappSecondaryGroupEnabled)
 		{

@@ -43,14 +43,14 @@ public class WebGroupDaoTest
 	@Test
 	public void getPrimaryGroupNeverReturnsNull()
 	{
-		assertNotNull(webGroupDao.getPrimaryGroupID(""));
+		assertNotNull(webGroupDao.getUserPrimaryGroupID(""));
 	}
 
 	@Test
 	public void getPrimaryGroupReturnsBlankWithPrimaryDisabled()
 	{
 		configuration.webappPrimaryGroupEnabled = false;
-		assertEquals("", webGroupDao.getPrimaryGroupID(USER_ID));
+		assertEquals("", webGroupDao.getUserPrimaryGroupID(USER_ID));
 	}
 	
 	@Test
@@ -59,7 +59,7 @@ public class WebGroupDaoTest
 		configuration.webappPrimaryGroupEnabled = true;
 		configuration.webappPrimaryGroupUsesKey = true;
 		when(sql.sqlQuery(anyString())).thenReturn(result);
-		assertEquals("", webGroupDao.getPrimaryGroupID(USER_ID));
+		assertEquals("", webGroupDao.getUserPrimaryGroupID(USER_ID));
 	}
 	
 	@Test
@@ -68,7 +68,7 @@ public class WebGroupDaoTest
 		configuration.webappPrimaryGroupEnabled = true;
 		configuration.webappPrimaryGroupUsesKey = false;
 		when(sql.sqlQuery(anyString())).thenReturn(result);
-		assertEquals("", webGroupDao.getPrimaryGroupID(USER_ID));
+		assertEquals("", webGroupDao.getUserPrimaryGroupID(USER_ID));
 	}
 	
 	@Test
@@ -80,7 +80,7 @@ public class WebGroupDaoTest
 		when(sql.sqlQuery(anyString())).thenReturn(result);
 		when(result.next()).thenReturn(Boolean.TRUE);
 		when(result.getString(configuration.webappPrimaryGroupGroupIDColumn)).thenReturn(group1);
-		assertEquals(group1, webGroupDao.getPrimaryGroupID(USER_ID));
+		assertEquals(group1, webGroupDao.getUserPrimaryGroupID(USER_ID));
 	}
 	
 	@Test
@@ -205,7 +205,7 @@ public class WebGroupDaoTest
 		configuration.webappPrimaryGroupUsesKey = true;
 		configuration.webappPrimaryGroupGroupIDColumn = "group_id";
 		when(sql.sqlQuery(anyString())).thenThrow(exception);
-		assertEquals("", webGroupDao.getPrimaryGroupID(USER_ID));
+		assertEquals("", webGroupDao.getUserPrimaryGroupID(USER_ID));
 		verify(log).severe(WebGroupDao.EXCEPTION_MESSAGE_GETPRIMARY + exception.getMessage());
 	}
 
@@ -217,7 +217,7 @@ public class WebGroupDaoTest
 		}
 
 		@Override
-		public List<String> getSecondaryGroups(String userID)
+		public List<String> getUserSecondaryGroupIDs(String userID)
 		{
 			return null;
 		}

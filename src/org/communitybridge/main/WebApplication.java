@@ -27,11 +27,6 @@ import org.communitybridge.utility.Log;
 import org.communitybridge.utility.MinecraftUtilities;
 import org.communitybridge.utility.StringUtilities;
 
-/**
- * Class representing the interface to the web application.
- *
- * @author Feaelin (Iain E. Davis) <iain@ruhlendavis.org>
- */
 public class WebApplication
 {
 	private final Boolean synchronizationLock = true;
@@ -189,216 +184,12 @@ public class WebApplication
 	 */
 	public String getUserPrimaryGroupID(String playerName)
 	{
-		return webGroupDao.getPrimaryGroupID(getUserID(playerName));
+		return webGroupDao.getUserPrimaryGroupID(getUserID(playerName));
 	}
 
 	public List<String> getUserGroupIDs(String playerName)
-	{
-		if (!config.webappSecondaryGroupEnabled)
-		{
-			return null;
-		}
-
-		if (config.webappSecondaryGroupStorageMethod.startsWith("sin"))
-		{
-			return getUserGroupIDsSingleColumn(playerName);
-		}
-		else if (config.webappSecondaryGroupStorageMethod.startsWith("jun"))
-
-		{
-			return getUserGroupIDsJunction(playerName);
-		}
-		else if (config.webappSecondaryGroupStorageMethod.startsWith("key"))
-		{
-			return getUserGroupIDsKeyValue(playerName);
-		}
-		else if (config.webappSecondaryGroupStorageMethod.startsWith("mul"))
-		{
-			return getUserGroupIDsMultipleKeyValue(playerName);
-		}
-		log.severe("Invalid storage method for secondary groups.");
-		return null;
-	}
-
-	private List<String> getUserGroupIDsSingleColumn(String playerName)
-	{
-		final String exceptionBase = "Exception during WebApplication.getUserGroupIDsSingleColumn(): ";
-		String query;
-
-		query = "SELECT `" + config.webappSecondaryGroupGroupIDColumn + "` "
-					+ "FROM `" + config.webappSecondaryGroupTable + "` "
-					+ "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + getUserID(playerName) + "' ";
-
-		try
-		{
-			ResultSet result = sql.sqlQuery(query);
-
-			if (result.next())
-			{
-				String groupsFromDB = result.getString(config.webappSecondaryGroupGroupIDColumn).trim();
-				
-				if (groupsFromDB.isEmpty())
-				{
-					return new ArrayList<String>();
-				}
-				
-				return new ArrayList<String>(Arrays.asList(groupsFromDB.split(config.webappSecondaryGroupGroupIDDelimiter)));
-			}
-			else
-			{
-				return null;
-			}
-		}
-		catch (SQLException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-			return null;
-		}
-		catch (MalformedURLException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-			return null;
-		}
-		catch (InstantiationException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-			return null;
-		}
-		catch (IllegalAccessException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-			return null;
-		}
-	}
-
-	private List<String> getUserGroupIDsKeyValue(String playerName)
-	{
-		final String exceptionBase = "Exception during WebApplication.getUserGroupIDsKeyValue(): ";
-		String query;
-
-		query = "SELECT `" + config.webappSecondaryGroupGroupIDColumn + "` "
-					+ "FROM `" + config.webappSecondaryGroupTable + "` "
-					+ "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + getUserID(playerName) + "' "
-					+ "AND `" + config.webappSecondaryGroupKeyColumn + "` = '" + config.webappSecondaryGroupKeyName + "' ";
-
-		try
-		{
-			ResultSet result = sql.sqlQuery(query);
-
-			if (result.next())
-			{
-				return new ArrayList<String>(Arrays.asList(result.getString(config.webappSecondaryGroupGroupIDColumn).split(config.webappSecondaryGroupGroupIDDelimiter)));
-			}
-			else
-			{
-				return null;
-			}
-		}
-		catch (SQLException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-			return null;
-		}
-		catch (MalformedURLException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-			return null;
-		}
-		catch (InstantiationException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-			return null;
-		}
-		catch (IllegalAccessException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-			return null;
-		}
-	}
-
-	private List<String> getUserGroupIDsJunction(String playerName)
-	{
-		final String exceptionBase = "Exception during WebApplication.getUserGroupIDsJunction(): ";
-		String query;
-
-		query = "SELECT `" + config.webappSecondaryGroupGroupIDColumn + "` "
-					+ "FROM `" + config.webappSecondaryGroupTable + "` "
-					+ "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + getUserID(playerName) + "' ";
-
-		try
-		{
-			ResultSet result = sql.sqlQuery(query);
-			List<String> groupIDs = new ArrayList<String>();
-
-			while (result.next())
-			{
-				groupIDs.add(result.getString(config.webappSecondaryGroupGroupIDColumn));
-			}
-			return groupIDs;
-		}
-		catch (SQLException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-			return null;
-		}
-		catch (MalformedURLException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-			return null;
-		}
-		catch (InstantiationException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-			return null;
-		}
-		catch (IllegalAccessException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-			return null;
-		}
-	}
-
-	private List<String> getUserGroupIDsMultipleKeyValue(String playerName)
-	{
-		final String exceptionBase = "Exception during WebApplication.getUserGroupIDsKeyValue(): ";
-		String query;
-
-		query = "SELECT `" + config.webappSecondaryGroupGroupIDColumn + "` "
-					+ "FROM `" + config.webappSecondaryGroupTable + "` "
-					+ "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + getUserID(playerName) + "' "
-					+ "AND `" + config.webappSecondaryGroupKeyColumn + "` = '" + config.webappSecondaryGroupKeyName + "' ";
-
-		try
-		{
-			ResultSet result = sql.sqlQuery(query);
-			List<String> groupIDs = new ArrayList<String>();
-
-			while (result.next())
-			{
-				groupIDs.add(result.getString(config.webappSecondaryGroupGroupIDColumn));
-			}
-			return groupIDs;
-		}
-		catch (SQLException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-			return null;
-		}
-		catch (MalformedURLException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-			return null;
-		}
-		catch (InstantiationException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-			return null;
-		}
-		catch (IllegalAccessException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-			return null;
-		}
+	{	
+		return webGroupDao.getUserSecondaryGroupIDs(getUserID(playerName));
 	}
 
 	/**
@@ -1449,6 +1240,8 @@ public class WebApplication
 		{
 			webGroupDao = new MultipleKeyValueWebGroupDao(config, sql, log);
 		}
+		log.severe("Invalid storage method for secondary groups, disabling secondary synchronization.");
+		config.webappSecondaryGroupEnabled = false;
 	}
 
 	private class FieldBuilder
