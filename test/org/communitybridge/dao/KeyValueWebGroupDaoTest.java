@@ -13,6 +13,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class KeyValueWebGroupDaoTest
@@ -129,5 +130,39 @@ public class KeyValueWebGroupDaoTest
 		List<String> secondaryGroups = webGroupDao.getSecondaryGroups(USER_ID);
 		assertEquals(1, secondaryGroups.size());
 		assertTrue(secondaryGroups.contains(group2));
+	}
+		@Test
+	public void getSecondaryHandlesSQLException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		SQLException exception = new SQLException(EXCEPTION_MESSAGE);
+		testSecondaryGroupsException(exception);
+	}
+	
+	@Test
+	public void getSecondaryHandlesMalformedURLException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		MalformedURLException exception = new MalformedURLException(EXCEPTION_MESSAGE);
+		testSecondaryGroupsException(exception);
+	}
+		
+	@Test
+	public void getSecondaryHandlesInstantiationException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		InstantiationException exception = new InstantiationException(EXCEPTION_MESSAGE);
+		testSecondaryGroupsException(exception);
+	}
+	
+	@Test
+	public void getSecondaryHandlesIllegalAccessException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		IllegalAccessException exception = new IllegalAccessException(EXCEPTION_MESSAGE);
+		testSecondaryGroupsException(exception);
+	}
+	
+	private void testSecondaryGroupsException(Exception exception) throws SQLException, InstantiationException, IllegalAccessException, MalformedURLException
+	{
+		when(sql.sqlQuery(anyString())).thenThrow(exception);
+		assertEquals(0, webGroupDao.getSecondaryGroups(USER_ID).size());
+		verify(log).severe(KeyValueWebGroupDao.EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
 	}
 }

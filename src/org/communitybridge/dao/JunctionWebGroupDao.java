@@ -1,12 +1,18 @@
 package org.communitybridge.dao;
 
+import java.net.MalformedURLException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import static org.communitybridge.dao.WebGroupDao.EMPTY_LIST;
 import org.communitybridge.main.Configuration;
 import org.communitybridge.main.SQL;
 import org.communitybridge.utility.Log;
 
 public class JunctionWebGroupDao extends WebGroupDao
 {
+	public static final String EXCEPTION_MESSAGE_GETSECONDARY = "Error during WebApplication.getUserGroupIDsJunction(): ";
 	
 	public JunctionWebGroupDao(Configuration configuration, SQL sql, Log log)
 	{
@@ -16,7 +22,41 @@ public class JunctionWebGroupDao extends WebGroupDao
 	@Override
 	public List<String> getSecondaryGroups(String userID)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		List<String> groupIDs = new ArrayList<String>();
+		String query = "SELECT `" + configuration.webappSecondaryGroupGroupIDColumn + "` "
+					+ "FROM `" + configuration.webappSecondaryGroupTable + "` "
+					+ "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' ";
+
+		try
+		{
+			result = sql.sqlQuery(query);
+			
+			while (result.next())
+			{
+				addCleanID(result.getString(configuration.webappSecondaryGroupGroupIDColumn), groupIDs);
+			}
+			return groupIDs;
+		}
+		catch (SQLException exception)
+		{
+			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
+			return EMPTY_LIST;
+		}
+		catch (MalformedURLException exception)
+		{
+			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
+			return EMPTY_LIST;
+		}
+		catch (InstantiationException exception)
+		{
+			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
+			return EMPTY_LIST;
+		}
+		catch (IllegalAccessException exception)
+		{
+			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
+			return EMPTY_LIST;
+		}
 	}
 
 	@Override

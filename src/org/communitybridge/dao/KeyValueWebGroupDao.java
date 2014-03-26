@@ -1,18 +1,17 @@
 package org.communitybridge.dao;
 
 import java.net.MalformedURLException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import static org.communitybridge.dao.WebGroupDao.EMPTY_LIST;
 import org.communitybridge.main.Configuration;
 import org.communitybridge.main.SQL;
 import org.communitybridge.utility.Log;
 
 public class KeyValueWebGroupDao extends WebGroupDao
 {
-	public static final String EXCEPTION_MESSAGE_GETSECONDARY = "Error during KeyValueWebGroupDao.getSecondaryGroups(): ";
+	public static final String EXCEPTION_MESSAGE_GETSECONDARY = "Exception during KeyValueWebGroupDao.getSecondaryGroups(): ";
 
 	public KeyValueWebGroupDao(Configuration configuration, SQL sql, Log log)
 	{
@@ -42,22 +41,22 @@ public class KeyValueWebGroupDao extends WebGroupDao
 		catch (SQLException exception)
 		{
 			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
-			return null;
+			return EMPTY_LIST;
 		}
 		catch (MalformedURLException exception)
 		{
 			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
-			return null;
+			return EMPTY_LIST;
 		}
 		catch (InstantiationException exception)
 		{
 			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
-			return null;
+			return EMPTY_LIST;
 		}
 		catch (IllegalAccessException exception)
 		{
 			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
-			return null;
+			return EMPTY_LIST;
 		}
 	}
 
