@@ -82,6 +82,15 @@ public class MultipleKeyValueWebGroupDaoTest
 	}
 	
 	@Test
+	public void getSecondaryGroupsWithNullReturnsEmptyList() throws SQLException
+	{
+		groups = "          ";
+		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(null);
+		List<String> secondaryGroups = webGroupDao.getSecondaryGroups(USER_ID);
+		assertEquals(0, secondaryGroups.size());
+	}
+		
+	@Test
 	public void getSecondaryGroupsReturnsOneGroupID() throws SQLException
 	{
 		groups = RandomStringUtils.randomNumeric(2);

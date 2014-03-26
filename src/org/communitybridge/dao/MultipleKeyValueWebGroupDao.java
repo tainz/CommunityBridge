@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import static org.communitybridge.dao.WebGroupDao.EMPTY_LIST;
 import org.communitybridge.main.Configuration;
 import org.communitybridge.main.SQL;
 import org.communitybridge.utility.Log;
@@ -24,7 +25,7 @@ public class MultipleKeyValueWebGroupDao extends WebGroupDao
 		
 		if (!configuration.webappSecondaryGroupEnabled)
 		{
-			return groupIDs;
+			return EMPTY_LIST;
 		}
 		
 		String query =
@@ -39,39 +40,29 @@ public class MultipleKeyValueWebGroupDao extends WebGroupDao
 
 			while (result.next())
 			{
-				String groupID = result.getString(configuration.webappSecondaryGroupGroupIDColumn);
-				
-				if (groupID != null)
-				{
-					groupID = groupID.trim();
-				}
-				
-				if (!"".equals(groupID))
-				{
-					groupIDs.add(groupID);
-				}
+				addCleanID(result.getString(configuration.webappSecondaryGroupGroupIDColumn), groupIDs);
 			}
 			return groupIDs;
 		}
 		catch (SQLException exception)
 		{
 			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
-			return groupIDs;
+			return EMPTY_LIST;
 		}
 		catch (MalformedURLException exception)
 		{
 			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
-			return groupIDs;
+			return EMPTY_LIST;
 		}
 		catch (InstantiationException exception)
 		{
 			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
-			return groupIDs;
+			return EMPTY_LIST;
 		}
 		catch (IllegalAccessException exception)
 		{
 			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
-			return groupIDs;
+			return EMPTY_LIST;
 		}
 	}
 

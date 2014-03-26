@@ -3,6 +3,7 @@ package org.communitybridge.dao;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import org.communitybridge.main.Configuration;
 import org.communitybridge.main.SQL;
@@ -10,6 +11,7 @@ import org.communitybridge.utility.Log;
 
 public abstract class WebGroupDao
 {
+	public static final List<String> EMPTY_LIST = new ArrayList<String>();
 	public static final String EXCEPTION_MESSAGE_GETPRIMARY = "Exception during WebGroupDao.getPrimaryGroup: ";
 	protected Configuration configuration;
 	protected SQL sql;
@@ -86,5 +88,30 @@ public abstract class WebGroupDao
 						+ "FROM `" + configuration.webappPrimaryGroupTable + "` "
 						+ "WHERE `" + configuration.webappPrimaryGroupUserIDColumn + "` = '" + userID + "'";
 		}
+	}
+
+	protected void addCleanID(String id, List<String> idList)
+	{
+		if (id != null && !id.isEmpty())
+		{
+			id = id.trim();
+			if (!id.isEmpty())
+			{
+				idList.add(id);
+			}
+		}
+	}
+
+	protected List<String> convertDelimitedIDString(String ids)
+	{
+		List<String> idList = new ArrayList<String>();
+		if (ids != null)
+		{
+			for (String id : ids.split(configuration.webappSecondaryGroupGroupIDDelimiter))
+			{
+				addCleanID(id, idList);
+			}
+		}
+		return idList;
 	}
 }

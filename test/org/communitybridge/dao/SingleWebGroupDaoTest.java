@@ -21,6 +21,8 @@ public class SingleWebGroupDaoTest
 	private static final String EXCEPTION_MESSAGE = "test message";
 	private final String USER_ID = RandomStringUtils.randomNumeric(2);
 	private final String GROUP_ID = RandomStringUtils.randomNumeric(2);
+	private String group1 = RandomStringUtils.randomNumeric(2);
+  private String group2 = RandomStringUtils.randomNumeric(2);
 	private String groups;
 	private WebGroupDao webGroupDao;
 	private Configuration configuration;
@@ -66,7 +68,16 @@ public class SingleWebGroupDaoTest
 		List<String> secondaryGroups = webGroupDao.getSecondaryGroups(USER_ID);
 		assertEquals(0, secondaryGroups.size());
 	}
-
+	
+	@Test
+	public void getSecondaryGroupsWithNullReturnsEmptyList() throws SQLException
+	{
+		groups = "          ";
+		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(null);
+		List<String> secondaryGroups = webGroupDao.getSecondaryGroups(USER_ID);
+		assertEquals(0, secondaryGroups.size());
+	}
+	
 	@Test
 	public void getSecondaryGroupsReturnsOneGroupID() throws SQLException
 	{
@@ -80,8 +91,6 @@ public class SingleWebGroupDaoTest
 	@Test
 	public void getSecondaryGroupsReturnsTwoGroupIDs() throws SQLException
 	{
-		String group1 = RandomStringUtils.randomNumeric(2);
-		String group2 = RandomStringUtils.randomNumeric(2);
 		groups = group1 + "," + group2;
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
 		List<String> secondaryGroups = webGroupDao.getSecondaryGroups(USER_ID);
@@ -93,8 +102,6 @@ public class SingleWebGroupDaoTest
 	@Test
 	public void getSecondaryGroupsReturnsTwoCleanGroupIDs() throws SQLException
 	{
-		String group1 = RandomStringUtils.randomNumeric(2);
-		String group2 = RandomStringUtils.randomNumeric(2);
 		groups = group1 + " , " + group2;
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
 		List<String> secondaryGroups = webGroupDao.getSecondaryGroups(USER_ID);
@@ -102,7 +109,17 @@ public class SingleWebGroupDaoTest
 		assertEquals(group1, secondaryGroups.get(0));
 		assertEquals(group2, secondaryGroups.get(1));
 	}
-
+	
+	@Test
+	public void getSecondaryGroupsReturnsOnlyGroupIDs() throws SQLException
+	{
+		groups = " , " + group2;
+		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
+		List<String> secondaryGroups = webGroupDao.getSecondaryGroups(USER_ID);
+		assertEquals(1, secondaryGroups.size());
+		assertTrue(secondaryGroups.contains(group2));
+	}
+	
 	@Test
 	public void getSecondaryGroupsWhenSecondaryDisableReturnsEmptyList()
 	{

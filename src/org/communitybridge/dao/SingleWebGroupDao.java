@@ -3,8 +3,8 @@ package org.communitybridge.dao;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import static org.communitybridge.dao.WebGroupDao.EMPTY_LIST;
 import org.communitybridge.main.Configuration;
 import org.communitybridge.main.SQL;
 import org.communitybridge.utility.Log;
@@ -22,11 +22,9 @@ public class SingleWebGroupDao extends WebGroupDao
 	@Override
 	public List<String> getSecondaryGroups(String userID)
 	{
-		List<String> groupIDs = new ArrayList<String>();
-		
 		if (!configuration.webappSecondaryGroupEnabled)
 		{
-			return groupIDs;
+			return EMPTY_LIST;
 		}
 		String query =
 						"SELECT `" + configuration.webappSecondaryGroupGroupIDColumn + "` "
@@ -39,36 +37,29 @@ public class SingleWebGroupDao extends WebGroupDao
 
 			if (result.next())
 			{
-				String groupsFromDB = result.getString(configuration.webappSecondaryGroupGroupIDColumn).trim();
-				if (!groupsFromDB.isEmpty())
-				{
-					for (String id : Arrays.asList(groupsFromDB.split(configuration.webappSecondaryGroupGroupIDDelimiter)))
-					{
-						groupIDs.add(id.trim());
-					}				
-				}
+				return convertDelimitedIDString(result.getString(configuration.webappSecondaryGroupGroupIDColumn));
 			}
-			return groupIDs;
+			return EMPTY_LIST;
 		}
 		catch (SQLException exception)
 		{
 			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
-			return groupIDs;
+			return EMPTY_LIST;
 		}
 		catch (MalformedURLException exception)
 		{
 			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
-			return groupIDs;
+			return EMPTY_LIST;
 		}
 		catch (InstantiationException exception)
 		{
 			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
-			return groupIDs;
+			return EMPTY_LIST;
 		}
 		catch (IllegalAccessException exception)
 		{
 			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
-			return groupIDs;
+			return EMPTY_LIST;
 		}
 	}
 
