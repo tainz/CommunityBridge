@@ -20,7 +20,7 @@ public class SingleWebGroupDao extends WebGroupDao
 	}
 
 	@Override
-	public List<String> getUserSecondaryGroupIDs(String userID)
+	public List<String> getUserSecondaryGroupIDs(String userID) throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
 		if (!configuration.webappSecondaryGroupEnabled)
 		{
@@ -31,8 +31,6 @@ public class SingleWebGroupDao extends WebGroupDao
 					+ "FROM `" + configuration.webappSecondaryGroupTable + "` "
 					+ "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' ";
 
-		try
-		{
 			result = sql.sqlQuery(query);
 
 			if (result.next())
@@ -40,27 +38,6 @@ public class SingleWebGroupDao extends WebGroupDao
 				return convertDelimitedIDString(result.getString(configuration.webappSecondaryGroupGroupIDColumn));
 			}
 			return EMPTY_LIST;
-		}
-		catch (SQLException exception)
-		{
-			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
-			return EMPTY_LIST;
-		}
-		catch (MalformedURLException exception)
-		{
-			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
-			return EMPTY_LIST;
-		}
-		catch (InstantiationException exception)
-		{
-			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
-			return EMPTY_LIST;
-		}
-		catch (IllegalAccessException exception)
-		{
-			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
-			return EMPTY_LIST;
-		}
 	}
 
 	@Override

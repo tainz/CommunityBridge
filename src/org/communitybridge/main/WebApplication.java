@@ -29,6 +29,8 @@ import org.communitybridge.utility.StringUtilities;
 
 public class WebApplication
 {
+	public static final List<String> EMPTY_LIST = new ArrayList<String>();
+	public static final String EXCEPTION_MESSAGE_GETSECONDARY = "Exception during WebApplication.getUserSecondaryGroupIDs(): ";
 	private final Boolean synchronizationLock = true;
 	private CommunityBridge plugin;
 	private Configuration config;
@@ -40,7 +42,13 @@ public class WebApplication
 
 	private Map<String, String> playerUserIDs = new HashMap<String, String>();
 	private List<Player> playerLocks = new ArrayList<Player>();
-
+	
+	public WebApplication(WebGroupDao webGroupDao, Log log)
+	{
+		this.webGroupDao = webGroupDao;
+		this.log = log;
+	}
+	
 	public WebApplication(CommunityBridge plugin, Configuration config, Log log, SQL sql)
 	{
 		this.config = config;
@@ -187,9 +195,32 @@ public class WebApplication
 		return webGroupDao.getUserPrimaryGroupID(getUserID(playerName));
 	}
 
-	public List<String> getUserGroupIDs(String playerName)
+	public List<String> getUserSecondaryGroupIDs(String playerName)
 	{	
-		return webGroupDao.getUserSecondaryGroupIDs(getUserID(playerName));
+		try
+		{
+			return webGroupDao.getUserSecondaryGroupIDs(getUserID(playerName));
+		}
+		catch (SQLException exception)
+		{
+			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
+			return EMPTY_LIST;
+		}
+		catch (MalformedURLException exception)
+		{
+			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
+			return EMPTY_LIST;
+		}
+		catch (InstantiationException exception)
+		{
+			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
+			return EMPTY_LIST;
+		}
+		catch (IllegalAccessException exception)
+		{
+			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
+			return EMPTY_LIST;
+		}
 	}
 
 	/**
@@ -768,12 +799,9 @@ public class WebApplication
 			playerStatistics.setLastOnlineTime((int) (System.currentTimeMillis() / 1000L));
 		}
 
-		if (config.gametimeEnabled)
+		if (config.gametimeEnabled && previousLastOnline > 0)
 		{
-			if (previousLastOnline > 0)
-			{
-				playerStatistics.setGameTime(previousGameTime + playerStatistics.getLastOnlineTime() - previousLastOnline);
-			}
+			playerStatistics.setGameTime(previousGameTime + playerStatistics.getLastOnlineTime() - previousLastOnline);
 		}
 		
 		if (config.levelEnabled)
@@ -1240,8 +1268,11 @@ public class WebApplication
 		{
 			webGroupDao = new MultipleKeyValueWebGroupDao(config, sql, log);
 		}
-		log.severe("Invalid storage method for secondary groups, disabling secondary synchronization.");
-		config.webappSecondaryGroupEnabled = false;
+		else
+		{
+			log.severe("Invalid storage method for secondary groups, disabling secondary synchronization.");
+			config.webappSecondaryGroupEnabled = false;
+		}
 	}
 
 	private class FieldBuilder

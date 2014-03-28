@@ -3,7 +3,6 @@ package org.communitybridge.dao;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.RandomStringUtils;
 import org.communitybridge.main.Configuration;
@@ -13,8 +12,6 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class SingleWebGroupDaoTest
 {
@@ -52,7 +49,7 @@ public class SingleWebGroupDaoTest
 	}
 	
 	@Test
-	public void getSecondaryGroupsWithEmptyStringReturnsEmptyList() throws SQLException
+	public void getSecondaryGroupsWithEmptyStringReturnsEmptyList() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
 		groups = "";
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
@@ -61,7 +58,7 @@ public class SingleWebGroupDaoTest
 	}
 
 	@Test
-	public void getSecondaryGroupsWithWhitespaceStringReturnsEmptyList() throws SQLException
+	public void getSecondaryGroupsWithWhitespaceStringReturnsEmptyList() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
 		groups = "          ";
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
@@ -70,7 +67,7 @@ public class SingleWebGroupDaoTest
 	}
 	
 	@Test
-	public void getSecondaryGroupsWithNullReturnsEmptyList() throws SQLException
+	public void getSecondaryGroupsWithNullReturnsEmptyList() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
 		groups = "          ";
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(null);
@@ -79,7 +76,7 @@ public class SingleWebGroupDaoTest
 	}
 	
 	@Test
-	public void getSecondaryGroupsReturnsOneGroupID() throws SQLException
+	public void getSecondaryGroupsReturnsOneGroupID() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
 		groups = RandomStringUtils.randomNumeric(2);
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
@@ -89,7 +86,7 @@ public class SingleWebGroupDaoTest
 	}
 	
 	@Test
-	public void getSecondaryGroupsReturnsTwoGroupIDs() throws SQLException
+	public void getSecondaryGroupsReturnsTwoGroupIDs() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
 		groups = group1 + "," + group2;
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
@@ -100,7 +97,7 @@ public class SingleWebGroupDaoTest
 	}
 
 	@Test
-	public void getSecondaryGroupsReturnsTwoCleanGroupIDs() throws SQLException
+	public void getSecondaryGroupsReturnsTwoCleanGroupIDs() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
 		groups = group1 + " , " + group2;
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
@@ -111,7 +108,7 @@ public class SingleWebGroupDaoTest
 	}
 	
 	@Test
-	public void getSecondaryGroupsReturnsOnlyGroupIDs() throws SQLException
+	public void getSecondaryGroupsReturnsOnlyGroupIDs() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
 		groups = " , " + group2;
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
@@ -121,45 +118,10 @@ public class SingleWebGroupDaoTest
 	}
 	
 	@Test
-	public void getSecondaryGroupsWhenSecondaryDisableReturnsEmptyList()
+	public void getSecondaryGroupsWhenSecondaryDisableReturnsEmptyList() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
 		configuration.webappSecondaryGroupEnabled = false;
 		assertEquals(0, webGroupDao.getUserSecondaryGroupIDs("").size());
-	}
-	
-	@Test
-	public void getSecondaryHandlesSQLException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
-	{
-		SQLException exception = new SQLException(EXCEPTION_MESSAGE);
-		testSecondaryGroupsException(exception);
-	}
-	
-	@Test
-	public void getSecondaryHandlesMalformedURLException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
-	{
-		MalformedURLException exception = new MalformedURLException(EXCEPTION_MESSAGE);
-		testSecondaryGroupsException(exception);
-	}
-		
-	@Test
-	public void getSecondaryHandlesInstantiationException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
-	{
-		InstantiationException exception = new InstantiationException(EXCEPTION_MESSAGE);
-		testSecondaryGroupsException(exception);
-	}
-	
-	@Test
-	public void getSecondaryHandlesIllegalAccessException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
-	{
-		IllegalAccessException exception = new IllegalAccessException(EXCEPTION_MESSAGE);
-		testSecondaryGroupsException(exception);
-	}
-	
-	private void testSecondaryGroupsException(Exception exception) throws SQLException, InstantiationException, IllegalAccessException, MalformedURLException
-	{
-		when(sql.sqlQuery(anyString())).thenThrow(exception);
-		assertEquals(0, webGroupDao.getUserSecondaryGroupIDs(USER_ID).size());
-		verify(log).severe(SingleWebGroupDao.EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
 	}
 	
 	@Test
@@ -290,8 +252,6 @@ public class SingleWebGroupDaoTest
 	@Test
 	public void getSecondaryGroupsReturnsTwoUserIDs() throws SQLException
 	{
-		String group1 = RandomStringUtils.randomNumeric(3);
-		String group2 = RandomStringUtils.randomNumeric(3);
 		String userID2 = RandomStringUtils.randomNumeric(2);
 		groups = group1 + "," + group2;
 		when(result.next()).thenReturn(true, true, false);
@@ -341,8 +301,6 @@ public class SingleWebGroupDaoTest
 	@Test
 	public void getGroupUserIDs() throws SQLException
 	{
-		String group1 = RandomStringUtils.randomNumeric(3);
-		String group2 = RandomStringUtils.randomNumeric(3);
 		String userID2 = RandomStringUtils.randomNumeric(2);
 		String primaryID1 = RandomStringUtils.randomNumeric(2);
 		String primaryID2 = RandomStringUtils.randomNumeric(2);

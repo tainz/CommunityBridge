@@ -68,7 +68,7 @@ public abstract class WebGroupDao
 		}
 	}
 	
-	abstract public List<String> getUserSecondaryGroupIDs(String userID);
+	abstract public List<String> getUserSecondaryGroupIDs(String userID) throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException;
 	abstract public List<String> getGroupUserIDs(String groupID);
 	abstract public List<String> getGroupUserIDsPrimary(String groupID);
 	abstract public List<String> getGroupUserIDsSecondary(String groupID);

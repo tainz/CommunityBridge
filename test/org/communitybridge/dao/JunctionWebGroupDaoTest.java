@@ -11,10 +11,7 @@ import org.communitybridge.utility.Log;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class JunctionWebGroupDaoTest
 {
@@ -50,20 +47,20 @@ public class JunctionWebGroupDaoTest
 	}
 
 	@Test
-	public void getSecondaryGroupsShouldNeverReturnNull()
+	public void getSecondaryGroupsShouldNeverReturnNull() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
 		assertNotNull(webGroupDao.getUserSecondaryGroupIDs(USER_ID));
 	}
 
 	@Test
-	public void getSecondaryGroupsWhenSecondaryDisableReturnsEmptyList()
+	public void getSecondaryGroupsWhenSecondaryDisableReturnsEmptyList() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
 		configuration.webappSecondaryGroupEnabled = false;
 		assertEquals(0, webGroupDao.getUserSecondaryGroupIDs("").size());
 	}
 
 	@Test
-	public void getSecondaryGroupsWithEmptyStringReturnsEmptyList() throws SQLException
+	public void getSecondaryGroupsWithEmptyStringReturnsEmptyList() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
 		group1 = "";
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(group1);
@@ -72,7 +69,7 @@ public class JunctionWebGroupDaoTest
 	}
 
 	@Test
-	public void getSecondaryGroupsWithWhitespaceStringReturnsEmptyList() throws SQLException
+	public void getSecondaryGroupsWithWhitespaceStringReturnsEmptyList() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
 		group1 = "          ";
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(group1);
@@ -81,7 +78,7 @@ public class JunctionWebGroupDaoTest
 	}
 
 	@Test
-	public void getSecondaryGroupsWithNullReturnsEmptyList() throws SQLException
+	public void getSecondaryGroupsWithNullReturnsEmptyList() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(null);
 		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
@@ -89,7 +86,7 @@ public class JunctionWebGroupDaoTest
 	}
 	
 	@Test
-	public void getSecondaryGroupsReturnsOneGroupID() throws SQLException
+	public void getSecondaryGroupsReturnsOneGroupID() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(group1);
 		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
@@ -98,7 +95,7 @@ public class JunctionWebGroupDaoTest
 	}
 
 	@Test
-	public void getSecondaryGroupsReturnsTwoGroupIDs() throws SQLException
+	public void getSecondaryGroupsReturnsTwoGroupIDs() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(group1, group2);
 		when(result.next()).thenReturn(true, true, false);
@@ -109,7 +106,7 @@ public class JunctionWebGroupDaoTest
 	}
 
 	@Test
-	public void getSecondaryGroupsReturnsTwoCleanGroupIDs() throws SQLException
+	public void getSecondaryGroupsReturnsTwoCleanGroupIDs() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(group1 + "  ", group2);
 		when(result.next()).thenReturn(true, true, false);
@@ -120,7 +117,7 @@ public class JunctionWebGroupDaoTest
 	}
 
 	@Test
-	public void getSecondaryGroupsReturnsOnlyGroupIDs() throws SQLException
+	public void getSecondaryGroupsReturnsOnlyGroupIDs() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn("  ", group2);
 		when(result.next()).thenReturn(true, true, false);

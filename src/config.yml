@@ -477,12 +477,21 @@ ban-synchronization:
   # Method options:
   # - table: Banned users will be inserted and deleted from a table that is a list of bans
   # - user: A column on the users/members table designates whether a user is banned.
+  # - group: Specify a web-application group whose members are banned. Specify whether
+  #          the group is a primary or secondary group and configure app-group-config
+  #          above as appropiate.
   method: table
 
-  # Name of the table that holds ban information for your web application
+  # Group method settings
+  # Group type is either primary or secondary
+  group-type: 
+  banned-group: 
+
+  # Name of the table that holds ban information for your web application. Only needed for
+  # user and table methods.
   table-name:
 
-  # Column that contains the user ID of the banee.
+  # Column that contains the user ID of the banee. Only needed for the user and table methods.
   banned-user-id-column:
 
   # Settings for the user method. Only needed if method above is set to user
