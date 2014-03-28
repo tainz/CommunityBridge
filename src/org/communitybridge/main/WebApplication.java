@@ -1141,7 +1141,7 @@ public class WebApplication
 			}
 		}
 
-		for (Iterator<String> iterator = result.webappGroupIDs.iterator(); iterator.hasNext();)
+		for (Iterator<String> iterator = current.webappGroupIDs.iterator(); iterator.hasNext();)
 		{
 			String groupID = iterator.next();
 
@@ -1156,7 +1156,7 @@ public class WebApplication
 				{
 					result.webappGroupIDs.remove(groupID);
 				}
-				else if (!current.permissionsSystemPrimaryGroupName.equals(groupName) && !result.permissionsSystemGroupNames.contains(groupName))
+				else if (!current.permissionsSystemPrimaryGroupName.equals(groupName) && !current.permissionsSystemGroupNames.contains(groupName))
 				{
 					CommunityBridge.permissionHandler.addToGroup(playerName, groupName);
 					result.permissionsSystemGroupNames.add(groupName);

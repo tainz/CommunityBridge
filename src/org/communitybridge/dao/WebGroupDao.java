@@ -25,6 +25,11 @@ public abstract class WebGroupDao
 		this.log = log;
 	}
 	
+	abstract public List<String> getUserSecondaryGroupIDs(String userID) throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException;
+	abstract public List<String> getGroupUserIDs(String groupID);
+	abstract public List<String> getGroupUserIDsPrimary(String groupID);
+	abstract public List<String> getGroupUserIDsSecondary(String groupID);
+
 	public String getUserPrimaryGroupID(String userID)
 	{
 		if (!configuration.webappPrimaryGroupEnabled)
@@ -68,11 +73,6 @@ public abstract class WebGroupDao
 		}
 	}
 	
-	abstract public List<String> getUserSecondaryGroupIDs(String userID) throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException;
-	abstract public List<String> getGroupUserIDs(String groupID);
-	abstract public List<String> getGroupUserIDsPrimary(String groupID);
-	abstract public List<String> getGroupUserIDsSecondary(String groupID);
-
 	private String determinePrimaryGroupQuery(String userID)
 	{
 		if (configuration.webappPrimaryGroupUsesKey)
