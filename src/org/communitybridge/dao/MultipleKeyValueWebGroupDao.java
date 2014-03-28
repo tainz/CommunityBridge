@@ -19,7 +19,7 @@ public class MultipleKeyValueWebGroupDao extends WebGroupDao
 	}
 
 	@Override
-	public List<String> getUserSecondaryGroupIDs(String userID)
+	public List<String> getUserSecondaryGroupIDs(String userID) throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
 		List<String> groupIDs = new ArrayList<String>();
 		
@@ -34,8 +34,6 @@ public class MultipleKeyValueWebGroupDao extends WebGroupDao
 					+ "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' "
 					+ "AND `" + configuration.webappSecondaryGroupKeyColumn + "` = '" + configuration.webappSecondaryGroupKeyName + "' ";
 
-		try
-		{
 			result = sql.sqlQuery(query);
 
 			while (result.next())
@@ -43,27 +41,6 @@ public class MultipleKeyValueWebGroupDao extends WebGroupDao
 				addCleanID(result.getString(configuration.webappSecondaryGroupGroupIDColumn), groupIDs);
 			}
 			return groupIDs;
-		}
-		catch (SQLException exception)
-		{
-			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
-			return EMPTY_LIST;
-		}
-		catch (MalformedURLException exception)
-		{
-			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
-			return EMPTY_LIST;
-		}
-		catch (InstantiationException exception)
-		{
-			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
-			return EMPTY_LIST;
-		}
-		catch (IllegalAccessException exception)
-		{
-			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
-			return EMPTY_LIST;
-		}
 	}
 
 	@Override

@@ -15,7 +15,6 @@ import static org.mockito.Mockito.*;
 
 public class MultipleKeyValueWebGroupDaoTest
 {	
-	private static final String EXCEPTION_MESSAGE = "test message";
 	private final String USER_ID = RandomStringUtils.randomNumeric(2);
 	private String group1 = RandomStringUtils.randomNumeric(2);
 	private String group2 = RandomStringUtils.randomNumeric(2);
@@ -53,6 +52,13 @@ public class MultipleKeyValueWebGroupDaoTest
 		assertNotNull(webGroupDao.getUserSecondaryGroupIDs(USER_ID));
 	}
 	
+	@Test
+	public void getSecondaryGroupsShouldHandleNoResult() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
+	{
+		when(result.next()).thenReturn(false);
+		assertNotNull(webGroupDao.getUserSecondaryGroupIDs(USER_ID));
+	}
+
 	@Test
 	public void getSecondaryGroupsWhenSecondaryDisableReturnsEmptyList() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
@@ -120,37 +126,12 @@ public class MultipleKeyValueWebGroupDaoTest
 	}
 	
 	@Test
-	public void getSecondaryHandlesSQLException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	public void getSecondaryGroupsReturnsOnlyGroupIDs() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
-		SQLException exception = new SQLException(EXCEPTION_MESSAGE);
-		testSecondaryGroupsException(exception);
-	}
-	
-	@Test
-	public void getSecondaryHandlesMalformedURLException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
-	{
-		MalformedURLException exception = new MalformedURLException(EXCEPTION_MESSAGE);
-		testSecondaryGroupsException(exception);
-	}
-		
-	@Test
-	public void getSecondaryHandlesInstantiationException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
-	{
-		InstantiationException exception = new InstantiationException(EXCEPTION_MESSAGE);
-		testSecondaryGroupsException(exception);
-	}
-	
-	@Test
-	public void getSecondaryHandlesIllegalAccessException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
-	{
-		IllegalAccessException exception = new IllegalAccessException(EXCEPTION_MESSAGE);
-		testSecondaryGroupsException(exception);
-	}
-	
-	private void testSecondaryGroupsException(Exception exception) throws SQLException, InstantiationException, IllegalAccessException, MalformedURLException
-	{
-		when(sql.sqlQuery(anyString())).thenThrow(exception);
-		assertEquals(0, webGroupDao.getUserSecondaryGroupIDs(USER_ID).size());
-		verify(log).severe(MultipleKeyValueWebGroupDao.EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
+		when(result.next()).thenReturn(true, true, false);
+		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(" ", group2);
+		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
+		assertEquals(1, secondaryGroups.size());
+		assertTrue(secondaryGroups.contains(group2));
 	}
 }

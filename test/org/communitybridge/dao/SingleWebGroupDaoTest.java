@@ -56,6 +56,13 @@ public class SingleWebGroupDaoTest
 		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
 		assertEquals(0, secondaryGroups.size());
 	}
+	
+	@Test
+	public void getSecondaryGroupsShouldHandleNoResult() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
+	{
+		when(result.next()).thenReturn(false);
+		assertNotNull(webGroupDao.getUserSecondaryGroupIDs(USER_ID));
+	}
 
 	@Test
 	public void getSecondaryGroupsWithWhitespaceStringReturnsEmptyList() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException

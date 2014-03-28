@@ -19,7 +19,7 @@ public class KeyValueWebGroupDao extends WebGroupDao
 	}
 
 	@Override
-	public List<String> getUserSecondaryGroupIDs(String userID)
+	public List<String> getUserSecondaryGroupIDs(String userID) throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
 		List<String> groupIDs = new ArrayList<String>();
 		String query =
@@ -28,36 +28,13 @@ public class KeyValueWebGroupDao extends WebGroupDao
 					+ "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' "
 					+ "AND `" + configuration.webappSecondaryGroupKeyColumn + "` = '" + configuration.webappSecondaryGroupKeyName + "' ";
 
-		try
-		{
-			result = sql.sqlQuery(query);
+		result = sql.sqlQuery(query);
 
-			if (result.next())
-			{
-				return convertDelimitedIDString(result.getString(configuration.webappSecondaryGroupGroupIDColumn));
-			}
-			return groupIDs;
-		}
-		catch (SQLException exception)
+		if (result.next())
 		{
-			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
-			return EMPTY_LIST;
+			return convertDelimitedIDString(result.getString(configuration.webappSecondaryGroupGroupIDColumn));
 		}
-		catch (MalformedURLException exception)
-		{
-			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
-			return EMPTY_LIST;
-		}
-		catch (InstantiationException exception)
-		{
-			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
-			return EMPTY_LIST;
-		}
-		catch (IllegalAccessException exception)
-		{
-			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
-			return EMPTY_LIST;
-		}
+		return groupIDs;
 	}
 
 	@Override
