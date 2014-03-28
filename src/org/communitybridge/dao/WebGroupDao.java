@@ -12,7 +12,6 @@ import org.communitybridge.utility.Log;
 public abstract class WebGroupDao
 {
 	public static final List<String> EMPTY_LIST = new ArrayList<String>();
-	public static final String EXCEPTION_MESSAGE_GETPRIMARY = "Exception during WebGroupDao.getPrimaryGroup: ";
 	protected Configuration configuration;
 	protected SQL sql;
 	protected Log log;
@@ -30,7 +29,7 @@ public abstract class WebGroupDao
 	abstract public List<String> getGroupUserIDsPrimary(String groupID);
 	abstract public List<String> getGroupUserIDsSecondary(String groupID);
 
-	public String getUserPrimaryGroupID(String userID)
+	public String getUserPrimaryGroupID(String userID) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
 		if (!configuration.webappPrimaryGroupEnabled)
 		{
@@ -38,37 +37,14 @@ public abstract class WebGroupDao
 		}
 		String query = determinePrimaryGroupQuery(userID);
 
-		try
-		{
-			result = sql.sqlQuery(query);
+		result = sql.sqlQuery(query);
 
-			if (result.next())
-			{
-				return result.getString(configuration.webappPrimaryGroupGroupIDColumn);
-			}
-			else
-			{
-				return "";
-			}
-		}
-		catch (SQLException exception)
+		if (result.next())
 		{
-			log.severe(EXCEPTION_MESSAGE_GETPRIMARY + exception.getMessage());
-			return "";
+			return result.getString(configuration.webappPrimaryGroupGroupIDColumn);
 		}
-		catch (MalformedURLException exception)
+		else
 		{
-			log.severe(EXCEPTION_MESSAGE_GETPRIMARY + exception.getMessage());
-			return "";
-		}
-		catch (InstantiationException exception)
-		{
-			log.severe(EXCEPTION_MESSAGE_GETPRIMARY + exception.getMessage());
-			return "";
-		}
-		catch (IllegalAccessException exception)
-		{
-			log.severe(EXCEPTION_MESSAGE_GETPRIMARY + exception.getMessage());
 			return "";
 		}
 	}

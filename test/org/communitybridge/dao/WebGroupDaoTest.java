@@ -16,7 +16,6 @@ import static org.mockito.Mockito.*;
 
 public class WebGroupDaoTest
 {
-	private static final String EXCEPTION_MESSAGE = "test message";
 	private static final String USER_ID = RandomStringUtils.randomNumeric(2);
 	private static final String group1 = RandomStringUtils.randomNumeric(2);
 	private static final String group2 = RandomStringUtils.randomNumeric(2);
@@ -39,13 +38,13 @@ public class WebGroupDaoTest
 	}
 	
 	@Test
-	public void getPrimaryGroupNeverReturnsNull()
+	public void getPrimaryGroupNeverReturnsNull() throws IllegalAccessException, SQLException, MalformedURLException, InstantiationException
 	{
 		assertNotNull(webGroupDao.getUserPrimaryGroupID(""));
 	}
 
 	@Test
-	public void getPrimaryGroupReturnsBlankWithPrimaryDisabled()
+	public void getPrimaryGroupReturnsBlankWithPrimaryDisabled() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
 		configuration.webappPrimaryGroupEnabled = false;
 		assertEquals("", webGroupDao.getUserPrimaryGroupID(USER_ID));
@@ -167,44 +166,6 @@ public class WebGroupDaoTest
 		assertEquals(2, idList.size());
 		assertTrue(idList.contains(group1));
 		assertTrue(idList.contains(group2));
-	}
-
-	@Test
-	public void getPrimaryHandlesSQLException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
-	{
-		SQLException exception = new SQLException(EXCEPTION_MESSAGE);
-		testException(exception);
-	}
-	
-	@Test
-	public void getPrimaryHandlesMalformedURLException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
-	{
-		MalformedURLException exception = new MalformedURLException(EXCEPTION_MESSAGE);
-		testException(exception);
-	}
-		
-	@Test
-	public void getPrimaryHandlesInstantiationException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
-	{
-		InstantiationException exception = new InstantiationException(EXCEPTION_MESSAGE);
-		testException(exception);
-	}
-	
-	@Test
-	public void getPrimaryHandlesIllegalAccessException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
-	{
-		IllegalAccessException exception = new IllegalAccessException(EXCEPTION_MESSAGE);
-		testException(exception);
-	}
-	
-	private void testException(Exception exception) throws SQLException, InstantiationException, IllegalAccessException, MalformedURLException
-	{
-		configuration.webappPrimaryGroupEnabled = true;
-		configuration.webappPrimaryGroupUsesKey = true;
-		configuration.webappPrimaryGroupGroupIDColumn = "group_id";
-		when(sql.sqlQuery(anyString())).thenThrow(exception);
-		assertEquals("", webGroupDao.getUserPrimaryGroupID(USER_ID));
-		verify(log).severe(WebGroupDao.EXCEPTION_MESSAGE_GETPRIMARY + exception.getMessage());
 	}
 
 	public class TestableWebGroupDao extends WebGroupDao

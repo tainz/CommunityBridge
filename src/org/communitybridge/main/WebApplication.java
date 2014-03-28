@@ -30,6 +30,8 @@ import org.communitybridge.utility.StringUtilities;
 public class WebApplication
 {
 	public static final List<String> EMPTY_LIST = new ArrayList<String>();
+	public static final String EXCEPTION_MESSAGE_GETPRIMARY = "Exception during WebApplication.getPrimaryGroupID(): ";
+
 	public static final String EXCEPTION_MESSAGE_GETSECONDARY = "Exception during WebApplication.getUserSecondaryGroupIDs(): ";
 	private final Boolean synchronizationLock = true;
 	private CommunityBridge plugin;
@@ -192,7 +194,30 @@ public class WebApplication
 	 */
 	public String getUserPrimaryGroupID(String playerName)
 	{
-		return webGroupDao.getUserPrimaryGroupID(getUserID(playerName));
+		try
+		{
+			return webGroupDao.getUserPrimaryGroupID(getUserID(playerName));
+		}
+		catch (SQLException exception)
+		{
+			log.severe(EXCEPTION_MESSAGE_GETPRIMARY + exception.getMessage());
+			return "";
+		}
+		catch (MalformedURLException exception)
+		{
+			log.severe(EXCEPTION_MESSAGE_GETPRIMARY + exception.getMessage());
+			return "";
+		}
+		catch (InstantiationException exception)
+		{
+			log.severe(EXCEPTION_MESSAGE_GETPRIMARY + exception.getMessage());
+			return "";
+		}
+		catch (IllegalAccessException exception)
+		{
+			log.severe(EXCEPTION_MESSAGE_GETPRIMARY + exception.getMessage());
+			return "";
+		}
 	}
 
 	public List<String> getUserSecondaryGroupIDs(String playerName)
