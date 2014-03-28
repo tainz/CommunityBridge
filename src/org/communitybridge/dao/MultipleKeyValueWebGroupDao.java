@@ -19,6 +19,14 @@ public class MultipleKeyValueWebGroupDao extends WebGroupDao
 	}
 
 	@Override
+	public void addGroup(String userID, String groupID, int currentGroupCount) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
+	{
+		String query = "INSERT INTO `" + configuration.webappSecondaryGroupTable + "` "
+								 + "(`" + configuration.webappSecondaryGroupUserIDColumn + "`, `" + configuration.webappPrimaryGroupKeyColumn + "`, `" + configuration.webappSecondaryGroupGroupIDColumn + "`) "
+								 + "VALUES ('" + userID + "', '" + configuration.webappSecondaryGroupKeyName + "', '" + groupID + "')";
+		sql.insertQuery(query);
+	}
+	@Override
 	public List<String> getUserSecondaryGroupIDs(String userID) throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
 		List<String> groupIDs = new ArrayList<String>();

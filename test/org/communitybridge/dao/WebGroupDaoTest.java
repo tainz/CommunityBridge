@@ -198,5 +198,9 @@ public class WebGroupDaoTest
 		{
 			return null;
 		}
+
+		@Override
+		public void addGroup(String userID, String groupID, int currentGroupCount) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
+		{}
 	}
 }

@@ -20,6 +20,19 @@ public class SingleWebGroupDao extends WebGroupDao
 	}
 
 	@Override
+	public void addGroup(String userID, String groupID, int currentGroupCount) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
+	{
+		if (currentGroupCount > 1)
+		{
+			groupID = configuration.webappSecondaryGroupGroupIDDelimiter + groupID;
+		}
+		String query = "UPDATE `" + configuration.webappSecondaryGroupTable + "` "
+								 + "SET `" + configuration.webappSecondaryGroupGroupIDColumn + "` = CONCAT(`" + configuration.webappSecondaryGroupGroupIDColumn + "`, '" + groupID + "') "
+								 + "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + userID + "'";
+		sql.updateQuery(query);
+	}
+
+	@Override
 	public List<String> getUserSecondaryGroupIDs(String userID) throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
 		if (!configuration.webappSecondaryGroupEnabled)

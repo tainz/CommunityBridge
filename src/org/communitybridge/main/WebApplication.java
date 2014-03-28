@@ -30,9 +30,10 @@ import org.communitybridge.utility.StringUtilities;
 public class WebApplication
 {
 	public static final List<String> EMPTY_LIST = new ArrayList<String>();
-	public static final String EXCEPTION_MESSAGE_GETPRIMARY = "Exception during WebApplication.getPrimaryGroupID(): ";
+	protected static final String EXCEPTION_MESSAGE_ADDGROUP = "Exception during WebApplication.addGroup(): ";
+	protected static final String EXCEPTION_MESSAGE_GETPRIMARY = "Exception during WebApplication.getPrimaryGroupID(): ";
+	protected static final String EXCEPTION_MESSAGE_GETSECONDARY = "Exception during WebApplication.getUserSecondaryGroupIDs(): ";
 
-	public static final String EXCEPTION_MESSAGE_GETSECONDARY = "Exception during WebApplication.getUserSecondaryGroupIDs(): ";
 	private final Boolean synchronizationLock = true;
 	private CommunityBridge plugin;
 	private Configuration config;
@@ -558,65 +559,27 @@ public class WebApplication
 	 *
 	 * @param String Name from permissions system of group added.
 	 */
-	private void addGroup(String userID, String groupID, int currentGroupCount)
+	protected void addGroup(String userID, String groupID, int currentGroupCount)
 	{
-		String exceptionBase = "Exception during addGroup(): ";
-
 		try
 		{
-			if (config.webappSecondaryGroupStorageMethod.startsWith("sin"))
-			{
-				if (currentGroupCount > 1)
-				{
-					groupID = config.webappSecondaryGroupGroupIDDelimiter + groupID;
-				}
-				String query = "UPDATE `" + config.webappSecondaryGroupTable + "` "
-										 + "SET `" + config.webappSecondaryGroupGroupIDColumn + "` = CONCAT(`" + config.webappSecondaryGroupGroupIDColumn + "`, '" + groupID + "') "
-										 + "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + userID + "'";
-				sql.updateQuery(query);
-			}
-			else if (config.webappSecondaryGroupStorageMethod.startsWith("key"))
-			{
-				if (currentGroupCount > 0)
-				{
-					groupID = config.webappSecondaryGroupGroupIDDelimiter + groupID;
-				}
-				String query = "UPDATE `" + config.webappSecondaryGroupTable + "` "
-										 + "SET `" + config.webappSecondaryGroupGroupIDColumn + "` = CONCAT(`" + config.webappSecondaryGroupGroupIDColumn + "`, '" + groupID + "') "
-										 + "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' "
-										 + "AND `" + config.webappSecondaryGroupKeyColumn + "` = '" + config.webappSecondaryGroupKeyName + "' ";
-				sql.updateQuery(query);
-			}
-			else if (config.webappSecondaryGroupStorageMethod.startsWith("jun"))
-			{
-				String query = "INSERT INTO `" + config.webappSecondaryGroupTable + "` "
-										 + "(`" + config.webappSecondaryGroupUserIDColumn + "`, `" + config.webappSecondaryGroupGroupIDColumn + "`) "
-										 + "VALUES ('" + userID + "', '" + groupID +"')";
-				sql.insertQuery(query);
-			}
-			else if (config.webappSecondaryGroupStorageMethod.startsWith("mul"))
-			{
-				String query = "INSERT INTO `" + config.webappSecondaryGroupTable + "` "
-										 + "(`" + config.webappSecondaryGroupUserIDColumn + "`, `" + config.webappPrimaryGroupKeyColumn + "`, `" + config.webappSecondaryGroupGroupIDColumn + "`) "
-										 + "VALUES ('" + userID + "', '" + config.webappSecondaryGroupKeyName + "', '" + groupID + "')";
-				sql.insertQuery(query);
-			}
+				webGroupDao.addGroup(userID, groupID, currentGroupCount);
 		}
 		catch (MalformedURLException exception)
 		{
-			log.severe(exceptionBase + exception.getMessage());
+			log.severe(EXCEPTION_MESSAGE_ADDGROUP + exception.getMessage());
 		}
 		catch (InstantiationException exception)
 		{
-			log.severe(exceptionBase + exception.getMessage());
+			log.severe(EXCEPTION_MESSAGE_ADDGROUP + exception.getMessage());
 		}
 		catch (IllegalAccessException exception)
 		{
-			log.severe(exceptionBase + exception.getMessage());
+			log.severe(EXCEPTION_MESSAGE_ADDGROUP + exception.getMessage());
 		}
 		catch (SQLException exception)
 		{
-			log.severe(exceptionBase + exception.getMessage());
+			log.severe(EXCEPTION_MESSAGE_ADDGROUP + exception.getMessage());
 		}
 	}
 

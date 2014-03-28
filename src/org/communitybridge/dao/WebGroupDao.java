@@ -24,6 +24,8 @@ public abstract class WebGroupDao
 		this.log = log;
 	}
 	
+	abstract public void addGroup(String userID, String groupID, int currentGroupCount) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException;
+
 	abstract public List<String> getUserSecondaryGroupIDs(String userID) throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException;
 	abstract public List<String> getGroupUserIDs(String groupID);
 	abstract public List<String> getGroupUserIDsPrimary(String groupID);

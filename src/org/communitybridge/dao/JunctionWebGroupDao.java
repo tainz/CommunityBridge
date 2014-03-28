@@ -18,6 +18,15 @@ public class JunctionWebGroupDao extends WebGroupDao
 	}
 	
 	@Override
+	public void addGroup(String userID, String groupID, int currentGroupCount) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
+	{
+		String query = "INSERT INTO `" + configuration.webappSecondaryGroupTable + "` "
+						 + "(`" + configuration.webappSecondaryGroupUserIDColumn + "`, `" + configuration.webappSecondaryGroupGroupIDColumn + "`) "
+						 + "VALUES ('" + userID + "', '" + groupID +"')";
+		sql.insertQuery(query);
+	}
+
+	@Override
 	public List<String> getUserSecondaryGroupIDs(String userID) throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
 		List<String> groupIDs = new ArrayList<String>();

@@ -46,6 +46,43 @@ public class WebApplicationTest
 	}
 	
 	@Test
+	public void addGroupHandlesSQLException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		SQLException exception = new SQLException(EXCEPTION_MESSAGE);
+		testAddGroupException(exception);
+	}
+
+	@Test
+	public void addGroupHandlesMalformedURLException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		MalformedURLException exception = new MalformedURLException(EXCEPTION_MESSAGE);
+		testAddGroupException(exception);
+	}
+
+	@Test
+	public void addGroupHandlesInstantiationException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		InstantiationException exception = new InstantiationException(EXCEPTION_MESSAGE);
+		testAddGroupException(exception);
+	}
+
+	@Test
+	public void addGroupHandlesIllegalAccessException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		IllegalAccessException exception = new IllegalAccessException(EXCEPTION_MESSAGE);
+		testAddGroupException(exception);
+	}
+
+	private void testAddGroupException(Exception exception) throws SQLException, InstantiationException, IllegalAccessException, MalformedURLException
+	{
+		String groupName = RandomStringUtils.randomAlphabetic(10);
+		int count = 0;
+		doThrow(exception).when(webGroupDao).addGroup(USER_ID, groupName, count);
+		webApplication.addGroup(USER_ID, groupName, count);
+		verify(log).severe(WebApplication.EXCEPTION_MESSAGE_ADDGROUP + exception.getMessage());
+	}
+
+	@Test
 	public void getUserPrimaryGroupIDShouldNeverReturnNull()throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
 		when(webGroupDao.getUserPrimaryGroupID(anyString())).thenReturn("");

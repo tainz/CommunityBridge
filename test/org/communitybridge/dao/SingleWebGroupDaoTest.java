@@ -36,18 +36,53 @@ public class SingleWebGroupDaoTest
 		webGroupDao = new SingleWebGroupDao(configuration,sql,log);
 		
 		result = mock(ResultSet.class);
+
 		configuration.webappPrimaryGroupEnabled = true;
 		configuration.webappSecondaryGroupEnabled = true;
-		configuration.webappSecondaryGroupGroupIDDelimiter = ",";
 		configuration.webappPrimaryGroupUserIDColumn = "primaryUserID";
 		configuration.webappSecondaryGroupUserIDColumn = "secondaryUserID";
 		configuration.webappPrimaryGroupGroupIDColumn = "primaryGroupIDs";
 		configuration.webappSecondaryGroupGroupIDColumn = "secondaryGroupIDs";
+		configuration.webappSecondaryGroupGroupIDDelimiter = ",";
+
 		when(sql.sqlQuery(anyString())).thenReturn(result);
 		when(result.next()).thenReturn(true, false);
 		when(result.getString(configuration.webappPrimaryGroupUserIDColumn)).thenReturn(USER_ID);
 	}
 	
+	@Test
+	public void addGroupWithZeroCountUsesCorrectQuery() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		String query = "UPDATE `" + configuration.webappSecondaryGroupTable + "` "
+								 + "SET `" + configuration.webappSecondaryGroupGroupIDColumn + "` = CONCAT(`" + configuration.webappSecondaryGroupGroupIDColumn + "`, '" + GROUP_ID + "') "
+								 + "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + USER_ID + "'";
+		doNothing().when(sql).updateQuery(query);
+		webGroupDao.addGroup(USER_ID, GROUP_ID, 0);
+		verify(sql).updateQuery(query);
+	}
+
+	@Test
+	public void addGroupWithOneCountUsesCorrectQuery() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		String query = "UPDATE `" + configuration.webappSecondaryGroupTable + "` "
+								 + "SET `" + configuration.webappSecondaryGroupGroupIDColumn + "` = CONCAT(`" + configuration.webappSecondaryGroupGroupIDColumn + "`, '" + GROUP_ID + "') "
+								 + "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + USER_ID + "'";
+		doNothing().when(sql).updateQuery(query);
+		webGroupDao.addGroup(USER_ID, GROUP_ID, 1);
+		verify(sql).updateQuery(query);
+	}
+
+	@Test
+	public void addGroupWithTwoCountUsesCorrectQuery() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		String query = "UPDATE `" + configuration.webappSecondaryGroupTable + "` "
+								 + "SET `" + configuration.webappSecondaryGroupGroupIDColumn + "` = CONCAT(`" + configuration.webappSecondaryGroupGroupIDColumn + "`, '," + GROUP_ID + "') "
+								 + "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + USER_ID + "'";
+		doNothing().when(sql).updateQuery(query);
+		webGroupDao.addGroup(USER_ID, GROUP_ID, 2);
+		verify(sql).updateQuery(query);
+	}
+
 	@Test
 	public void getSecondaryGroupsWithEmptyStringReturnsEmptyList() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{

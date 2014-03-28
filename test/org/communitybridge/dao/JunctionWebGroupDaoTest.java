@@ -46,6 +46,17 @@ public class JunctionWebGroupDaoTest
 	}
 
 	@Test
+	public void addGroupUsesCorrectQuery() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		String query = "INSERT INTO `" + configuration.webappSecondaryGroupTable + "` "
+						 + "(`" + configuration.webappSecondaryGroupUserIDColumn + "`, `" + configuration.webappSecondaryGroupGroupIDColumn + "`) "
+						 + "VALUES ('" + USER_ID + "', '" + group1 +"')";
+		doNothing().when(sql).insertQuery(query);
+		webGroupDao.addGroup(USER_ID, group1, 0);
+		verify(sql).insertQuery(query);
+	}
+
+	@Test
 	public void getSecondaryGroupsShouldNeverReturnNull() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
 		assertNotNull(webGroupDao.getUserSecondaryGroupIDs(USER_ID));
