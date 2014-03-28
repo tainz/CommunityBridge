@@ -76,7 +76,7 @@ public class WebApplication
 	 */
 	public boolean playerHasAvatar(String playerName)
 	{
-		final String errorBase = "Error during WebApplication.playerHasAvatar(): ";
+		final String exceptionBase = "Exception during WebApplication.playerHasAvatar(): ";
 		String query;
 
 		query = "SELECT `" + config.avatarTableName + "`.`" + config.avatarAvatarColumn + "` "
@@ -104,22 +104,22 @@ public class WebApplication
 		}
 		catch (SQLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return false;
 		}
 		catch (MalformedURLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return false;
 		}
 		catch (InstantiationException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return false;
 		}
 		catch (IllegalAccessException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return false;
 		}
 	}
@@ -132,7 +132,7 @@ public class WebApplication
 	 */
 	public int getUserPostCount(String playerName)
 	{
-		final String errorBase = "Error during WebApplication.getUserPostCount(): ";
+		final String exceptionBase = "Exception during WebApplication.getUserPostCount(): ";
 		String query;
 
 		query = "SELECT `" + config.postCountTableName + "`.`" + config.postCountPostCountColumn + "` "
@@ -154,22 +154,22 @@ public class WebApplication
 		}
 		catch (SQLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return 0;
 		}
 		catch (MalformedURLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return 0;
 		}
 		catch (InstantiationException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return 0;
 		}
 		catch (IllegalAccessException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return 0;
 		}
 	}
@@ -187,7 +187,7 @@ public class WebApplication
 			return "";
 		}
 
-		final String errorBase = "Error during WebApplication.getUserPrimaryGroupID(): ";
+		final String exceptionBase = "Exception during WebApplication.getUserPrimaryGroupID(): ";
 		String query;
 
 		if (config.webappPrimaryGroupUsesKey)
@@ -219,22 +219,22 @@ public class WebApplication
 		}
 		catch (SQLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return "";
 		}
 		catch (MalformedURLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return "";
 		}
 		catch (InstantiationException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return "";
 		}
 		catch (IllegalAccessException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return "";
 		}
 	}
@@ -269,7 +269,7 @@ public class WebApplication
 
 	private List<String> getUserGroupIDsSingleColumn(String playerName)
 	{
-		final String errorBase = "Error during WebApplication.getUserGroupIDsSingleColumn(): ";
+		final String exceptionBase = "Exception during WebApplication.getUserGroupIDsSingleColumn(): ";
 		String query;
 
 		query = "SELECT `" + config.webappSecondaryGroupGroupIDColumn + "` "
@@ -298,29 +298,29 @@ public class WebApplication
 		}
 		catch (SQLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return null;
 		}
 		catch (MalformedURLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return null;
 		}
 		catch (InstantiationException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return null;
 		}
 		catch (IllegalAccessException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return null;
 		}
 	}
 
 	private List<String> getUserGroupIDsKeyValue(String playerName)
 	{
-		final String errorBase = "Error during WebApplication.getUserGroupIDsKeyValue(): ";
+		final String exceptionBase = "Exception during WebApplication.getUserGroupIDsKeyValue(): ";
 		String query;
 
 		query = "SELECT `" + config.webappSecondaryGroupGroupIDColumn + "` "
@@ -343,29 +343,29 @@ public class WebApplication
 		}
 		catch (SQLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return null;
 		}
 		catch (MalformedURLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return null;
 		}
 		catch (InstantiationException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return null;
 		}
 		catch (IllegalAccessException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return null;
 		}
 	}
 
 	private List<String> getUserGroupIDsJunction(String playerName)
 	{
-		final String errorBase = "Error during WebApplication.getUserGroupIDsJunction(): ";
+		final String exceptionBase = "Exception during WebApplication.getUserGroupIDsJunction(): ";
 		String query;
 
 		query = "SELECT `" + config.webappSecondaryGroupGroupIDColumn + "` "
@@ -385,29 +385,29 @@ public class WebApplication
 		}
 		catch (SQLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return null;
 		}
 		catch (MalformedURLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return null;
 		}
 		catch (InstantiationException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return null;
 		}
 		catch (IllegalAccessException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return null;
 		}
 	}
 
 	private List<String> getUserGroupIDsMultipleKeyValue(String playerName)
 	{
-		final String errorBase = "Error during WebApplication.getUserGroupIDsKeyValue(): ";
+		final String exceptionBase = "Exception during WebApplication.getUserGroupIDsKeyValue(): ";
 		String query;
 
 		query = "SELECT `" + config.webappSecondaryGroupGroupIDColumn + "` "
@@ -428,22 +428,22 @@ public class WebApplication
 		}
 		catch (SQLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return null;
 		}
 		catch (MalformedURLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return null;
 		}
 		catch (InstantiationException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return null;
 		}
 		catch (IllegalAccessException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return null;
 		}
 	}
@@ -485,7 +485,7 @@ public class WebApplication
 			loadOnlineUserIDsFromDatabase();
 		}
 
-		final String errorBase = "Error during WebApplication.onPreLogin(): ";
+		final String exceptionBase = "Exception during WebApplication.onPreLogin(): ";
 		String query = "SELECT `" + config.linkingTableName + "`.`" + config.linkingUserIDColumn + "` "
 								 + "FROM `" + config.linkingTableName + "` ";
 
@@ -523,19 +523,19 @@ public class WebApplication
 		}
 		catch (SQLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
 		catch (MalformedURLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
 		catch (InstantiationException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
 		catch (IllegalAccessException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
 	} // loadUserIDfromDatabase()
 
@@ -646,7 +646,7 @@ public class WebApplication
 
 	private void setPrimaryGroup(String userID, String groupID)
 	{
-		String errorBase = "Error during setPrimaryGroup(): ";
+		String exceptionBase = "Exception during setPrimaryGroup(): ";
 
 		try
 		{
@@ -668,15 +668,15 @@ public class WebApplication
 		}
 		catch (MalformedURLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
 		catch (InstantiationException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
 		catch (IllegalAccessException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
 	}
 
@@ -709,45 +709,47 @@ public class WebApplication
 		
 		File playerFolder = new File(plugin.getDataFolder(), "Players");
 
-		PlayerGroupState previousState = new PlayerGroupState(playerName, playerFolder);
-		previousState.load();
+		PlayerGroupState previous = new PlayerGroupState(playerName, playerFolder);
+		previous.load();
 
-		PlayerGroupState currentState = new PlayerGroupState(playerName, playerFolder);
-		currentState.generate();
+		PlayerGroupState current = new PlayerGroupState(playerName, playerFolder);
+		current.generate();
+		PlayerGroupState result = current.copy();
 
-		if(config.simpleSynchronizationFirstDirection.startsWith("web") && previousState.isNewFile) {
+		if(config.simpleSynchronizationFirstDirection.startsWith("web") && previous.isNewFile) {
 			direction = "web";
 		}
+
 		if (config.webappPrimaryGroupEnabled)
 		{
-			synchronizeGroupsPrimary(direction, previousState, currentState, playerName, player, userID);
+			synchronizeGroupsPrimary(direction, previous, current, result, playerName, player, userID);
 		}
 		else
 		{
 			// With synchronization turned off the currentState should always be the previous state.
-			currentState.permissionsSystemPrimaryGroupName = previousState.permissionsSystemPrimaryGroupName;
-			currentState.webappPrimaryGroupID = previousState.webappPrimaryGroupID;
+			current.permissionsSystemPrimaryGroupName = previous.permissionsSystemPrimaryGroupName;
+			current.webappPrimaryGroupID = previous.webappPrimaryGroupID;
 		}
 
 		// 4. Synchronize secondary group state
 		if (config.webappSecondaryGroupEnabled)
 		{
-			synchronizeGroupsSecondary(direction, previousState, currentState, userID, playerName);
+			synchronizeGroupsSecondary(direction, previous, current, result, userID, playerName);
 		}
 		else
 		{
 			// With synchronization turned off the currentState should always be the previous state.
-			currentState.permissionsSystemGroupNames = previousState.permissionsSystemGroupNames;
-			currentState.webappGroupIDs = previousState.webappGroupIDs;	
+			current.permissionsSystemGroupNames = previous.permissionsSystemGroupNames;
+			current.webappGroupIDs = previous.webappGroupIDs;
 		}
 		// 5. Save newly created state
 		try
 		{
-			currentState.save();
+			result.save();
 		}
 		catch (IOException exception)
 		{
-			log.severe("Error when saving group state for player " + playerName + ": " + exception.getMessage());
+			log.severe("Exception when saving group state for player " + playerName + ": " + exception.getMessage());
 		}
 	}
 
@@ -758,7 +760,7 @@ public class WebApplication
 	 */
 	private void addGroup(String userID, String groupID, int currentGroupCount)
 	{
-		String errorBase = "Error during addGroup(): ";
+		String exceptionBase = "Exception during addGroup(): ";
 
 		try
 		{
@@ -802,19 +804,19 @@ public class WebApplication
 		}
 		catch (MalformedURLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
 		catch (InstantiationException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
 		catch (IllegalAccessException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
 		catch (SQLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
 	}
 
@@ -826,7 +828,7 @@ public class WebApplication
 	private void removeGroup(String userID, String groupName)
 	{
 		String groupID = config.getWebappGroupIDbyGroupName(groupName);
-		String errorBase = "Error during addGroup(): ";
+		String exceptionBase = "Exception during addGroup(): ";
 
 		try
 		{
@@ -889,19 +891,19 @@ public class WebApplication
 		}
 		catch (SQLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
 		catch (MalformedURLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
 		catch (InstantiationException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
 		catch (IllegalAccessException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
 	}
 
@@ -1093,7 +1095,7 @@ public class WebApplication
 		 */
 
 		List<String> foundFields = new ArrayList<String>();
-		String errorBase = "Error during updateStatisticsKeyStyle(): ";
+		String exceptionBase = "Exception during updateStatisticsKeyStyle(): ";
 		String insertQuery = "INSERT INTO `" + config.statisticsTableName + "` ("
 											 + config.statisticsUserIDColumn + ", "
 											 + (config.statisticsUsesInsert && config.statisticsInsertMethod.startsWith("smf") ? config.statisticsThemeIDColumn + ", " : "")
@@ -1203,63 +1205,68 @@ public class WebApplication
 		}
 		catch (SQLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
 		catch (MalformedURLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
 		catch (InstantiationException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
 		catch (IllegalAccessException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
 	}
 
-	private void synchronizeGroupsPrimary(String direction, PlayerGroupState previousState, PlayerGroupState currentState, String playerName, Player player, String userID)
+	private void synchronizeGroupsPrimary(String direction, PlayerGroupState previous, PlayerGroupState current, PlayerGroupState result, String playerName, Player player, String userID)
 	{
-		if (direction.startsWith("two") || direction.startsWith("web") && !previousState.webappPrimaryGroupID.equals(currentState.webappPrimaryGroupID))
+		if (isValidDirection(direction, "web") && !previous.webappPrimaryGroupID.equals(current.webappPrimaryGroupID))
 		{
-			synchronizeGroupsPrimaryWebToGame(player, previousState, currentState);
+			synchronizeGroupsPrimaryWebToGame(player, previous, current, result);
 		}
 
-		if (CommunityBridge.permissionHandler.supportsPrimaryGroups() && (direction.startsWith("two") || direction.startsWith("min")) && !previousState.permissionsSystemPrimaryGroupName.equals(currentState.permissionsSystemPrimaryGroupName))
+		if (isValidDirection(direction, "min") && !previous.permissionsSystemPrimaryGroupName.equals(current.permissionsSystemPrimaryGroupName))
 		{
-			synchronizeGroupsPrimaryGameToWeb(userID, playerName, previousState, currentState);
+			synchronizeGroupsPrimaryGameToWeb(userID, playerName, previous, current, result);
 		}
 	}
 
-	private void synchronizeGroupsSecondary(String direction, PlayerGroupState previousState, PlayerGroupState currentState, String userID, String playerName)
+	private boolean isValidDirection(String direction, String validDirection)
 	{
-		if (direction.startsWith("two") || direction.startsWith("min"))
+		return direction.startsWith("two") || direction.startsWith(validDirection);
+	}
+
+	private void synchronizeGroupsSecondary(String direction, PlayerGroupState previous, PlayerGroupState current, PlayerGroupState result, String userID, String playerName)
+	{
+		if (isValidDirection(direction, "min"))
 		{
-			synchronizeGroupsSecondaryGameToWeb(userID, previousState, currentState);
+			synchronizeGroupsSecondaryGameToWeb(userID, previous, current, result);
 		}
 
-		if (direction.startsWith("two") || direction.startsWith("web"))
+		if (isValidDirection(direction, "web"))
 		{
-			synchronizeGroupsSecondaryWebToGame(playerName, previousState, currentState);
+			synchronizeGroupsSecondaryWebToGame(playerName, previous, current, result);
 		}
 	}
 
-	private void synchronizeGroupsPrimaryWebToGame(Player player, PlayerGroupState previousState, PlayerGroupState currentState)
+	private void synchronizeGroupsPrimaryWebToGame(Player player, PlayerGroupState previous, PlayerGroupState current, PlayerGroupState result)
 	{
-		if (previousState.webappPrimaryGroupID.equalsIgnoreCase(currentState.webappPrimaryGroupID))
+		if (previous.webappPrimaryGroupID.equalsIgnoreCase(current.webappPrimaryGroupID))
 		{
 			return;
 		}
 
-		String formerGroupName = config.getGroupNameByGroupID(previousState.webappPrimaryGroupID);
-		String newGroupName = config.getGroupNameByGroupID(currentState.webappPrimaryGroupID);
+		String formerGroupName = config.getGroupNameByGroupID(previous.webappPrimaryGroupID);
+		String newGroupName = config.getGroupNameByGroupID(current.webappPrimaryGroupID);
 		String playerName = player.getName();
 
 		if (newGroupName == null)
 		{
-			log.warning("Not changing permissions group due to permissions system group name lookup failure for web application group ID: " + currentState.webappPrimaryGroupID + ". Player '" + playerName + "' primary group state unchanged.");
-			currentState.webappPrimaryGroupID = previousState.webappPrimaryGroupID;
+			log.warning("Not changing permissions group due to permissions system group name lookup failure for web application group ID: " + current.webappPrimaryGroupID + ". Player '" + playerName + "' primary group state unchanged.");
+			result.webappPrimaryGroupID = previous.webappPrimaryGroupID;
 			return;
 		}
 
@@ -1280,89 +1287,93 @@ public class WebApplication
 			CommunityBridge.permissionHandler.switchGroup(playerName, formerGroupName, newGroupName);
 			pseudo = "pseudo-primary ";
 		}
-		
-		log.fine("Moved player '" + playerName + "' to " + pseudo + "permissions group '" + newGroupName + "' from '" + formerGroupName + "'.");
-	}
-
-	private void synchronizeGroupsPrimaryGameToWeb(String userID, String playerName, PlayerGroupState previousState, PlayerGroupState currentState)
-	{
-		String groupID = config.getWebappGroupIDbyGroupName(currentState.permissionsSystemPrimaryGroupName);
-
-		if (groupID == null)
+		result.permissionsSystemPrimaryGroupName = newGroupName;
+		if (formerGroupName == null)
 		{
-			log.warning("Not changing web application group due to web application group ID lookup failure for: " + currentState.permissionsSystemPrimaryGroupName + ". Player '" + playerName + "' primary group state unchanged.");
-			currentState.permissionsSystemPrimaryGroupName = previousState.permissionsSystemPrimaryGroupName;
+			log.fine("Placed player '" + playerName + "' in " + pseudo + "permissions group '" + newGroupName + "'.");
 		}
 		else
 		{
+			log.fine("Moved player '" + playerName + "' to " + pseudo + "permissions group '" + newGroupName + "' from '" + formerGroupName + "'.");			
+		}
+	}
+
+	private void synchronizeGroupsPrimaryGameToWeb(String userID, String playerName, PlayerGroupState previous, PlayerGroupState current, PlayerGroupState result)
+	{
+		String groupID = config.getWebappGroupIDbyGroupName(current.permissionsSystemPrimaryGroupName);
+
+		if (groupID == null)
+		{
+			log.warning("Not changing web application group due to web application group ID lookup failure for: " + current.permissionsSystemPrimaryGroupName + ". Player '" + playerName + "' primary group state unchanged.");
+			result.permissionsSystemPrimaryGroupName = previous.permissionsSystemPrimaryGroupName;
+		}
+		else
+		{
+			result.webappPrimaryGroupID = groupID;
 			setPrimaryGroup(userID, groupID);
 			log.fine("Moved player '" + playerName + "' to web application group ID '" + groupID + "'.");
 		}
 	}
 
-	private void synchronizeGroupsSecondaryGameToWeb(String userID, PlayerGroupState previousState, PlayerGroupState currentState)
+	private void synchronizeGroupsSecondaryGameToWeb(String userID, PlayerGroupState previous, PlayerGroupState current, PlayerGroupState result)
 	{
-		for (String groupName : previousState.permissionsSystemGroupNames)
+		for (String groupName : previous.permissionsSystemGroupNames)
 		{
-			if (!currentState.permissionsSystemGroupNames.contains(groupName) && !config.simpleSynchronizationGroupsTreatedAsPrimary.contains(groupName))
+			if (!current.permissionsSystemGroupNames.contains(groupName) && !config.simpleSynchronizationGroupsTreatedAsPrimary.contains(groupName))
 			{
+				String groupID = config.getWebappGroupIDbyGroupName(groupName);
 				removeGroup(userID, groupName);
+				result.webappGroupIDs.remove(groupID);
 			}
 		}
 
 		int addedCount = 0;
-		for (Iterator<String> iterator = currentState.permissionsSystemGroupNames.iterator(); iterator.hasNext();)
+		for (Iterator<String> iterator = current.permissionsSystemGroupNames.iterator(); iterator.hasNext();)
 		{
 			String groupName = iterator.next();
 			
-			if (!previousState.permissionsSystemGroupNames.contains(groupName))
+			if (!previous.permissionsSystemGroupNames.contains(groupName))
 			{
 				String groupID = config.getWebappGroupIDbyGroupName(groupName);
 
 				// Since the group is not in the mapping, we'll NOT record it as
 				// part of the current state. That way, if the group is added to
-				// the mapping later, we'll see it as a 'new' group and syncrhonize.
+				// the mapping later, we'll see it as a 'new' group and synchronize.
 				if (groupID == null)
 				{
-					iterator.remove();
+					result.permissionsSystemGroupNames.remove(groupName);
 				}
-				else if (!currentState.webappPrimaryGroupID.equals(groupID))
+				else if (current.webappGroupIDs.contains(groupID))
 				{
-					if (config.simpleSynchronizationGroupsTreatedAsPrimary.contains(groupName))
-					{
-						this.setPrimaryGroup(userID, groupID);
-					}
-					else if (!currentState.webappGroupIDs.contains(groupID))
-					{
-						this.addGroup(userID, groupID, currentState.webappGroupIDs.size() + addedCount);
-						addedCount++;
-					}
-					else
-					{
-						// This shouldn't happen. But if it does, we need to figure out why.
-						log.warning("We thought we needed to add a secondary group ID " + groupID + "...but we didn't?");
-					}
+					log.warning("We thought we needed to add a secondary group ID " + groupID + "...but we didn't?");
+				}
+				else
+				{
+					addGroup(userID, groupID, result.webappGroupIDs.size() + addedCount);
+					result.webappGroupIDs.add(groupID);
+					addedCount++;
 				}
 			}
 		}
 	}
 
-	private void synchronizeGroupsSecondaryWebToGame(String playerName, PlayerGroupState previousState, PlayerGroupState currentState)
+	private void synchronizeGroupsSecondaryWebToGame(String playerName, PlayerGroupState previous, PlayerGroupState current, PlayerGroupState result)
 	{
-		for(String groupID : previousState.webappGroupIDs)
+		for (String groupID : previous.webappGroupIDs)
 		{
-			if (!currentState.webappGroupIDs.contains(groupID))
+			if (!current.webappGroupIDs.contains(groupID))
 			{
 				String groupName = config.getGroupNameByGroupID(groupID);
 				CommunityBridge.permissionHandler.removeFromGroup(playerName, groupName);
+				result.permissionsSystemGroupNames.remove(groupName);
 			}
 		}
 
-		for (Iterator<String> iterator = currentState.webappGroupIDs.iterator(); iterator.hasNext();)
+		for (Iterator<String> iterator = result.webappGroupIDs.iterator(); iterator.hasNext();)
 		{
 			String groupID = iterator.next();
 
-			if (!previousState.webappGroupIDs.contains(groupID))
+			if (!previous.webappGroupIDs.contains(groupID))
 			{
 				String groupName = config.getGroupNameByGroupID(groupID);
 				
@@ -1371,11 +1382,12 @@ public class WebApplication
 				// and we will synchronize.
 				if (groupName == null)
 				{
-					iterator.remove();
+					result.webappGroupIDs.remove(groupID);
 				}
-				else if (!currentState.permissionsSystemPrimaryGroupName.equals(groupName) && !currentState.permissionsSystemGroupNames.contains(groupName))
+				else if (!current.permissionsSystemPrimaryGroupName.equals(groupName) && !result.permissionsSystemGroupNames.contains(groupName))
 				{
 					CommunityBridge.permissionHandler.addToGroup(playerName, groupName);
+					result.permissionsSystemGroupNames.add(groupName);
 				} // Check for null/primaryalreadyset/secondaryalreadyset
 			} // if previousState contains group ID
 		} // for each group ID in currentState
@@ -1411,7 +1423,7 @@ public class WebApplication
 	
 	private String loadPlayerNameFromDatabase(String userID)
 	{
-		final String errorBase = "Error during WebApplication.getPlayerName(): ";
+		final String exceptionBase = "Exception during WebApplication.getPlayerName(): ";
 		String query;
 		
 		if (config.linkingUsesKey)
@@ -1446,22 +1458,22 @@ public class WebApplication
 		}
 		catch (SQLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return null;
 		}
 		catch (MalformedURLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return null;
 		}
 		catch (InstantiationException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return null;
 		}
 		catch (IllegalAccessException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 			return null;
 		}		
 	}
@@ -1598,7 +1610,7 @@ public class WebApplication
 
 		query = query + StringUtilities.joinStrings(fields, ", ") + " WHERE `" + config.statisticsUserIDColumn + "` = '" + playerStatistics.getUserID() + "'";
 
-		String errorBase = "Error during updateStatisticsKeylessStyle(): ";
+		String exceptionBase = "Exception during updateStatisticsKeylessStyle(): ";
 
 		try
 		{
@@ -1606,15 +1618,15 @@ public class WebApplication
 		}
 		catch (MalformedURLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
 		catch (InstantiationException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
 		catch (IllegalAccessException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
 	}
 } // WebApplication class

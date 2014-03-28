@@ -8,11 +8,6 @@ import java.util.List;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-/**
- * Class to hold a player's group membership state
- *
- * @author Iain E. Davis <iain@ruhlendavis.org>
- */
 public class PlayerGroupState
 {
 	private String playerName;
@@ -38,19 +33,26 @@ public class PlayerGroupState
 
 	public void generate()
 	{
+		webappPrimaryGroupID = CommunityBridge.webapp.getUserPrimaryGroupID(playerName);
+		webappGroupIDs = CommunityBridge.webapp.getUserGroupIDs(playerName);
+		permissionsSystemGroupNames = new ArrayList<String>(Arrays.asList(CommunityBridge.permissionHandler.getGroups(playerName)));
+
 		if (CommunityBridge.permissionHandler.supportsPrimaryGroups())
 		{
 			permissionsSystemPrimaryGroupName = CommunityBridge.permissionHandler.getPrimaryGroup(playerName);
 		}
 		else
 		{
-			permissionsSystemPrimaryGroupName = "";
+			for (String groupName : CommunityBridge.config.simpleSynchronizationGroupsTreatedAsPrimary)
+			{
+				if (permissionsSystemGroupNames.contains(groupName))
+				{
+					permissionsSystemPrimaryGroupName = groupName;
+					permissionsSystemGroupNames.remove(groupName);
+				}
+			}
 		}
 		
-		permissionsSystemGroupNames = new ArrayList<String>(Arrays.asList(CommunityBridge.permissionHandler.getGroups(playerName)));
-
-		webappPrimaryGroupID = CommunityBridge.webapp.getUserPrimaryGroupID(playerName);
-		webappGroupIDs = CommunityBridge.webapp.getUserGroupIDs(playerName);
 	}
 
 	public void load()
@@ -87,5 +89,16 @@ public class PlayerGroupState
 		playerData.set("permissions-system.group-names", permissionsSystemGroupNames);
 
 		playerData.save(playerFile);
+	}
+
+	public PlayerGroupState copy()
+	{
+		PlayerGroupState copy = new PlayerGroupState(playerName, playerFolder);
+		copy.isNewFile = isNewFile;
+		copy.permissionsSystemGroupNames.addAll(permissionsSystemGroupNames);
+		copy.permissionsSystemPrimaryGroupName = permissionsSystemPrimaryGroupName;
+		copy.webappGroupIDs.addAll(webappGroupIDs);
+		copy.webappPrimaryGroupID = webappPrimaryGroupID;
+		return copy;
 	}
 }
