@@ -14,7 +14,6 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import static org.mockito.Mockito.*;
 
-// TODO: Review all dao tests for good coverage and simplification.
 public class WebGroupDaoTest
 {
 	private static final String USER_ID = RandomStringUtils.randomNumeric(2);
@@ -30,10 +29,10 @@ public class WebGroupDaoTest
 	public void setup()
 	{
 		configuration = mock(Configuration.class);
-		configuration.webappSecondaryGroupGroupIDDelimiter = ",";
+		DaoTestsHelper.setupConfiguration(configuration);
 		log = mock(Log.class);
 		sql = mock(SQL.class);
-		webGroupDao = new TestableWebGroupDao(configuration,sql,log);
+		webGroupDao = new TestableWebGroupDao(configuration, sql, log);
 		
 		result = mock(ResultSet.class);
 	}
@@ -41,6 +40,7 @@ public class WebGroupDaoTest
 	@Test
 	public void getPrimaryGroupNeverReturnsNull() throws IllegalAccessException, SQLException, MalformedURLException, InstantiationException
 	{
+		configuration.webappPrimaryGroupEnabled = false;
 		assertNotNull(webGroupDao.getUserPrimaryGroupID(""));
 	}
 
@@ -54,8 +54,6 @@ public class WebGroupDaoTest
 	@Test
 	public void getPrimaryGroupKeyedWithUnknownIDReturnsBlank() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
-		configuration.webappPrimaryGroupEnabled = true;
-		configuration.webappPrimaryGroupUsesKey = true;
 		when(sql.sqlQuery(anyString())).thenReturn(result);
 		assertEquals("", webGroupDao.getUserPrimaryGroupID(USER_ID));
 	}
@@ -63,7 +61,6 @@ public class WebGroupDaoTest
 	@Test
 	public void getPrimaryGroupKeylessWithUnknownIDReturnsBlank() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
-		configuration.webappPrimaryGroupEnabled = true;
 		configuration.webappPrimaryGroupUsesKey = false;
 		when(sql.sqlQuery(anyString())).thenReturn(result);
 		assertEquals("", webGroupDao.getUserPrimaryGroupID(USER_ID));
@@ -72,9 +69,6 @@ public class WebGroupDaoTest
 	@Test
 	public void getPrimaryGroupWithValidIDReturnsGroup() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
-		configuration.webappPrimaryGroupEnabled = true;
-		configuration.webappPrimaryGroupUsesKey = true;
-		configuration.webappPrimaryGroupGroupIDColumn = "group_id";
 		when(sql.sqlQuery(anyString())).thenReturn(result);
 		when(result.next()).thenReturn(Boolean.TRUE);
 		when(result.getString(configuration.webappPrimaryGroupGroupIDColumn)).thenReturn(group1);
