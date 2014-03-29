@@ -36,14 +36,7 @@ public class SingleWebGroupDaoTest
 		webGroupDao = new SingleWebGroupDao(configuration,sql,log);
 		
 		result = mock(ResultSet.class);
-
-		configuration.webappPrimaryGroupEnabled = true;
-		configuration.webappSecondaryGroupEnabled = true;
-		configuration.webappPrimaryGroupUserIDColumn = "primaryUserID";
-		configuration.webappSecondaryGroupUserIDColumn = "secondaryUserID";
-		configuration.webappPrimaryGroupGroupIDColumn = "primaryGroupIDs";
-		configuration.webappSecondaryGroupGroupIDColumn = "secondaryGroupIDs";
-		configuration.webappSecondaryGroupGroupIDDelimiter = ",";
+		DaoTestsHelper.setupConfiguration(configuration);
 
 		when(sql.sqlQuery(anyString())).thenReturn(result);
 		when(result.next()).thenReturn(true, false);

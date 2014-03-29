@@ -34,15 +34,7 @@ public class MultipleKeyValueWebGroupDaoTest
 		webGroupDao = new MultipleKeyValueWebGroupDao(configuration,sql,log);
 		
 		result = mock(ResultSet.class);
-		configuration.webappPrimaryGroupEnabled = true;
-		configuration.webappSecondaryGroupEnabled = true;
-		configuration.webappSecondaryGroupGroupIDDelimiter = ",";
-		configuration.webappPrimaryGroupKeyColumn = "primaryGroupKeyColumn";
-		configuration.webappPrimaryGroupUserIDColumn = "primaryUserID";
-		configuration.webappSecondaryGroupUserIDColumn = "secondaryUserID";
-		configuration.webappPrimaryGroupGroupIDColumn = "primaryGroupIDs";
-		configuration.webappSecondaryGroupGroupIDColumn = "secondaryGroupIDs";
-		configuration.webappSecondaryGroupKeyColumn = "secondaryGroupKeyColumn";
+		DaoTestsHelper.setupConfiguration(configuration);
 		when(sql.sqlQuery(anyString())).thenReturn(result);
 		when(result.next()).thenReturn(true, false);
 		when(result.getString(configuration.webappPrimaryGroupUserIDColumn)).thenReturn(USER_ID);
