@@ -15,15 +15,21 @@ public class WebApplicationTest
 	private static final String EXCEPTION_MESSAGE = "test message";
 	private static final String PLAYER_NAME = RandomStringUtils.randomAlphabetic(7);
 	private static final String USER_ID = RandomStringUtils.randomNumeric(2);
+	private static final String GROUP_NAME = RandomStringUtils.randomAlphabetic(10);
+	private static final String GROUP_ID = RandomStringUtils.randomAlphabetic(2);
+	private static final int COUNT = 0;
+	
+	private Configuration configuration;
+	
 	TestableWebApplication  webApplication;
 	WebGroupDao webGroupDao;
 	Log log;
 	
 	public class TestableWebApplication extends WebApplication
 	{
-		public TestableWebApplication(WebGroupDao webGroupDao, Log log)
+		public TestableWebApplication(Configuration configuration, Log log, WebGroupDao webGroupDao)
 		{
-			super(webGroupDao, log);
+			super(configuration, log, webGroupDao);
 		}
 		
 		public TestableWebApplication(CommunityBridge plugin, Configuration config, Log log, SQL sql)
@@ -42,9 +48,17 @@ public class WebApplicationTest
 	{
 		webGroupDao = mock(WebGroupDao.class);
 		log = mock(Log.class);
-		webApplication= new TestableWebApplication(webGroupDao, log);
+		configuration = mock(Configuration.class);
+		webApplication= new TestableWebApplication(configuration, log, webGroupDao);
 	}
 	
+	@Test
+	public void addGroupWorks() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		doNothing().when(webGroupDao).addGroup(USER_ID, GROUP_NAME, COUNT);
+		webApplication.addGroup(USER_ID, GROUP_NAME, COUNT);
+	}
+
 	@Test
 	public void addGroupHandlesSQLException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
@@ -75,11 +89,52 @@ public class WebApplicationTest
 
 	private void testAddGroupException(Exception exception) throws SQLException, InstantiationException, IllegalAccessException, MalformedURLException
 	{
-		String groupName = RandomStringUtils.randomAlphabetic(10);
-		int count = 0;
-		doThrow(exception).when(webGroupDao).addGroup(USER_ID, groupName, count);
-		webApplication.addGroup(USER_ID, groupName, count);
+		doThrow(exception).when(webGroupDao).addGroup(USER_ID, GROUP_NAME, COUNT);
+		webApplication.addGroup(USER_ID, GROUP_NAME, COUNT);
 		verify(log).severe(WebApplication.EXCEPTION_MESSAGE_ADDGROUP + exception.getMessage());
+	}
+
+	@Test
+	public void removeGroupWorks() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		doNothing().when(webGroupDao).removeGroup(USER_ID, GROUP_NAME);
+		webApplication.removeGroup(USER_ID, GROUP_NAME);
+	}
+
+	@Test
+	public void removeGroupHandlesSQLException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		SQLException exception = new SQLException(EXCEPTION_MESSAGE);
+		testRemoveGroupException(exception);
+	}
+
+	@Test
+	public void removeGroupHandlesMalformedURLException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		MalformedURLException exception = new MalformedURLException(EXCEPTION_MESSAGE);
+		testRemoveGroupException(exception);
+	}
+
+	@Test
+	public void removeGroupHandlesInstantiationException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		InstantiationException exception = new InstantiationException(EXCEPTION_MESSAGE);
+		testRemoveGroupException(exception);
+	}
+
+	@Test
+	public void removeGroupHandlesIllegalAccessException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		IllegalAccessException exception = new IllegalAccessException(EXCEPTION_MESSAGE);
+		testRemoveGroupException(exception);
+	}
+
+	private void testRemoveGroupException(Exception exception) throws SQLException, InstantiationException, IllegalAccessException, MalformedURLException
+	{
+		when(configuration.getWebappGroupIDbyGroupName(GROUP_NAME)).thenReturn(GROUP_ID);
+		doThrow(exception).when(webGroupDao).removeGroup(USER_ID, GROUP_ID);
+		webApplication.removeGroup(USER_ID, GROUP_NAME);
+		verify(log).severe(WebApplication.EXCEPTION_MESSAGE_REMOVEGROUP + exception.getMessage());
 	}
 
 	@Test

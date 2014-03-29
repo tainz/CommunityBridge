@@ -25,7 +25,16 @@ public class JunctionWebGroupDao extends WebGroupDao
 						 + "VALUES ('" + userID + "', '" + groupID +"')";
 		sql.insertQuery(query);
 	}
-
+	
+	@Override
+	public void removeGroup(String userID, String groupID) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
+	{
+		String query = "DELETE FROM `" + configuration.webappSecondaryGroupTable + "` "
+								 + "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' "
+								 + "AND `" + configuration.webappSecondaryGroupGroupIDColumn + "` = '" + groupID + "' ";
+		sql.deleteQuery(query);
+	}
+	
 	@Override
 	public List<String> getUserSecondaryGroupIDs(String userID) throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{

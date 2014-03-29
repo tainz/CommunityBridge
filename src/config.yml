@@ -151,8 +151,9 @@ player-user-linking:
   # name/login ID/login/username.
   #
   # If you want to allow them to use a different name on the web application,
-  # you need to add a custom field or column to your web application's database,
-  # and provide that table and column information here.
+  # you need to add a custom field or column to your web application's database
+  # for their minecraft name and specify below where the minecraft name is stored
+  # in the web application's database.
 
   # The name of the table which contains the columns:
   table-name:

@@ -37,10 +37,12 @@ public class MultipleKeyValueWebGroupDaoTest
 		configuration.webappPrimaryGroupEnabled = true;
 		configuration.webappSecondaryGroupEnabled = true;
 		configuration.webappSecondaryGroupGroupIDDelimiter = ",";
+		configuration.webappPrimaryGroupKeyColumn = "primaryGroupKeyColumn";
 		configuration.webappPrimaryGroupUserIDColumn = "primaryUserID";
 		configuration.webappSecondaryGroupUserIDColumn = "secondaryUserID";
 		configuration.webappPrimaryGroupGroupIDColumn = "primaryGroupIDs";
 		configuration.webappSecondaryGroupGroupIDColumn = "secondaryGroupIDs";
+		configuration.webappSecondaryGroupKeyColumn = "secondaryGroupKeyColumn";
 		when(sql.sqlQuery(anyString())).thenReturn(result);
 		when(result.next()).thenReturn(true, false);
 		when(result.getString(configuration.webappPrimaryGroupUserIDColumn)).thenReturn(USER_ID);
@@ -50,11 +52,23 @@ public class MultipleKeyValueWebGroupDaoTest
 	public void addGroupUsesCorrectQuery() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
 		String query = "INSERT INTO `" + configuration.webappSecondaryGroupTable + "` "
-								 + "(`" + configuration.webappSecondaryGroupUserIDColumn + "`, `" + configuration.webappPrimaryGroupKeyColumn + "`, `" + configuration.webappSecondaryGroupGroupIDColumn + "`) "
+								 + "(`" + configuration.webappSecondaryGroupUserIDColumn + "`, `" + configuration.webappSecondaryGroupKeyColumn + "`, `" + configuration.webappSecondaryGroupGroupIDColumn + "`) "
 								 + "VALUES ('" + USER_ID + "', '" + configuration.webappSecondaryGroupKeyName + "', '" + group1 + "')";
 		doNothing().when(sql).insertQuery(query);
 		webGroupDao.addGroup(USER_ID, group1, 0);
 		verify(sql).insertQuery(query);
+	}
+
+	@Test
+	public void removeGroupUsesCorrectQuery() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		String query = "DELETE FROM `" + configuration.webappSecondaryGroupTable + "` "
+								 + "WHERE `" + configuration.webappSecondaryGroupKeyColumn + "` = '" + configuration.webappSecondaryGroupKeyName + "' "
+								 + "AND `" + configuration.webappSecondaryGroupGroupIDColumn + "` = '" + group1 + "' ";
+		
+		doNothing().when(sql).deleteQuery(query);
+		webGroupDao.removeGroup(USER_ID, group1);
+		verify(sql).deleteQuery(query);
 	}
 
 	@Test

@@ -6,7 +6,6 @@ import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -33,10 +32,11 @@ public class WebApplication
 	protected static final String EXCEPTION_MESSAGE_ADDGROUP = "Exception during WebApplication.addGroup(): ";
 	protected static final String EXCEPTION_MESSAGE_GETPRIMARY = "Exception during WebApplication.getPrimaryGroupID(): ";
 	protected static final String EXCEPTION_MESSAGE_GETSECONDARY = "Exception during WebApplication.getUserSecondaryGroupIDs(): ";
+	protected	static final String EXCEPTION_MESSAGE_REMOVEGROUP = "Exception during addGroup(): ";
 
 	private final Boolean synchronizationLock = true;
 	private CommunityBridge plugin;
-	private Configuration config;
+	private Configuration configuration;
 	private Log log;
 	private SQL sql;
 	private BanSynchronizer banSynchronizer;
@@ -46,15 +46,16 @@ public class WebApplication
 	private Map<String, String> playerUserIDs = new HashMap<String, String>();
 	private List<Player> playerLocks = new ArrayList<Player>();
 	
-	public WebApplication(WebGroupDao webGroupDao, Log log)
+	public WebApplication(Configuration configuration, Log log, WebGroupDao webGroupDao)
 	{
-		this.webGroupDao = webGroupDao;
+		this.configuration = configuration;
 		this.log = log;
+		this.webGroupDao = webGroupDao;
 	}
 	
 	public WebApplication(CommunityBridge plugin, Configuration config, Log log, SQL sql)
 	{
-		this.config = config;
+		this.configuration = config;
 		this.plugin = plugin;
 		this.log = log;
 		setSQL(sql);
@@ -92,9 +93,9 @@ public class WebApplication
 		final String exceptionBase = "Exception during WebApplication.playerHasAvatar(): ";
 		String query;
 
-		query = "SELECT `" + config.avatarTableName + "`.`" + config.avatarAvatarColumn + "` "
-					+ "FROM `" + config.avatarTableName + "` "
-					+ "WHERE `" + config.avatarUserIDColumn + "` = '" + getUserID(playerName) + "'";
+		query = "SELECT `" + configuration.avatarTableName + "`.`" + configuration.avatarAvatarColumn + "` "
+					+ "FROM `" + configuration.avatarTableName + "` "
+					+ "WHERE `" + configuration.avatarUserIDColumn + "` = '" + getUserID(playerName) + "'";
 
 		try
 		{
@@ -103,7 +104,7 @@ public class WebApplication
 
 			if (result.next())
 			{
-				avatar = result.getString(config.avatarAvatarColumn);
+				avatar = result.getString(configuration.avatarAvatarColumn);
 			}
 
 			if (avatar == null || avatar.isEmpty())
@@ -148,9 +149,9 @@ public class WebApplication
 		final String exceptionBase = "Exception during WebApplication.getUserPostCount(): ";
 		String query;
 
-		query = "SELECT `" + config.postCountTableName + "`.`" + config.postCountPostCountColumn + "` "
-					+ "FROM `" + config.postCountTableName + "` "
-					+ "WHERE `" + config.postCountUserIDColumn + "` = '" + getUserID(playerName) + "'";
+		query = "SELECT `" + configuration.postCountTableName + "`.`" + configuration.postCountPostCountColumn + "` "
+					+ "FROM `" + configuration.postCountTableName + "` "
+					+ "WHERE `" + configuration.postCountUserIDColumn + "` = '" + getUserID(playerName) + "'";
 
 		try
 		{
@@ -158,7 +159,7 @@ public class WebApplication
 
 			if (result.next())
 			{
-				return result.getInt(config.postCountPostCountColumn);
+				return result.getInt(configuration.postCountPostCountColumn);
 			}
 			else
 			{
@@ -287,20 +288,20 @@ public class WebApplication
 		}
 
 		final String exceptionBase = "Exception during WebApplication.onPreLogin(): ";
-		String query = "SELECT `" + config.linkingTableName + "`.`" + config.linkingUserIDColumn + "` "
-								 + "FROM `" + config.linkingTableName + "` ";
+		String query = "SELECT `" + configuration.linkingTableName + "`.`" + configuration.linkingUserIDColumn + "` "
+								 + "FROM `" + configuration.linkingTableName + "` ";
 
-		if (config.linkingUsesKey)
+		if (configuration.linkingUsesKey)
 		{
 			query = query
-						+ "WHERE `" + config.linkingKeyColumn + "` = '" + config.linkingKeyName + "' "
-						+ "AND `" + config.linkingValueColumn + "` = '" + playerName + "' ";
+						+ "WHERE `" + configuration.linkingKeyColumn + "` = '" + configuration.linkingKeyName + "' "
+						+ "AND `" + configuration.linkingValueColumn + "` = '" + playerName + "' ";
 		}
 		else
 		{
-			query = query	+ "WHERE LOWER(`" + config.linkingPlayerNameColumn + "`) = LOWER('" + playerName + "') ";
+			query = query	+ "WHERE LOWER(`" + configuration.linkingPlayerNameColumn + "`) = LOWER('" + playerName + "') ";
 		}
-		query = query + "ORDER BY `" + config.linkingUserIDColumn + "` DESC";
+		query = query + "ORDER BY `" + configuration.linkingUserIDColumn + "` DESC";
 
 		try
 		{
@@ -309,7 +310,7 @@ public class WebApplication
 
 			if (result != null && result.next())
 			{
-				userID = result.getString(config.linkingUserIDColumn);
+				userID = result.getString(configuration.linkingUserIDColumn);
 			}
 			
 			if (userID == null)
@@ -347,7 +348,7 @@ public class WebApplication
 	 */
 	public void onJoin(final Player player)
 	{
-		if (config.syncDuringJoin)
+		if (configuration.syncDuringJoin)
 		{
 			runSynchronizePlayer(player, true);
 		}
@@ -360,7 +361,7 @@ public class WebApplication
 	 */
 	public void onQuit(Player player)
 	{
-		if (config.syncDuringQuit)
+		if (configuration.syncDuringQuit)
 		{
 			runSynchronizePlayer(player, false);
 		}
@@ -408,7 +409,7 @@ public class WebApplication
 			synchronizePlayer(player, true);
 		}
 		
-		if (config.banSynchronizationEnabled)
+		if (configuration.banSynchronizationEnabled)
 		{
 			banSynchronizer.synchronize();
 		}
@@ -419,15 +420,15 @@ public class WebApplication
 		if (!playerLocks.contains(player))
 		{
 			synchronized (synchronizationLock) { playerLocks.add(player);}
-			if (config.groupSynchronizationActive)
+			if (configuration.groupSynchronizationActive)
 			{
 				synchronizeGroups(player);
 			}
-			if (config.statisticsEnabled)
+			if (configuration.statisticsEnabled)
 			{
 				updateStatistics(player, online);
 			}
-			if (config.useAchievements)
+			if (configuration.useAchievements)
 			{
 				rewardAchievements(player);
 			}
@@ -451,19 +452,19 @@ public class WebApplication
 
 		try
 		{
-			if (config.webappPrimaryGroupUsesKey)
+			if (configuration.webappPrimaryGroupUsesKey)
 			{
-				String query = "UPDATE `" + config.webappPrimaryGroupTable + "` "
-										 + "SET `" + config.webappPrimaryGroupGroupIDColumn + "` = '" + groupID + "' "
-										 + "WHERE `" + config.webappPrimaryGroupKeyColumn + "` = '" + config.webappPrimaryGroupKeyName + "' "
-										 + "AND `" + config.webappPrimaryGroupUserIDColumn + "` = '" + userID + "'";
+				String query = "UPDATE `" + configuration.webappPrimaryGroupTable + "` "
+										 + "SET `" + configuration.webappPrimaryGroupGroupIDColumn + "` = '" + groupID + "' "
+										 + "WHERE `" + configuration.webappPrimaryGroupKeyColumn + "` = '" + configuration.webappPrimaryGroupKeyName + "' "
+										 + "AND `" + configuration.webappPrimaryGroupUserIDColumn + "` = '" + userID + "'";
 				sql.updateQuery(query);
 			}
 			else
 			{
-				String query = "UPDATE `" + config.webappPrimaryGroupTable + "` "
-										 + "SET `" + config.webappPrimaryGroupGroupIDColumn + "` = '" + groupID + "' "
-										 + "WHERE `" + config.webappPrimaryGroupUserIDColumn + "` = '" + userID + "' ";
+				String query = "UPDATE `" + configuration.webappPrimaryGroupTable + "` "
+										 + "SET `" + configuration.webappPrimaryGroupGroupIDColumn + "` = '" + groupID + "' "
+										 + "WHERE `" + configuration.webappPrimaryGroupUserIDColumn + "` = '" + userID + "' ";
 				sql.updateQuery(query);
 			}
 		}
@@ -484,7 +485,7 @@ public class WebApplication
 	private void synchronizeGroups(Player player)
 	{
 		String playerName = player.getName();
-		String direction = config.simpleSynchronizationDirection;
+		String direction = configuration.simpleSynchronizationDirection;
 		String userID = getUserID(playerName);
 
 		// This can happen if the player disconnects after synchronization has
@@ -494,7 +495,7 @@ public class WebApplication
 			return;
 		}
 		
-		if (userID.equalsIgnoreCase(config.simpleSynchronizationSuperUserID))
+		if (userID.equalsIgnoreCase(configuration.simpleSynchronizationSuperUserID))
 		{
 			// If we're configured to have minecraft be 'master' only,
 			// we'll do nothing at all with the super-user.
@@ -517,11 +518,11 @@ public class WebApplication
 		current.generate();
 		PlayerGroupState result = current.copy();
 
-		if(config.simpleSynchronizationFirstDirection.startsWith("web") && previous.isNewFile) {
+		if(configuration.simpleSynchronizationFirstDirection.startsWith("web") && previous.isNewFile) {
 			direction = "web";
 		}
 
-		if (config.webappPrimaryGroupEnabled)
+		if (configuration.webappPrimaryGroupEnabled)
 		{
 			synchronizeGroupsPrimary(direction, previous, current, result, playerName, player, userID);
 		}
@@ -533,7 +534,7 @@ public class WebApplication
 		}
 
 		// 4. Synchronize secondary group state
-		if (config.webappSecondaryGroupEnabled)
+		if (configuration.webappSecondaryGroupEnabled)
 		{
 			synchronizeGroupsSecondary(direction, previous, current, result, userID, playerName);
 		}
@@ -588,85 +589,27 @@ public class WebApplication
 	 *
 	 * @param String Name from permissions system of group to remove.
 	 */
-	private void removeGroup(String userID, String groupName)
+	protected void removeGroup(String userID, String groupName)
 	{
-		String groupID = config.getWebappGroupIDbyGroupName(groupName);
-		String exceptionBase = "Exception during addGroup(): ";
-
 		try
 		{
-			if (config.webappSecondaryGroupStorageMethod.startsWith("sin"))
-			{
-				String groupIDs;
-				String query = "SELECT `" + config.webappSecondaryGroupGroupIDColumn + "` "
-										 + "FROM `" + config.webappSecondaryGroupTable + "` "
-										 + "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + userID + "'";
-				ResultSet result = sql.sqlQuery(query);
-
-				if (result.next())
-				{
-					groupIDs = result.getString(config.webappSecondaryGroupGroupIDColumn);
-					List<String> groupIDsAsList = new ArrayList<String>(Arrays.asList(groupIDs.split(config.webappSecondaryGroupGroupIDDelimiter)));
-					groupIDsAsList.remove(groupID);
-					groupIDs = StringUtilities.joinStrings(groupIDsAsList, config.webappSecondaryGroupGroupIDDelimiter);
-					query = "UPDATE `" + config.webappSecondaryGroupTable + "` "
-								+ "SET `" + config.webappSecondaryGroupGroupIDColumn + "` = '" + groupIDs + "' "
-								+ "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + userID + "'";
-					sql.updateQuery(query);
-				}
-			}
-			else if (config.webappSecondaryGroupStorageMethod.startsWith("key"))
-			{
-				String groupIDs;
-				String query = "SELECT `" + config.webappSecondaryGroupGroupIDColumn + "` "
-										 + "FROM `" + config.webappSecondaryGroupTable + "` "
-										 + "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' "
-										 + "AND `" + config.webappSecondaryGroupKeyColumn + "` = '" + config.webappSecondaryGroupKeyName + "' ";
-				ResultSet result = sql.sqlQuery(query);
-
-				if (result.next())
-				{
-					groupIDs = result.getString(config.webappSecondaryGroupGroupIDColumn);
-					List<String> groupIDsAsList = new ArrayList<String>(Arrays.asList(groupIDs.split(config.webappSecondaryGroupGroupIDDelimiter)));
-					groupIDsAsList.remove(groupID);
-					groupIDs = StringUtilities.joinStrings(groupIDsAsList, config.webappSecondaryGroupGroupIDDelimiter);
-					query = "UPDATE `" + config.webappSecondaryGroupTable + "` "
-								+ " SET `" + config.webappSecondaryGroupGroupIDColumn + "` = '" + groupIDs + "' "
-								+ "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' "
-								+ "AND `" + config.webappSecondaryGroupKeyColumn + "` = '" + config.webappSecondaryGroupKeyName + "' ";
-					sql.updateQuery(query);
-				}
-			}
-			else if (config.webappSecondaryGroupStorageMethod.startsWith("jun"))
-			{
-				String query = "DELETE FROM `" + config.webappSecondaryGroupTable + "` "
-										 + "WHERE `" + config.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' "
-										 + "AND `" + config.webappSecondaryGroupGroupIDColumn + "` = '" + groupID + "' ";
-				sql.deleteQuery(query);
-			}
-			else if (config.webappSecondaryGroupStorageMethod.startsWith("mul"))
-			{
-				String query = "DELETE FROM `" + config.webappSecondaryGroupTable + "` "
-										 + "WHERE `" + config.webappSecondaryGroupKeyColumn + "` = '" + config.webappSecondaryGroupKeyName + "' "
-										 + "AND `" + config.webappSecondaryGroupGroupIDColumn + "` = '" + groupID + "' ";
-				sql.deleteQuery(query);
-			}
+			webGroupDao.removeGroup(userID, configuration.getWebappGroupIDbyGroupName(groupName));
 		}
 		catch (SQLException exception)
 		{
-			log.severe(exceptionBase + exception.getMessage());
+			log.severe(EXCEPTION_MESSAGE_REMOVEGROUP + exception.getMessage());
 		}
 		catch (MalformedURLException exception)
 		{
-			log.severe(exceptionBase + exception.getMessage());
+			log.severe(EXCEPTION_MESSAGE_REMOVEGROUP + exception.getMessage());
 		}
 		catch (InstantiationException exception)
 		{
-			log.severe(exceptionBase + exception.getMessage());
+			log.severe(EXCEPTION_MESSAGE_REMOVEGROUP + exception.getMessage());
 		}
 		catch (IllegalAccessException exception)
 		{
-			log.severe(exceptionBase + exception.getMessage());
+			log.severe(EXCEPTION_MESSAGE_REMOVEGROUP + exception.getMessage());
 		}
 	}
 
@@ -678,7 +621,7 @@ public class WebApplication
 	 */
 	private void updateStatistics(Player player, boolean online)
 	{
-		PlayerStatistics playerStatistics = new PlayerStatistics(config.dateFormat);
+		PlayerStatistics playerStatistics = new PlayerStatistics(configuration.dateFormat);
 		
 		String query;
 		ResultSet result;
@@ -696,26 +639,26 @@ public class WebApplication
 		// If gametime is enabled, it depends on lastonline. Also, we need to
 		// retrieve previously recorded lastonline time and the previously
 		// recorded gametime to compute the new gametime.
-		if (config.gametimeEnabled)
+		if (configuration.gametimeEnabled)
 		{
-			if (config.statisticsUsesKey)
+			if (configuration.statisticsUsesKey)
 			{
-				query = "SELECT `" + config.statisticsKeyColumn +  "`, `" + config.statisticsValueColumn + "` "
-							+ "FROM `" + config.statisticsTableName + "` "
-							+ "WHERE `" + config.statisticsUserIDColumn + "` = '" + playerStatistics.getUserID() + "'";
+				query = "SELECT `" + configuration.statisticsKeyColumn +  "`, `" + configuration.statisticsValueColumn + "` "
+							+ "FROM `" + configuration.statisticsTableName + "` "
+							+ "WHERE `" + configuration.statisticsUserIDColumn + "` = '" + playerStatistics.getUserID() + "'";
 				try
 				{
 					result = sql.sqlQuery(query);
 					while (result.next())
 					{
-						String key = result.getString(config.statisticsKeyColumn);
-						if (key.equalsIgnoreCase(config.lastonlineColumnOrKey))
+						String key = result.getString(configuration.statisticsKeyColumn);
+						if (key.equalsIgnoreCase(configuration.lastonlineColumnOrKey))
 						{
-							previousLastOnline = result.getInt(config.statisticsValueColumn);
+							previousLastOnline = result.getInt(configuration.statisticsValueColumn);
 						}
-						else if (key.equalsIgnoreCase(config.gametimeColumnOrKey))
+						else if (key.equalsIgnoreCase(configuration.gametimeColumnOrKey))
 						{
-							previousGameTime = result.getInt(config.statisticsValueColumn);
+							previousGameTime = result.getInt(configuration.statisticsValueColumn);
 						}
 					}
 				}
@@ -738,17 +681,17 @@ public class WebApplication
 			}
 			else
 			{
-				query = "SELECT `" + config.lastonlineColumnOrKey + "`, `" + config.gametimeColumnOrKey + "`"
-							+ " FROM `" + config.statisticsTableName + "`"
-							+ " WHERE `" + config.statisticsUserIDColumn + "` = '" + playerStatistics.getUserID() + "'";
+				query = "SELECT `" + configuration.lastonlineColumnOrKey + "`, `" + configuration.gametimeColumnOrKey + "`"
+							+ " FROM `" + configuration.statisticsTableName + "`"
+							+ " WHERE `" + configuration.statisticsUserIDColumn + "` = '" + playerStatistics.getUserID() + "'";
 				try
 				{
 					result = sql.sqlQuery(query);
 
 					if (result.next())
 					{
-						previousLastOnline = result.getInt(config.lastonlineColumnOrKey);
-						previousGameTime = result.getInt(config.gametimeColumnOrKey);
+						previousLastOnline = result.getInt(configuration.lastonlineColumnOrKey);
+						previousGameTime = result.getInt(configuration.gametimeColumnOrKey);
 					}
 				}
 				catch (SQLException exception)
@@ -770,59 +713,59 @@ public class WebApplication
 			}
 		}
 		
-		if (config.onlineStatusEnabled)
+		if (configuration.onlineStatusEnabled)
 		{
 			if (online)
 			{
-				playerStatistics.setOnlineStatus(config.onlineStatusValueOnline);
+				playerStatistics.setOnlineStatus(configuration.onlineStatusValueOnline);
 			}
 			else
 			{
-				playerStatistics.setOnlineStatus(config.onlineStatusValueOffline);
+				playerStatistics.setOnlineStatus(configuration.onlineStatusValueOffline);
 			}
 		}
 		
-		if (config.lastonlineEnabled)
+		if (configuration.lastonlineEnabled)
 		{
 			playerStatistics.setLastOnlineTime((int) (System.currentTimeMillis() / 1000L));
 		}
 
-		if (config.gametimeEnabled && previousLastOnline > 0)
+		if (configuration.gametimeEnabled && previousLastOnline > 0)
 		{
 			playerStatistics.setGameTime(previousGameTime + playerStatistics.getLastOnlineTime() - previousLastOnline);
 		}
 		
-		if (config.levelEnabled)
+		if (configuration.levelEnabled)
 		{
 			playerStatistics.setLevel(player.getLevel());
 		}
 		
-		if (config.totalxpEnabled)
+		if (configuration.totalxpEnabled)
 		{
 			playerStatistics.setTotalXP(player.getTotalExperience());
 		}
 		
-		if (config.currentxpEnabled)
+		if (configuration.currentxpEnabled)
 		{
 			playerStatistics.setCurrentXP(player.getExp());
 		}
 		
-		if (config.healthEnabled)
+		if (configuration.healthEnabled)
 		{
 			playerStatistics.setHealth((double)player.getHealth());
 		}
 		
-		if (config.lifeticksEnabled)
+		if (configuration.lifeticksEnabled)
 		{
 			playerStatistics.setLifeTicks(player.getTicksLived());
 		}
 
-		if (config.walletEnabled)
+		if (configuration.walletEnabled)
 		{
 			playerStatistics.setWallet(CommunityBridge.economy.getBalance(playerName));
 		}
 
-		if (config.statisticsUsesKey)
+		if (configuration.statisticsUsesKey)
 		{
 			updateStatisticsKeyStyle(playerStatistics);
 		}
@@ -856,93 +799,93 @@ public class WebApplication
 
 		List<String> foundFields = new ArrayList<String>();
 		String exceptionBase = "Exception during updateStatisticsKeyStyle(): ";
-		String insertQuery = "INSERT INTO `" + config.statisticsTableName + "` ("
-											 + config.statisticsUserIDColumn + ", "
-											 + (config.statisticsUsesInsert && config.statisticsInsertMethod.startsWith("smf") ? config.statisticsThemeIDColumn + ", " : "")
-											 + config.statisticsKeyColumn + ", "
-											 + config.statisticsValueColumn + ") VALUES ";
-		String updateQuery = "UPDATE `" + config.statisticsTableName + "` "
-											 + "SET " + "`" + config.statisticsValueColumn
-											 + "` = CASE " + "`" + config.statisticsKeyColumn + "` ";
+		String insertQuery = "INSERT INTO `" + configuration.statisticsTableName + "` ("
+											 + configuration.statisticsUserIDColumn + ", "
+											 + (configuration.statisticsUsesInsert && configuration.statisticsInsertMethod.startsWith("smf") ? configuration.statisticsThemeIDColumn + ", " : "")
+											 + configuration.statisticsKeyColumn + ", "
+											 + configuration.statisticsValueColumn + ") VALUES ";
+		String updateQuery = "UPDATE `" + configuration.statisticsTableName + "` "
+											 + "SET " + "`" + configuration.statisticsValueColumn
+											 + "` = CASE " + "`" + configuration.statisticsKeyColumn + "` ";
 		try
 		{
-			if (config.statisticsUsesInsert)
+			if (configuration.statisticsUsesInsert)
 			{
-				String selectQuery = "SELECT `" + config.statisticsKeyColumn + "` "
-													 + " FROM `" + config.statisticsTableName + "` "
-													 + " WHERE `" + config.statisticsUserIDColumn + "` = '"
+				String selectQuery = "SELECT `" + configuration.statisticsKeyColumn + "` "
+													 + " FROM `" + configuration.statisticsTableName + "` "
+													 + " WHERE `" + configuration.statisticsUserIDColumn + "` = '"
 													 + playerStatistics.getUserID() + "'"
-													 + (config.statisticsInsertMethod.startsWith("smf") ? " AND `" + config.statisticsThemeIDColumn + "` = '" + config.statisticsThemeID + "'" : "");
+													 + (configuration.statisticsInsertMethod.startsWith("smf") ? " AND `" + configuration.statisticsThemeIDColumn + "` = '" + configuration.statisticsThemeID + "'" : "");
 
 				ResultSet result = sql.sqlQuery(selectQuery);
 				while (result.next())
 				{
-					foundFields.add(result.getString(config.statisticsKeyColumn));
+					foundFields.add(result.getString(configuration.statisticsKeyColumn));
 				}
 			}
 
 			FieldBuilder builder = new FieldBuilder(foundFields);
 			
-			if (config.onlineStatusEnabled)
+			if (configuration.onlineStatusEnabled)
 			{
-				builder.add(playerStatistics.getUserID(), config.onlineStatusColumnOrKey, playerStatistics.getOnlineStatus());
+				builder.add(playerStatistics.getUserID(), configuration.onlineStatusColumnOrKey, playerStatistics.getOnlineStatus());
 			}
 			
-			if (config.lastonlineEnabled)
+			if (configuration.lastonlineEnabled)
 			{
-				builder.add(playerStatistics.getUserID(), config.lastonlineColumnOrKey, playerStatistics.getLastOnlineTime());
-				if (!config.lastonlineFormattedColumnOrKey.isEmpty())
+				builder.add(playerStatistics.getUserID(), configuration.lastonlineColumnOrKey, playerStatistics.getLastOnlineTime());
+				if (!configuration.lastonlineFormattedColumnOrKey.isEmpty())
 				{
-					builder.add(playerStatistics.getUserID(), config.lastonlineFormattedColumnOrKey, playerStatistics.getLastOnlineTimeFormatted());
+					builder.add(playerStatistics.getUserID(), configuration.lastonlineFormattedColumnOrKey, playerStatistics.getLastOnlineTimeFormatted());
 				}
 			}
 
 			// Gametime actually relies on the prior lastonlineTime...
-			if (config.gametimeEnabled && config.lastonlineEnabled)
+			if (configuration.gametimeEnabled && configuration.lastonlineEnabled)
 			{
-				builder.add(playerStatistics.getUserID(), config.gametimeColumnOrKey, playerStatistics.getGameTime());
-				if (!config.gametimeFormattedColumnOrKey.isEmpty())
+				builder.add(playerStatistics.getUserID(), configuration.gametimeColumnOrKey, playerStatistics.getGameTime());
+				if (!configuration.gametimeFormattedColumnOrKey.isEmpty())
 				{
-					builder.add(playerStatistics.getUserID(), config.gametimeFormattedColumnOrKey, playerStatistics.getGameTimeFormatted());
+					builder.add(playerStatistics.getUserID(), configuration.gametimeFormattedColumnOrKey, playerStatistics.getGameTimeFormatted());
 				}
 			}
 			
-			if (config.levelEnabled)
+			if (configuration.levelEnabled)
 			{
-				builder.add(playerStatistics.getUserID(), config.levelColumnOrKey, playerStatistics.getLevel());
+				builder.add(playerStatistics.getUserID(), configuration.levelColumnOrKey, playerStatistics.getLevel());
 			}
 			
-			if (config.totalxpEnabled)
+			if (configuration.totalxpEnabled)
 			{
-				builder.add(playerStatistics.getUserID(), config.totalxpColumnOrKey, playerStatistics.getTotalXP());
+				builder.add(playerStatistics.getUserID(), configuration.totalxpColumnOrKey, playerStatistics.getTotalXP());
 			}
 			
-			if (config.currentxpEnabled)
+			if (configuration.currentxpEnabled)
 			{
-				builder.add(playerStatistics.getUserID(), config.currentxpColumnOrKey, playerStatistics.getCurrentXP());
-				if (!config.currentxpFormattedColumnOrKey.isEmpty())
+				builder.add(playerStatistics.getUserID(), configuration.currentxpColumnOrKey, playerStatistics.getCurrentXP());
+				if (!configuration.currentxpFormattedColumnOrKey.isEmpty())
 				{
-					builder.add(playerStatistics.getUserID(), config.currentxpFormattedColumnOrKey, playerStatistics.getCurrentXPFormatted());
+					builder.add(playerStatistics.getUserID(), configuration.currentxpFormattedColumnOrKey, playerStatistics.getCurrentXPFormatted());
 				}
 			}
 			
-			if (config.healthEnabled)
+			if (configuration.healthEnabled)
 			{
-				builder.add(playerStatistics.getUserID(), config.healthColumnOrKey, (int)playerStatistics.getHealth());
+				builder.add(playerStatistics.getUserID(), configuration.healthColumnOrKey, (int)playerStatistics.getHealth());
 			}
 			
-			if (config.lifeticksEnabled)
+			if (configuration.lifeticksEnabled)
 			{
-				builder.add(playerStatistics.getUserID(), config.lifeticksColumnOrKey, playerStatistics.getLifeTicks());
-				if (!config.lifeticksFormattedColumnOrKey.isEmpty())
+				builder.add(playerStatistics.getUserID(), configuration.lifeticksColumnOrKey, playerStatistics.getLifeTicks());
+				if (!configuration.lifeticksFormattedColumnOrKey.isEmpty())
 				{
-					builder.add(playerStatistics.getUserID(), config.lifeticksFormattedColumnOrKey, playerStatistics.getLifeTicksFormatted());
+					builder.add(playerStatistics.getUserID(), configuration.lifeticksFormattedColumnOrKey, playerStatistics.getLifeTicksFormatted());
 				}
 			}
 			
-			if (config.walletEnabled)
+			if (configuration.walletEnabled)
 			{
-				builder.add(playerStatistics.getUserID(), config.walletColumnOrKey, playerStatistics.getWallet());
+				builder.add(playerStatistics.getUserID(), configuration.walletColumnOrKey, playerStatistics.getWallet());
 			}
 
 			if (builder.insertFields.size() > 0)
@@ -955,9 +898,9 @@ public class WebApplication
 			{
 				updateQuery = updateQuery + StringUtilities.joinStrings(builder.updateFields, " ")
 										+ " END"
-										+ " WHERE `" + config.statisticsUserIDColumn + "` = '"
+										+ " WHERE `" + configuration.statisticsUserIDColumn + "` = '"
 										+ playerStatistics.getUserID() + "'"
-										+ " AND `" + config.statisticsKeyColumn + "`"
+										+ " AND `" + configuration.statisticsKeyColumn + "`"
 										+ " IN (" + StringUtilities.joinStrings(builder.inFields, ", ") + ");";
 				
 				sql.updateQuery(updateQuery);
@@ -1019,8 +962,8 @@ public class WebApplication
 			return;
 		}
 
-		String formerGroupName = config.getGroupNameByGroupID(previous.webappPrimaryGroupID);
-		String newGroupName = config.getGroupNameByGroupID(current.webappPrimaryGroupID);
+		String formerGroupName = configuration.getGroupNameByGroupID(previous.webappPrimaryGroupID);
+		String newGroupName = configuration.getGroupNameByGroupID(current.webappPrimaryGroupID);
 		String playerName = player.getName();
 
 		if (newGroupName == null)
@@ -1030,7 +973,7 @@ public class WebApplication
 			return;
 		}
 
-		if (config.simpleSynchronizationPrimaryGroupNotify)
+		if (configuration.simpleSynchronizationPrimaryGroupNotify)
 		{
 			String message = ChatColor.YELLOW + CommunityBridge.config.messages.get("group-synchronization-primary-notify-player");
 			message = message.replace("~GROUPNAME~", newGroupName);
@@ -1060,7 +1003,7 @@ public class WebApplication
 
 	private void synchronizeGroupsPrimaryGameToWeb(String userID, String playerName, PlayerGroupState previous, PlayerGroupState current, PlayerGroupState result)
 	{
-		String groupID = config.getWebappGroupIDbyGroupName(current.permissionsSystemPrimaryGroupName);
+		String groupID = configuration.getWebappGroupIDbyGroupName(current.permissionsSystemPrimaryGroupName);
 
 		if (groupID == null)
 		{
@@ -1079,9 +1022,9 @@ public class WebApplication
 	{
 		for (String groupName : previous.permissionsSystemGroupNames)
 		{
-			if (!current.permissionsSystemGroupNames.contains(groupName) && !config.simpleSynchronizationGroupsTreatedAsPrimary.contains(groupName))
+			if (!current.permissionsSystemGroupNames.contains(groupName) && !configuration.simpleSynchronizationGroupsTreatedAsPrimary.contains(groupName))
 			{
-				String groupID = config.getWebappGroupIDbyGroupName(groupName);
+				String groupID = configuration.getWebappGroupIDbyGroupName(groupName);
 				removeGroup(userID, groupName);
 				result.webappGroupIDs.remove(groupID);
 			}
@@ -1094,7 +1037,7 @@ public class WebApplication
 			
 			if (!previous.permissionsSystemGroupNames.contains(groupName))
 			{
-				String groupID = config.getWebappGroupIDbyGroupName(groupName);
+				String groupID = configuration.getWebappGroupIDbyGroupName(groupName);
 
 				// Since the group is not in the mapping, we'll NOT record it as
 				// part of the current state. That way, if the group is added to
@@ -1123,7 +1066,7 @@ public class WebApplication
 		{
 			if (!current.webappGroupIDs.contains(groupID))
 			{
-				String groupName = config.getGroupNameByGroupID(groupID);
+				String groupName = configuration.getGroupNameByGroupID(groupID);
 				CommunityBridge.permissionHandler.removeFromGroup(playerName, groupName);
 				result.permissionsSystemGroupNames.remove(groupName);
 			}
@@ -1135,7 +1078,7 @@ public class WebApplication
 
 			if (!previous.webappGroupIDs.contains(groupID))
 			{
-				String groupName = config.getGroupNameByGroupID(groupID);
+				String groupName = configuration.getGroupNameByGroupID(groupID);
 				
 				// Since this group is not in the mapping, we shouldn't record it
 				// This way, if the group is later added, it will be 'new' to us
@@ -1157,7 +1100,7 @@ public class WebApplication
 	{
 		PlayerAchievementState state = new PlayerAchievementState(player.getName(), new File(plugin.getDataFolder(), "Players"));
 		state.load();
-		for (Achievement achievement : config.achievements)
+		for (Achievement achievement : configuration.achievements)
 		{
 			if (achievement.playerQualifies(player, state))
 			{
@@ -1186,18 +1129,18 @@ public class WebApplication
 		final String exceptionBase = "Exception during WebApplication.getPlayerName(): ";
 		String query;
 		
-		if (config.linkingUsesKey)
+		if (configuration.linkingUsesKey)
 		{
-			query = "SELECT `" + config.linkingValueColumn + "` "
-						+ "FROM `" + config.linkingTableName + "` "
-						+ "WHERE `" + config.linkingKeyColumn + "` = '" + config.linkingKeyName + "' "
-						+ "AND `" + config.linkingUserIDColumn + "` = '" + userID + "'";
+			query = "SELECT `" + configuration.linkingValueColumn + "` "
+						+ "FROM `" + configuration.linkingTableName + "` "
+						+ "WHERE `" + configuration.linkingKeyColumn + "` = '" + configuration.linkingKeyName + "' "
+						+ "AND `" + configuration.linkingUserIDColumn + "` = '" + userID + "'";
 		}
 		else
 		{
-			query = "SELECT `" + config.linkingPlayerNameColumn + "` "
-						+ "FROM `" + config.linkingTableName + "` "
-						+ "WHERE `" + config.linkingUserIDColumn + "` = '" + userID + "'";
+			query = "SELECT `" + configuration.linkingPlayerNameColumn + "` "
+						+ "FROM `" + configuration.linkingTableName + "` "
+						+ "WHERE `" + configuration.linkingUserIDColumn + "` = '" + userID + "'";
 		}
 
 		try
@@ -1240,26 +1183,26 @@ public class WebApplication
 
 	private void configureDao()
 	{
-		if (config.webappSecondaryGroupStorageMethod.startsWith("sin"))
+		if (configuration.webappSecondaryGroupStorageMethod.startsWith("sin"))
 		{
-			webGroupDao = new SingleWebGroupDao(config, sql, log);
+			webGroupDao = new SingleWebGroupDao(configuration, sql, log);
 		}
-		else if (config.webappSecondaryGroupStorageMethod.startsWith("jun"))
+		else if (configuration.webappSecondaryGroupStorageMethod.startsWith("jun"))
 		{
-			webGroupDao = new JunctionWebGroupDao(config, sql, log);
+			webGroupDao = new JunctionWebGroupDao(configuration, sql, log);
 		}
-		else if (config.webappSecondaryGroupStorageMethod.startsWith("key"))
+		else if (configuration.webappSecondaryGroupStorageMethod.startsWith("key"))
 		{
-			webGroupDao = new KeyValueWebGroupDao(config, sql, log);
+			webGroupDao = new KeyValueWebGroupDao(configuration, sql, log);
 		}
-		else if (config.webappSecondaryGroupStorageMethod.startsWith("mul"))
+		else if (configuration.webappSecondaryGroupStorageMethod.startsWith("mul"))
 		{
-			webGroupDao = new MultipleKeyValueWebGroupDao(config, sql, log);
+			webGroupDao = new MultipleKeyValueWebGroupDao(configuration, sql, log);
 		}
 		else
 		{
 			log.severe("Invalid storage method for secondary groups, disabling secondary synchronization.");
-			config.webappSecondaryGroupEnabled = false;
+			configuration.webappSecondaryGroupEnabled = false;
 		}
 	}
 
@@ -1286,15 +1229,15 @@ public class WebApplication
 		 */
 		private void add(String userID, String key, String data)
 		{
-			if (config.statisticsUsesInsert && !foundFields.contains(key))
+			if (configuration.statisticsUsesInsert && !foundFields.contains(key))
 			{
-				if (config.statisticsInsertMethod.startsWith("gen"))
+				if (configuration.statisticsInsertMethod.startsWith("gen"))
 				{
 					insertFields.add("('" + userID + "', '" + key + "', '" + data + "')");
 				}
-				else if (config.statisticsInsertMethod.startsWith("smf"))
+				else if (configuration.statisticsInsertMethod.startsWith("smf"))
 				{
-					insertFields.add("('" + userID + "', '" + config.statisticsThemeID + "', '" + key + "', '" + data + "')");
+					insertFields.add("('" + userID + "', '" + configuration.statisticsThemeID + "', '" + key + "', '" + data + "')");
 				}
 			}
 			else
@@ -1329,71 +1272,71 @@ public class WebApplication
 	{
 		String query;
 		List<String> fields = new ArrayList<String>();
-		query = "UPDATE `" + config.statisticsTableName + "` "
+		query = "UPDATE `" + configuration.statisticsTableName + "` "
 					+ "SET ";
 
-		if (config.onlineStatusEnabled)
+		if (configuration.onlineStatusEnabled)
 		{
-			fields.add("`" + config.onlineStatusColumnOrKey + "` = '" + playerStatistics.getOnlineStatus() +  "'");
+			fields.add("`" + configuration.onlineStatusColumnOrKey + "` = '" + playerStatistics.getOnlineStatus() +  "'");
 		}
 
-		if (config.lastonlineEnabled)
+		if (configuration.lastonlineEnabled)
 		{
-			fields.add("`" + config.lastonlineColumnOrKey + "` = '" + playerStatistics.getLastOnlineTime() + "'");
-			if (!config.lastonlineFormattedColumnOrKey.isEmpty())
+			fields.add("`" + configuration.lastonlineColumnOrKey + "` = '" + playerStatistics.getLastOnlineTime() + "'");
+			if (!configuration.lastonlineFormattedColumnOrKey.isEmpty())
 			{
-				fields.add("`" + config.lastonlineFormattedColumnOrKey + "` = '" + playerStatistics.getLastOnlineTimeFormatted() + "'");
+				fields.add("`" + configuration.lastonlineFormattedColumnOrKey + "` = '" + playerStatistics.getLastOnlineTimeFormatted() + "'");
 			}
 		}
 
-		if (config.gametimeEnabled)
+		if (configuration.gametimeEnabled)
 		{
-			fields.add("`" + config.gametimeColumnOrKey + "` = '" + playerStatistics.getGameTime() + "'");
-			if (!config.gametimeFormattedColumnOrKey.isEmpty())
+			fields.add("`" + configuration.gametimeColumnOrKey + "` = '" + playerStatistics.getGameTime() + "'");
+			if (!configuration.gametimeFormattedColumnOrKey.isEmpty())
 			{
-				fields.add("`" + config.gametimeFormattedColumnOrKey + "` = '" + playerStatistics.getGameTimeFormatted() + "'");
+				fields.add("`" + configuration.gametimeFormattedColumnOrKey + "` = '" + playerStatistics.getGameTimeFormatted() + "'");
 			}
 		}
 
-		if (config.levelEnabled)
+		if (configuration.levelEnabled)
 		{
-			fields.add("`" + config.levelColumnOrKey + "` = '" + playerStatistics.getLevel() + "'");
+			fields.add("`" + configuration.levelColumnOrKey + "` = '" + playerStatistics.getLevel() + "'");
 		}
 
-		if (config.totalxpEnabled)
+		if (configuration.totalxpEnabled)
 		{
-			fields.add("`" + config.totalxpColumnOrKey + "` = '" + playerStatistics.getTotalXP() + "'");
+			fields.add("`" + configuration.totalxpColumnOrKey + "` = '" + playerStatistics.getTotalXP() + "'");
 		}
 
-		if (config.currentxpEnabled)
+		if (configuration.currentxpEnabled)
 		{
-			fields.add("`" + config.currentxpColumnOrKey + "` = '" + playerStatistics.getCurrentXP() + "'");
-			if (!config.currentxpFormattedColumnOrKey.isEmpty())
+			fields.add("`" + configuration.currentxpColumnOrKey + "` = '" + playerStatistics.getCurrentXP() + "'");
+			if (!configuration.currentxpFormattedColumnOrKey.isEmpty())
 			{
-				fields.add("`" + config.currentxpFormattedColumnOrKey + "` = '" + playerStatistics.getCurrentXPFormatted() + "'");
+				fields.add("`" + configuration.currentxpFormattedColumnOrKey + "` = '" + playerStatistics.getCurrentXPFormatted() + "'");
 			}
 		}
 
-		if (config.healthEnabled)
+		if (configuration.healthEnabled)
 		{
-			fields.add("`" + config.healthColumnOrKey + "` = '" + (int)playerStatistics.getHealth() + "'");
+			fields.add("`" + configuration.healthColumnOrKey + "` = '" + (int)playerStatistics.getHealth() + "'");
 		}
 
-		if (config.lifeticksEnabled)
+		if (configuration.lifeticksEnabled)
 		{
-			fields.add("`" + config.lifeticksColumnOrKey + "` = '" + playerStatistics.getLifeTicks() + "'");
-			if (!config.lifeticksFormattedColumnOrKey.isEmpty())
+			fields.add("`" + configuration.lifeticksColumnOrKey + "` = '" + playerStatistics.getLifeTicks() + "'");
+			if (!configuration.lifeticksFormattedColumnOrKey.isEmpty())
 			{
-				fields.add("`" + config.lifeticksFormattedColumnOrKey + "` = '" + playerStatistics.getLifeTicksFormatted() + "'");
+				fields.add("`" + configuration.lifeticksFormattedColumnOrKey + "` = '" + playerStatistics.getLifeTicksFormatted() + "'");
 			}
 		}
 
-		if (config.walletEnabled)
+		if (configuration.walletEnabled)
 		{
-			fields.add("`" + config.walletColumnOrKey + "` = '" + playerStatistics.getWallet() + "'");
+			fields.add("`" + configuration.walletColumnOrKey + "` = '" + playerStatistics.getWallet() + "'");
 		}
 
-		query = query + StringUtilities.joinStrings(fields, ", ") + " WHERE `" + config.statisticsUserIDColumn + "` = '" + playerStatistics.getUserID() + "'";
+		query = query + StringUtilities.joinStrings(fields, ", ") + " WHERE `" + configuration.statisticsUserIDColumn + "` = '" + playerStatistics.getUserID() + "'";
 
 		String exceptionBase = "Exception during updateStatisticsKeylessStyle(): ";
 

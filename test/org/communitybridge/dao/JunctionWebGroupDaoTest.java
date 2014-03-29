@@ -57,6 +57,18 @@ public class JunctionWebGroupDaoTest
 	}
 
 	@Test
+	public void removeGroupUsesCorrectQuery() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		String query = "DELETE FROM `" + configuration.webappSecondaryGroupTable + "` "
+								 + "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + USER_ID + "' "
+								 + "AND `" + configuration.webappSecondaryGroupGroupIDColumn + "` = '" + group1 + "' ";
+		
+		doNothing().when(sql).deleteQuery(query);
+		webGroupDao.removeGroup(USER_ID, group1);
+		verify(sql).deleteQuery(query);
+	}
+
+	@Test
 	public void getSecondaryGroupsShouldNeverReturnNull() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
 		assertNotNull(webGroupDao.getUserSecondaryGroupIDs(USER_ID));

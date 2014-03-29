@@ -3,11 +3,13 @@ package org.communitybridge.dao;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import static org.communitybridge.dao.WebGroupDao.EMPTY_LIST;
 import org.communitybridge.main.Configuration;
 import org.communitybridge.main.SQL;
 import org.communitybridge.utility.Log;
+import org.communitybridge.utility.StringUtilities;
 
 public class SingleWebGroupDao extends WebGroupDao
 {
@@ -32,6 +34,27 @@ public class SingleWebGroupDao extends WebGroupDao
 		sql.updateQuery(query);
 	}
 
+	@Override
+	public void removeGroup(String userID, String groupID) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
+	{
+		String query = "SELECT `" + configuration.webappSecondaryGroupGroupIDColumn + "` "
+								 + "FROM `" + configuration.webappSecondaryGroupTable + "` "
+								 + "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + userID + "'";
+		result = sql.sqlQuery(query);
+		
+		if (result.next())
+		{
+			String groupIDs = result.getString(configuration.webappSecondaryGroupGroupIDColumn);
+			List<String> groupIDsAsList = new ArrayList<String>(Arrays.asList(groupIDs.split(configuration.webappSecondaryGroupGroupIDDelimiter)));
+			groupIDsAsList.remove(groupID);
+			groupIDs = StringUtilities.joinStrings(groupIDsAsList, configuration.webappSecondaryGroupGroupIDDelimiter);
+			query = "UPDATE `" + configuration.webappSecondaryGroupTable + "` "
+						+ "SET `" + configuration.webappSecondaryGroupGroupIDColumn + "` = '" + groupIDs + "' "
+						+ "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + userID + "'";
+			sql.updateQuery(query);
+		}		
+	}
+	
 	@Override
 	public List<String> getUserSecondaryGroupIDs(String userID) throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{

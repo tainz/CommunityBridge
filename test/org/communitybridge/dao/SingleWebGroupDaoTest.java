@@ -53,9 +53,7 @@ public class SingleWebGroupDaoTest
 	@Test
 	public void addGroupWithZeroCountUsesCorrectQuery() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
-		String query = "UPDATE `" + configuration.webappSecondaryGroupTable + "` "
-								 + "SET `" + configuration.webappSecondaryGroupGroupIDColumn + "` = CONCAT(`" + configuration.webappSecondaryGroupGroupIDColumn + "`, '" + GROUP_ID + "') "
-								 + "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + USER_ID + "'";
+		String query = getAddGroupUpdateQuery("");
 		doNothing().when(sql).updateQuery(query);
 		webGroupDao.addGroup(USER_ID, GROUP_ID, 0);
 		verify(sql).updateQuery(query);
@@ -64,9 +62,7 @@ public class SingleWebGroupDaoTest
 	@Test
 	public void addGroupWithOneCountUsesCorrectQuery() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
-		String query = "UPDATE `" + configuration.webappSecondaryGroupTable + "` "
-								 + "SET `" + configuration.webappSecondaryGroupGroupIDColumn + "` = CONCAT(`" + configuration.webappSecondaryGroupGroupIDColumn + "`, '" + GROUP_ID + "') "
-								 + "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + USER_ID + "'";
+		String query = getAddGroupUpdateQuery("");
 		doNothing().when(sql).updateQuery(query);
 		webGroupDao.addGroup(USER_ID, GROUP_ID, 1);
 		verify(sql).updateQuery(query);
@@ -75,12 +71,88 @@ public class SingleWebGroupDaoTest
 	@Test
 	public void addGroupWithTwoCountUsesCorrectQuery() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
-		String query = "UPDATE `" + configuration.webappSecondaryGroupTable + "` "
-								 + "SET `" + configuration.webappSecondaryGroupGroupIDColumn + "` = CONCAT(`" + configuration.webappSecondaryGroupGroupIDColumn + "`, '," + GROUP_ID + "') "
-								 + "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + USER_ID + "'";
+		String query = getAddGroupUpdateQuery(",");
 		doNothing().when(sql).updateQuery(query);
 		webGroupDao.addGroup(USER_ID, GROUP_ID, 2);
 		verify(sql).updateQuery(query);
+	}
+	
+
+	private String getAddGroupUpdateQuery(String comma)
+	{
+		return "UPDATE `" + configuration.webappSecondaryGroupTable + "` "
+				 + "SET `" + configuration.webappSecondaryGroupGroupIDColumn + "` = CONCAT(`" + configuration.webappSecondaryGroupGroupIDColumn + "`, '"+ comma + GROUP_ID + "') "
+				 + "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + USER_ID + "'";
+	}
+
+	@Test
+	public void removeGroupUsesCorrectReadQuery() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		String query = getRemoveGroupReadQuery();
+		when(sql.sqlQuery(query)).thenReturn(result);
+		when(result.next()).thenReturn(false);
+		webGroupDao.removeGroup(USER_ID, GROUP_ID);
+		verify(sql).sqlQuery(query);
+	}
+	
+	@Test
+	public void removeGroupHandlesNoResultOnRead() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		String query = getRemoveGroupReadQuery();
+		when(sql.sqlQuery(query)).thenReturn(result);
+		when(result.next()).thenReturn(false);
+		webGroupDao.removeGroup(USER_ID, GROUP_ID);
+		verify(sql).sqlQuery(query);
+		verifyNoMoreInteractions(sql);
+	}
+	
+	@Test
+	public void removeGroupUsesCorrectUpdateCallRemovingOneOfNone() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		testRemoveGroupUpdateQuery("", "");
+	}
+	
+	@Test
+	public void removeGroupUsesCorrectUpdateCallRemovingOneOfOne() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		testRemoveGroupUpdateQuery(group1, "");
+	}
+
+	@Test
+	public void removeGroupUsesCorrectUpdateCallRemovingOneOfPair() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		testRemoveGroupUpdateQuery(group1 + "," + group2, group2);
+	}
+
+	@Test
+	public void removeGroupUsesCorrectUpdateCallRemovingOneOfThree() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		testRemoveGroupUpdateQuery(group1 + "," + group2 + "," + GROUP_ID, group2 + "," + GROUP_ID);
+	}
+
+	private void testRemoveGroupUpdateQuery(String before, String after) throws SQLException, IllegalAccessException, MalformedURLException, InstantiationException
+	{
+		when(sql.sqlQuery(getRemoveGroupReadQuery())).thenReturn(result);
+		when(result.next()).thenReturn(true);
+		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(before);
+		String query = getRemoveGroupUpdateQuery(after);
+		doNothing().when(sql).updateQuery(query);
+		webGroupDao.removeGroup(USER_ID, group1);
+		verify(sql).updateQuery(query);
+	}
+
+	private String getRemoveGroupReadQuery()
+	{
+		return "SELECT `" + configuration.webappSecondaryGroupGroupIDColumn + "` "
+					+ "FROM `" + configuration.webappSecondaryGroupTable + "` "
+					+ "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + USER_ID + "'";
+	}
+
+	private String getRemoveGroupUpdateQuery(String after)
+	{
+		return "UPDATE `" + configuration.webappSecondaryGroupTable + "` "
+				 + "SET `" + configuration.webappSecondaryGroupGroupIDColumn + "` = '" + after + "' "
+				 + "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + USER_ID + "'";
 	}
 
 	@Test
