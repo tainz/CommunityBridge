@@ -22,40 +22,85 @@ public class KeyValueWebGroupDao extends WebGroupDao
 	@Override
 	public void addGroup(String userID, String groupID, int currentGroupCount) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
-		if (currentGroupCount > 0)
+		result = sql.sqlQuery(getSecondaryGroupReadQuery(userID));
+		
+		if (result.next())
 		{
-			groupID = configuration.webappSecondaryGroupGroupIDDelimiter + groupID;
+			List<String> groupIDs = getGroupIDsFromResult();
+			groupIDs.add(groupID);
+			sql.updateQuery(getGroupIDsUpdateQuery(groupIDs, userID));
 		}
-		String query = "UPDATE `" + configuration.webappSecondaryGroupTable + "` "
-								 + "SET `" + configuration.webappSecondaryGroupGroupIDColumn + "` = CONCAT(`" + configuration.webappSecondaryGroupGroupIDColumn + "`, '" + groupID + "') "
-								 + "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' "
-								 + "AND `" + configuration.webappSecondaryGroupKeyColumn + "` = '" + configuration.webappSecondaryGroupKeyName + "' ";
-		sql.updateQuery(query);
+		else
+		{
+			sql.insertQuery(getGroupIDInsertQuery(userID, groupID));
+		}
 	}
 
 	@Override
 	public void removeGroup(String userID, String groupID) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
-		String query = "SELECT `" + configuration.webappSecondaryGroupGroupIDColumn + "` "
-								 + "FROM `" + configuration.webappSecondaryGroupTable + "` "
-								 + "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' "
-								 + "AND `" + configuration.webappSecondaryGroupKeyColumn + "` = '" + configuration.webappSecondaryGroupKeyName + "' ";
-		result = sql.sqlQuery(query);
+		result = sql.sqlQuery(getSecondaryGroupReadQuery(userID));
 		
 		if (result.next())
 		{
-			String groupIDs = result.getString(configuration.webappSecondaryGroupGroupIDColumn);
-			List<String> groupIDsAsList = new ArrayList<String>(Arrays.asList(groupIDs.split(configuration.webappSecondaryGroupGroupIDDelimiter)));
-			groupIDsAsList.remove(groupID);
-			groupIDs = StringUtilities.joinStrings(groupIDsAsList, configuration.webappSecondaryGroupGroupIDDelimiter);
-			query = "UPDATE `" + configuration.webappSecondaryGroupTable + "` "
-						+ "SET `" + configuration.webappSecondaryGroupGroupIDColumn + "` = '" + groupIDs + "' "
-						+ "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' "
-						+ "AND `" + configuration.webappSecondaryGroupKeyColumn + "` = '" + configuration.webappSecondaryGroupKeyName + "'";
-			sql.updateQuery(query);
+			List<String> groupIDs  = getGroupIDsFromResult();
+			groupIDs.remove(groupID);
+			sql.updateQuery(getGroupIDsUpdateQuery(groupIDs, userID));
 		}		
 	}
+
+	protected List<String> getGroupIDsFromResult() throws SQLException
+	{
+		List<String> groupIDs = new ArrayList();
+		String groupIDString = result.getString(configuration.webappSecondaryGroupGroupIDColumn);
+		
+		if (groupIDString == null)
+		{
+			return groupIDs;
+		}
+		
+		groupIDString = groupIDString.trim();
+		
+		if (groupIDString.isEmpty())
+		{
+			return groupIDs;
+		}
+		
+		groupIDs.addAll(Arrays.asList(groupIDString.split(configuration.webappSecondaryGroupGroupIDDelimiter)));
+		return groupIDs;
+	}
+
+	protected String getSecondaryGroupReadQuery(String userID)
+	{
+		return "SELECT `" + configuration.webappSecondaryGroupGroupIDColumn + "` "
+				 + "FROM `" + configuration.webappSecondaryGroupTable + "` "
+				 + "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' "
+				 + "AND `" + configuration.webappSecondaryGroupKeyColumn + "` = '" + configuration.webappSecondaryGroupKeyName + "' ";
+	}
 	
+	protected String getGroupIDsUpdateQuery(List<String> groupIDs, String userID)
+	{
+		String groupIDString = StringUtilities.joinStrings(groupIDs, configuration.webappSecondaryGroupGroupIDDelimiter);
+		return "UPDATE `" + configuration.webappSecondaryGroupTable + "` "
+				 + "SET `" + configuration.webappSecondaryGroupGroupIDColumn + "` = '" + groupIDString + "' "
+				 + "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' "
+				 + "AND `" + configuration.webappSecondaryGroupKeyColumn + "` = '" + configuration.webappSecondaryGroupKeyName + "'";
+	}
+
+	protected String getGroupIDInsertQuery(String userID, String groupID)
+	{
+		String query = "INSERT INTO `" + configuration.webappSecondaryGroupTable + "` "
+								 + "(`"
+								 + configuration.webappSecondaryGroupUserIDColumn + "`, `"
+								 + configuration.webappSecondaryGroupKeyColumn + "`, `"
+								 + configuration.webappSecondaryGroupGroupIDColumn + "`) "
+								 + "VALUES ('"
+								 + userID + "', '"
+								 + configuration.webappSecondaryGroupKeyName + "', '"
+								 + groupID + "')";
+		return query;
+	}
+
 	@Override
 	public List<String> getUserSecondaryGroupIDs(String userID) throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
