@@ -522,6 +522,7 @@ public class CBMetrics {
      * @param input
      * @return
      */
+		@SuppressWarnings("PMD.EmptyCatchBlock")
     public static byte[] gzip(String input) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         GZIPOutputStream gzos = null;

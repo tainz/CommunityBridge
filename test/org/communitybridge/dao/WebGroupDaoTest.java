@@ -14,6 +14,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import static org.mockito.Mockito.*;
 
+// TODO: Review all dao tests for good coverage and simplification.
 public class WebGroupDaoTest
 {
 	private static final String USER_ID = RandomStringUtils.randomNumeric(2);
