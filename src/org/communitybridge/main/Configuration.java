@@ -40,7 +40,7 @@ public class Configuration
 	// General Section
 	public String logLevel;
 	public boolean usePluginMetrics;
-	
+
 	public boolean useAchievements;
 	public List<Achievement> achievements = new ArrayList<Achievement>();
 
@@ -49,7 +49,7 @@ public class Configuration
 	public String autoEveryUnit;
 	public boolean autoSync;
 	public long autoSyncEvery;
-	
+
 	public boolean syncDuringJoin;
 	public boolean syncDuringQuit;
 
@@ -90,13 +90,13 @@ public class Configuration
 	public String	avatarTableName;
 	public String	avatarUserIDColumn;
 	public String	avatarAvatarColumn;
-	
+
 	// Post count config
 	public boolean postCountEnabled;
 	public String	postCountTableName;
 	public String	postCountUserIDColumn;
 	public String postCountPostCountColumn;
-	
+
 	// Requirements Section
 	public boolean requireAvatar;
 	public boolean requireMinimumPosts;
@@ -113,7 +113,7 @@ public class Configuration
 	public String statisticsInsertMethod;
 	public String statisticsThemeID;
 	public String statisticsThemeIDColumn;
-	
+
 	public boolean onlineStatusEnabled;
 	public String onlineStatusColumnOrKey;
 	public String onlineStatusValueOffline;
@@ -165,7 +165,9 @@ public class Configuration
 	public String webappSecondaryGroupKeyName;
 	public String webappSecondaryGroupKeyColumn;
 	public String webappSecondaryGroupGroupIDDelimiter;
-	// junction, single-column, key-value
+	public Map<String, Object> webappSecondaryAdditionalColumns = new HashMap<String, Object>();
+
+	// junction, single-column, key-value, multiple-key-value
 	public String webappSecondaryGroupStorageMethod;
 
 	public boolean simpleSynchronizationEnabled;
@@ -178,16 +180,16 @@ public class Configuration
 	// Ban synchronization
 	public boolean banSynchronizationEnabled;
 	public String banSynchronizationMethod;
-	
+
 	public List<String> banSynchronizationGroupIDs = new ArrayList<String>();
-	
+
 	public String banSynchronizationTableName;
-	
+
 	// User Method
 	public String banSynchronizationBanColumn;
 	public String banSynchronizationValueBanned;
 	public String banSynchronizationValueNotBanned;
-	
+
 	// Table Method
 	public String banSynchronizationUserIDColumn;
 	public String banSynchronizationReasonColumn;
@@ -195,7 +197,7 @@ public class Configuration
 	public String banSynchronizationEndTimeColumn;
 	public String banSynchronizationBanGroupIDColumn;
 	public String banSynchronizationBanGroupID;
-	
+
 	// These are not in the config.yml. They are calculated.
 	public boolean playerDataRequired;
 	public boolean permissionsSystemRequired;
@@ -226,7 +228,7 @@ public class Configuration
 	 * @param SQL SQL query object.
 	 * @return boolean True if the configuration is okay.
 	 */
-	public boolean analyzeConfiguration(SQL sql)
+	public boolean analyze(SQL sql)
 	{
 		boolean status;
 		boolean temp;
@@ -294,13 +296,13 @@ public class Configuration
 			if (temp)
 			{
 				status = status & checkColumn(sql, "statistics.user-id-column", statisticsTableName, statisticsUserIDColumn);
-				
+
 				if (statisticsUsesInsert && statisticsInsertMethod.startsWith("smf"))
 				{
 					status = status & checkColumn(sql, "statistics.theme-id-column", statisticsTableName, statisticsThemeIDColumn);
 					checkKeyColumnForKey(sql, "statistics.theme-id", statisticsTableName, statisticsThemeIDColumn, statisticsThemeID);
 				}
-				
+
 				if (statisticsUsesKey)
 				{
 					temp = checkColumn(sql, "statistics.key-column", statisticsTableName, statisticsKeyColumn);
@@ -397,7 +399,7 @@ public class Configuration
 						{
 							gametimeFormattedColumnOrKey = "";
 						}
-						
+
 						if (!lastonlineEnabled)
 						{
 							log.warning("Gametime tracker requires lastonline tracker to be enabled. Temporarily disabling gametime tracker.");
@@ -405,7 +407,7 @@ public class Configuration
 							gametimeFormattedColumnOrKey = "";
 						}
 					}
-					
+
 					if (levelEnabled && !checkColumn(sql, "statistics.trackers.level.column-or-key-name", statisticsTableName,	levelColumnOrKey))
 					{
 						levelEnabled = false;
@@ -422,7 +424,7 @@ public class Configuration
 						{
 							currentxpEnabled = false;
 						}
-						
+
 						if (!currentxpFormattedColumnOrKey.isEmpty() && !checkColumn(sql, "statistics.trackers.current-xp.formatted-column-or-key-name", statisticsTableName, currentxpFormattedColumnOrKey))
 						{
 							currentxpFormattedColumnOrKey = "";
@@ -440,7 +442,7 @@ public class Configuration
 						{
 							lifeticksEnabled = false;
 						}
-						
+
 						if (!lifeticksFormattedColumnOrKey.isEmpty() && !checkColumn(sql, "statistics.trackers.lifeticks.formatted-column-or-key-name", statisticsTableName, lifeticksFormattedColumnOrKey))
 						{
 								lifeticksFormattedColumnOrKey = "";
@@ -494,13 +496,20 @@ public class Configuration
 					checkKeyColumnForKey(sql, "app-group-config.secondary.key-name", webappSecondaryGroupTable, webappSecondaryGroupKeyColumn, webappSecondaryGroupKeyName);
 				}
 			}
+			if (webappSecondaryGroupStorageMethod.startsWith("jun"))
+			{
+				for (String columnName : webappSecondaryAdditionalColumns.keySet())
+				{
+					temp = temp & checkColumn(sql, "app-group-config.secondary.additional-columns." + columnName, webappSecondaryGroupTable, columnName);
+				}
+			}
 			if (!temp)
 			{
 				webappSecondaryGroupEnabled = false;
 				log.warning("Web application secondary groups disabled due to prior errors.");
 			}
 		}
-		
+
 		if (simpleSynchronizationEnabled && webappPrimaryGroupEnabled == false && webappSecondaryGroupEnabled == false)
 		{
 			simpleSynchronizationEnabled = false;
@@ -513,7 +522,7 @@ public class Configuration
 			simpleSynchronizationEnabled = false;
 			log.severe("Simple synchronization disabled due to prior errors.");
 		}
-		
+
 		if (banSynchronizationEnabled)
 		{
 			temp = checkTable(sql, "ban-synchronization.table-name", banSynchronizationTableName);
@@ -535,7 +544,7 @@ public class Configuration
 				banSynchronizationEnabled = false;
 			}
 		}
-		
+
 		if (playerDataRequired)
 		{
 			File playerData = new File(plugin.getDataFolder(), "Players");
@@ -589,7 +598,7 @@ public class Configuration
 			log.severe(errorBase + "Empty column name.");
 			return false;
 		}
-		
+
 		try
 		{
 			result = sql.sqlQuery("SHOW COLUMNS FROM `" + tableName	+ "` LIKE '" + columnName + "'");
@@ -750,8 +759,8 @@ public class Configuration
 	/**
 	 * Loads the individual settings into our config object from the YAML
 	 * configuration.
-	 * 
-	 * @param FileConfiguration The file configuration to load the settings from. 
+	 *
+	 * @param FileConfiguration The file configuration to load the settings from.
 	 */
 	private void loadSettings(FileConfiguration config)
 	{
@@ -775,9 +784,9 @@ public class Configuration
 		syncDuringQuit = config.getBoolean("general.sync-during-quit", true);
 
 		applicationURL = config.getString("general.application-url", "http://www.example.org/");
-		
+
 		loadDateFormat(config);
-		
+
 		// Database Section
 		databaseHost = config.getString("database.hostname", "");
 		databasePort = config.getString("database.port", "");
@@ -841,7 +850,7 @@ public class Configuration
 		}
 
 		statisticsUsesInsert = config.getBoolean("statistics.insert.enabled", false);
-		
+
 		if (statisticsUsesInsert)
 		{
 			statisticsInsertMethod = config.getString("statistics.insert.method", "generic").toLowerCase();
@@ -854,7 +863,7 @@ public class Configuration
 			statisticsThemeIDColumn = config.getString("statistics.insert.theme-id-column", "id_theme");
 			statisticsThemeID = config.getString("statistics.insert.theme-id", "1");
 		}
-		
+
 		onlineStatusEnabled = config.getBoolean("statistics.trackers.online-status.enabled", false);
 		onlineStatusColumnOrKey = config.getString("statistics.trackers.online-status.column-or-key-name", "");
 		onlineStatusValueOnline = config.getString("statistics.trackers.online-status.online-value", "");
@@ -907,6 +916,7 @@ public class Configuration
 		webappSecondaryGroupGroupIDDelimiter = config.getString("app-group-config.secondary.group-id-delimiter", "");
 		// junction, single-column, key-value
 		webappSecondaryGroupStorageMethod = config.getString("app-group-config.secondary.storage-method", "").toLowerCase();
+		webappSecondaryAdditionalColumns = config.getConfigurationSection("app-group-config.secondary.additional-columns").getValues(false);
 
 		// Simple synchronization
 		simpleSynchronizationSuperUserID = config.getString("simple-synchronization.super-user-user-id", "");
@@ -922,7 +932,7 @@ public class Configuration
 
 		banSynchronizationEnabled = config.getBoolean("ban-synchronization.enabled", false);
 		banSynchronizationMethod = config.getString("ban-synchronization.method", "table").toLowerCase();
-		
+
 		banSynchronizationTableName = config.getString("ban-synchronization.table-name", "");
 		banSynchronizationUserIDColumn = config.getString("ban-synchronization.banned-user-id-column", "");
 
@@ -940,7 +950,7 @@ public class Configuration
 			banSynchronizationBanGroupIDColumn = config.getString("ban-synchronization.ban-group-id-column", "");
 			banSynchronizationBanGroupID = config.getString("ban-synchronization.ban-group-id", "");
 		}
-		
+
 		// These are calculated from settings above.
 		groupSynchronizationActive = simpleSynchronizationEnabled && (webappPrimaryGroupEnabled || webappSecondaryGroupEnabled);
 		playerDataRequired = groupSynchronizationActive;
@@ -957,7 +967,7 @@ public class Configuration
 		linkingUnregisteredGroup = "";
 		linkingRegisteredGroup = "";
 	}
-	
+
 	/**
 	 * Loads the messages from the message file.
 	 *
@@ -971,7 +981,7 @@ public class Configuration
 		YamlConfiguration messagesConfig = obtainYamlConfigurationHandle(messageFilename);
 
 		Set<String> rootSet = messagesConfig.getKeys(false);
-		
+
 		if (rootSet.isEmpty())
 		{
 			log.severe("The messages.yml file is empty. Replace with a valid file and reload.");
@@ -984,18 +994,18 @@ public class Configuration
 
 		locale = rootSet.iterator().next();
 		log.info("Detected locale: " + locale);
-		
+
 		ConfigurationSection configSection = messagesConfig.getConfigurationSection(locale);
-		
+
 		// Read the key-value pairs from the configuration
 		values = configSection.getValues(false);
-		
+
 		if (values.isEmpty())
 		{
 			log.severe("Language identifier found but no message keys found. Replace with a valid file and reload.");
 			return;
 		}
-		
+
 		messages.clear();
 		// Store them in our own HashMap.
 		for (Map.Entry<String, Object> entry : values.entrySet())
@@ -1007,7 +1017,7 @@ public class Configuration
 			messages.put(entry.getKey(), message);
 		}
 	}
-	
+
 	private void loadAchievements()
 	{
 		final String filename = "achievements.yml";
@@ -1016,13 +1026,13 @@ public class Configuration
 		achievementConfig = obtainYamlConfigurationHandle(filename);
 
 		Set<String> rootSet = achievementConfig.getKeys(false);
-		
+
 		if (rootSet.isEmpty())
 		{
 			log.warning("The achievements.yml file is empty.");
 			return;
 		}
-		
+
 		for (String key : rootSet)
 		{
 			if (key.equalsIgnoreCase("avatar"))
@@ -1094,7 +1104,7 @@ public class Configuration
 
 	/**
 	 * Reloads the configuration either from config.yml or specified file.
-	 * 
+	 *
 	 * @param filename File to load from, will default to config.yml if null/empty.
 	 * @return On error, the error message. Otherwise will be null.
 	 */
@@ -1102,13 +1112,13 @@ public class Configuration
 	{
 		loadMessages();
 		loadAchievements();
-		
+
 		if (filename == null || filename.isEmpty() || filename.equals("config.yml"))
 		{
 			plugin.deactivate();
 			plugin.reloadConfig();
 			load();
-			
+
 			plugin.activate();
 			return null;
 		}
@@ -1145,10 +1155,10 @@ public class Configuration
 		{
 			log.config(  "Autosync every                       : " + autoSyncEvery + " " + autoEveryUnit);
 		}
-		
+
 		log.config(    "Synchronize during join event        : " + syncDuringJoin);
 		log.config(    "Synchronize during quit event        : " + syncDuringQuit);
-		
+
 		log.config(    "Application url                      : " + applicationURL);
 		log.config(    "Date Format                          : " + dateFormatString);
 
@@ -1195,7 +1205,7 @@ public class Configuration
 			log.config(  "Avatar user ID column                : " + avatarUserIDColumn);
 			log.config(  "Avatar avatar column                 : " + avatarAvatarColumn);
 		}
-		
+
 		log.config(    "Post count config enabled            : " + postCountEnabled);
 		if (postCountEnabled)
 			log.config(  "Post count table name                : " + postCountTableName);
@@ -1305,6 +1315,15 @@ public class Configuration
 				log.config("Secondary group key name             : " + webappSecondaryGroupKeyName);
 				log.config("Secondary group key column           : " + webappSecondaryGroupKeyColumn);
 			}
+
+			if (webappSecondaryGroupStorageMethod.startsWith("jun"))
+			{
+				for (String columnName : webappSecondaryAdditionalColumns.keySet())
+				{
+					String output = columnName + " (" + webappSecondaryAdditionalColumns.get(columnName) + ")";
+					log.config("Secondary group additional column    : " + output);
+				}
+			}
 		}
 
 		log.config(    "Simple synchronization enabled       : " + simpleSynchronizationEnabled);
@@ -1315,7 +1334,7 @@ public class Configuration
 			log.config(  "Simple synchronization notification  : " + simpleSynchronizationPrimaryGroupNotify);
 			log.config(  "Simple synchronization P-groups      : " + simpleSynchronizationGroupsTreatedAsPrimary.toString());
 		}
-		
+
 		log.config(    "Ban synchronization enabled          : " + banSynchronizationEnabled);
 		if (banSynchronizationEnabled)
 		{
@@ -1335,7 +1354,7 @@ public class Configuration
 			{
 				log.config("Ban synchronization ban column       : " + banSynchronizationBanColumn);
 				log.config("Ban synchronization banned value     : " + banSynchronizationValueBanned);
-				log.config("Ban synchronization not banned value : " + banSynchronizationValueNotBanned);				
+				log.config("Ban synchronization not banned value : " + banSynchronizationValueNotBanned);
 			}
 		}
 	}
@@ -1346,13 +1365,13 @@ public class Configuration
 		String query = "SELECT `" + linkingUserIDColumn + "`"
 									 + " FROM `" + linkingTableName + "`"
 									 + " WHERE `" + linkingUserIDColumn + "` = '" + simpleSynchronizationSuperUserID + "'";
-	
+
 		if (simpleSynchronizationSuperUserID.isEmpty())
 		{
 			log.severe("The super-user's user ID setting is not set.");
 			return false;
 		}
-		
+
 		try
 		{
 			ResultSet result = sql.sqlQuery(query);
@@ -1404,13 +1423,13 @@ public class Configuration
 	{
 		final File dataFolder = plugin.getDataFolder();
 		File file = new File(dataFolder, filename);
-		
+
 		if (!file.exists())
 		{
 			plugin.saveResource(filename, false);
 			file = new File(dataFolder, filename);
 		}
-		
+
 		return YamlConfiguration.loadConfiguration(file);
 	}
 }

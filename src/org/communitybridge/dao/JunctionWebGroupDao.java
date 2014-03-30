@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import org.communitybridge.main.Configuration;
 import org.communitybridge.main.SQL;
 import org.communitybridge.utility.Log;
@@ -11,21 +12,31 @@ import org.communitybridge.utility.Log;
 public class JunctionWebGroupDao extends WebGroupDao
 {
 	public static final String EXCEPTION_MESSAGE_GETSECONDARY = "Error during WebApplication.getUserGroupIDsJunction(): ";
-	
+
 	public JunctionWebGroupDao(Configuration configuration, SQL sql, Log log)
 	{
 		super(configuration, sql, log);
 	}
-	
+
 	@Override
 	public void addGroup(String userID, String groupID, int currentGroupCount) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
-		String query = "INSERT INTO `" + configuration.webappSecondaryGroupTable + "` "
-						 + "(`" + configuration.webappSecondaryGroupUserIDColumn + "`, `" + configuration.webappSecondaryGroupGroupIDColumn + "`) "
-						 + "VALUES ('" + userID + "', '" + groupID +"')";
+		String columns = "(`" + configuration.webappSecondaryGroupUserIDColumn + "`, `" + configuration.webappSecondaryGroupGroupIDColumn;
+		String values = "VALUES ('" + userID + "', '" + groupID;
+
+		for (Entry entry : configuration.webappSecondaryAdditionalColumns.entrySet())
+		{
+			columns = columns + "`, `" + entry.getKey();
+			values = values + "', '" + entry.getValue();
+		}
+
+		columns = columns + "`) ";
+		values = values + "')";
+		
+		String query = "INSERT INTO `" + configuration.webappSecondaryGroupTable + "` " + columns + values;
 		sql.insertQuery(query);
 	}
-	
+
 	@Override
 	public void removeGroup(String userID, String groupID) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
@@ -34,7 +45,7 @@ public class JunctionWebGroupDao extends WebGroupDao
 								 + "AND `" + configuration.webappSecondaryGroupGroupIDColumn + "` = '" + groupID + "' ";
 		sql.deleteQuery(query);
 	}
-	
+
 	@Override
 	public List<String> getUserSecondaryGroupIDs(String userID) throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{

@@ -1,6 +1,5 @@
 package org.communitybridge.main;
 
-
 import java.io.IOException;
 import java.util.logging.Level;
 import net.milkbowl.vault.economy.Economy;
@@ -102,7 +101,7 @@ public final class CommunityBridge extends JavaPlugin
 		{
 			selectPermissionsHandler();
 		}
-		
+
 		if (config.economyEnabled || config.statisticsEnabled && config.walletEnabled)
 		{
 	    if (getServer().getPluginManager().getPlugin("Vault") == null)
@@ -144,7 +143,7 @@ public final class CommunityBridge extends JavaPlugin
 		{
 			autosyncStart();
 		}
-		
+
 		active = true;
 		log.finest("CommunityBridge activated.");
 	}
@@ -190,11 +189,11 @@ public final class CommunityBridge extends JavaPlugin
 
 		if (metrics != null)
 		{
-			try 
+			try
 			{
 				metrics.cancelTask();
 			}
-			catch (NoSuchMethodError exception) 
+			catch (NoSuchMethodError exception)
 			{
 				log.warning("Metrics cancelTask() method unavailable: " + exception.getMessage());
 			}
@@ -206,7 +205,7 @@ public final class CommunityBridge extends JavaPlugin
 			sql.close();
 			sql = null;
 		}
-		
+
 		if (economy != null)
 		{
 			economy = null;
@@ -333,7 +332,7 @@ public final class CommunityBridge extends JavaPlugin
 			webapp.setSQL(sql);
 		}
 
-		if (config.analyzeConfiguration(sql) == false)
+		if (config.analyze(sql) == false)
 		{
 			return false;
 		}
@@ -349,7 +348,7 @@ public final class CommunityBridge extends JavaPlugin
 			{
 				metrics = new CBMetrics(this);
 				Graph permsGraph = metrics.createGraph("Permissions Plugin Used");
-				
+
 				if (permissionHandler == null)
 				{
 					permsGraph.addPlotter(new CBMetrics.Plotter("None")

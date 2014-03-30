@@ -1,5 +1,6 @@
 package org.communitybridge.dao;
 
+import java.util.HashMap;
 import org.communitybridge.main.Configuration;
 
 public class DaoTestsHelper
@@ -21,5 +22,6 @@ public class DaoTestsHelper
 		configuration.webappSecondaryGroupKeyName = "secondaryGroupKeyName";
 		configuration.webappSecondaryGroupKeyColumn = "secondaryGroupKeyColumn";
 		configuration.webappSecondaryGroupStorageMethod = "single";
-	}	
+		configuration.webappSecondaryAdditionalColumns = new HashMap<String, Object>();
+	}
 }

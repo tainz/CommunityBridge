@@ -21,7 +21,7 @@ general:
   # Enable/Disable for all plugins by editing plugins/PluginMetrics/config.yml
   # and setting 'opt-out' to false.
   plugin-metrics: true
-  
+
   # Turns on the achievements (rewards) system. See achievements.yml for more
   # information.
   use-achievements: false
@@ -39,7 +39,7 @@ general:
   # The interval for the auto-sync timer, this should not be set any lower than
   # 20 minutes.
   auto-sync-every: 20
-  
+
   # Enables/disables synchronization during join and quit events. Recommend both
   # being set to true.
   sync-during-join: true
@@ -56,7 +56,7 @@ general:
   #       create. Further, zPermissions lacks a real API. A player's group
   #       assignment can fail without CommunityBridge being aware of the
   #       failure.
-  
+
   # The permissions system you're using. A permissions system is required for
   # the following features:
   # * Group Synchronization (both primary and secondary)
@@ -68,7 +68,7 @@ general:
   # If ~APPURL~ appears in a message in messages.yml, it will be replaced with
   # this:
   application-url:
-  
+
   # Set the date format for any of the dates used by CommunityBridge.
   date-format: "yyyy-MM-dd hh:mm:ss a"
 
@@ -198,7 +198,7 @@ app-post-count-config:
   user-id-column:
   # Column containing the user's post count.
   post-count-column:
-    
+
 #                             Requirements
 # -----------------------------------------------------------------------------
 requirement:
@@ -403,6 +403,13 @@ app-group-config:
     # Column that the key name is in
     key-column:
 
+    # This applies to the junction storage method. If there are additional columns on
+    # the junction table that need to be set to a value different from the table default
+    # add the column name and value to this list.
+    additional-columns:
+      # group_leader: 0
+      # user_pending: 0
+
 # Simple Synchronization Configuration
 # NOTE: If you wish to utilize the primary group synchronization feature and
 #       your permissions system does not support primary groups, then you must
@@ -427,7 +434,7 @@ simple-synchronization:
   # setting to determine the direction of the synchronization. 'web-application'
   # is the only option available at this time.
   first-direction: web-application
-  
+
   # Set this to true if you want the player to be notified when their primary
   # group changes.
   primary-group-change-notify: false
@@ -443,7 +450,7 @@ simple-synchronization:
   # synchronized from Minecraft to the web application, that is, the
   # synchronization for this user will be as if direction was set to
   # 'web' (see above). Be absolutely sure this user-id is your super-user
-  # all-access administrative account.  
+  # all-access administrative account.
   super-user-user-id: ''
 
   # If you're using primary group synchronization and a permissions system that
@@ -466,7 +473,7 @@ simple-synchronization:
   #       groups that are part of a ladder need to have entries on this table
   #       and have corresponding group on the web application or NONE of them
   #       should be on this list. It may be that you want to use the
-  #       unregistered/registered group settings instead. 
+  #       unregistered/registered group settings instead.
   group-mapping:
     '1' : 'guest'
     '2' : 'member'
@@ -474,7 +481,7 @@ simple-synchronization:
 
 ban-synchronization:
   enabled: false
-  
+
   # Method options:
   # - table: Banned users will be inserted and deleted from a table that is a list of bans
   # - user: A column on the users/members table designates whether a user is banned.
@@ -485,8 +492,8 @@ ban-synchronization:
 
   # Group method settings
   # Group type is either primary or secondary
-  group-type: 
-  banned-group: 
+  group-type:
+  banned-group:
 
   # Name of the table that holds ban information for your web application. Only needed for
   # user and table methods.
@@ -498,10 +505,10 @@ ban-synchronization:
   # Settings for the user method. Only needed if method above is set to user
   # The value parameters can be strings, numbers, whatever your web application
   # uses to indicate the user is banned or not.
-  ban-column: 
+  ban-column:
   value-banned:
   value-notbanned:
-    
+
   # Settings for table method. Only needed if method above is 'table'. Set
   # options that seem relevant to your web application.
   # The column containing the reason for the ban. Leave blank if your web
