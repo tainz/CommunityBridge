@@ -181,9 +181,13 @@ public class Configuration
 	public boolean banSynchronizationEnabled;
 	public String banSynchronizationMethod;
 
-	public List<String> banSynchronizationGroupIDs = new ArrayList<String>();
-
+	// Both user and table Methods
 	public String banSynchronizationTableName;
+	public String banSynchronizationUserIDColumn;
+
+	// Group Method
+	public String banSynchronizationBanGroup;
+	public String banSynchronizationBanGroupType;
 
 	// User Method
 	public String banSynchronizationBanColumn;
@@ -191,7 +195,6 @@ public class Configuration
 	public String banSynchronizationValueNotBanned;
 
 	// Table Method
-	public String banSynchronizationUserIDColumn;
 	public String banSynchronizationReasonColumn;
 	public String banSynchronizationStartTimeColumn;
 	public String banSynchronizationEndTimeColumn;
@@ -204,11 +207,6 @@ public class Configuration
 	public boolean groupSynchronizationActive;
 	public boolean economyEnabled;
 
-	/**
-	 * Constructor for the configuration class.
-	 *
-	 * @param CommunityBridge The plugin object of this plugin.
-	 */
 	public Configuration(CommunityBridge plugin, Log log)
 	{
 		this.plugin = plugin;
@@ -219,15 +217,6 @@ public class Configuration
 		report();
 	}
 
-	/**
-	 * Analyze the configuration for potential problems.
-	 *
-	 * Checks for the existence of the specified tables and columns within those
-	 * tables.
-	 *
-	 * @param SQL SQL query object.
-	 * @return boolean True if the configuration is okay.
-	 */
 	public boolean analyze(SQL sql)
 	{
 		boolean status;
@@ -537,6 +526,30 @@ public class Configuration
 			else if (banSynchronizationMethod.startsWith("use"))
 			{
 				temp = temp & checkColumn(sql, "ban-synchronization.ban-column", banSynchronizationTableName, banSynchronizationBanColumn);
+			}
+			else if (banSynchronizationMethod.startsWith("gro"))
+			{
+				if (banSynchronizationBanGroupType.startsWith("pri"))
+				{
+					if (!webappPrimaryGroupEnabled)
+					{
+						log.severe("Need to enable web application primary group configuration for primary ban group.");
+						temp = false;
+					}
+				}
+				else if (banSynchronizationBanGroupType.startsWith("sec"))
+				{
+					if (!webappSecondaryGroupEnabled)
+					{
+						log.severe("Need to enable web application secondary group configuration for the ban group.");
+						temp = false;
+					}
+				}
+				else
+				{
+					log.severe("Need to specify primary or secondary group configuration for the ban group.");
+					temp = false;
+				}
 			}
 			if (!temp)
 			{
@@ -928,8 +941,6 @@ public class Configuration
 		simpleSynchronizationGroupsTreatedAsPrimary = config.getStringList("simple-synchronization.groups-treated-as-primary");
 
 		// Ban synchronization
-		banSynchronizationGroupIDs = config.getStringList("ban-synchronization.ban-group-ids");
-
 		banSynchronizationEnabled = config.getBoolean("ban-synchronization.enabled", false);
 		banSynchronizationMethod = config.getString("ban-synchronization.method", "table").toLowerCase();
 
@@ -949,6 +960,11 @@ public class Configuration
 			banSynchronizationEndTimeColumn = config.getString("ban-synchronization.ban-end-column", "");
 			banSynchronizationBanGroupIDColumn = config.getString("ban-synchronization.ban-group-id-column", "");
 			banSynchronizationBanGroupID = config.getString("ban-synchronization.ban-group-id", "");
+		}
+		else if (banSynchronizationMethod.startsWith("gro"))
+		{
+			banSynchronizationBanGroupType = config.getString("ban-synchronization.group-type", "");
+			banSynchronizationBanGroup = config.getString("ban-synchronization.banned-group", "");
 		}
 
 		// These are calculated from settings above.
@@ -1339,7 +1355,6 @@ public class Configuration
 		if (banSynchronizationEnabled)
 		{
 			log.config(  "Ban synchronization method           : " + banSynchronizationMethod);
-			log.config(  "Ban synchronization group IDs        : " + banSynchronizationGroupIDs);
 			log.config(  "Ban synchronization table name       : " + banSynchronizationTableName);
 			log.config(  "Ban synchronization user ID column   : " + banSynchronizationUserIDColumn);
 			if (banSynchronizationMethod.startsWith("tab"))
@@ -1355,6 +1370,11 @@ public class Configuration
 				log.config("Ban synchronization ban column       : " + banSynchronizationBanColumn);
 				log.config("Ban synchronization banned value     : " + banSynchronizationValueBanned);
 				log.config("Ban synchronization not banned value : " + banSynchronizationValueNotBanned);
+			}
+			else if (banSynchronizationMethod.startsWith("gro"))
+			{
+				log.config("Ban synchronization group            : " + banSynchronizationBanGroup);
+				log.config("Ban synchronization group type       : " + banSynchronizationBanGroupType);
 			}
 		}
 	}

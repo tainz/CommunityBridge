@@ -16,25 +16,25 @@ import org.communitybridge.utility.Log;
 
 public class BanState
 {
-	private Log log;	
+	private Log log;
 	private File dataFile;
 	private String storageMethod;
 	private List<String> gameBannedPlayerNames = new ArrayList<String>();
 	private List<String> webBannedUserIDs = new ArrayList<String>();
-	
+
 	public BanState(Log log, File dataFolder, String storageMethod)
 	{
 		this.dataFile = new File(dataFolder, "banstate.yml");
 		this.log = log;
 		this.storageMethod = storageMethod;
 	}
-		
+
 	public void generate()
 	{
 		collectGameBans();
 		collectWebBans();
 	}
-	
+
 	public void load()
 	{
 		webBannedUserIDs.clear();
@@ -46,7 +46,7 @@ public class BanState
 			gameBannedPlayerNames = banData.getStringList("banned-player-names");
 		}
 	}
-	
+
 	public void save() throws IOException
 	{
 		FileConfiguration banData = new YamlConfiguration();
@@ -79,9 +79,9 @@ public class BanState
 
 	private void collectWebBansTableMethod()
 	{
-		String errorBase = "Error in collectWebBans: ";
+		String exceptionBase = "Exception in collectWebBans: ";
 		String query = "SELECT * FROM `" + CommunityBridge.config.banSynchronizationTableName + "`";
-		
+
 		try
 		{
 			ResultSet result = CommunityBridge.sql.sqlQuery(query);
@@ -92,19 +92,19 @@ public class BanState
 		}
 		catch (MalformedURLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
 		catch (InstantiationException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
 		catch (IllegalAccessException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
 		catch (SQLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
 	}
 
@@ -128,11 +128,23 @@ public class BanState
 		this.webBannedUserIDs = webBannedUserIDs;
 	}
 
+	private void collectWebBansGroupMethod()
+	{
+		if (CommunityBridge.config.banSynchronizationBanGroupType.startsWith("pri"))
+		{
+			collectWebBansGroupPrimary();
+		}
+		else if (CommunityBridge.config.banSynchronizationBanGroupType.startsWith("sec"))
+		{
+			collectWebBansGroupSecondary();
+		}
+	}
+
 	private void collectWebBansUserMethod()
 	{
-		String errorBase = "Error in collectWebBansUser: ";
+		String exceptionBase = "Exception in collectWebBansUser: ";
 		String query = "SELECT * FROM `" + CommunityBridge.config.banSynchronizationTableName + "`";
-		
+
 		try
 		{
 			ResultSet result = CommunityBridge.sql.sqlQuery(query);
@@ -146,19 +158,56 @@ public class BanState
 		}
 		catch (MalformedURLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
 		catch (InstantiationException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
 		catch (IllegalAccessException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
 		catch (SQLException exception)
 		{
-			log.severe(errorBase + exception.getMessage());
+			log.severe(exceptionBase + exception.getMessage());
 		}
+	}
+
+	private void collectWebBansGroupPrimary()
+	{
+		String exceptionBase = "Exception during collectWebBansGroupPrimary: ";
+		String query = "SELECT `" + CommunityBridge.config.webappPrimaryGroupUserIDColumn + "` "
+								 + "FROM `" + CommunityBridge.config.webappPrimaryGroupTable + "` "
+								 + "WHERE `" + CommunityBridge.config.webappPrimaryGroupGroupIDColumn + "` = '" + CommunityBridge.config.banSynchronizationBanGroupID;
+
+		try
+		{
+			ResultSet result = CommunityBridge.sql.sqlQuery(query);
+			while(result.next())
+			{
+				webBannedUserIDs.add(result.getString(CommunityBridge.config.webappPrimaryGroupUserIDColumn));
+			}
+		}
+		catch (MalformedURLException exception)
+		{
+			log.severe(exceptionBase + exception.getMessage());
+		}
+		catch (InstantiationException exception)
+		{
+			log.severe(exceptionBase + exception.getMessage());
+		}
+		catch (IllegalAccessException exception)
+		{
+			log.severe(exceptionBase + exception.getMessage());
+		}
+		catch (SQLException exception)
+		{
+			log.severe(exceptionBase + exception.getMessage());
+		}
+	}
+
+	private void collectWebBansGroupSecondary()
+	{
 	}
 }
