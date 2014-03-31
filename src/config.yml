@@ -482,6 +482,15 @@ simple-synchronization:
 ban-synchronization:
   enabled: false
 
+  # Controls the "direction" of synchronization.
+  # Options are: two-way, web-application, or minecraft.
+  # - two-way: Changes on either side are synchronized to the other.
+  # - web-application: Changes made in the web-application are
+  #   synchronized to the Minecraft server.
+  # - minecraft: Changes made in Minecraft are synchronized to the
+  #   web-application.
+  direction: two-way
+  
   # Method options:
   # - table: Banned users will be inserted and deleted from a table that is a list of bans
   # - user: A column on the users/members table designates whether a user is banned.

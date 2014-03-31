@@ -179,6 +179,7 @@ public class Configuration
 
 	// Ban synchronization
 	public boolean banSynchronizationEnabled;
+	public String banSynchronizationDirection;
 	public String banSynchronizationMethod;
 
 	public List<String> banSynchronizationGroupIDs = new ArrayList<String>();
@@ -943,6 +944,7 @@ public class Configuration
 		banSynchronizationGroupIDs = config.getStringList("ban-synchronization.ban-group-ids");
 
 		banSynchronizationEnabled = config.getBoolean("ban-synchronization.enabled", false);
+		banSynchronizationDirection = config.getString("simple-synchronization.direction", "two-way").toLowerCase();
 		banSynchronizationMethod = config.getString("ban-synchronization.method", "table").toLowerCase();
 
 		banSynchronizationTableName = config.getString("ban-synchronization.table-name", "");
@@ -1350,6 +1352,7 @@ public class Configuration
 		log.config(    "Ban synchronization enabled          : " + banSynchronizationEnabled);
 		if (banSynchronizationEnabled)
 		{
+			log.config(  "Ban synchronization direction        : " + banSynchronizationDirection);
 			log.config(  "Ban synchronization method           : " + banSynchronizationMethod);
 			log.config(  "Ban synchronization group IDs        : " + banSynchronizationGroupIDs);
 			log.config(  "Ban synchronization table name       : " + banSynchronizationTableName);
