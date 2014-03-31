@@ -9,65 +9,44 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.communitybridge.main.Configuration;
 import org.communitybridge.main.SQL;
+import org.communitybridge.main.Synchronizer;
 import org.communitybridge.main.WebApplication;
 import org.communitybridge.utility.Log;
 
-public class BanSynchronizer
+public class BanSynchronizer extends Synchronizer
 {
 	private Log log;
 	private SQL sql;
-	private File dataFolder;
+	private File folder;
 	private WebApplication webApplication;
-	private Configuration config;
-	
-	public BanSynchronizer(Log log, File dataFolder, Configuration config, WebApplication webApplication, SQL sql)
+	private Configuration configuration;
+
+	public BanSynchronizer(File folder, Configuration configuration, Log log, SQL sql, WebApplication webApplication)
 	{
 		this.log = log;
-		this.dataFolder = dataFolder;
+		this.folder = folder;
 		this.webApplication = webApplication;
-		this.config = config;
+		this.configuration = configuration;
 		this.sql = sql;
 	}
-	
+
 	public void synchronize()
 	{
-		BanState previous = new BanState(log, dataFolder, config.banSynchronizationMethod);
+		BanState previous = new BanState(configuration.banSynchronizationMethod, folder, log);
 		previous.load();
-		
-		BanState current = new BanState(log, dataFolder, config.banSynchronizationMethod);
+
+		BanState current = new BanState(configuration.banSynchronizationMethod, folder, log);
 		current.generate();
-		
-		for (String userID : previous.getWebBannedUserIDs())
+
+		if (isValidDirection(configuration.banSynchronizationDirection, "web"))
 		{
-			if (!current.getWebBannedUserIDs().contains(userID))
-			{
-				unbanPlayerGame(webApplication.getPlayerName(userID));
-			}
+			synchronizeWebToGame(previous, current);
 		}
-		
-		for (String userID : current.getWebBannedUserIDs())
+		else if (isValidDirection(configuration.banSynchronizationDirection, "min"))
 		{
-			if (!previous.getWebBannedUserIDs().contains(userID))
-			{
-				banPlayerGame(webApplication.getPlayerName(userID));
-			}
+			synchronizeGameToWeb(previous, current);
 		}
-		
-		for (String playerName : previous.getGameBannedPlayerNames())
-		{
-			if (!current.getGameBannedPlayerNames().contains(playerName))
-			{
-				unbanPlayerWeb(webApplication.getUserID(playerName));
-			}
-		}
-		
-		for (String playerName : current.getGameBannedPlayerNames())
-		{
-			if (!previous.getGameBannedPlayerNames().contains(playerName))
-			{
-				banPlayerWeb(webApplication.getUserID(playerName));
-			}
-		}
+
 		current.generate();
 		try
 		{
@@ -102,11 +81,11 @@ public class BanSynchronizer
 
 	private void unbanPlayerWeb(String userID)
 	{
-		if (config.banSynchronizationMethod.startsWith("tab"))
+		if (configuration.banSynchronizationMethod.startsWith("tab"))
 		{
 			unbanPlayerWebTable(userID);
 		}
-		else if (config.banSynchronizationMethod.startsWith("use"))
+		else if (configuration.banSynchronizationMethod.startsWith("use"))
 		{
 			unbanPlayerWebUser(userID);
 		}
@@ -114,24 +93,24 @@ public class BanSynchronizer
 
 	private void banPlayerWeb(String userID)
 	{
-		if (config.banSynchronizationMethod.startsWith("tab"))
+		if (configuration.banSynchronizationMethod.startsWith("tab"))
 		{
 			banPlayerWebTable(userID);
 		}
-		else if (config.banSynchronizationMethod.startsWith("use"))
+		else if (configuration.banSynchronizationMethod.startsWith("use"))
 		{
 			banPlayerWebUser(userID);
 		}
 	}
-	
-	
+
+
 	private void banPlayerWebUser(String userID)
 	{
 		String errorBase = "Error during banPlayerWebUser: ";
-		String query = "UPDATE `" + config.banSynchronizationTableName + "` "
-						     + "SET `" + config.banSynchronizationBanColumn + "` = '" + config.banSynchronizationValueBanned + "' "
-								 + "WHERE `" + config.banSynchronizationUserIDColumn + "` = '" + userID + "'";
-		
+		String query = "UPDATE `" + configuration.banSynchronizationTableName + "` "
+						     + "SET `" + configuration.banSynchronizationBanColumn + "` = '" + configuration.banSynchronizationValueBanned + "' "
+								 + "WHERE `" + configuration.banSynchronizationUserIDColumn + "` = '" + userID + "'";
+
 		try
 		{
 			sql.updateQuery(query);
@@ -149,14 +128,14 @@ public class BanSynchronizer
 			log.severe(errorBase + exception.getMessage());
 		}
 	}
-	
+
 	private void unbanPlayerWebUser(String userID)
 	{
 		String errorBase = "Error during unbanPlayerWebUser: ";
-		String query = "UPDATE `" + config.banSynchronizationTableName + "` "
-						     + "SET `" + config.banSynchronizationBanColumn + "` = '" + config.banSynchronizationValueNotBanned + "' "
-								 + "WHERE `" + config.banSynchronizationUserIDColumn + "` = '" + userID + "'";
-		
+		String query = "UPDATE `" + configuration.banSynchronizationTableName + "` "
+						     + "SET `" + configuration.banSynchronizationBanColumn + "` = '" + configuration.banSynchronizationValueNotBanned + "' "
+								 + "WHERE `" + configuration.banSynchronizationUserIDColumn + "` = '" + userID + "'";
+
 		try
 		{
 			sql.updateQuery(query);
@@ -174,38 +153,38 @@ public class BanSynchronizer
 			log.severe(errorBase + exception.getMessage());
 		}
 	}
-	
+
 	private void banPlayerWebTable(String userID)
 	{
 		String errorBase = "Error during banPlayerWebTable: ";
-		String columns = "`" + config.banSynchronizationUserIDColumn + "`, ";
+		String columns = "`" + configuration.banSynchronizationUserIDColumn + "`, ";
 		String values = userID + ", ";
-		
-		if (!config.banSynchronizationReasonColumn.isEmpty())
+
+		if (!configuration.banSynchronizationReasonColumn.isEmpty())
 		{
-			columns = columns + "`" + config.banSynchronizationReasonColumn + "`, ";
+			columns = columns + "`" + configuration.banSynchronizationReasonColumn + "`, ";
 			values = values + "'banned via minecraft server', ";
 		}
-		if (!config.banSynchronizationStartTimeColumn.isEmpty())
+		if (!configuration.banSynchronizationStartTimeColumn.isEmpty())
 		{
-			columns = columns + "`" + config.banSynchronizationStartTimeColumn + "`, ";
+			columns = columns + "`" + configuration.banSynchronizationStartTimeColumn + "`, ";
 			values = values + (System.currentTimeMillis() / 1000) + ", ";
 		}
-		if (!config.banSynchronizationEndTimeColumn.isEmpty())
+		if (!configuration.banSynchronizationEndTimeColumn.isEmpty())
 		{
-			columns = columns + "`" + config.banSynchronizationEndTimeColumn + "`, ";
+			columns = columns + "`" + configuration.banSynchronizationEndTimeColumn + "`, ";
 			values = values + "2147483647, ";
 		}
-		if (!config.banSynchronizationBanGroupIDColumn.isEmpty() && !config.banSynchronizationBanGroupID.isEmpty())
+		if (!configuration.banSynchronizationBanGroupIDColumn.isEmpty() && !configuration.banSynchronizationBanGroupID.isEmpty())
 		{
-			columns = columns + "`" + config.banSynchronizationBanGroupIDColumn + "`, ";
-			values = values + "'" + config.banSynchronizationBanGroupID + "', ";
+			columns = columns + "`" + configuration.banSynchronizationBanGroupIDColumn + "`, ";
+			values = values + "'" + configuration.banSynchronizationBanGroupID + "', ";
 		}
-		
+
 		columns = columns.substring(0, columns.length() - 2);
 		values = values.substring(0, values.length() - 2);
-		String query = "INSERT INTO `" + config.banSynchronizationTableName + "` (" + columns + ") " + "VALUES (" + values + ")";
-		
+		String query = "INSERT INTO `" + configuration.banSynchronizationTableName + "` (" + columns + ") " + "VALUES (" + values + ")";
+
 		try
 		{
 			sql.insertQuery(query);
@@ -231,9 +210,9 @@ public class BanSynchronizer
 	private void unbanPlayerWebTable(String userID)
 	{
 		String errorBase = "Error during unbanPlayerWebTable: ";
-		String query = "DELETE FROM `" + config.banSynchronizationTableName
-							+ "`  WHERE `" + config.banSynchronizationUserIDColumn	+ "` = '" + userID + "'";
-		
+		String query = "DELETE FROM `" + configuration.banSynchronizationTableName
+							+ "`  WHERE `" + configuration.banSynchronizationUserIDColumn	+ "` = '" + userID + "'";
+
 		try
 		{
 			sql.deleteQuery(query);
@@ -249,6 +228,44 @@ public class BanSynchronizer
 		catch (IllegalAccessException exception)
 		{
 			log.severe(errorBase + exception.getMessage());
+		}
+	}
+
+	private void synchronizeWebToGame(BanState previous, BanState current)
+	{
+		for (String userID : previous.getWebBannedUserIDs())
+		{
+			if (!current.getWebBannedUserIDs().contains(userID))
+			{
+				unbanPlayerGame(webApplication.getPlayerName(userID));
+			}
+		}
+
+		for (String userID : current.getWebBannedUserIDs())
+		{
+			if (!previous.getWebBannedUserIDs().contains(userID))
+			{
+				banPlayerGame(webApplication.getPlayerName(userID));
+			}
+		}
+	}
+
+	private void synchronizeGameToWeb(BanState previous, BanState current)
+	{
+		for (String playerName : previous.getGameBannedPlayerNames())
+		{
+			if (!current.getGameBannedPlayerNames().contains(playerName))
+			{
+				unbanPlayerWeb(webApplication.getUserID(playerName));
+			}
+		}
+
+		for (String playerName : current.getGameBannedPlayerNames())
+		{
+			if (!previous.getGameBannedPlayerNames().contains(playerName))
+			{
+				banPlayerWeb(webApplication.getUserID(playerName));
+			}
 		}
 	}
 }

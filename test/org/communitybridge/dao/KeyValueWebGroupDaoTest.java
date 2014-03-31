@@ -139,24 +139,24 @@ public class KeyValueWebGroupDaoTest
 		webGroupDao.removeGroup(USER_ID, group1);
 		verify(sql).sqlQuery(query);
 	}
-	
+
 	@Test
 	public void removeGroupHandlesNoResultOnRead() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
-		String query = webGroupDao.getSecondaryGroupReadQuery(USER_ID);;
+		String query = webGroupDao.getSecondaryGroupReadQuery(USER_ID);
 		when(sql.sqlQuery(query)).thenReturn(result);
 		when(result.next()).thenReturn(false);
 		webGroupDao.removeGroup(USER_ID, group1);
 		verify(sql).sqlQuery(query);
 		verifyNoMoreInteractions(sql);
 	}
-	
+
 	@Test
 	public void removeGroupUsesCorrectUpdateCallRemovingOneOfNone() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
 		testRemoveGroupUpdateQuery("", "");
 	}
-	
+
 	@Test
 	public void removeGroupUsesCorrectUpdateCallRemovingOneOfOne() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
@@ -199,7 +199,7 @@ public class KeyValueWebGroupDaoTest
 	{
 		assertNotNull(webGroupDao.getUserSecondaryGroupIDs(USER_ID));
 	}
-	
+
 	@Test
 	public void getSecondaryGroupsShouldHandleNoResult() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{

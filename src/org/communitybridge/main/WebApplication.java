@@ -26,7 +26,7 @@ import org.communitybridge.utility.Log;
 import org.communitybridge.utility.MinecraftUtilities;
 import org.communitybridge.utility.StringUtilities;
 
-public class WebApplication
+public class WebApplication extends Synchronizer
 {
 	public static final List<String> EMPTY_LIST = new ArrayList<String>();
 	protected static final String EXCEPTION_MESSAGE_ADDGROUP = "Exception during WebApplication.addGroup(): ";
@@ -45,14 +45,14 @@ public class WebApplication
 
 	private Map<String, String> playerUserIDs = new HashMap<String, String>();
 	private List<Player> playerLocks = new ArrayList<Player>();
-	
+
 	public WebApplication(Configuration configuration, Log log, WebGroupDao webGroupDao)
 	{
 		this.configuration = configuration;
 		this.log = log;
 		this.webGroupDao = webGroupDao;
 	}
-	
+
 	public WebApplication(CommunityBridge plugin, Configuration config, Log log, SQL sql)
 	{
 		this.configuration = config;
@@ -63,7 +63,7 @@ public class WebApplication
 		configureDao();
 		if (config.banSynchronizationEnabled)
 		{
-			banSynchronizer = new BanSynchronizer(log, plugin.getDataFolder(), config, this, sql);
+			banSynchronizer = new BanSynchronizer(plugin.getDataFolder(), config, log, sql, this);
 		}
 	}
 
@@ -223,7 +223,7 @@ public class WebApplication
 	}
 
 	public List<String> getUserSecondaryGroupIDs(String playerName)
-	{	
+	{
 		try
 		{
 			return webGroupDao.getUserSecondaryGroupIDs(getUserID(playerName));
@@ -312,7 +312,7 @@ public class WebApplication
 			{
 				userID = result.getString(configuration.linkingUserIDColumn);
 			}
-			
+
 			if (userID == null)
 			{
 				log.finest("User ID for " + playerName + " not found.");
@@ -408,7 +408,7 @@ public class WebApplication
 		{
 			synchronizePlayer(player, true);
 		}
-		
+
 		if (configuration.banSynchronizationEnabled)
 		{
 			banSynchronizer.synchronize();
@@ -494,7 +494,7 @@ public class WebApplication
 		{
 			return;
 		}
-		
+
 		if (userID.equalsIgnoreCase(configuration.simpleSynchronizationSuperUserID))
 		{
 			// If we're configured to have minecraft be 'master' only,
@@ -503,12 +503,12 @@ public class WebApplication
 			{
 				return;
 			}
-			
+
 			// Otherwise, we'll temporarily override the direction to be one-way
 			// for the super-user.
-			direction = "web";					
+			direction = "web";
 		}
-		
+
 		File playerFolder = new File(plugin.getDataFolder(), "Players");
 
 		PlayerGroupState previous = new PlayerGroupState(playerName, playerFolder);
@@ -622,20 +622,20 @@ public class WebApplication
 	private void updateStatistics(Player player, boolean online)
 	{
 		PlayerStatistics playerStatistics = new PlayerStatistics(configuration.dateFormat);
-		
+
 		String query;
 		ResultSet result;
-		
+
 		int previousLastOnline = 0;
 		int previousGameTime = 0;
 
 		String playerName = player.getName();
 		playerStatistics.setUserID(getUserID(playerName));
-		if (playerStatistics.getUserID() == null) 
+		if (playerStatistics.getUserID() == null)
 		{
 			return;
 		}
-		
+
 		// If gametime is enabled, it depends on lastonline. Also, we need to
 		// retrieve previously recorded lastonline time and the previously
 		// recorded gametime to compute the new gametime.
@@ -712,7 +712,7 @@ public class WebApplication
 				}
 			}
 		}
-		
+
 		if (configuration.onlineStatusEnabled)
 		{
 			if (online)
@@ -724,7 +724,7 @@ public class WebApplication
 				playerStatistics.setOnlineStatus(configuration.onlineStatusValueOffline);
 			}
 		}
-		
+
 		if (configuration.lastonlineEnabled)
 		{
 			playerStatistics.setLastOnlineTime((int) (System.currentTimeMillis() / 1000L));
@@ -734,27 +734,27 @@ public class WebApplication
 		{
 			playerStatistics.setGameTime(previousGameTime + playerStatistics.getLastOnlineTime() - previousLastOnline);
 		}
-		
+
 		if (configuration.levelEnabled)
 		{
 			playerStatistics.setLevel(player.getLevel());
 		}
-		
+
 		if (configuration.totalxpEnabled)
 		{
 			playerStatistics.setTotalXP(player.getTotalExperience());
 		}
-		
+
 		if (configuration.currentxpEnabled)
 		{
 			playerStatistics.setCurrentXP(player.getExp());
 		}
-		
+
 		if (configuration.healthEnabled)
 		{
 			playerStatistics.setHealth((double)player.getHealth());
 		}
-		
+
 		if (configuration.lifeticksEnabled)
 		{
 			playerStatistics.setLifeTicks(player.getTicksLived());
@@ -792,7 +792,7 @@ public class WebApplication
 		 *                   WHEN keyname THEN keyvalue
 		 *                   END
 		 * WHERE useridcolumn = userid;
-		 * 
+		 *
 		 * insert prototype:
 		 * INSERT INTO tableName (user_idcolumn,theme_idcolumn,keycolumn,valuecolumn) VALUES (user_id,theme_id,keyname1,keyvalue1),(user_id,theme_id,keyname2,keyvalue2)
 		 */
@@ -825,12 +825,12 @@ public class WebApplication
 			}
 
 			FieldBuilder builder = new FieldBuilder(foundFields);
-			
+
 			if (configuration.onlineStatusEnabled)
 			{
 				builder.add(playerStatistics.getUserID(), configuration.onlineStatusColumnOrKey, playerStatistics.getOnlineStatus());
 			}
-			
+
 			if (configuration.lastonlineEnabled)
 			{
 				builder.add(playerStatistics.getUserID(), configuration.lastonlineColumnOrKey, playerStatistics.getLastOnlineTime());
@@ -849,17 +849,17 @@ public class WebApplication
 					builder.add(playerStatistics.getUserID(), configuration.gametimeFormattedColumnOrKey, playerStatistics.getGameTimeFormatted());
 				}
 			}
-			
+
 			if (configuration.levelEnabled)
 			{
 				builder.add(playerStatistics.getUserID(), configuration.levelColumnOrKey, playerStatistics.getLevel());
 			}
-			
+
 			if (configuration.totalxpEnabled)
 			{
 				builder.add(playerStatistics.getUserID(), configuration.totalxpColumnOrKey, playerStatistics.getTotalXP());
 			}
-			
+
 			if (configuration.currentxpEnabled)
 			{
 				builder.add(playerStatistics.getUserID(), configuration.currentxpColumnOrKey, playerStatistics.getCurrentXP());
@@ -868,12 +868,12 @@ public class WebApplication
 					builder.add(playerStatistics.getUserID(), configuration.currentxpFormattedColumnOrKey, playerStatistics.getCurrentXPFormatted());
 				}
 			}
-			
+
 			if (configuration.healthEnabled)
 			{
 				builder.add(playerStatistics.getUserID(), configuration.healthColumnOrKey, (int)playerStatistics.getHealth());
 			}
-			
+
 			if (configuration.lifeticksEnabled)
 			{
 				builder.add(playerStatistics.getUserID(), configuration.lifeticksColumnOrKey, playerStatistics.getLifeTicks());
@@ -882,7 +882,7 @@ public class WebApplication
 					builder.add(playerStatistics.getUserID(), configuration.lifeticksFormattedColumnOrKey, playerStatistics.getLifeTicksFormatted());
 				}
 			}
-			
+
 			if (configuration.walletEnabled)
 			{
 				builder.add(playerStatistics.getUserID(), configuration.walletColumnOrKey, playerStatistics.getWallet());
@@ -893,7 +893,7 @@ public class WebApplication
 				insertQuery = insertQuery + StringUtilities.joinStrings(builder.insertFields, ", ") + ";";
 				sql.insertQuery(insertQuery);
 			}
-			
+
 			if (builder.updateFields.size() > 0)
 			{
 				updateQuery = updateQuery + StringUtilities.joinStrings(builder.updateFields, " ")
@@ -902,7 +902,7 @@ public class WebApplication
 										+ playerStatistics.getUserID() + "'"
 										+ " AND `" + configuration.statisticsKeyColumn + "`"
 										+ " IN (" + StringUtilities.joinStrings(builder.inFields, ", ") + ");";
-				
+
 				sql.updateQuery(updateQuery);
 			}
 		}
@@ -935,11 +935,6 @@ public class WebApplication
 		{
 			synchronizeGroupsPrimaryGameToWeb(userID, playerName, previous, current, result);
 		}
-	}
-
-	private boolean isValidDirection(String direction, String validDirection)
-	{
-		return direction.startsWith("two") || direction.startsWith(validDirection);
 	}
 
 	private void synchronizeGroupsSecondary(String direction, PlayerGroupState previous, PlayerGroupState current, PlayerGroupState result, String userID, String playerName)
@@ -997,7 +992,7 @@ public class WebApplication
 		}
 		else
 		{
-			log.fine("Moved player '" + playerName + "' to " + pseudo + "permissions group '" + newGroupName + "' from '" + formerGroupName + "'.");			
+			log.fine("Moved player '" + playerName + "' to " + pseudo + "permissions group '" + newGroupName + "' from '" + formerGroupName + "'.");
 		}
 	}
 
@@ -1034,7 +1029,7 @@ public class WebApplication
 		for (Iterator<String> iterator = current.permissionsSystemGroupNames.iterator(); iterator.hasNext();)
 		{
 			String groupName = iterator.next();
-			
+
 			if (!previous.permissionsSystemGroupNames.contains(groupName))
 			{
 				String groupID = configuration.getWebappGroupIDbyGroupName(groupName);
@@ -1079,7 +1074,7 @@ public class WebApplication
 			if (!previous.webappGroupIDs.contains(groupID))
 			{
 				String groupName = configuration.getGroupNameByGroupID(groupID);
-				
+
 				// Since this group is not in the mapping, we shouldn't record it
 				// This way, if the group is later added, it will be 'new' to us
 				// and we will synchronize.
@@ -1119,16 +1114,16 @@ public class WebApplication
 				return entry.getKey();
 			}
 		}
-		
+
 		String playerName = loadPlayerNameFromDatabase(userID);
 		return playerName;
 	}
-	
+
 	private String loadPlayerNameFromDatabase(String userID)
 	{
 		final String exceptionBase = "Exception during WebApplication.getPlayerName(): ";
 		String query;
-		
+
 		if (configuration.linkingUsesKey)
 		{
 			query = "SELECT `" + configuration.linkingValueColumn + "` "
@@ -1152,7 +1147,7 @@ public class WebApplication
 			{
 				playerName = result.getString(1);
 			}
-			
+
 			if (playerName == null)
 			{
 				log.finest("Player name for " + userID + " not found.");
@@ -1178,7 +1173,7 @@ public class WebApplication
 		{
 			log.severe(exceptionBase + exception.getMessage());
 			return null;
-		}		
+		}
 	}
 
 	private void configureDao()
@@ -1212,7 +1207,7 @@ public class WebApplication
 		public List<String> updateFields;
 		public List<String> inFields;
 		List<String> foundFields;
-		
+
 		FieldBuilder(List<String> foundFields)
 		{
 			this.foundFields = foundFields;
@@ -1223,7 +1218,7 @@ public class WebApplication
 
 		/**
 		 * Adds field data to the appropriate list depending on whether it needs inserted or updated.
-		 * 
+		 *
 		 * @param userID
 		 * @param data
 		 */
@@ -1246,12 +1241,12 @@ public class WebApplication
 				inFields.add("'" + key + "'");
 			}
 		}
-		
+
 		private void add(String userID, String key, int data)
 		{
 			add(userID, key, Integer.toString(data));
 		}
-		
+
 		private void add(String userID, String key, double data)
 		{
 			add(userID, key, Double.toString(data));

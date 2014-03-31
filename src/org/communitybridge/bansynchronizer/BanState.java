@@ -17,14 +17,14 @@ import org.communitybridge.utility.Log;
 public class BanState
 {
 	private Log log;
-	private File dataFile;
+	private File file;
 	private String storageMethod;
 	private List<String> gameBannedPlayerNames = new ArrayList<String>();
 	private List<String> webBannedUserIDs = new ArrayList<String>();
 
-	public BanState(Log log, File dataFolder, String storageMethod)
+	public BanState(String storageMethod, File folder, Log log)
 	{
-		this.dataFile = new File(dataFolder, "banstate.yml");
+		this.file = new File(folder, "banstate.yml");
 		this.log = log;
 		this.storageMethod = storageMethod;
 	}
@@ -39,9 +39,9 @@ public class BanState
 	{
 		webBannedUserIDs.clear();
 		gameBannedPlayerNames.clear();
-		if (dataFile.exists())
+		if (file.exists())
 		{
-			FileConfiguration banData = YamlConfiguration.loadConfiguration(dataFile);
+			FileConfiguration banData = YamlConfiguration.loadConfiguration(file);
 			webBannedUserIDs = banData.getStringList("banned-user-ids");
 			gameBannedPlayerNames = banData.getStringList("banned-player-names");
 		}
@@ -52,7 +52,7 @@ public class BanState
 		FileConfiguration banData = new YamlConfiguration();
 		banData.set("banned-user-ids", webBannedUserIDs);
 		banData.set("banned-player-names", gameBannedPlayerNames);
-		banData.save(dataFile);
+		banData.save(file);
 	}
 
 	private void collectGameBans()
