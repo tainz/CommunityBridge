@@ -179,6 +179,7 @@ public class Configuration
 
 	// Ban synchronization
 	public boolean banSynchronizationEnabled;
+	public String banSynchronizationDirection;
 	public String banSynchronizationMethod;
 
 	// Both user and table Methods
@@ -518,10 +519,10 @@ public class Configuration
 			temp = temp & checkColumn(sql, "ban-synchronization.banned-user-id-column", banSynchronizationTableName, banSynchronizationUserIDColumn);
 			if (banSynchronizationMethod.startsWith("tab"))
 			{
-				temp = temp & checkColumn(sql, "ban-synchronization.ban-reason-column", banSynchronizationTableName, banSynchronizationReasonColumn);
-				temp = temp & checkColumn(sql, "ban-synchronization.ban-start-column", banSynchronizationTableName, banSynchronizationStartTimeColumn);
-				temp = temp & checkColumn(sql, "ban-synchronization.ban-end-column", banSynchronizationTableName, banSynchronizationEndTimeColumn);
-				temp = temp & checkColumn(sql, "ban-synchronization.ban-group-id-column", banSynchronizationTableName, banSynchronizationBanGroupIDColumn);
+				temp = temp & checkColumnIfNotEmpty(sql, "ban-synchronization.ban-reason-column", banSynchronizationTableName, banSynchronizationReasonColumn);
+				temp = temp & checkColumnIfNotEmpty(sql, "ban-synchronization.ban-start-column", banSynchronizationTableName, banSynchronizationStartTimeColumn);
+				temp = temp & checkColumnIfNotEmpty(sql, "ban-synchronization.ban-end-column", banSynchronizationTableName, banSynchronizationEndTimeColumn);
+				temp = temp & checkColumnIfNotEmpty(sql, "ban-synchronization.ban-group-id-column", banSynchronizationTableName, banSynchronizationBanGroupIDColumn);
 			}
 			else if (banSynchronizationMethod.startsWith("use"))
 			{
@@ -588,6 +589,15 @@ public class Configuration
 		}
 
 		return status;
+	}
+
+	private boolean checkColumnIfNotEmpty(SQL sql, String keyName, String tableName, String columnName)
+	{
+		if (columnName.isEmpty())
+		{
+			return true;
+		}
+		return checkColumn(sql, keyName, tableName, columnName);
 	}
 
 	/**
@@ -942,6 +952,7 @@ public class Configuration
 
 		// Ban synchronization
 		banSynchronizationEnabled = config.getBoolean("ban-synchronization.enabled", false);
+		banSynchronizationDirection = config.getString("simple-synchronization.direction", "two-way").toLowerCase();
 		banSynchronizationMethod = config.getString("ban-synchronization.method", "table").toLowerCase();
 
 		banSynchronizationTableName = config.getString("ban-synchronization.table-name", "");
@@ -1354,6 +1365,7 @@ public class Configuration
 		log.config(    "Ban synchronization enabled          : " + banSynchronizationEnabled);
 		if (banSynchronizationEnabled)
 		{
+			log.config(  "Ban synchronization direction        : " + banSynchronizationDirection);
 			log.config(  "Ban synchronization method           : " + banSynchronizationMethod);
 			log.config(  "Ban synchronization table name       : " + banSynchronizationTableName);
 			log.config(  "Ban synchronization user ID column   : " + banSynchronizationUserIDColumn);

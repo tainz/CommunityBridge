@@ -29,7 +29,7 @@ public class PermissionHandlerGroupManager extends PermissionHandler
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("GroupManager");
 
 		validate(plugin, "GroupManager");
-		
+
 		groupManager = (GroupManager)plugin;
 	}
 
@@ -201,7 +201,7 @@ public class PermissionHandlerGroupManager extends PermissionHandler
 				return false;
 		}
 
-		if (user.getGroup().getName().equalsIgnoreCase(groupName))
+		if (user.getGroup() != null && user.getGroup().getName().equalsIgnoreCase(groupName))
 		{
 			user.setGroup(worldHolder.getDefaultGroup(), false);
 			return true;
