@@ -529,14 +529,17 @@ public class Configuration
 			temp = temp & checkColumn(sql, "ban-synchronization.banned-user-id-column", banSynchronizationTableName, banSynchronizationUserIDColumn);
 			if (banSynchronizationMethod.startsWith("tab"))
 			{
-				temp = temp & checkColumn(sql, "ban-synchronization.ban-reason-column", banSynchronizationTableName, banSynchronizationReasonColumn);
-				temp = temp & checkColumn(sql, "ban-synchronization.ban-start-column", banSynchronizationTableName, banSynchronizationStartTimeColumn);
-				temp = temp & checkColumn(sql, "ban-synchronization.ban-end-column", banSynchronizationTableName, banSynchronizationEndTimeColumn);
-				temp = temp & checkColumn(sql, "ban-synchronization.ban-group-id-column", banSynchronizationTableName, banSynchronizationBanGroupIDColumn);
+				temp = temp & checkColumnIfNotEmpty(sql, "ban-synchronization.ban-reason-column", banSynchronizationTableName, banSynchronizationReasonColumn);
+				temp = temp & checkColumnIfNotEmpty(sql, "ban-synchronization.ban-start-column", banSynchronizationTableName, banSynchronizationStartTimeColumn);
+				temp = temp & checkColumnIfNotEmpty(sql, "ban-synchronization.ban-end-column", banSynchronizationTableName, banSynchronizationEndTimeColumn);
+				temp = temp & checkColumnIfNotEmpty(sql, "ban-synchronization.ban-group-id-column", banSynchronizationTableName, banSynchronizationBanGroupIDColumn);
 			}
 			else if (banSynchronizationMethod.startsWith("use"))
 			{
 				temp = temp & checkColumn(sql, "ban-synchronization.ban-column", banSynchronizationTableName, banSynchronizationBanColumn);
+			}
+			else if (banSynchronizationMethod.startsWith("gro"))
+			{
 			}
 			if (!temp)
 			{
@@ -575,6 +578,15 @@ public class Configuration
 		}
 
 		return status;
+	}
+
+	private boolean checkColumnIfNotEmpty(SQL sql, String keyName, String tableName, String columnName)
+	{
+		if (columnName.isEmpty())
+		{
+			return true;
+		}
+		return checkColumn(sql, keyName, tableName, columnName);
 	}
 
 	/**
