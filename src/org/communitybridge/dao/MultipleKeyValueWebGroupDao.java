@@ -41,11 +41,6 @@ public class MultipleKeyValueWebGroupDao extends WebGroupDao
 	{
 		List<String> groupIDs = new ArrayList<String>();
 
-		if (!configuration.webappSecondaryGroupEnabled)
-		{
-			return EMPTY_LIST;
-		}
-
 		String query =
 						"SELECT `" + configuration.webappSecondaryGroupGroupIDColumn + "` "
 					+ "FROM `" + configuration.webappSecondaryGroupTable + "` "
@@ -62,8 +57,22 @@ public class MultipleKeyValueWebGroupDao extends WebGroupDao
 	}
 
 	@Override
-	public List<String> getSecondaryGroupUserIDs(String groupID)
+	public List<String> getSecondaryGroupUserIDs(String groupID) throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		List<String> userIDs = new ArrayList<String>();
+
+		String query =
+						"SELECT `" + configuration.webappSecondaryGroupUserIDColumn + "` "
+					+ "FROM `" + configuration.webappSecondaryGroupTable + "` "
+					+ "WHERE `" + configuration.webappSecondaryGroupGroupIDColumn + "` = '" + groupID + "' "
+					+ "AND `" + configuration.webappSecondaryGroupKeyColumn + "` = '" + configuration.webappSecondaryGroupKeyName + "' ";
+
+			result = sql.sqlQuery(query);
+
+			while (result.next())
+			{
+				addCleanID(result.getString(configuration.webappSecondaryGroupUserIDColumn), userIDs);
+			}
+			return userIDs;
 	}
 }
