@@ -152,7 +152,6 @@ public class MultipleKeyValueWebGroupDaoTest
 		assertTrue(secondaryGroups.contains(group2));
 	}
 
-
 	@Test
 	public void getSecondaryGroupUserIDsNeverReturnNull() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
