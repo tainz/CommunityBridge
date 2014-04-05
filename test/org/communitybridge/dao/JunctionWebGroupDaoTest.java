@@ -46,7 +46,7 @@ public class JunctionWebGroupDaoTest
 						 + "(`" + configuration.webappSecondaryGroupUserIDColumn + "`, `" + configuration.webappSecondaryGroupGroupIDColumn + "`) "
 						 + "VALUES ('" + USER_ID + "', '" + group1 +"')";
 		doNothing().when(sql).insertQuery(query);
-		webGroupDao.addGroup(USER_ID, group1, 0);
+		webGroupDao.addUserToGroup(USER_ID, group1, 0);
 		verify(sql).insertQuery(query);
 	}
 
@@ -60,7 +60,7 @@ public class JunctionWebGroupDaoTest
 						 + "(`" + configuration.webappSecondaryGroupUserIDColumn + "`, `" + configuration.webappSecondaryGroupGroupIDColumn + "`, `" + additionalColumn + "`) "
 						 + "VALUES ('" + USER_ID + "', '" + group1 + "', '" + additionalValue + "')";
 		doNothing().when(sql).insertQuery(query);
-		webGroupDao.addGroup(USER_ID, group1, 0);
+		webGroupDao.addUserToGroup(USER_ID, group1, 0);
 		verify(sql).insertQuery(query);
 	}
 
@@ -77,7 +77,7 @@ public class JunctionWebGroupDaoTest
 						 + "(`" + configuration.webappSecondaryGroupUserIDColumn + "`, `" + configuration.webappSecondaryGroupGroupIDColumn + "`, `" + additionalColumn2 + "`, `" + additionalColumn + "`) "
 						 + "VALUES ('" + USER_ID + "', '" + group1 + "', '" + additionalValue2 + "', '" + additionalValue + "')";
 		doNothing().when(sql).insertQuery(query);
-		webGroupDao.addGroup(USER_ID, group1, 0);
+		webGroupDao.addUserToGroup(USER_ID, group1, 0);
 		verify(sql).insertQuery(query);
 	}
 
@@ -89,28 +89,28 @@ public class JunctionWebGroupDaoTest
 								 + "AND `" + configuration.webappSecondaryGroupGroupIDColumn + "` = '" + group1 + "' ";
 
 		doNothing().when(sql).deleteQuery(query);
-		webGroupDao.removeGroup(USER_ID, group1);
+		webGroupDao.removeUserFromGroup(USER_ID, group1);
 		verify(sql).deleteQuery(query);
 	}
 
 	@Test
 	public void getSecondaryGroupsShouldNeverReturnNull() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
-		assertNotNull(webGroupDao.getUserSecondaryGroupIDs(USER_ID));
+		assertNotNull(webGroupDao.getSecondaryGroupIDs(USER_ID));
 	}
 
 	@Test
 	public void getSecondaryGroupsShouldHandleNoResult() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
 		when(result.next()).thenReturn(false);
-		assertNotNull(webGroupDao.getUserSecondaryGroupIDs(USER_ID));
+		assertNotNull(webGroupDao.getSecondaryGroupIDs(USER_ID));
 	}
 
 	@Test
 	public void getSecondaryGroupsWhenSecondaryDisableReturnsEmptyList() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
 		configuration.webappSecondaryGroupEnabled = false;
-		assertEquals(0, webGroupDao.getUserSecondaryGroupIDs("").size());
+		assertEquals(0, webGroupDao.getSecondaryGroupIDs("").size());
 	}
 
 	@Test
@@ -118,7 +118,7 @@ public class JunctionWebGroupDaoTest
 	{
 		group1 = "";
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(group1);
-		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
+		List<String> secondaryGroups = webGroupDao.getSecondaryGroupIDs(USER_ID);
 		assertEquals(0, secondaryGroups.size());
 	}
 
@@ -127,7 +127,7 @@ public class JunctionWebGroupDaoTest
 	{
 		group1 = "          ";
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(group1);
-		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
+		List<String> secondaryGroups = webGroupDao.getSecondaryGroupIDs(USER_ID);
 		assertEquals(0, secondaryGroups.size());
 	}
 
@@ -135,7 +135,7 @@ public class JunctionWebGroupDaoTest
 	public void getSecondaryGroupsWithNullReturnsEmptyList() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(null);
-		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
+		List<String> secondaryGroups = webGroupDao.getSecondaryGroupIDs(USER_ID);
 		assertEquals(0, secondaryGroups.size());
 	}
 
@@ -143,7 +143,7 @@ public class JunctionWebGroupDaoTest
 	public void getSecondaryGroupsReturnsOneGroupID() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(group1);
-		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
+		List<String> secondaryGroups = webGroupDao.getSecondaryGroupIDs(USER_ID);
 		assertEquals(1, secondaryGroups.size());
 		assertTrue(secondaryGroups.contains(group1));
 	}
@@ -153,7 +153,7 @@ public class JunctionWebGroupDaoTest
 	{
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(group1, group2);
 		when(result.next()).thenReturn(true, true, false);
-		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
+		List<String> secondaryGroups = webGroupDao.getSecondaryGroupIDs(USER_ID);
 		assertEquals(2, secondaryGroups.size());
 		assertTrue(secondaryGroups.contains(group1));
 		assertTrue(secondaryGroups.contains(group2));
@@ -164,7 +164,7 @@ public class JunctionWebGroupDaoTest
 	{
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(group1 + "  ", group2);
 		when(result.next()).thenReturn(true, true, false);
-		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
+		List<String> secondaryGroups = webGroupDao.getSecondaryGroupIDs(USER_ID);
 		assertEquals(2, secondaryGroups.size());
 		assertTrue(secondaryGroups.contains(group1));
 		assertTrue(secondaryGroups.contains(group2));
@@ -175,7 +175,7 @@ public class JunctionWebGroupDaoTest
 	{
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn("  ", group2);
 		when(result.next()).thenReturn(true, true, false);
-		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
+		List<String> secondaryGroups = webGroupDao.getSecondaryGroupIDs(USER_ID);
 		assertEquals(1, secondaryGroups.size());
 		assertTrue(secondaryGroups.contains(group2));
 	}

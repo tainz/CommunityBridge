@@ -103,7 +103,6 @@ public class BanSynchronizer extends Synchronizer
 		}
 	}
 
-
 	private void banPlayerWebUser(String userID)
 	{
 		String errorBase = "Error during banPlayerWebUser: ";

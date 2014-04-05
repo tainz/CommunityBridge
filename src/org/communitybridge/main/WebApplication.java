@@ -41,6 +41,7 @@ public class WebApplication extends Synchronizer
 	private SQL sql;
 	private BanSynchronizer banSynchronizer;
 	private WebGroupDao webGroupDao;
+
 	private int maxPlayers;
 
 	private Map<String, String> playerUserIDs = new HashMap<String, String>();
@@ -198,7 +199,7 @@ public class WebApplication extends Synchronizer
 	{
 		try
 		{
-			return webGroupDao.getUserPrimaryGroupID(getUserID(playerName));
+			return webGroupDao.getPrimaryGroupID(getUserID(playerName));
 		}
 		catch (SQLException exception)
 		{
@@ -226,7 +227,7 @@ public class WebApplication extends Synchronizer
 	{
 		try
 		{
-			return webGroupDao.getUserSecondaryGroupIDs(getUserID(playerName));
+			return webGroupDao.getSecondaryGroupIDs(getUserID(playerName));
 		}
 		catch (SQLException exception)
 		{
@@ -564,7 +565,7 @@ public class WebApplication extends Synchronizer
 	{
 		try
 		{
-				webGroupDao.addGroup(userID, groupID, currentGroupCount);
+				webGroupDao.addUserToGroup(userID, groupID, currentGroupCount);
 		}
 		catch (MalformedURLException exception)
 		{
@@ -593,7 +594,7 @@ public class WebApplication extends Synchronizer
 	{
 		try
 		{
-			webGroupDao.removeGroup(userID, configuration.getWebappGroupIDbyGroupName(groupName));
+			webGroupDao.removeUserFromGroup(userID, configuration.getWebappGroupIDbyGroupName(groupName));
 		}
 		catch (SQLException exception)
 		{
@@ -1351,5 +1352,10 @@ public class WebApplication extends Synchronizer
 		{
 			log.severe(exceptionBase + exception.getMessage());
 		}
+	}
+
+	public WebGroupDao getWebGroupDao()
+	{
+		return webGroupDao;
 	}
 } // WebApplication class

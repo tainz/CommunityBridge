@@ -18,20 +18,20 @@ public class WebApplicationTest
 	private static final String GROUP_NAME = RandomStringUtils.randomAlphabetic(10);
 	private static final String GROUP_ID = RandomStringUtils.randomAlphabetic(2);
 	private static final int COUNT = 0;
-	
+
 	private Configuration configuration;
-	
+
 	TestableWebApplication  webApplication;
 	WebGroupDao webGroupDao;
 	Log log;
-	
+
 	public class TestableWebApplication extends WebApplication
 	{
 		public TestableWebApplication(Configuration configuration, Log log, WebGroupDao webGroupDao)
 		{
 			super(configuration, log, webGroupDao);
 		}
-		
+
 		public TestableWebApplication(CommunityBridge plugin, Configuration config, Log log, SQL sql)
 		{
 			super(plugin, config, log, sql);
@@ -42,7 +42,7 @@ public class WebApplicationTest
 			return USER_ID;
 		}
 	}
-	
+
 	@Before
 	public void setup()
 	{
@@ -51,11 +51,11 @@ public class WebApplicationTest
 		configuration = mock(Configuration.class);
 		webApplication= new TestableWebApplication(configuration, log, webGroupDao);
 	}
-	
+
 	@Test
 	public void addGroupWorks() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
-		doNothing().when(webGroupDao).addGroup(USER_ID, GROUP_NAME, COUNT);
+		doNothing().when(webGroupDao).addUserToGroup(USER_ID, GROUP_NAME, COUNT);
 		webApplication.addGroup(USER_ID, GROUP_NAME, COUNT);
 	}
 
@@ -89,7 +89,7 @@ public class WebApplicationTest
 
 	private void testAddGroupException(Exception exception) throws SQLException, InstantiationException, IllegalAccessException, MalformedURLException
 	{
-		doThrow(exception).when(webGroupDao).addGroup(USER_ID, GROUP_NAME, COUNT);
+		doThrow(exception).when(webGroupDao).addUserToGroup(USER_ID, GROUP_NAME, COUNT);
 		webApplication.addGroup(USER_ID, GROUP_NAME, COUNT);
 		verify(log).severe(WebApplication.EXCEPTION_MESSAGE_ADDGROUP + exception.getMessage());
 	}
@@ -97,7 +97,7 @@ public class WebApplicationTest
 	@Test
 	public void removeGroupWorks() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
-		doNothing().when(webGroupDao).removeGroup(USER_ID, GROUP_NAME);
+		doNothing().when(webGroupDao).removeUserFromGroup(USER_ID, GROUP_NAME);
 		webApplication.removeGroup(USER_ID, GROUP_NAME);
 	}
 
@@ -132,7 +132,7 @@ public class WebApplicationTest
 	private void testRemoveGroupException(Exception exception) throws SQLException, InstantiationException, IllegalAccessException, MalformedURLException
 	{
 		when(configuration.getWebappGroupIDbyGroupName(GROUP_NAME)).thenReturn(GROUP_ID);
-		doThrow(exception).when(webGroupDao).removeGroup(USER_ID, GROUP_ID);
+		doThrow(exception).when(webGroupDao).removeUserFromGroup(USER_ID, GROUP_ID);
 		webApplication.removeGroup(USER_ID, GROUP_NAME);
 		verify(log).severe(WebApplication.EXCEPTION_MESSAGE_REMOVEGROUP + exception.getMessage());
 	}
@@ -140,83 +140,83 @@ public class WebApplicationTest
 	@Test
 	public void getUserPrimaryGroupIDShouldNeverReturnNull()throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
-		when(webGroupDao.getUserPrimaryGroupID(anyString())).thenReturn("");
+		when(webGroupDao.getPrimaryGroupID(anyString())).thenReturn("");
 		assertNotNull(webApplication.getUserPrimaryGroupID(""));
 	}
-	
+
 	@Test
 	public void getUserPrimaryGroupIDHandlesSQLException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
 		SQLException exception = new SQLException(EXCEPTION_MESSAGE);
 		testUserPrimaryGroupIDGroupsException(exception);
 	}
-	
+
 	@Test
 	public void getUserPrimaryGroupIDHandlesMalformedURLException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
 		MalformedURLException exception = new MalformedURLException(EXCEPTION_MESSAGE);
 		testUserPrimaryGroupIDGroupsException(exception);
 	}
-		
+
 	@Test
 	public void getUserPrimaryGroupIDHandlesInstantiationException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
 		InstantiationException exception = new InstantiationException(EXCEPTION_MESSAGE);
 		testUserPrimaryGroupIDGroupsException(exception);
 	}
-	
+
 	@Test
 	public void getUserPrimaryGroupIDHandlesIllegalAccessException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
 		IllegalAccessException exception = new IllegalAccessException(EXCEPTION_MESSAGE);
 		testUserPrimaryGroupIDGroupsException(exception);
 	}
-	
+
 	private void testUserPrimaryGroupIDGroupsException(Exception exception) throws SQLException, InstantiationException, IllegalAccessException, MalformedURLException
 	{
-		when(webGroupDao.getUserPrimaryGroupID(anyString())).thenThrow(exception);
+		when(webGroupDao.getPrimaryGroupID(anyString())).thenThrow(exception);
 		webApplication.getUserPrimaryGroupID(PLAYER_NAME);
 		verify(log).severe(WebApplication.EXCEPTION_MESSAGE_GETPRIMARY + exception.getMessage());
 	}
-	
+
 	@Test
 	public void getUserSecondaryGroupIDsShouldNeverReturnNull()throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
-		when(webGroupDao.getUserSecondaryGroupIDs(anyString())).thenReturn(WebApplication.EMPTY_LIST);
+		when(webGroupDao.getSecondaryGroupIDs(anyString())).thenReturn(WebApplication.EMPTY_LIST);
 		assertNotNull(webApplication.getUserSecondaryGroupIDs(""));
 	}
-	
+
 		@Test
 	public void getUserSecondaryGroupIDsHandlesSQLException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
 		SQLException exception = new SQLException(EXCEPTION_MESSAGE);
 		testSecondaryGroupUserIDsGroupsException(exception);
 	}
-	
+
 	@Test
 	public void getUserSecondaryGroupIDsHandlesMalformedURLException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
 		MalformedURLException exception = new MalformedURLException(EXCEPTION_MESSAGE);
 		testSecondaryGroupUserIDsGroupsException(exception);
 	}
-		
+
 	@Test
 	public void getUserSecondaryGroupIDsHandlesInstantiationException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
 		InstantiationException exception = new InstantiationException(EXCEPTION_MESSAGE);
 		testSecondaryGroupUserIDsGroupsException(exception);
 	}
-	
+
 	@Test
 	public void getUserSecondaryGroupIDsHandlesIllegalAccessException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
 		IllegalAccessException exception = new IllegalAccessException(EXCEPTION_MESSAGE);
 		testSecondaryGroupUserIDsGroupsException(exception);
 	}
-	
+
 	private void testSecondaryGroupUserIDsGroupsException(Exception exception) throws SQLException, InstantiationException, IllegalAccessException, MalformedURLException
 	{
-		when(webGroupDao.getUserSecondaryGroupIDs(anyString())).thenThrow(exception);
+		when(webGroupDao.getSecondaryGroupIDs(anyString())).thenThrow(exception);
 		assertEquals(0, webApplication.getUserSecondaryGroupIDs(PLAYER_NAME).size());
 		verify(log).severe(WebApplication.EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
 	}

@@ -75,6 +75,10 @@ public class BanState
 		{
 			collectWebBansUserMethod();
 		}
+		else if (storageMethod.startsWith("gro"))
+		{
+			collectWebBansGroupMethod();
+		}
 	}
 
 	private void collectWebBansTableMethod()
@@ -130,14 +134,7 @@ public class BanState
 
 	private void collectWebBansGroupMethod()
 	{
-		if (CommunityBridge.config.banSynchronizationBanGroupType.startsWith("pri"))
-		{
-			collectWebBansGroupPrimary();
-		}
-		else if (CommunityBridge.config.banSynchronizationBanGroupType.startsWith("sec"))
-		{
-			collectWebBansGroupSecondary();
-		}
+		CommunityBridge.webapp.getWebGroupDao().getGroupUserIDs(storageMethod);
 	}
 
 	private void collectWebBansUserMethod()
@@ -172,42 +169,5 @@ public class BanState
 		{
 			log.severe(exceptionBase + exception.getMessage());
 		}
-	}
-
-	private void collectWebBansGroupPrimary()
-	{
-		String exceptionBase = "Exception during collectWebBansGroupPrimary: ";
-		String query = "SELECT `" + CommunityBridge.config.webappPrimaryGroupUserIDColumn + "` "
-								 + "FROM `" + CommunityBridge.config.webappPrimaryGroupTable + "` "
-								 + "WHERE `" + CommunityBridge.config.webappPrimaryGroupGroupIDColumn + "` = '" + CommunityBridge.config.banSynchronizationBanGroupID;
-
-		try
-		{
-			ResultSet result = CommunityBridge.sql.sqlQuery(query);
-			while(result.next())
-			{
-				webBannedUserIDs.add(result.getString(CommunityBridge.config.webappPrimaryGroupUserIDColumn));
-			}
-		}
-		catch (MalformedURLException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-		}
-		catch (InstantiationException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-		}
-		catch (IllegalAccessException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-		}
-		catch (SQLException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-		}
-	}
-
-	private void collectWebBansGroupSecondary()
-	{
 	}
 }

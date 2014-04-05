@@ -20,10 +20,10 @@ public class KeyValueWebGroupDao extends WebGroupDao
 	}
 
 	@Override
-	public void addGroup(String userID, String groupID, int currentGroupCount) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
+	public void addUserToGroup(String userID, String groupID, int currentGroupCount) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
 		result = sql.sqlQuery(getSecondaryGroupReadQuery(userID));
-		
+
 		if (result.next())
 		{
 			List<String> groupIDs = getGroupIDsFromResult();
@@ -37,35 +37,35 @@ public class KeyValueWebGroupDao extends WebGroupDao
 	}
 
 	@Override
-	public void removeGroup(String userID, String groupID) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
+	public void removeUserFromGroup(String userID, String groupID) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
 		result = sql.sqlQuery(getSecondaryGroupReadQuery(userID));
-		
+
 		if (result.next())
 		{
 			List<String> groupIDs  = getGroupIDsFromResult();
 			groupIDs.remove(groupID);
 			sql.updateQuery(getGroupIDsUpdateQuery(groupIDs, userID));
-		}		
+		}
 	}
 
 	protected List<String> getGroupIDsFromResult() throws SQLException
 	{
 		List<String> groupIDs = new ArrayList();
 		String groupIDString = result.getString(configuration.webappSecondaryGroupGroupIDColumn);
-		
+
 		if (groupIDString == null)
 		{
 			return groupIDs;
 		}
-		
+
 		groupIDString = groupIDString.trim();
-		
+
 		if (groupIDString.isEmpty())
 		{
 			return groupIDs;
 		}
-		
+
 		groupIDs.addAll(Arrays.asList(groupIDString.split(configuration.webappSecondaryGroupGroupIDDelimiter)));
 		return groupIDs;
 	}
@@ -77,7 +77,7 @@ public class KeyValueWebGroupDao extends WebGroupDao
 				 + "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' "
 				 + "AND `" + configuration.webappSecondaryGroupKeyColumn + "` = '" + configuration.webappSecondaryGroupKeyName + "' ";
 	}
-	
+
 	protected String getGroupIDsUpdateQuery(List<String> groupIDs, String userID)
 	{
 		String groupIDString = StringUtilities.joinStrings(groupIDs, configuration.webappSecondaryGroupGroupIDDelimiter);
@@ -102,7 +102,7 @@ public class KeyValueWebGroupDao extends WebGroupDao
 	}
 
 	@Override
-	public List<String> getUserSecondaryGroupIDs(String userID) throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	public List<String> getSecondaryGroupIDs(String userID) throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
 		List<String> groupIDs = new ArrayList<String>();
 		String query =
@@ -121,19 +121,7 @@ public class KeyValueWebGroupDao extends WebGroupDao
 	}
 
 	@Override
-	public List<String> getGroupUserIDs(String groupID)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
-	public List<String> getGroupUserIDsPrimary(String groupID)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
-	public List<String> getGroupUserIDsSecondary(String groupID)
+	public List<String> getSecondaryGroupUserIDs(String groupID)
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}

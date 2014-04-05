@@ -5,35 +5,35 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import static org.communitybridge.dao.SingleWebGroupDao.EXCEPTION_MESSAGE_GET_USERIDS;
 import org.communitybridge.main.Configuration;
 import org.communitybridge.main.SQL;
 import org.communitybridge.utility.Log;
 
 public abstract class WebGroupDao
 {
-	public static final List<String> EMPTY_LIST = new ArrayList<String>();
+	protected static final List<String> EMPTY_LIST = new ArrayList<String>();
+
 	protected Configuration configuration;
 	protected SQL sql;
 	protected Log log;
 	protected ResultSet result;
-	
+
 	WebGroupDao(Configuration configuration, SQL sql, Log log)
 	{
 		this.configuration = configuration;
 		this.sql = sql;
 		this.log = log;
 	}
-	
-	abstract public void addGroup(String userID, String groupID, int currentGroupCount) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException;
 
-	abstract public void removeGroup(String userID, String groupID) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException;
+	abstract public void addUserToGroup(String userID, String groupID, int currentGroupCount) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException;
 
-	abstract public List<String> getUserSecondaryGroupIDs(String userID) throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException;
-	abstract public List<String> getGroupUserIDs(String groupID);
-	abstract public List<String> getGroupUserIDsPrimary(String groupID);
-	abstract public List<String> getGroupUserIDsSecondary(String groupID);
+	abstract public void removeUserFromGroup(String userID, String groupID) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException;
 
-	public String getUserPrimaryGroupID(String userID) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
+	abstract public List<String> getSecondaryGroupIDs(String userID) throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException;
+	abstract public List<String> getSecondaryGroupUserIDs(String groupID) throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException;
+
+	public String getPrimaryGroupID(String userID) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
 		if (!configuration.webappPrimaryGroupEnabled)
 		{
@@ -52,7 +52,7 @@ public abstract class WebGroupDao
 			return "";
 		}
 	}
-	
+
 	private String determinePrimaryGroupQuery(String userID)
 	{
 		if (configuration.webappPrimaryGroupUsesKey)
@@ -93,5 +93,58 @@ public abstract class WebGroupDao
 			}
 		}
 		return idList;
+	}
+
+	public List<String> getGroupUserIDs(String groupID)
+	{
+		List<String> userIDs = new ArrayList<String>();
+		try
+		{
+			userIDs.addAll(getUserIDsFromPrimaryGroup(groupID));
+			userIDs.addAll(getSecondaryGroupUserIDs(groupID));
+
+			return userIDs;
+		}
+		catch (IllegalAccessException exception)
+		{
+			log.severe(EXCEPTION_MESSAGE_GET_USERIDS + exception.getMessage());
+			return userIDs;
+		}
+		catch (InstantiationException exception)
+		{
+			log.severe(EXCEPTION_MESSAGE_GET_USERIDS + exception.getMessage());
+			return userIDs;
+		}
+		catch (MalformedURLException exception)
+		{
+			log.severe(EXCEPTION_MESSAGE_GET_USERIDS + exception.getMessage());
+			return userIDs;
+		}
+		catch (SQLException exception)
+		{
+			log.severe(EXCEPTION_MESSAGE_GET_USERIDS + exception.getMessage());
+			return userIDs;
+		}
+	}
+
+	protected List<String> getUserIDsFromPrimaryGroup(String groupID) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
+	{
+		List<String> userIDs = new ArrayList<String>();
+
+		if (!configuration.webappPrimaryGroupEnabled)
+		{
+			return userIDs;
+		}
+
+		String query =
+						"SELECT `" + configuration.webappPrimaryGroupUserIDColumn + "` "
+						+ "FROM `" + configuration.webappPrimaryGroupTable + "` "
+						+ "WHERE `" + configuration.webappPrimaryGroupGroupIDColumn + "` = '" + groupID + "' ";
+		result = sql.sqlQuery(query);
+		while(result.next())
+		{
+			userIDs.add(result.getString(configuration.webappPrimaryGroupUserIDColumn));
+		}
+		return userIDs;
 	}
 }

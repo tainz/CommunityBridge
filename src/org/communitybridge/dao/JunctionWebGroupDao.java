@@ -19,7 +19,7 @@ public class JunctionWebGroupDao extends WebGroupDao
 	}
 
 	@Override
-	public void addGroup(String userID, String groupID, int currentGroupCount) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
+	public void addUserToGroup(String userID, String groupID, int currentGroupCount) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
 		String columns = "(`" + configuration.webappSecondaryGroupUserIDColumn + "`, `" + configuration.webappSecondaryGroupGroupIDColumn;
 		String values = "VALUES ('" + userID + "', '" + groupID;
@@ -32,13 +32,13 @@ public class JunctionWebGroupDao extends WebGroupDao
 
 		columns = columns + "`) ";
 		values = values + "')";
-		
+
 		String query = "INSERT INTO `" + configuration.webappSecondaryGroupTable + "` " + columns + values;
 		sql.insertQuery(query);
 	}
 
 	@Override
-	public void removeGroup(String userID, String groupID) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
+	public void removeUserFromGroup(String userID, String groupID) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
 		String query = "DELETE FROM `" + configuration.webappSecondaryGroupTable + "` "
 								 + "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' "
@@ -47,7 +47,7 @@ public class JunctionWebGroupDao extends WebGroupDao
 	}
 
 	@Override
-	public List<String> getUserSecondaryGroupIDs(String userID) throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	public List<String> getSecondaryGroupIDs(String userID) throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
 		List<String> groupIDs = new ArrayList<String>();
 		String query = "SELECT `" + configuration.webappSecondaryGroupGroupIDColumn + "` "
@@ -64,19 +64,7 @@ public class JunctionWebGroupDao extends WebGroupDao
 	}
 
 	@Override
-	public List<String> getGroupUserIDs(String groupID)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
-	public List<String> getGroupUserIDsPrimary(String groupID)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
-	public List<String> getGroupUserIDsSecondary(String groupID)
+	public List<String> getSecondaryGroupUserIDs(String groupID)
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}

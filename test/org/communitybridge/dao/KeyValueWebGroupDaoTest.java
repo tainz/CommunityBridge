@@ -49,7 +49,7 @@ public class KeyValueWebGroupDaoTest
 		when(sql.sqlQuery(query)).thenReturn(result);
 		when(result.next()).thenReturn(false);
 		doNothing().when(sql).updateQuery(webGroupDao.getGroupIDInsertQuery(USER_ID, group1));
-		webGroupDao.addGroup(USER_ID, group1, 0);
+		webGroupDao.addUserToGroup(USER_ID, group1, 0);
 		verify(sql).sqlQuery(query);
 	}
 
@@ -61,7 +61,7 @@ public class KeyValueWebGroupDaoTest
 		when(result.next()).thenReturn(false);
 		query = webGroupDao.getGroupIDInsertQuery(USER_ID, group1);
 		doNothing().when(sql).insertQuery(query);
-		webGroupDao.addGroup(USER_ID, group1, 0);
+		webGroupDao.addUserToGroup(USER_ID, group1, 0);
 		verify(sql).insertQuery(query);
 	}
 
@@ -77,7 +77,7 @@ public class KeyValueWebGroupDaoTest
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(null);
 		query = webGroupDao.getGroupIDsUpdateQuery(groupsAsList, USER_ID);
 		doNothing().when(sql).updateQuery(query);
-		webGroupDao.addGroup(USER_ID, group1, 0);
+		webGroupDao.addUserToGroup(USER_ID, group1, 0);
 		verify(sql).updateQuery(query);
 	}
 
@@ -93,7 +93,7 @@ public class KeyValueWebGroupDaoTest
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn("");
 		query = webGroupDao.getGroupIDsUpdateQuery(groupsAsList, USER_ID);
 		doNothing().when(sql).updateQuery(query);
-		webGroupDao.addGroup(USER_ID, group1, 0);
+		webGroupDao.addUserToGroup(USER_ID, group1, 0);
 		verify(sql).updateQuery(query);
 	}
 
@@ -109,7 +109,7 @@ public class KeyValueWebGroupDaoTest
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn("      ");
 		query = webGroupDao.getGroupIDsUpdateQuery(groupsAsList, USER_ID);
 		doNothing().when(sql).updateQuery(query);
-		webGroupDao.addGroup(USER_ID, group1, 0);
+		webGroupDao.addUserToGroup(USER_ID, group1, 0);
 		verify(sql).updateQuery(query);
 	}
 
@@ -126,7 +126,7 @@ public class KeyValueWebGroupDaoTest
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(group2);
 		query = webGroupDao.getGroupIDsUpdateQuery(groupsAsList, USER_ID);
 		doNothing().when(sql).updateQuery(query);
-		webGroupDao.addGroup(USER_ID, group1, 0);
+		webGroupDao.addUserToGroup(USER_ID, group1, 0);
 		verify(sql).updateQuery(query);
 	}
 
@@ -136,7 +136,7 @@ public class KeyValueWebGroupDaoTest
 		String query = webGroupDao.getSecondaryGroupReadQuery(USER_ID);
 		when(sql.sqlQuery(query)).thenReturn(result);
 		when(result.next()).thenReturn(false);
-		webGroupDao.removeGroup(USER_ID, group1);
+		webGroupDao.removeUserFromGroup(USER_ID, group1);
 		verify(sql).sqlQuery(query);
 	}
 
@@ -146,7 +146,7 @@ public class KeyValueWebGroupDaoTest
 		String query = webGroupDao.getSecondaryGroupReadQuery(USER_ID);
 		when(sql.sqlQuery(query)).thenReturn(result);
 		when(result.next()).thenReturn(false);
-		webGroupDao.removeGroup(USER_ID, group1);
+		webGroupDao.removeUserFromGroup(USER_ID, group1);
 		verify(sql).sqlQuery(query);
 		verifyNoMoreInteractions(sql);
 	}
@@ -182,7 +182,7 @@ public class KeyValueWebGroupDaoTest
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(before);
 		String query = getRemoveGroupUpdateQuery(after);
 		doNothing().when(sql).updateQuery(query);
-		webGroupDao.removeGroup(USER_ID, group1);
+		webGroupDao.removeUserFromGroup(USER_ID, group1);
 		verify(sql).updateQuery(query);
 	}
 
@@ -197,21 +197,21 @@ public class KeyValueWebGroupDaoTest
 	@Test
 	public void getSecondaryGroupsShouldNeverReturnNull() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
-		assertNotNull(webGroupDao.getUserSecondaryGroupIDs(USER_ID));
+		assertNotNull(webGroupDao.getSecondaryGroupIDs(USER_ID));
 	}
 
 	@Test
 	public void getSecondaryGroupsShouldHandleNoResult() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
 		when(result.next()).thenReturn(false);
-		assertNotNull(webGroupDao.getUserSecondaryGroupIDs(USER_ID));
+		assertNotNull(webGroupDao.getSecondaryGroupIDs(USER_ID));
 	}
 
 	@Test
 	public void getSecondaryGroupsWhenSecondaryDisableReturnsEmptyList() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
 		configuration.webappSecondaryGroupEnabled = false;
-		assertEquals(0, webGroupDao.getUserSecondaryGroupIDs("").size());
+		assertEquals(0, webGroupDao.getSecondaryGroupIDs("").size());
 	}
 
 	@Test
@@ -219,7 +219,7 @@ public class KeyValueWebGroupDaoTest
 	{
 		groups = "";
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
-		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
+		List<String> secondaryGroups = webGroupDao.getSecondaryGroupIDs(USER_ID);
 		assertEquals(0, secondaryGroups.size());
 	}
 
@@ -228,7 +228,7 @@ public class KeyValueWebGroupDaoTest
 	{
 		groups = "          ";
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
-		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
+		List<String> secondaryGroups = webGroupDao.getSecondaryGroupIDs(USER_ID);
 		assertEquals(0, secondaryGroups.size());
 	}
 
@@ -237,7 +237,7 @@ public class KeyValueWebGroupDaoTest
 	{
 		groups = "          ";
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(null);
-		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
+		List<String> secondaryGroups = webGroupDao.getSecondaryGroupIDs(USER_ID);
 		assertEquals(0, secondaryGroups.size());
 	}
 
@@ -246,7 +246,7 @@ public class KeyValueWebGroupDaoTest
 	{
 		groups = RandomStringUtils.randomNumeric(2);
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
-		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
+		List<String> secondaryGroups = webGroupDao.getSecondaryGroupIDs(USER_ID);
 		assertEquals(1, secondaryGroups.size());
 		assertEquals(groups, secondaryGroups.get(0));
 	}
@@ -256,7 +256,7 @@ public class KeyValueWebGroupDaoTest
 	{
 		groups = group1 + "," + group2;
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
-		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
+		List<String> secondaryGroups = webGroupDao.getSecondaryGroupIDs(USER_ID);
 		assertEquals(2, secondaryGroups.size());
 		assertTrue(secondaryGroups.contains(group1));
 		assertTrue(secondaryGroups.contains(group2));
@@ -267,7 +267,7 @@ public class KeyValueWebGroupDaoTest
 	{
 		groups = group1 + " , " + group2;
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
-		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
+		List<String> secondaryGroups = webGroupDao.getSecondaryGroupIDs(USER_ID);
 		assertEquals(2, secondaryGroups.size());
 		assertTrue(secondaryGroups.contains(group1));
 		assertTrue(secondaryGroups.contains(group2));
@@ -278,7 +278,7 @@ public class KeyValueWebGroupDaoTest
 	{
 		groups = " , " + group2;
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
-		List<String> secondaryGroups = webGroupDao.getUserSecondaryGroupIDs(USER_ID);
+		List<String> secondaryGroups = webGroupDao.getSecondaryGroupIDs(USER_ID);
 		assertEquals(1, secondaryGroups.size());
 		assertTrue(secondaryGroups.contains(group2));
 	}
