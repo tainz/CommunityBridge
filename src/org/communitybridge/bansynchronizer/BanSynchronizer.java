@@ -42,12 +42,14 @@ public class BanSynchronizer extends Synchronizer
 		{
 			synchronizeWebToGame(previous, current);
 		}
-		else if (isValidDirection(configuration.banSynchronizationDirection, "min"))
+
+		if (isValidDirection(configuration.banSynchronizationDirection, "min"))
 		{
 			synchronizeGameToWeb(previous, current);
 		}
 
 		current.generate();
+		
 		try
 		{
 			current.save();

@@ -168,7 +168,7 @@ player-user-linking:
   uses-key: false
 
   # If you set 'linking-uses-key' to false, then set this to the column that
-  # the playername is stored in. Otherwise, leave it empty.
+  # the minecraft playername is stored in. Otherwise, leave it empty.
   playername-column:
 
   # If you set 'linking-uses-key' to true, then set the key column, value
@@ -490,7 +490,7 @@ ban-synchronization:
   # - minecraft: Changes made in Minecraft are synchronized to the
   #   web-application.
   direction: two-way
-  
+
   # Method options:
   # - table: Banned users will be inserted and deleted from a table that is a list of bans
   # - user: A column on the users/members table designates whether a user is banned.

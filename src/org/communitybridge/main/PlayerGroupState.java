@@ -52,7 +52,6 @@ public class PlayerGroupState
 				}
 			}
 		}
-		
 	}
 
 	public void load()

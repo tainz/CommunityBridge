@@ -77,7 +77,7 @@ public class BanState
 		}
 		else if (storageMethod.startsWith("gro"))
 		{
-			collectWebBansGroupMethod();
+			collectWebBansGroupMethod(CommunityBridge.config.banSynchronizationBanGroup);
 		}
 	}
 
@@ -132,25 +132,24 @@ public class BanState
 		this.webBannedUserIDs = webBannedUserIDs;
 	}
 
-	private void collectWebBansGroupMethod()
+	private void collectWebBansGroupMethod(String groupID)
 	{
-		CommunityBridge.webapp.getWebGroupDao().getGroupUserIDs(storageMethod);
+		CommunityBridge.webapp.getWebGroupDao().getGroupUserIDs(groupID);
 	}
 
 	private void collectWebBansUserMethod()
 	{
 		String exceptionBase = "Exception in collectWebBansUser: ";
-		String query = "SELECT * FROM `" + CommunityBridge.config.banSynchronizationTableName + "`";
+		String query = "SELECT * FROM `" + CommunityBridge.config.banSynchronizationTableName + "` "
+								 + "WHERE `" + CommunityBridge.config.banSynchronizationBanColumn + "` = '" + CommunityBridge.config.banSynchronizationValueBanned + "'";
 
 		try
 		{
 			ResultSet result = CommunityBridge.sql.sqlQuery(query);
+
 			while(result.next())
 			{
-				if (result.getString(CommunityBridge.config.banSynchronizationBanColumn).equals(CommunityBridge.config.banSynchronizationValueBanned))
-				{
-					webBannedUserIDs.add(result.getString(CommunityBridge.config.banSynchronizationUserIDColumn));
-				}
+				webBannedUserIDs.add(result.getString(CommunityBridge.config.banSynchronizationUserIDColumn));
 			}
 		}
 		catch (MalformedURLException exception)
