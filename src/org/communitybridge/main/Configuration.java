@@ -513,6 +513,11 @@ public class Configuration
 			log.severe("Simple synchronization disabled due to prior errors.");
 		}
 
+		if (simpleSynchronizationEnabled && webappPrimaryGroupEnabled && CommunityBridge.permissionHandler.supportsPrimaryGroups() == false && simpleSynchronizationGroupsTreatedAsPrimary.isEmpty())
+		{
+			log.warning("The permissions system does not support primary groups and primary group synchronization is enabled...but there are no groups listed in the 'groups treated as primary' configuration option.");
+		}
+
 		if (banSynchronizationEnabled)
 		{
 			temp = checkTable(sql, "ban-synchronization.table-name", banSynchronizationTableName);
@@ -758,11 +763,14 @@ public class Configuration
 
 	public String getWebappGroupIDbyGroupName(String groupName)
 	{
-		for (Entry<String, Object> entry: simpleSynchronizationGroupMap.entrySet())
+		if (groupName != null && !groupName.isEmpty())
 		{
-			if (groupName.equalsIgnoreCase((String)entry.getValue()))
+			for (Entry<String, Object> entry: simpleSynchronizationGroupMap.entrySet())
 			{
-				return entry.getKey();
+				if (groupName.equalsIgnoreCase((String)entry.getValue()))
+				{
+					return entry.getKey();
+				}
 			}
 		}
 		return null;
