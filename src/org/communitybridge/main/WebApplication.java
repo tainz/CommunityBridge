@@ -486,6 +486,7 @@ public class WebApplication extends Synchronizer
 	private void synchronizeGroups(Player player)
 	{
 		String playerName = player.getName();
+		String uuid = player.getUniqueId().toString().replace("-", "");
 		String direction = configuration.simpleSynchronizationDirection;
 		String userID = getUserID(playerName);
 
@@ -512,10 +513,10 @@ public class WebApplication extends Synchronizer
 
 		File playerFolder = new File(plugin.getDataFolder(), "Players");
 
-		PlayerGroupState previous = new PlayerGroupState(playerName, playerFolder);
+		PlayerGroupState previous = new PlayerGroupState(playerFolder, uuid, playerName);
 		previous.load();
 
-		PlayerGroupState current = new PlayerGroupState(playerName, playerFolder);
+		PlayerGroupState current = new PlayerGroupState(playerFolder, uuid, playerName);
 		current.generate();
 		PlayerGroupState result = current.copy();
 

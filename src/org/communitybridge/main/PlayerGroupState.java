@@ -10,9 +10,12 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 public class PlayerGroupState
 {
-	private String playerName;
-	private String fileName;
 	private File playerFolder;
+	private String name;
+	private String uuid;
+
+	private File playerFile;
+	private File oldPlayerFile;
 
 	public String webappPrimaryGroupID;
 	public List<String> webappGroupIDs;
@@ -22,24 +25,25 @@ public class PlayerGroupState
 
 	public boolean isNewFile;
 
-	public PlayerGroupState(String playerName, File playerDataFolder)
+	public PlayerGroupState(File playerFolder, String uuid, String name)
 	{
-		this.playerName = playerName;
-		this.fileName = playerName + ".yml";
-		this.playerFolder = playerDataFolder;
+		this.name = name;
+		this.playerFolder = playerFolder;
+		this.playerFile = new File(playerFolder, uuid + ".yml");
+		this.oldPlayerFile = new File(playerFolder, name + ".yml");
 		this.webappGroupIDs = new ArrayList<String>();
 		this.permissionsSystemGroupNames = new ArrayList<String>();
 	}
 
 	public void generate()
 	{
-		webappPrimaryGroupID = CommunityBridge.webapp.getUserPrimaryGroupID(playerName);
-		webappGroupIDs = CommunityBridge.webapp.getUserSecondaryGroupIDs(playerName);
-		permissionsSystemGroupNames = new ArrayList<String>(Arrays.asList(CommunityBridge.permissionHandler.getGroups(playerName)));
+		webappPrimaryGroupID = CommunityBridge.webapp.getUserPrimaryGroupID(name);
+		webappGroupIDs = CommunityBridge.webapp.getUserSecondaryGroupIDs(name);
+		permissionsSystemGroupNames = new ArrayList<String>(Arrays.asList(CommunityBridge.permissionHandler.getGroups(name)));
 
 		if (CommunityBridge.permissionHandler.supportsPrimaryGroups())
 		{
-			permissionsSystemPrimaryGroupName = CommunityBridge.permissionHandler.getPrimaryGroup(playerName);
+			permissionsSystemPrimaryGroupName = CommunityBridge.permissionHandler.getPrimaryGroup(name);
 		}
 		else
 		{
@@ -56,31 +60,29 @@ public class PlayerGroupState
 
 	public void load()
 	{
-		File playerFile = new File(playerFolder, fileName);
-
 		if (playerFile.exists())
 		{
-			FileConfiguration playerData = YamlConfiguration.loadConfiguration(playerFile);
-			webappPrimaryGroupID = playerData.getString("webapp.primary-group-id", "");
-			webappGroupIDs = playerData.getStringList("webapp.group-ids");
-			permissionsSystemPrimaryGroupName = playerData.getString("permissions-system.primary-group-name", "");
-			permissionsSystemGroupNames = playerData.getStringList("permissions-system.group-names");
-			isNewFile = false;
+			loadFromFile(playerFile);
 		}
 		else
 		{
-			isNewFile = true;
-			webappPrimaryGroupID = "";
-			webappGroupIDs = new ArrayList<String>();
-			permissionsSystemPrimaryGroupName = "";
-			permissionsSystemGroupNames = new ArrayList<String>();
+			if (oldPlayerFile.exists())
+			{
+				loadFromFile(oldPlayerFile);
+			}
+			else
+			{
+				isNewFile = true;
+				webappPrimaryGroupID = "";
+				webappGroupIDs = new ArrayList<String>();
+				permissionsSystemPrimaryGroupName = "";
+				permissionsSystemGroupNames = new ArrayList<String>();
+			}
 		}
 	}
 
 	public void save() throws IOException
 	{
-		File playerFile = new File(playerFolder, fileName);
-
 		FileConfiguration playerData = new YamlConfiguration();
 		playerData.set("webapp.primary-group-id", webappPrimaryGroupID);
 		playerData.set("webapp.group-ids", webappGroupIDs);
@@ -92,12 +94,22 @@ public class PlayerGroupState
 
 	public PlayerGroupState copy()
 	{
-		PlayerGroupState copy = new PlayerGroupState(playerName, playerFolder);
+		PlayerGroupState copy = new PlayerGroupState(playerFolder, uuid, name);
 		copy.isNewFile = isNewFile;
 		copy.permissionsSystemGroupNames.addAll(permissionsSystemGroupNames);
 		copy.permissionsSystemPrimaryGroupName = permissionsSystemPrimaryGroupName;
 		copy.webappGroupIDs.addAll(webappGroupIDs);
 		copy.webappPrimaryGroupID = webappPrimaryGroupID;
 		return copy;
+	}
+
+	private void loadFromFile(File file)
+	{
+		FileConfiguration playerData = YamlConfiguration.loadConfiguration(file);
+		webappPrimaryGroupID = playerData.getString("webapp.primary-group-id", "");
+		webappGroupIDs = playerData.getStringList("webapp.group-ids");
+		permissionsSystemPrimaryGroupName = playerData.getString("permissions-system.primary-group-name", "");
+		permissionsSystemGroupNames = playerData.getStringList("permissions-system.group-names");
+		isNewFile = false;
 	}
 }
