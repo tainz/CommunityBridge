@@ -291,7 +291,7 @@ public class WebGroupDaoTest
 		@Override
 		public List<String> getSecondaryGroupUserIDs(String groupID)
 		{
-			return new ArrayList(Arrays.asList(user_id1, user_id2));
+			return new ArrayList<String>(Arrays.asList(user_id1, user_id2));
 		}
 
 		@Override

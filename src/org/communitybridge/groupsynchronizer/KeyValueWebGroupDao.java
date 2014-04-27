@@ -51,7 +51,7 @@ public class KeyValueWebGroupDao extends WebGroupDao
 
 	protected List<String> getGroupIDsFromResult() throws SQLException
 	{
-		List<String> groupIDs = new ArrayList();
+		List<String> groupIDs = new ArrayList<String>();
 		String groupIDString = result.getString(configuration.webappSecondaryGroupGroupIDColumn);
 
 		if (groupIDString == null)
