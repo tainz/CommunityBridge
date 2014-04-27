@@ -1,4 +1,4 @@
-package org.communitybridge.dao;
+package org.communitybridge.groupsynchronizer;
 
 import java.util.HashMap;
 import org.communitybridge.main.Configuration;

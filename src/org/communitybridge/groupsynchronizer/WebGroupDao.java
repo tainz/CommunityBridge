@@ -1,11 +1,11 @@
-package org.communitybridge.dao;
+package org.communitybridge.groupsynchronizer;
 
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import static org.communitybridge.dao.SingleWebGroupDao.EXCEPTION_MESSAGE_GET_USERIDS;
+import static org.communitybridge.groupsynchronizer.SingleWebGroupDao.EXCEPTION_MESSAGE_GET_USERIDS;
 import org.communitybridge.main.Configuration;
 import org.communitybridge.main.SQL;
 import org.communitybridge.utility.Log;
