@@ -63,6 +63,7 @@ public class Configuration
 	public String databaseName;
 	public String databaseUsername;
 	public String databasePassword;
+	public String databaseBindingAddress;
 
 	// Linking Section
 	public boolean linkingAutoRemind;
@@ -824,6 +825,20 @@ public class Configuration
 		databaseName = config.getString("database.name", "");
 		databaseUsername = config.getString("database.username", "");
 		databasePassword = config.getString("database.password", "");
+		databaseBindingAddress = config.getString("database.binding-address", "localhost").toLowerCase();
+
+		if (databaseBindingAddress.isEmpty())
+		{
+			databaseBindingAddress = "localhost";
+		}
+		else if (databaseBindingAddress.startsWith("min"))
+		{
+			databaseBindingAddress = Bukkit.getIp();
+			if (databaseBindingAddress.isEmpty())
+			{
+				databaseBindingAddress = "localhost";
+			}
+		}
 
 		// Linking Section
 		linkingKickUnregistered = config.getBoolean("player-user-linking.kick-unregistered", false);
@@ -1198,8 +1213,7 @@ public class Configuration
 		log.config(    "Date Format                          : " + dateFormatString);
 
 		// Database Section
-		String bindingAddress = Bukkit.getIp();
-		log.config(    "Minecraft binding address            : " + bindingAddress);
+		log.config(    "Database binding address             : " + databaseBindingAddress);
 		log.config(    "Database hostname                    : " + databaseHost);
 		log.config(    "Database port                        : " + databasePort);
 		log.config(    "Database name                        : " + databaseName);
