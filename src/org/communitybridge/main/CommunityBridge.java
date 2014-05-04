@@ -32,8 +32,10 @@ import org.communitybridge.utility.MinecraftUtilities;
 
 public final class CommunityBridge extends JavaPlugin
 {
+	private Environment environment = new Environment();
+
 	public static Configuration config;
-	public static WebApplication webapp = null;
+	public static WebApplication webapp;
 	public static PermissionHandler permissionHandler;
 	@SuppressWarnings("NonConstantLogger")
 	public static Log log;
@@ -41,9 +43,9 @@ public final class CommunityBridge extends JavaPlugin
 	public static Economy economy;
 
 	@SuppressWarnings("PMD.UnusedPrivateField")
-	private static CommunityBridge instance = null;
+	private static CommunityBridge instance;
 	private static boolean active;
-	private static CBMetrics metrics = null;
+	private static CBMetrics metrics;
 
 	/**
 	 * Handles all the set up for the plugin.
@@ -55,6 +57,10 @@ public final class CommunityBridge extends JavaPlugin
 		instance = this;
 		log = new Log(this.getLogger(), Level.CONFIG);
 		config = new Configuration(this, log);
+
+		environment.setConfiguration(config);
+		environment.setLog(log);
+		environment.setSql(sql);
 
 		CBCommandExecutor command = new CBCommandExecutor(config, log);
 		getCommand("cbreload").setExecutor(command);
@@ -92,7 +98,7 @@ public final class CommunityBridge extends JavaPlugin
 			return;
 		}
 
-		webapp = new WebApplication(this, config, log, sql);
+		webapp = new WebApplication(this, environment);
 		webapp.loadOnlineUserIDsFromDatabase();
 		getServer().getPluginManager().registerEvents(new PlayerListener(log, config, webapp), this);
 
@@ -167,6 +173,7 @@ public final class CommunityBridge extends JavaPlugin
 
 		log.config("Disabled...");
 		log = null;
+		environment = null;
 		instance = null;
 	}
 
@@ -330,6 +337,7 @@ public final class CommunityBridge extends JavaPlugin
 
 		if (reload)
 		{
+			environment.setSql(sql);
 			webapp.setSQL(sql);
 		}
 

@@ -1,8 +1,11 @@
 package org.communitybridge.main;
 
 import java.net.MalformedURLException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
 import org.apache.commons.lang.RandomStringUtils;
+import org.bukkit.OfflinePlayer;
 import org.communitybridge.groupsynchronizer.WebGroupDao;
 import org.communitybridge.utility.Log;
 import org.junit.Test;
@@ -19,23 +22,28 @@ public class WebApplicationTest
 	private static final String GROUP_ID = RandomStringUtils.randomAlphabetic(2);
 	private static final int COUNT = 0;
 
-	private Configuration configuration;
+	private TestableWebApplication  webApplication;
 
-	TestableWebApplication  webApplication;
-	WebGroupDao webGroupDao;
-	Log log;
+	private Environment environment = new Environment();
+	private Configuration configuration = mock(Configuration.class);
+	private Log log = mock(Log.class);
+	private SQL sql = mock(SQL.class);
+
+	private WebGroupDao webGroupDao = mock(WebGroupDao.class);
+	private ResultSet result = mock(ResultSet.class);
 
 	public class TestableWebApplication extends WebApplication
 	{
-		public TestableWebApplication(Configuration configuration, Log log, WebGroupDao webGroupDao)
+		public TestableWebApplication(Environment environment, WebGroupDao webGroupDao)
 		{
-			super(configuration, log, webGroupDao);
+			super(environment, webGroupDao);
 		}
 
-		public TestableWebApplication(CommunityBridge plugin, Configuration config, Log log, SQL sql)
+		public TestableWebApplication(CommunityBridge plugin, Environment environment)
 		{
-			super(plugin, config, log, sql);
+			super(plugin, environment);
 		}
+
 		@Override
 		public String getUserID(String playerName)
 		{
@@ -46,10 +54,10 @@ public class WebApplicationTest
 	@Before
 	public void setup()
 	{
-		webGroupDao = mock(WebGroupDao.class);
-		log = mock(Log.class);
-		configuration = mock(Configuration.class);
-		webApplication= new TestableWebApplication(configuration, log, webGroupDao);
+		environment.setConfiguration(configuration);
+		environment.setLog(log);
+		environment.setSql(sql);
+		webApplication = new TestableWebApplication(environment, webGroupDao);
 	}
 
 	@Test
@@ -186,7 +194,7 @@ public class WebApplicationTest
 		assertNotNull(webApplication.getUserSecondaryGroupIDs(""));
 	}
 
-		@Test
+	@Test
 	public void getUserSecondaryGroupIDsHandlesSQLException() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
 		SQLException exception = new SQLException(EXCEPTION_MESSAGE);
@@ -219,5 +227,12 @@ public class WebApplicationTest
 		when(webGroupDao.getSecondaryGroupIDs(anyString())).thenThrow(exception);
 		assertEquals(0, webApplication.getUserSecondaryGroupIDs(PLAYER_NAME).size());
 		verify(log).severe(WebApplication.EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
+	}
+
+	@Test
+	public void getUserIDNeverReturnsNull()
+	{
+		OfflinePlayer player = mock(OfflinePlayer.class);
+		assertNotNull(webApplication.getUserID(player));
 	}
 }

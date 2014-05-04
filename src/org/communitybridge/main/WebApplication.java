@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.communitybridge.achievement.Achievement;
 import org.communitybridge.achievement.PlayerAchievementState;
@@ -32,13 +33,15 @@ public class WebApplication extends Synchronizer
 	protected static final String EXCEPTION_MESSAGE_ADDGROUP = "Exception during WebApplication.addGroup(): ";
 	protected static final String EXCEPTION_MESSAGE_GETPRIMARY = "Exception during WebApplication.getPrimaryGroupID(): ";
 	protected static final String EXCEPTION_MESSAGE_GETSECONDARY = "Exception during WebApplication.getUserSecondaryGroupIDs(): ";
-	protected	static final String EXCEPTION_MESSAGE_REMOVEGROUP = "Exception during addGroup(): ";
+	protected	static final String EXCEPTION_MESSAGE_REMOVEGROUP = "Exception during WebApplication.addGroup(): ";
+	protected	static final String EXCEPTION_MESSAGE_GETUSERID = "Exception during WebApplication.getUserIDfromDatabase(): ";
 
 	private final Boolean synchronizationLock = true;
-	private CommunityBridge plugin;
+	private Environment environment;
 	private Configuration configuration;
 	private Log log;
 	private SQL sql;
+	private CommunityBridge plugin;
 	private BanSynchronizer banSynchronizer;
 	private WebGroupDao webGroupDao;
 
@@ -47,24 +50,27 @@ public class WebApplication extends Synchronizer
 	private Map<String, String> playerUserIDs = new HashMap<String, String>();
 	private List<Player> playerLocks = new ArrayList<Player>();
 
-	public WebApplication(Configuration configuration, Log log, WebGroupDao webGroupDao)
+	public WebApplication(Environment environment, WebGroupDao webGroupDao)
 	{
-		this.configuration = configuration;
-		this.log = log;
+		this.environment = environment;
+		this.configuration = environment.getConfiguration();
+		this.log = environment.getLog();
+		this.sql = environment.getSql();
 		this.webGroupDao = webGroupDao;
 	}
 
-	public WebApplication(CommunityBridge plugin, Configuration config, Log log, SQL sql)
+	public WebApplication(CommunityBridge plugin, Environment environment)
 	{
-		this.configuration = config;
+		this.environment = environment;
+		this.configuration = environment.getConfiguration();
+		this.log = environment.getLog();
+		this.sql = environment.getSql();
 		this.plugin = plugin;
-		this.log = log;
-		setSQL(sql);
 		maxPlayers = Bukkit.getMaxPlayers();
 		configureDao();
-		if (config.banSynchronizationEnabled)
+		if (configuration.banSynchronizationEnabled)
 		{
-			banSynchronizer = new BanSynchronizer(plugin.getDataFolder(), config, log, sql, this);
+			banSynchronizer = new BanSynchronizer(plugin.getDataFolder(), configuration, log, sql, this);
 		}
 	}
 
@@ -275,11 +281,13 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	/**
-	 * Performs the database query that should be done when a player connects.
-	 *
-	 * @param String containing the player's name.
-	 */
+	public String getUserID(OfflinePlayer player)
+	{
+		return "";
+//		UserIDDao userIDDao = new UserIDDao(environment);
+//		return userIDDao.getUserID(player.getName());
+	}
+
 	public synchronized void loadUserIDfromDatabase(String playerName)
 	{
 		if (playerUserIDs.size() >= (maxPlayers * 4))
@@ -288,66 +296,25 @@ public class WebApplication extends Synchronizer
 			loadOnlineUserIDsFromDatabase();
 		}
 
-		final String exceptionBase = "Exception during WebApplication.onPreLogin(): ";
-		String query = "SELECT `" + configuration.linkingTableName + "`.`" + configuration.linkingUserIDColumn + "` "
-								 + "FROM `" + configuration.linkingTableName + "` ";
-
-		if (configuration.linkingUsesKey)
+		UserIDDao userIDDao = new UserIDDao(environment);
+		String userID = userIDDao.getUserID(playerName);
+		if (userID.isEmpty())
 		{
-			query = query
-						+ "WHERE `" + configuration.linkingKeyColumn + "` = '" + configuration.linkingKeyName + "' "
-						+ "AND `" + configuration.linkingValueColumn + "` = '" + playerName + "' ";
+			log.finest("User ID for " + playerName + " not found.");
 		}
 		else
 		{
-			query = query	+ "WHERE LOWER(`" + configuration.linkingPlayerNameColumn + "`) = LOWER('" + playerName + "') ";
+			log.finest("User ID '" + userID + "' associated with " + playerName + ".");
+			playerUserIDs.put(playerName, userID);
 		}
-		query = query + "ORDER BY `" + configuration.linkingUserIDColumn + "` DESC";
-
-		try
-		{
-			String userID = null;
-			ResultSet result = sql.sqlQuery(query);
-
-			if (result != null && result.next())
-			{
-				userID = result.getString(configuration.linkingUserIDColumn);
-			}
-
-			if (userID == null)
-			{
-				log.finest("User ID for " + playerName + " not found.");
-			}
-			else
-			{
-				log.finest("User ID '" + userID + "' associated with " + playerName + ".");
-				playerUserIDs.put(playerName, userID);
-			}
-		}
-		catch (SQLException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-		}
-		catch (MalformedURLException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-		}
-		catch (InstantiationException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-		}
-		catch (IllegalAccessException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-		}
-	} // loadUserIDfromDatabase()
+	}
 
 	/**
 	 * Performs operations when a player joins
 	 *
 	 * @param String The player who joined.
 	 */
-	public void onJoin(final Player player)
+	public void onJoin(Player player)
 	{
 		if (configuration.syncDuringJoin)
 		{
