@@ -962,7 +962,11 @@ public class Configuration
 		webappSecondaryGroupGroupIDDelimiter = config.getString("app-group-config.secondary.group-id-delimiter", "");
 		// junction, single-column, key-value
 		webappSecondaryGroupStorageMethod = config.getString("app-group-config.secondary.storage-method", "").toLowerCase();
-		webappSecondaryAdditionalColumns = config.getConfigurationSection("app-group-config.secondary.additional-columns").getValues(false);
+
+		if (config.contains("app-group-config.secondary.additional-columns"))
+		{
+			webappSecondaryAdditionalColumns = config.getConfigurationSection("app-group-config.secondary.additional-columns").getValues(false);
+		}
 
 		// Simple synchronization
 		simpleSynchronizationSuperUserID = config.getString("simple-synchronization.super-user-user-id", "");
@@ -970,7 +974,12 @@ public class Configuration
 		simpleSynchronizationDirection = config.getString("simple-synchronization.direction", "two-way").toLowerCase();
 		simpleSynchronizationFirstDirection = config.getString("simple-synchronization.first-direction", "two-way").toLowerCase();
 		simpleSynchronizationPrimaryGroupNotify = config.getBoolean("simple-synchronization.primary-group-change-notify", false);
-		simpleSynchronizationGroupMap = config.getConfigurationSection("simple-synchronization.group-mapping").getValues(false);
+		
+		if (config.contains("simple-synchronization.group-mapping"))
+		{
+			simpleSynchronizationGroupMap = config.getConfigurationSection("simple-synchronization.group-mapping").getValues(false);
+		}
+
 		simpleSynchronizationGroupsTreatedAsPrimary = config.getStringList("simple-synchronization.groups-treated-as-primary");
 
 		// Ban synchronization
