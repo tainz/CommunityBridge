@@ -974,12 +974,13 @@ public class Configuration
 		simpleSynchronizationDirection = config.getString("simple-synchronization.direction", "two-way").toLowerCase();
 		simpleSynchronizationFirstDirection = config.getString("simple-synchronization.first-direction", "two-way").toLowerCase();
 		simpleSynchronizationPrimaryGroupNotify = config.getBoolean("simple-synchronization.primary-group-change-notify", false);
-		
+
 		if (config.contains("simple-synchronization.group-mapping"))
 		{
 			simpleSynchronizationGroupMap = config.getConfigurationSection("simple-synchronization.group-mapping").getValues(false);
 		}
 
+		config.addDefault("simple-synchronization.groups-treated-as-primary", simpleSynchronizationGroupsTreatedAsPrimary);
 		simpleSynchronizationGroupsTreatedAsPrimary = config.getStringList("simple-synchronization.groups-treated-as-primary");
 
 		// Ban synchronization
