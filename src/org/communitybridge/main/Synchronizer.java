@@ -1,6 +1,6 @@
 package org.communitybridge.main;
 
-abstract public class Synchronizer
+public class Synchronizer
 {
 	protected boolean isValidDirection(String direction, String validDirection)
 	{
