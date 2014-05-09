@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.communitybridge.main.Configuration;
+import org.communitybridge.main.Environment;
 import org.communitybridge.main.SQL;
 import org.communitybridge.main.Synchronizer;
 import org.communitybridge.main.WebApplication;
@@ -21,13 +22,14 @@ public class BanSynchronizer extends Synchronizer
 	private WebApplication webApplication;
 	private Configuration configuration;
 
-	public BanSynchronizer(File folder, Configuration configuration, Log log, SQL sql, WebApplication webApplication)
+	public BanSynchronizer(File folder, Environment environment, WebApplication webApplication)
 	{
-		this.log = log;
+		super(environment);
+		this.log = environment.getLog();
 		this.folder = folder;
 		this.webApplication = webApplication;
-		this.configuration = configuration;
-		this.sql = sql;
+		this.configuration = environment.getConfiguration();
+		this.sql = environment.getSql();
 	}
 
 	public void synchronize()
@@ -49,7 +51,7 @@ public class BanSynchronizer extends Synchronizer
 		}
 
 		current.generate();
-		
+
 		try
 		{
 			current.save();

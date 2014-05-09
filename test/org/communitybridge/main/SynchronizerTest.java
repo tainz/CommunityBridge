@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 
 public class SynchronizerTest
 {
-	Synchronizer synchronizer = new Synchronizer();
+	Synchronizer synchronizer = new Synchronizer(new Environment());
 
 	@Test
 	public void isValidDirectionReturnsTrueForTwo()

@@ -52,6 +52,7 @@ public class WebApplication extends Synchronizer
 
 	public WebApplication(Environment environment, WebGroupDao webGroupDao)
 	{
+		super(environment);
 		this.environment = environment;
 		this.configuration = environment.getConfiguration();
 		this.log = environment.getLog();
@@ -61,6 +62,7 @@ public class WebApplication extends Synchronizer
 
 	public WebApplication(CommunityBridge plugin, Environment environment)
 	{
+		super(environment);
 		this.environment = environment;
 		this.configuration = environment.getConfiguration();
 		this.log = environment.getLog();
@@ -70,7 +72,7 @@ public class WebApplication extends Synchronizer
 		configureDao();
 		if (configuration.banSynchronizationEnabled)
 		{
-			banSynchronizer = new BanSynchronizer(plugin.getDataFolder(), configuration, log, sql, this);
+			banSynchronizer = new BanSynchronizer(plugin.getDataFolder(), environment, this);
 		}
 	}
 
