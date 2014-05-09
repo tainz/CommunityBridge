@@ -1,5 +1,6 @@
 package org.communitybridge.main;
 
+import org.communitybridge.linker.UserPlayerLinker;
 import org.communitybridge.utility.Log;
 
 public class Environment
@@ -7,6 +8,7 @@ public class Environment
 	private Configuration configuration;
 	private Log log;
 	private SQL sql;
+	private UserPlayerLinker userPlayerLinker;
 
 	public Configuration getConfiguration()
 	{
@@ -32,9 +34,19 @@ public class Environment
 	{
 		return log;
 	}
-	
+
 	public void setLog(Log log)
 	{
 		this.log = log;
+	}
+
+	public UserPlayerLinker getUserPlayerLinker()
+	{
+		return userPlayerLinker;
+	}
+
+	public void setUserPlayerLinker(UserPlayerLinker userPlayerLinker)
+	{
+		this.userPlayerLinker = userPlayerLinker;
 	}
 }

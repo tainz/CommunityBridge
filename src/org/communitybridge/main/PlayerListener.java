@@ -1,5 +1,6 @@
 package org.communitybridge.main;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -7,40 +8,38 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.communitybridge.linker.UserPlayerLinker;
 import org.communitybridge.utility.Log;
 
 public class PlayerListener implements Listener
 {
+	private Environment environment;
 	private Configuration config;
 	private Log log;
 	private WebApplication webapp;
 
-	/**
-	 * Constructor
-	 *
-	 * @param Log The log object passed in from onEnable().
-	 * @param Configuration The configuration object passed in from onEnable().
-	 * @param WebApplication The web application object passed in from onEnable().
-	 */
-	public PlayerListener(Log log, Configuration config, WebApplication webapp)
+	private UserPlayerLinker userPlayerLinker;
+
+	public PlayerListener(Environment environment, WebApplication webapp)
 	{
-		this.config = config;
-		this.log = log;
+		this.environment = environment;
+		this.config = environment.getConfiguration();
+		this.log = environment.getLog();
 		this.webapp = webapp;
+		this.userPlayerLinker = environment.getUserPlayerLinker();
 	}
 
 	/**
 	 * This method is called by CraftBukkit as the player connects to the server.
 	 * We perform the initial linking here so that we can reject the login if
 	 * linking-kick-unregistered is turned on.
-	 *
-	 * @param AsyncPlayerPreLoginEvent The event object (see CraftBukkit API).
 	 */
 	@EventHandler
 	public void onPlayerPreLogin(AsyncPlayerPreLoginEvent event)
 	{
 		String playerName = event.getName();
-		webapp.loadUserIDfromDatabase(playerName);
+		Player player = Bukkit.getPlayerExact(playerName);
+		userPlayerLinker.removeUserIDFromCache(player);
 
 		if (webapp.isPlayerRegistered(playerName))
 		{
@@ -62,7 +61,7 @@ public class PlayerListener implements Listener
 	{
 		Player player = event.getPlayer();
 		String playerName = player.getName();
-						
+
 		if (webapp.isPlayerRegistered(playerName))
 		{
 			if (config.linkingNotifyRegistered)
@@ -113,7 +112,7 @@ public class PlayerListener implements Listener
 	/**
 	 * Checks if changing the player's group from the unregistered group to
 	 * the registered group is merited and does so if it is.
-	 * 
+	 *
 	 * @param playerName - name of the player to check and possibly move.
 	 * @param player - player object representing the player.
 	 */
@@ -125,14 +124,14 @@ public class PlayerListener implements Listener
 		{
 			return;
 		}
-		
+
 		// if this rule is turned on, we won't change groups unless they're
 		// a member of the unregistered group or they have no groups.
 		if (config.linkingRegisteredFormerUnregisteredOnly && !CommunityBridge.permissionHandler.isMemberOfGroup(playerName, config.linkingUnregisteredGroup) && CommunityBridge.permissionHandler.getGroupsPure(playerName).length != 0)
 		{
 			return;
 		}
-		
+
 		CommunityBridge.permissionHandler.switchGroup(playerName, config.linkingUnregisteredGroup, config.linkingRegisteredGroup);
 
 		if (config.linkingNotifyPlayerGroup)
@@ -142,7 +141,7 @@ public class PlayerListener implements Listener
 			player.sendMessage(message);
 		}
 	}
-	
+
 	private void kickPlayerForInsufficientPosts(AsyncPlayerPreLoginEvent event)
 	{
 		event.setKickMessage(config.messages.get("require-minimum-posts-message"));

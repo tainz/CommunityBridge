@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.communitybridge.linker.UserPlayerLinker;
 import org.communitybridge.main.CBMetrics.Graph;
 import org.communitybridge.utility.Log;
 import org.communitybridge.permissionhandlers.*;
@@ -61,6 +62,7 @@ public final class CommunityBridge extends JavaPlugin
 		environment.setConfiguration(config);
 		environment.setLog(log);
 		environment.setSql(sql);
+		environment.setUserPlayerLinker(new UserPlayerLinker(environment));
 
 		CBCommandExecutor command = new CBCommandExecutor(config, log);
 		getCommand("cbreload").setExecutor(command);
@@ -100,7 +102,7 @@ public final class CommunityBridge extends JavaPlugin
 
 		webapp = new WebApplication(this, environment);
 		webapp.loadOnlineUserIDsFromDatabase();
-		getServer().getPluginManager().registerEvents(new PlayerListener(log, config, webapp), this);
+		getServer().getPluginManager().registerEvents(new PlayerListener(environment, webapp), this);
 
 		// If a feature requires a permissions system we load it up here.
 		if (config.permissionsSystemRequired)
