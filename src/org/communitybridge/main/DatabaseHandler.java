@@ -79,7 +79,7 @@ public class DatabaseHandler
 			}
 			return false;
 		}
-		
+
 		try
 		{
 			return !connection.isClosed();
@@ -123,7 +123,7 @@ public class DatabaseHandler
 				Statement statement = connection.createStatement();
 				statement.setQueryTimeout(5);
 				ResultSet result = statement.executeQuery("SELECT 1");
-				
+
 				if (result.next())
 				{
 					return this.connection;
@@ -147,7 +147,7 @@ public class DatabaseHandler
 				}
 				catch (SQLException exception2)
 				{
-					CommunityBridge.log.warning("Database Connection Error: " + exception2.getMessage());
+					CommunityBridge.log.warning("Database Connection Exception: " + exception2.getMessage());
 				}
 			}
 		}
@@ -175,13 +175,13 @@ public class DatabaseHandler
 		try
 		{
 			Connection connectionLocal = getConnection();
-		
+
 			if (connectionLocal != null)
 			{
 				Statement statement = connectionLocal.createStatement();
 				statement.executeUpdate(query);
 			}
-		} 
+		}
 		catch (SQLException exception)
 		{
 			if (!exception.toString().contains("not return ResultSet"))
@@ -196,7 +196,7 @@ public class DatabaseHandler
 		try
 		{
 			Connection connectionLocal = getConnection();
-			
+
 			if (connectionLocal != null)
 			{
 				Statement statement = connectionLocal.createStatement();
@@ -207,7 +207,7 @@ public class DatabaseHandler
 		{
 			if (!exception.toString().contains("not return ResultSet"))
 			{
-				CommunityBridge.log.warning("Error at SQL UPDATE Query: " + exception);
+				CommunityBridge.log.warning("Exception at SQL UPDATE Query: " + exception);
 			}
 		}
 	}
@@ -217,7 +217,7 @@ public class DatabaseHandler
 		try
 		{
 			Connection connectionLocal = getConnection();
-			
+
 			if (connectionLocal != null)
 			{
 				Statement statement = connectionLocal.createStatement();
@@ -228,7 +228,7 @@ public class DatabaseHandler
 		{
 			if (!exception.toString().contains("not return ResultSet"))
 			{
-				CommunityBridge.log.warning("Error at SQL DELETE Query: " + exception);
+				CommunityBridge.log.warning("Exception at SQL DELETE Query: " + exception);
 			}
 		}
 	}
@@ -238,7 +238,7 @@ public class DatabaseHandler
 		try
 		{
 			Connection connectionLocal = getConnection();
-			
+
 			if (connectionLocal == null)
 			{
 				return false;
@@ -259,8 +259,8 @@ public class DatabaseHandler
 			{
 				return false;
 			}
-			
-			CommunityBridge.log.warning("Error at SQL Query: " + exception.getMessage());
+
+			CommunityBridge.log.warning("Exception at SQL Query: " + exception.getMessage());
 		}
 		try
 		{
@@ -271,7 +271,7 @@ public class DatabaseHandler
 		}
 		catch (SQLException exception)
 		{
-			CommunityBridge.log.warning("Error at SQL Query: " + exception.getMessage());
+			CommunityBridge.log.warning("Exception at SQL Query: " + exception.getMessage());
 		}
 		return false;
 	}
