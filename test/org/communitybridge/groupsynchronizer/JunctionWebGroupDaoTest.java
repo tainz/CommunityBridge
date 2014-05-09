@@ -68,15 +68,15 @@ public class JunctionWebGroupDaoTest
 	@Test
 	public void addGroupUsesCorrectQueryWithTwoAdditionalColumns() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
-		String additionalColumn = RandomStringUtils.randomAlphabetic(7);
+		String additionalColumn = RandomStringUtils.randomAlphabetic(3);
 		String additionalValue = RandomStringUtils.randomAlphanumeric(7);
-		String additionalColumn2 = RandomStringUtils.randomAlphabetic(8);
+		String additionalColumn2 = RandomStringUtils.randomAlphabetic(4);
 		String additionalValue2 = RandomStringUtils.randomAlphanumeric(9);
 		configuration.webappSecondaryAdditionalColumns.put(additionalColumn, additionalValue);
 		configuration.webappSecondaryAdditionalColumns.put(additionalColumn2, additionalValue2);
 		String query = "INSERT INTO `" + configuration.webappSecondaryGroupTable + "` "
-						 + "(`" + configuration.webappSecondaryGroupUserIDColumn + "`, `" + configuration.webappSecondaryGroupGroupIDColumn + "`, `" + additionalColumn2 + "`, `" + additionalColumn + "`) "
-						 + "VALUES ('" + USER_ID + "', '" + group1 + "', '" + additionalValue2 + "', '" + additionalValue + "')";
+						 + "(`" + configuration.webappSecondaryGroupUserIDColumn + "`, `" + configuration.webappSecondaryGroupGroupIDColumn + "`, `" + additionalColumn + "`, `" + additionalColumn2 + "`) "
+						 + "VALUES ('" + USER_ID + "', '" + group1 + "', '" + additionalValue + "', '" + additionalValue2 + "')";
 		doNothing().when(sql).insertQuery(query);
 		webGroupDao.addUserToGroup(USER_ID, group1, 0);
 		verify(sql).insertQuery(query);

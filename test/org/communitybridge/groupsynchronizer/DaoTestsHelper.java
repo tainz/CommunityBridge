@@ -1,6 +1,7 @@
 package org.communitybridge.groupsynchronizer;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import org.communitybridge.main.Configuration;
 
 public class DaoTestsHelper
@@ -22,6 +23,6 @@ public class DaoTestsHelper
 		configuration.webappSecondaryGroupKeyName = "secondaryGroupKeyName";
 		configuration.webappSecondaryGroupKeyColumn = "secondaryGroupKeyColumn";
 		configuration.webappSecondaryGroupStorageMethod = "single";
-		configuration.webappSecondaryAdditionalColumns = new HashMap<String, Object>();
+		configuration.webappSecondaryAdditionalColumns = new LinkedHashMap<String, Object>();
 	}
 }
