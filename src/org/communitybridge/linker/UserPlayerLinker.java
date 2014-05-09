@@ -1,10 +1,12 @@
 package org.communitybridge.linker;
 
+import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.OfflinePlayer;
 import org.communitybridge.main.Environment;
 
 public class UserPlayerLinker
 {
+	private ConcurrentHashMap<String, String> userIDCache = new ConcurrentHashMap<String, String>();
 	private Environment environment;
 	private UserIDDao userIDDao;
 
@@ -21,12 +23,12 @@ public class UserPlayerLinker
 
 		if (isValidMethod(linkingMethod, "uui"))
 		{
-			userID = userIDDao.getUserID(player.getPlayer().getUniqueId().toString());
+			userID = getUserIDFromCacheOrDatabase(player.getPlayer().getUniqueId().toString());
 		}
 
 		if (userID.isEmpty() && isValidMethod(linkingMethod, "nam"))
 		{
-			userID = userIDDao.getUserID(player.getName());
+			userID = getUserIDFromCacheOrDatabase(player.getName());
 		}
 		return userID;
 	}
@@ -34,5 +36,16 @@ public class UserPlayerLinker
 	private boolean isValidMethod(String linkingMethod, String valid)
 	{
 		return linkingMethod.startsWith(valid) || linkingMethod.startsWith("bot");
+	}
+
+	private String getUserIDFromCacheOrDatabase(String identifier)
+	{
+		String userID = userIDCache.get(identifier);
+		if (userID == null)
+		{
+			userID = userIDDao.getUserID(identifier);
+			userIDCache.put(identifier, userID);
+		}
+		return userID;
 	}
 }

@@ -20,6 +20,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class UserPlayerLinkerTest
 {
 	private static final String NAME_USER_ID = RandomStringUtils.randomNumeric(2);
+	private static final String PLAYER_NAME = RandomStringUtils.randomAlphabetic(8);
 	private static final String UUID_USER_ID = RandomStringUtils.randomNumeric(2);
 
 	private	OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
@@ -53,6 +54,7 @@ public class UserPlayerLinkerTest
 	{
 		configuration.linkingMethod = "both";
 		when(offlinePlayer.getPlayer()).thenReturn(player);
+		when(offlinePlayer.getName()).thenReturn(PLAYER_NAME);
 		when(player.getUniqueId()).thenReturn(uuid);
 		when(userIDDao.getUserID(uuid.toString())).thenReturn("");
 		when(userIDDao.getUserID(offlinePlayer.getName())).thenReturn(NAME_USER_ID);
@@ -76,6 +78,7 @@ public class UserPlayerLinkerTest
 		configuration.linkingMethod = "name";
 		when(offlinePlayer.getPlayer()).thenReturn(player);
 		when(player.getUniqueId()).thenReturn(uuid);
+		when(offlinePlayer.getName()).thenReturn(PLAYER_NAME);
 		when(userIDDao.getUserID(offlinePlayer.getName())).thenReturn(NAME_USER_ID);
 		when(userIDDao.getUserID(uuid.toString())).thenReturn(UUID_USER_ID);
 		assertEquals(NAME_USER_ID, userPlayerLinker.getUserID(offlinePlayer));
