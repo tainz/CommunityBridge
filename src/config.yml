@@ -98,12 +98,11 @@ database:
   password: password
 
   # SQL binding address
-  # Defaults to localhost. Majority of cases, localhost will work.
-  # Setting this to 'minecraft' will cause SQL to be bound to the same IP as
-  # the Minecraft server itself.
-  # In some hosting setups you may need to set this to a particular address to
-  # be used instead of localhost and/or the game address.
-  binding-address: localhost
+  # Normally you won't need to set anything here.
+  # Recommended setting is blank.
+  # If needed the local binding address for the SQL client can be set here.
+  # Use 'minecraft' to use the address set in the server.properties.
+  binding-address:
 
 #                             Player Linking Settings
 # -----------------------------------------------------------------------------

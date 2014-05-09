@@ -1,6 +1,5 @@
 package org.communitybridge.main;
 
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
@@ -23,11 +22,6 @@ import org.communitybridge.achievement.AchievementGroup;
 import org.communitybridge.achievement.AchievementPostCount;
 import org.communitybridge.achievement.AchievementSectionPostCount;
 
-/**
- * Class for storing configuration information loaded from the yaml files.
- *
- * @author Feaelin (Iain E. Davis) <iain@ruhlendavis.org>
- */
 public class Configuration
 {
 	private CommunityBridge plugin;
@@ -825,19 +819,11 @@ public class Configuration
 		databaseName = config.getString("database.name", "");
 		databaseUsername = config.getString("database.username", "");
 		databasePassword = config.getString("database.password", "");
-		databaseBindingAddress = config.getString("database.binding-address", "localhost").toLowerCase();
+		databaseBindingAddress = config.getString("database.binding-address", "").toLowerCase();
 
-		if (databaseBindingAddress.isEmpty())
-		{
-			databaseBindingAddress = "localhost";
-		}
-		else if (databaseBindingAddress.startsWith("min"))
+		if (databaseBindingAddress.startsWith("min"))
 		{
 			databaseBindingAddress = Bukkit.getIp();
-			if (databaseBindingAddress.isEmpty())
-			{
-				databaseBindingAddress = "localhost";
-			}
 		}
 
 		// Linking Section
@@ -861,7 +847,7 @@ public class Configuration
 		linkingKeyColumn = config.getString("player-user-linking.key-column", "");
 		linkingValueColumn = config.getString("player-user-linking.value-column", "");
 
-		avatarEnabled = config.getBoolean("app-avatar-config.enabled");
+		avatarEnabled = config.getBoolean("app-avatar-config.enabled", false);
 		if (avatarEnabled)
 		{
 			avatarTableName = config.getString("app-avatar-config.table-name", "");
@@ -974,12 +960,13 @@ public class Configuration
 		simpleSynchronizationDirection = config.getString("simple-synchronization.direction", "two-way").toLowerCase();
 		simpleSynchronizationFirstDirection = config.getString("simple-synchronization.first-direction", "two-way").toLowerCase();
 		simpleSynchronizationPrimaryGroupNotify = config.getBoolean("simple-synchronization.primary-group-change-notify", false);
-		
+
 		if (config.contains("simple-synchronization.group-mapping"))
 		{
 			simpleSynchronizationGroupMap = config.getConfigurationSection("simple-synchronization.group-mapping").getValues(false);
 		}
 
+		config.addDefault("simple-synchronization.groups-treated-as-primary", simpleSynchronizationGroupsTreatedAsPrimary);
 		simpleSynchronizationGroupsTreatedAsPrimary = config.getStringList("simple-synchronization.groups-treated-as-primary");
 
 		// Ban synchronization
@@ -1222,7 +1209,10 @@ public class Configuration
 		log.config(    "Date Format                          : " + dateFormatString);
 
 		// Database Section
-		log.config(    "Database binding address             : " + databaseBindingAddress);
+		if (!databaseBindingAddress.isEmpty())
+		{
+			log.config(    "Database binding address             : " + databaseBindingAddress);
+		}
 		log.config(    "Database hostname                    : " + databaseHost);
 		log.config(    "Database port                        : " + databasePort);
 		log.config(    "Database name                        : " + databaseName);
