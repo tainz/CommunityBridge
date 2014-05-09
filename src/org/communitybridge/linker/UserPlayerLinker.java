@@ -2,6 +2,7 @@ package org.communitybridge.linker;
 
 import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.communitybridge.main.Environment;
 
 public class UserPlayerLinker
@@ -16,14 +17,18 @@ public class UserPlayerLinker
 		this.userIDDao = new UserIDDao(environment);
 	}
 
-	public String getUserID(OfflinePlayer player)
+	// TODO:
+	// - Provide a getUserID(String name) method. use getPlayerExact to fetch a player.
+	// - Provide a getUserID(UUID id) method.
+
+	public String getUserID(Player player)
 	{
 		String userID = "";
 		String linkingMethod = environment.getConfiguration().linkingMethod;
 
 		if (isValidMethod(linkingMethod, "uui"))
 		{
-			userID = getUserIDFromCacheOrDatabase(player.getPlayer().getUniqueId().toString());
+			userID = getUserIDFromCacheOrDatabase(player.getUniqueId().toString());
 		}
 
 		if (userID.isEmpty() && isValidMethod(linkingMethod, "nam"))

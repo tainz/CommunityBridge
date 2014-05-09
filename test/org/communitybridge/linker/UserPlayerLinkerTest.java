@@ -23,7 +23,6 @@ public class UserPlayerLinkerTest
 	private static final String PLAYER_NAME = RandomStringUtils.randomAlphabetic(8);
 	private static final String UUID_USER_ID = RandomStringUtils.randomNumeric(2);
 
-	private	OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
 	private	Player player = mock(Player.class);
 	private	UUID uuid = new UUID(System.currentTimeMillis(), System.currentTimeMillis());
 	private UserIDDao userIDDao = mock(UserIDDao.class);
@@ -43,55 +42,51 @@ public class UserPlayerLinkerTest
 	public void getUserIDNeverReturnsNull()
 	{
 		configuration.linkingMethod = "both";
-		when(offlinePlayer.getPlayer()).thenReturn(player);
 		when(player.getUniqueId()).thenReturn(uuid);
 		when(userIDDao.getUserID(anyString())).thenReturn(NAME_USER_ID);
-		assertNotNull(userPlayerLinker.getUserID(offlinePlayer));
+		assertNotNull(userPlayerLinker.getUserID(player));
 	}
 
 	@Test
 	public void getUserIDWithoutUUIDWithPlayernameReturnsPlayernameUserID()
 	{
 		configuration.linkingMethod = "both";
-		when(offlinePlayer.getPlayer()).thenReturn(player);
-		when(offlinePlayer.getName()).thenReturn(PLAYER_NAME);
+		when(player.getName()).thenReturn(PLAYER_NAME);
 		when(player.getUniqueId()).thenReturn(uuid);
 		when(userIDDao.getUserID(uuid.toString())).thenReturn("");
-		when(userIDDao.getUserID(offlinePlayer.getName())).thenReturn(NAME_USER_ID);
-		assertEquals(NAME_USER_ID, userPlayerLinker.getUserID(offlinePlayer));
+		when(userIDDao.getUserID(PLAYER_NAME)).thenReturn(NAME_USER_ID);
+		assertEquals(NAME_USER_ID, userPlayerLinker.getUserID(player));
 	}
 
 	@Test
 	public void getUserIDWithUUIDandWithPlayernameReturnsUUIDUserID()
 	{
 		configuration.linkingMethod = "both";
-		when(offlinePlayer.getPlayer()).thenReturn(player);
 		when(player.getUniqueId()).thenReturn(uuid);
-		when(userIDDao.getUserID(offlinePlayer.getName())).thenReturn(NAME_USER_ID);
+		when(userIDDao.getUserID(PLAYER_NAME)).thenReturn(NAME_USER_ID);
 		when(userIDDao.getUserID(uuid.toString())).thenReturn(UUID_USER_ID);
-		assertEquals(UUID_USER_ID, userPlayerLinker.getUserID(offlinePlayer));
+		assertEquals(UUID_USER_ID, userPlayerLinker.getUserID(player));
 	}
 
 	@Test
 	public void getUserIDWithUUIDandWithPlayernameUUIDOffReturnsPlayernameUserID()
 	{
 		configuration.linkingMethod = "name";
-		when(offlinePlayer.getPlayer()).thenReturn(player);
 		when(player.getUniqueId()).thenReturn(uuid);
-		when(offlinePlayer.getName()).thenReturn(PLAYER_NAME);
-		when(userIDDao.getUserID(offlinePlayer.getName())).thenReturn(NAME_USER_ID);
+		when(player.getName()).thenReturn(PLAYER_NAME);
+		when(userIDDao.getUserID(PLAYER_NAME)).thenReturn(NAME_USER_ID);
 		when(userIDDao.getUserID(uuid.toString())).thenReturn(UUID_USER_ID);
-		assertEquals(NAME_USER_ID, userPlayerLinker.getUserID(offlinePlayer));
+		assertEquals(NAME_USER_ID, userPlayerLinker.getUserID(player));
 	}
 
 	@Test
 	public void getUserIDWithoutUUIDandWithPlayernameUUIDOnReturnsBlank()
 	{
 		configuration.linkingMethod = "uuid";
-		when(offlinePlayer.getPlayer()).thenReturn(player);
 		when(player.getUniqueId()).thenReturn(uuid);
-		when(userIDDao.getUserID(offlinePlayer.getName())).thenReturn(NAME_USER_ID);
+		when(player.getName()).thenReturn(PLAYER_NAME);
+		when(userIDDao.getUserID(PLAYER_NAME)).thenReturn(NAME_USER_ID);
 		when(userIDDao.getUserID(uuid.toString())).thenReturn("");
-		assertEquals("", userPlayerLinker.getUserID(offlinePlayer));
+		assertEquals("", userPlayerLinker.getUserID(player));
 	}
 }
