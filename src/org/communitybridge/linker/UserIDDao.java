@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.communitybridge.main.Configuration;
 import org.communitybridge.main.Environment;
-import org.communitybridge.main.WebApplication;
 
 public class UserIDDao
 {

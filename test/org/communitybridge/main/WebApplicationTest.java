@@ -1,11 +1,8 @@
 package org.communitybridge.main;
 
 import java.net.MalformedURLException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.UUID;
 import org.apache.commons.lang.RandomStringUtils;
-import org.bukkit.OfflinePlayer;
 import org.communitybridge.groupsynchronizer.WebGroupDao;
 import org.communitybridge.utility.Log;
 import org.junit.Test;
