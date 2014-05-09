@@ -89,4 +89,54 @@ public class UserPlayerLinkerTest
 		when(userIDDao.getUserID(uuid.toString())).thenReturn("");
 		assertEquals("", userPlayerLinker.getUserID(player));
 	}
+
+	@Test
+	public void getUserIDAddsUUIDEntryToCache()
+	{
+		configuration.linkingMethod = "uuid";
+		when(player.getUniqueId()).thenReturn(uuid);
+		when(player.getName()).thenReturn(PLAYER_NAME);
+		when(userIDDao.getUserID(PLAYER_NAME)).thenReturn(NAME_USER_ID);
+		when(userIDDao.getUserID(uuid.toString())).thenReturn(UUID_USER_ID);
+		userPlayerLinker.getUserID(player);
+		assertEquals(UUID_USER_ID, userPlayerLinker.getUserIDCache().get(uuid.toString()));
+	}
+
+	@Test
+	public void getUserIDAddsNameEntryToCache()
+	{
+		configuration.linkingMethod = "name";
+		when(player.getUniqueId()).thenReturn(uuid);
+		when(player.getName()).thenReturn(PLAYER_NAME);
+		when(userIDDao.getUserID(PLAYER_NAME)).thenReturn(NAME_USER_ID);
+		when(userIDDao.getUserID(uuid.toString())).thenReturn(UUID_USER_ID);
+		userPlayerLinker.getUserID(player);
+		assertEquals(NAME_USER_ID, userPlayerLinker.getUserIDCache().get(PLAYER_NAME));
+	}
+
+	@Test
+	public void removeUserIDFromCacheRemovesUUIDEntry()
+	{
+		configuration.linkingMethod = "uuid";
+		when(player.getUniqueId()).thenReturn(uuid);
+		when(player.getName()).thenReturn(PLAYER_NAME);
+		when(userIDDao.getUserID(PLAYER_NAME)).thenReturn(NAME_USER_ID);
+		when(userIDDao.getUserID(uuid.toString())).thenReturn(UUID_USER_ID);
+		userPlayerLinker.getUserID(player);
+		userPlayerLinker.removeUserIDFromCache(player);
+		assertNull(userPlayerLinker.getUserIDCache().get(uuid.toString()));
+	}
+
+	@Test
+	public void removeUserIDFromCacheRemovesNameEntry()
+	{
+		configuration.linkingMethod = "name";
+		when(player.getUniqueId()).thenReturn(uuid);
+		when(player.getName()).thenReturn(PLAYER_NAME);
+		when(userIDDao.getUserID(PLAYER_NAME)).thenReturn(NAME_USER_ID);
+		when(userIDDao.getUserID(uuid.toString())).thenReturn(UUID_USER_ID);
+		userPlayerLinker.getUserID(player);
+		userPlayerLinker.removeUserIDFromCache(player);
+		assertNull(userPlayerLinker.getUserIDCache().get(PLAYER_NAME));
+	}
 }

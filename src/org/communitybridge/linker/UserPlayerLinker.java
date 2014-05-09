@@ -38,6 +38,12 @@ public class UserPlayerLinker
 		return userID;
 	}
 
+	public void removeUserIDFromCache(Player player)
+	{
+		userIDCache.remove(player.getUniqueId().toString());
+		userIDCache.remove(player.getName());
+	}
+
 	private boolean isValidMethod(String linkingMethod, String valid)
 	{
 		return linkingMethod.startsWith(valid) || linkingMethod.startsWith("bot");
@@ -52,5 +58,10 @@ public class UserPlayerLinker
 			userIDCache.put(identifier, userID);
 		}
 		return userID;
+	}
+
+	protected ConcurrentHashMap<String, String> getUserIDCache()
+	{
+		return userIDCache;
 	}
 }
