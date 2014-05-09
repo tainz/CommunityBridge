@@ -1,11 +1,16 @@
-package org.communitybridge.main;
+package org.communitybridge.linker;
 
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.communitybridge.main.Configuration;
+import org.communitybridge.main.Environment;
+import org.communitybridge.main.WebApplication;
 
 public class UserIDDao
 {
+	protected	static final String EXCEPTION_MESSAGE_GETUSERID = "Exception during UserIDDao.getUserID: ";
+
 	private Environment environment;
 
 	public UserIDDao(Environment environment)
@@ -24,7 +29,7 @@ public class UserIDDao
 		}
 		else
 		{
-			query = query + "WHERE LOWER(`" + configuration.linkingPlayerNameColumn + "`) = LOWER('" + identifier + "') ";
+			query = query + "WHERE LOWER(`" + configuration.linkingIdentifierColumn + "`) = LOWER('" + identifier + "') ";
 		}
 		query = query + "ORDER BY `" + configuration.linkingUserIDColumn + "` DESC";
 		try
@@ -37,19 +42,19 @@ public class UserIDDao
 		}
 		catch (IllegalAccessException exception)
 		{
-			environment.getLog().severe(WebApplication.EXCEPTION_MESSAGE_GETUSERID + exception.getMessage());
+			environment.getLog().severe(EXCEPTION_MESSAGE_GETUSERID + exception.getMessage());
 		}
 		catch (InstantiationException exception)
 		{
-			environment.getLog().severe(WebApplication.EXCEPTION_MESSAGE_GETUSERID + exception.getMessage());
+			environment.getLog().severe(EXCEPTION_MESSAGE_GETUSERID + exception.getMessage());
 		}
 		catch (MalformedURLException exception)
 		{
-			environment.getLog().severe(WebApplication.EXCEPTION_MESSAGE_GETUSERID + exception.getMessage());
+			environment.getLog().severe(EXCEPTION_MESSAGE_GETUSERID + exception.getMessage());
 		}
 		catch (SQLException exception)
 		{
-			environment.getLog().severe(WebApplication.EXCEPTION_MESSAGE_GETUSERID + exception.getMessage());
+			environment.getLog().severe(EXCEPTION_MESSAGE_GETUSERID + exception.getMessage());
 		}
 		return "";
 	}

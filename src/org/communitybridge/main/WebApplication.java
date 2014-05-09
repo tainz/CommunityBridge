@@ -23,6 +23,7 @@ import org.communitybridge.groupsynchronizer.KeyValueWebGroupDao;
 import org.communitybridge.groupsynchronizer.MultipleKeyValueWebGroupDao;
 import org.communitybridge.groupsynchronizer.SingleWebGroupDao;
 import org.communitybridge.groupsynchronizer.WebGroupDao;
+import org.communitybridge.linker.UserIDDao;
 import org.communitybridge.utility.Log;
 import org.communitybridge.utility.MinecraftUtilities;
 import org.communitybridge.utility.StringUtilities;
@@ -279,13 +280,6 @@ public class WebApplication extends Synchronizer
 		{
 			loadUserIDfromDatabase(player.getName());
 		}
-	}
-
-	public String getUserID(OfflinePlayer player)
-	{
-		return "";
-//		UserIDDao userIDDao = new UserIDDao(environment);
-//		return userIDDao.getUserID(player.getName());
 	}
 
 	public synchronized void loadUserIDfromDatabase(String playerName)
@@ -1102,7 +1096,7 @@ public class WebApplication extends Synchronizer
 		}
 		else
 		{
-			query = "SELECT `" + configuration.linkingPlayerNameColumn + "` "
+			query = "SELECT `" + configuration.linkingIdentifierColumn + "` "
 						+ "FROM `" + configuration.linkingTableName + "` "
 						+ "WHERE `" + configuration.linkingUserIDColumn + "` = '" + userID + "'";
 		}

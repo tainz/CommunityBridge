@@ -70,11 +70,12 @@ public class Configuration
 	public String linkingRegisteredGroup;
 	public boolean linkingNotifyPlayerGroup;
 	public boolean linkingRegisteredFormerUnregisteredOnly;
+	public String linkingMethod;
 
 	public boolean linkingUsesKey;
 	public String linkingTableName;
 	public String linkingUserIDColumn;
-	public String linkingPlayerNameColumn;
+	public String linkingIdentifierColumn;
 	public String linkingKeyName;
 	public String linkingKeyColumn;
 	public String linkingValueColumn;
@@ -215,11 +216,17 @@ public class Configuration
 
 	public boolean analyze(SQL sql)
 	{
-		boolean status;
+		boolean status = true;
 		boolean temp;
 
 		// Linking table section.
-		status = checkTable(sql, "player-user-linking.table-name", linkingTableName);
+		if (!linkingMethod.startsWith("bot") && !linkingMethod.startsWith("uui") && !linkingMethod.startsWith("nam"))
+		{
+			status = false;
+			log.severe("Invalid linking method in the player-user-linking section of the configuration.");
+		}
+
+		status = status & checkTable(sql, "player-user-linking.table-name", linkingTableName);
 		if (status)
 		{
 			status = status & checkColumn(sql, "player-user-linking.user-id-column", linkingTableName, linkingUserIDColumn);
@@ -236,7 +243,7 @@ public class Configuration
 			}
 			else
 			{
-				status = status & checkColumn(sql, "player-user-linking.playername-column", linkingTableName, linkingPlayerNameColumn);
+				status = status & checkColumn(sql, "player-user-linking.identifer-column", linkingTableName, linkingIdentifierColumn);
 			}
 		}
 
@@ -827,6 +834,7 @@ public class Configuration
 		}
 
 		// Linking Section
+		linkingMethod = config.getString("player-user-linking.linking-method", "both");
 		linkingKickUnregistered = config.getBoolean("player-user-linking.kick-unregistered", false);
 		linkingAutoRemind = config.getBoolean("player-user-linking.auto-remind", false);
 		linkingAutoEvery = config.getLong("player-user-linking.auto-remind-every", 12000L);
@@ -841,7 +849,16 @@ public class Configuration
 		linkingUsesKey = config.getBoolean("player-user-linking.uses-key", false);
 		linkingTableName = config.getString("player-user-linking.table-name", "");
 		linkingUserIDColumn = config.getString("player-user-linking.user-id-column", "");
-		linkingPlayerNameColumn = config.getString("player-user-linking.playername-column", "");
+		linkingIdentifierColumn = config.getString("player-user-linking.identifer-column", "");
+
+		if (linkingIdentifierColumn.isEmpty())
+		{
+			linkingIdentifierColumn = config.getString("player-user-linking.playername-column", "");
+			if (!linkingIdentifierColumn.isEmpty())
+			{
+				log.severe("the configuration option player-user-linking.playername-column is deprecated. Change playername-column to identifier-column in the player-user-linking section.");
+			}
+		}
 
 		linkingKeyName = config.getString("player-user-linking.key-name", "");
 		linkingKeyColumn = config.getString("player-user-linking.key-column", "");
@@ -1219,6 +1236,7 @@ public class Configuration
 		log.config(    "Database username                    : " + databaseUsername);
 
 		// Linking Section
+		log.config(    "Linking method                       : " + linkingMethod);
 		log.config(    "Linking auto reminder                : " + linkingAutoRemind);
 		if (linkingAutoRemind)
 		{
@@ -1243,7 +1261,7 @@ public class Configuration
 		}
 		else
 		{
-			log.config(  "Linking player name column           : " + linkingPlayerNameColumn);
+			log.config(  "Linking player name column           : " + linkingIdentifierColumn);
 		}
 
 		log.config(    "Avatars config enabled               : " + avatarEnabled);

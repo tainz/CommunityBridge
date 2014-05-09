@@ -1,16 +1,16 @@
-package org.communitybridge.main;
+package org.communitybridge.linker;
 
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.apache.commons.lang.RandomStringUtils;
+import org.communitybridge.main.Configuration;
+import org.communitybridge.main.Environment;
+import org.communitybridge.main.SQL;
 import org.communitybridge.utility.Log;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.*;
 
 public class UserIDDaoTest
@@ -62,7 +62,7 @@ public class UserIDDaoTest
 
 		String query = "SELECT `" + configuration.linkingTableName + "`.`" + configuration.linkingUserIDColumn + "` "
 								 + "FROM `" + configuration.linkingTableName + "` "
-								 + "WHERE LOWER(`" + configuration.linkingPlayerNameColumn + "`) = LOWER('" + PLAYER_NAME + "') "
+								 + "WHERE LOWER(`" + configuration.linkingIdentifierColumn + "`) = LOWER('" + PLAYER_NAME + "') "
 								 + "ORDER BY `" + configuration.linkingUserIDColumn + "` DESC";
 		userIDDao.getUserID(PLAYER_NAME);
 		verify(sql).sqlQuery(query);
@@ -127,6 +127,6 @@ public class UserIDDaoTest
 	{
 		when(sql.sqlQuery(anyString())).thenThrow(exception);
 		assertEquals("", userIDDao.getUserID(PLAYER_NAME));
-		verify(log).severe(WebApplication.EXCEPTION_MESSAGE_GETUSERID + exception.getMessage());
+		verify(log).severe(UserIDDao.EXCEPTION_MESSAGE_GETUSERID + exception.getMessage());
 	}
 }

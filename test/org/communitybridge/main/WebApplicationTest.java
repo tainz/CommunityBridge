@@ -30,7 +30,6 @@ public class WebApplicationTest
 	private SQL sql = mock(SQL.class);
 
 	private WebGroupDao webGroupDao = mock(WebGroupDao.class);
-	private ResultSet result = mock(ResultSet.class);
 
 	public class TestableWebApplication extends WebApplication
 	{
@@ -227,12 +226,5 @@ public class WebApplicationTest
 		when(webGroupDao.getSecondaryGroupIDs(anyString())).thenThrow(exception);
 		assertEquals(0, webApplication.getUserSecondaryGroupIDs(PLAYER_NAME).size());
 		verify(log).severe(WebApplication.EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
-	}
-
-	@Test
-	public void getUserIDNeverReturnsNull()
-	{
-		OfflinePlayer player = mock(OfflinePlayer.class);
-		assertNotNull(webApplication.getUserID(player));
 	}
 }
