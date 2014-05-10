@@ -1,5 +1,6 @@
 package org.communitybridge.linker;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.entity.Player;
 import org.communitybridge.main.Environment;
@@ -16,6 +17,18 @@ public class UserPlayerLinker
 		this.cacheLimit = cacheLimit;
 		this.environment = environment;
 		this.userIDDao = new UserIDDao(environment);
+	}
+
+	public String getUUID(String userID)
+	{
+		for (Map.Entry<String, String> entry : userIDCache.entrySet())
+		{
+			if (userID.equals(entry.getValue()))
+			{
+				return entry.getKey();
+			}
+		}
+		return userIDDao.getUUID(userID);
 	}
 
 	public String getUserID(Player player)

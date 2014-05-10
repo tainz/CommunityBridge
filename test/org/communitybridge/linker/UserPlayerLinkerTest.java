@@ -156,4 +156,34 @@ public class UserPlayerLinkerTest
 		assertEquals(someOtherID, userPlayerLinker.getUserIDCache().get(someOtherName));
 		assertFalse(userPlayerLinker.getUserIDCache().containsKey(PLAYER_NAME));
 	}
+
+	@Test
+	public void getUUIDNeverReturnsNull()
+	{
+		configuration.linkingMethod = "both";
+		when(userIDDao.getUUID(anyString())).thenReturn(uuid.toString());
+		assertNotNull(userPlayerLinker.getUUID(""));
+	}
+
+	@Test
+	public void getUUIDSuccessfullyRetrievesCachedEntry()
+	{
+		configuration.linkingMethod = "uuid";
+		when(player.getUniqueId()).thenReturn(uuid);
+		when(player.getName()).thenReturn(PLAYER_NAME);
+		when(userIDDao.getUserID(PLAYER_NAME)).thenReturn(NAME_USER_ID);
+		when(userIDDao.getUserID(uuid.toString())).thenReturn(UUID_USER_ID);
+		userPlayerLinker.getUserID(player);
+		assertEquals(uuid.toString(), userPlayerLinker.getUUID(UUID_USER_ID));
+	}
+
+	@Test
+	public void getUUIDRetrievesUUIDFromDatabase()
+	{
+		configuration.linkingMethod = "uuid";
+		when(player.getUniqueId()).thenReturn(uuid);
+		when(player.getName()).thenReturn(PLAYER_NAME);
+		when(userIDDao.getUUID(UUID_USER_ID)).thenReturn(uuid.toString());
+		assertEquals(uuid.toString(), userPlayerLinker.getUUID(UUID_USER_ID));
+	}
 }
