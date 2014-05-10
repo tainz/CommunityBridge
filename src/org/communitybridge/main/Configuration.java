@@ -966,8 +966,10 @@ public class Configuration
 			simpleSynchronizationGroupMap = config.getConfigurationSection("simple-synchronization.group-mapping").getValues(false);
 		}
 
-		config.addDefault("simple-synchronization.groups-treated-as-primary", simpleSynchronizationGroupsTreatedAsPrimary);
-		simpleSynchronizationGroupsTreatedAsPrimary = config.getStringList("simple-synchronization.groups-treated-as-primary");
+		if (config.contains("simple-synchronization.groups-treated-as-primary"))
+		{
+			simpleSynchronizationGroupsTreatedAsPrimary = config.getStringList("simple-synchronization.groups-treated-as-primary");
+		}
 
 		// Ban synchronization
 		banSynchronizationEnabled = config.getBoolean("ban-synchronization.enabled", false);
