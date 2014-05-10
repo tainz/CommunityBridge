@@ -30,7 +30,7 @@ public class UserPlayerLinkerTest
 	private Configuration configuration = mock(Configuration.class);
 
 	@InjectMocks
-	UserPlayerLinker userPlayerLinker = new UserPlayerLinker(environment);
+	UserPlayerLinker userPlayerLinker = new UserPlayerLinker(environment, 1);
 
 	@Before
 	public void setup()
@@ -138,5 +138,23 @@ public class UserPlayerLinkerTest
 		userPlayerLinker.getUserID(player);
 		userPlayerLinker.removeUserIDFromCache(player);
 		assertNull(userPlayerLinker.getUserIDCache().get(PLAYER_NAME));
+	}
+
+	@Test
+	public void secondLookupOnTinyCacheForcesFlush()
+	{
+		String someOtherName = RandomStringUtils.randomNumeric(6);
+		String someOtherID = RandomStringUtils.randomNumeric(2);
+		configuration.linkingMethod = "name";
+		when(player.getUniqueId()).thenReturn(uuid);
+		when(player.getName()).thenReturn(PLAYER_NAME, someOtherName);
+		when(userIDDao.getUserID(PLAYER_NAME)).thenReturn(NAME_USER_ID);
+		when(userIDDao.getUserID(someOtherName)).thenReturn(someOtherID);
+		when(userIDDao.getUserID(uuid.toString())).thenReturn(UUID_USER_ID);
+		userPlayerLinker.getUserID(player);
+		userPlayerLinker.getUserID(player);
+		assertEquals(1, userPlayerLinker.getUserIDCache().size());
+		assertEquals(someOtherID, userPlayerLinker.getUserIDCache().get(someOtherName));
+		assertFalse(userPlayerLinker.getUserIDCache().containsKey(PLAYER_NAME));
 	}
 }

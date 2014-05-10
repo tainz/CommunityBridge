@@ -10,16 +10,14 @@ public class UserPlayerLinker
 	private ConcurrentHashMap<String, String> userIDCache = new ConcurrentHashMap<String, String>();
 	private Environment environment;
 	private UserIDDao userIDDao;
+	private int cacheLimit;
 
-	public UserPlayerLinker(Environment environment)
+	public UserPlayerLinker(Environment environment, int cacheLimit)
 	{
+		this.cacheLimit = cacheLimit;
 		this.environment = environment;
 		this.userIDDao = new UserIDDao(environment);
 	}
-
-	// TODO:
-	// - Provide a getUserID(String name) method. use getPlayerExact to fetch a player.
-	// - Provide a getUserID(UUID id) method.
 
 	public String getUserID(Player player)
 	{
@@ -55,6 +53,10 @@ public class UserPlayerLinker
 		if (userID == null)
 		{
 			userID = userIDDao.getUserID(identifier);
+			if (userIDCache.size() == cacheLimit)
+			{
+				userIDCache.clear();
+			}
 			userIDCache.put(identifier, userID);
 		}
 		return userID;
