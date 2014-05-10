@@ -37,17 +37,16 @@ public class PlayerListener implements Listener
 	@EventHandler
 	public void onPlayerPreLogin(AsyncPlayerPreLoginEvent event)
 	{
-		String playerName = event.getName();
-		Player player = Bukkit.getPlayerExact(playerName);
+		Player player = Bukkit.getPlayerExact(event.getName());
 		userPlayerLinker.removeUserIDFromCache(player);
 
-		if (webapp.isPlayerRegistered(playerName))
+		if (userPlayerLinker.getUserID(player).isEmpty())
 		{
-			preLoginRegisteredPlayer(playerName, event);
+			preLoginUnregisteredPlayer(event);
 		}
 		else
 		{
-			preLoginUnregisteredPlayer(event);
+			preLoginRegisteredPlayer(player, event);
 		}
 	} // onPlayerPreLogin
 
@@ -142,30 +141,18 @@ public class PlayerListener implements Listener
 		}
 	}
 
-	private void kickPlayerForInsufficientPosts(AsyncPlayerPreLoginEvent event)
+	private void preLoginRegisteredPlayer(Player player, AsyncPlayerPreLoginEvent event)
 	{
-		event.setKickMessage(config.messages.get("require-minimum-posts-message"));
-		event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
-	}
+		log.fine(player.getName() + " linked to web application user ID #" + userPlayerLinker.getUserID(player) + ".");
 
-	private void kickPlayerLackingAvatar(AsyncPlayerPreLoginEvent event)
-	{
-		event.setKickMessage(config.messages.get("require-avatar-message"));
-		event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
-	}
-
-	private void preLoginRegisteredPlayer(String playerName, AsyncPlayerPreLoginEvent event)
-	{
-		log.fine(playerName + " linked to web application user ID #" + webapp.getUserID(playerName) + ".");
-
-		if (config.avatarEnabled && config.requireAvatar && webapp.playerHasAvatar(playerName) == false)
+		if (config.avatarEnabled && config.requireAvatar && webapp.playerHasAvatar(player.getName()) == false)
 		{
-			kickPlayerLackingAvatar(event);
+			kickPlayer(event, "require-avatar-message");
 		}
 
-		if (config.postCountEnabled && config.requireMinimumPosts && webapp.getUserPostCount(playerName) < config.requirePostsPostCount)
+		if (config.postCountEnabled && config.requireMinimumPosts && webapp.getUserPostCount(player.getName()) < config.requirePostsPostCount)
 		{
-			kickPlayerForInsufficientPosts(event);
+			kickPlayer(event, "require-minimum-posts-message");
 		}
 	}
 
@@ -179,12 +166,18 @@ public class PlayerListener implements Listener
 
 		if (config.requireAvatar)
 		{
-			kickPlayerLackingAvatar(event);
+			kickPlayer(event, "require-avatar-message");
 		}
 
 		if (config.requireMinimumPosts)
 		{
-			kickPlayerForInsufficientPosts(event);
+			kickPlayer(event, "require-minimum-posts-message");
 		}
+	}
+
+	private void kickPlayer(AsyncPlayerPreLoginEvent event, String messageKey)
+	{
+		event.setKickMessage(config.messages.get(messageKey));
+		event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
 	}
 } // PlayerListener class
