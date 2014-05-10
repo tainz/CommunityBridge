@@ -82,6 +82,7 @@ public class WebApplication extends Synchronizer
 	 * @param String containing the player's name.
 	 * @return String containing the player's  web application user ID.
 	 */
+	@Deprecated
 	public String getUserID(String playerName)
 	{
 		if (!playerUserIDs.containsKey(playerName))

@@ -13,7 +13,6 @@ import org.communitybridge.utility.Log;
 
 public class PlayerListener implements Listener
 {
-	private Environment environment;
 	private Configuration config;
 	private Log log;
 	private WebApplication webapp;
@@ -22,7 +21,6 @@ public class PlayerListener implements Listener
 
 	public PlayerListener(Environment environment, WebApplication webapp)
 	{
-		this.environment = environment;
 		this.config = environment.getConfiguration();
 		this.log = environment.getLog();
 		this.webapp = webapp;

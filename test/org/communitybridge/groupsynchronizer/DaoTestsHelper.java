@@ -1,6 +1,5 @@
 package org.communitybridge.groupsynchronizer;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import org.communitybridge.main.Configuration;
 

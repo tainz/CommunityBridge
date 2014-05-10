@@ -2,7 +2,6 @@ package org.communitybridge.linker;
 
 import java.util.UUID;
 import org.apache.commons.lang.RandomStringUtils;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.communitybridge.main.Configuration;
 import org.communitybridge.main.Environment;

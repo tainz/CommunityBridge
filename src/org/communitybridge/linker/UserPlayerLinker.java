@@ -1,7 +1,6 @@
 package org.communitybridge.linker;
 
 import java.util.concurrent.ConcurrentHashMap;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.communitybridge.main.Environment;
 
