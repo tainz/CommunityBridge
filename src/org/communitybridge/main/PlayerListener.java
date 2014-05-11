@@ -72,8 +72,6 @@ public class PlayerListener implements Listener
 
 	/**
 	 * This method is called by CraftBukkit when a player quits/disconnects.
-	 *
-	 * @param PlayerQuitEvent The event object (see CraftBukkit API).
 	 */
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event)
@@ -188,4 +186,4 @@ public class PlayerListener implements Listener
 		}
 		webapp.onJoin(player);
 	}
-} // PlayerListener class
+}
