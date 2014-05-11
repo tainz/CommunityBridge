@@ -11,7 +11,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.communitybridge.linker.UserPlayerLinker;
 import org.communitybridge.main.CommunityBridge;
 import org.communitybridge.main.Configuration;
 import org.communitybridge.main.Environment;
@@ -52,6 +51,8 @@ public class BanState
 			FileConfiguration banData = YamlConfiguration.loadConfiguration(file);
 			bannedUserIDs = banData.getStringList("banned-user-ids");
 			bannedUUIDs = banData.getStringList("banned-uuids");
+
+			convertNamesIfNeeded(banData);
 		}
 	}
 
@@ -60,6 +61,7 @@ public class BanState
 		FileConfiguration banData = new YamlConfiguration();
 		banData.set("banned-user-ids", bannedUserIDs);
 		banData.set("banned-uuids", bannedUUIDs);
+		banData.set("ban-file-version", "2");
 		banData.save(file);
 	}
 
@@ -175,6 +177,19 @@ public class BanState
 		catch (SQLException exception)
 		{
 			log.severe(exceptionBase + exception.getMessage());
+		}
+	}
+
+	private void convertNamesIfNeeded(FileConfiguration banData)
+	{
+		String version = banData.getString("ban-file-version", "");
+		if (version.isEmpty())
+		{
+			List<String> names = banData.getStringList("banned-player-names");
+			for (String name : names)
+			{
+				bannedUUIDs.add(Bukkit.getOfflinePlayer(name).getUniqueId().toString());
+			}
 		}
 	}
 }
