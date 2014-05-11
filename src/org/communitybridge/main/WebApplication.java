@@ -319,19 +319,6 @@ public class WebApplication extends Synchronizer
 	}
 
 	/**
-	 * Performs operations when a player quits.
-	 *
-	 * @param String containing the player's name.
-	 */
-	public void onQuit(Player player)
-	{
-		if (configuration.syncDuringQuit)
-		{
-			runSynchronizePlayer(player, false);
-		}
-	}
-
-	/**
 	 * If statistics is enabled, this method sets up an update statistics task
 	 * for the given player.
 	 *

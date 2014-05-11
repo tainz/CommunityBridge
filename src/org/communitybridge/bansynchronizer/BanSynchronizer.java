@@ -265,7 +265,7 @@ public class BanSynchronizer extends Synchronizer
 		{
 			if (!current.getBannedUUIDs().contains(uuid))
 			{
-				unbanPlayerWeb(userPlayerLinker.getUserIDByUUID(uuid));
+				unbanPlayerWeb(userPlayerLinker.getUserID(uuid));
 			}
 		}
 
@@ -273,7 +273,7 @@ public class BanSynchronizer extends Synchronizer
 		{
 			if (!previous.getBannedUUIDs().contains(uuid))
 			{
-				banPlayerWeb(userPlayerLinker.getUserIDByUUID(uuid));
+				banPlayerWeb(userPlayerLinker.getUserID(uuid));
 			}
 		}
 	}

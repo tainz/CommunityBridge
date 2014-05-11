@@ -3,8 +3,6 @@ package org.communitybridge.linker;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.communitybridge.main.Configuration;
 import org.communitybridge.main.Environment;
 

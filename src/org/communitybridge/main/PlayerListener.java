@@ -9,11 +9,13 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.communitybridge.linker.UserPlayerLinker;
+import org.communitybridge.permissionhandlers.PermissionHandler;
 import org.communitybridge.utility.Log;
 
 public class PlayerListener implements Listener
 {
-	private Configuration config;
+	private Configuration configuration;
+	private PermissionHandler permissionHandler;
 	private Log log;
 	private WebApplication webapp;
 
@@ -21,8 +23,9 @@ public class PlayerListener implements Listener
 
 	public PlayerListener(Environment environment, WebApplication webapp)
 	{
-		this.config = environment.getConfiguration();
+		this.configuration = environment.getConfiguration();
 		this.log = environment.getLog();
+		this.permissionHandler = environment.getPermissionHandler();
 		this.webapp = webapp;
 		this.userPlayerLinker = environment.getUserPlayerLinker();
 	}
@@ -35,7 +38,7 @@ public class PlayerListener implements Listener
 	@EventHandler
 	public void onPlayerPreLogin(AsyncPlayerPreLoginEvent event)
 	{
-		Player player = Bukkit.getPlayerExact(event.getName());
+		Player player = Bukkit.getPlayer(event.getUniqueId());
 		userPlayerLinker.removeUserIDFromCache(player);
 
 		if (userPlayerLinker.getUserID(player).isEmpty())
@@ -46,12 +49,10 @@ public class PlayerListener implements Listener
 		{
 			preLoginRegisteredPlayer(player, event);
 		}
-	} // onPlayerPreLogin
+	}
 
 	/**
 	 * This method is called by CraftBukkit as the player joins the server.
-	 *
-	 * @param PlayerJoinEvent The event object (see CraftBukkit API).
 	 */
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event)
@@ -59,40 +60,14 @@ public class PlayerListener implements Listener
 		Player player = event.getPlayer();
 		String playerName = player.getName();
 
-		if (webapp.isPlayerRegistered(playerName))
+		if (userPlayerLinker.getUserID(player).isEmpty())
 		{
-			if (config.linkingNotifyRegistered)
-			{
-				String message = ChatColor.GREEN + config.messages.get("link-registered-player");
-				player.sendMessage(message);
-			}
-
-			if (!config.groupSynchronizationActive && !config.linkingRegisteredGroup.isEmpty())
-			{
-				maybeSwitchToRegistered(playerName, player);
-			}
-			webapp.onJoin(player);
+			joinRegisteredPlayer(player, playerName);
 		}
 		else
 		{
-			if (config.linkingNotifyUnregistered)
-			{
-				String message = ChatColor.RED + config.messages.get("link-unregistered-player");
-				player.sendMessage(message);
-			} // if config.linkingNotifyUnregistered
-
-			if (!config.linkingUnregisteredGroup.isEmpty())
-			{
-				CommunityBridge.permissionHandler.addToGroup(playerName, config.linkingUnregisteredGroup);
-				if (config.linkingNotifyPlayerGroup)
-				{
-					String message = ChatColor.RED + config.messages.get("link-notify-player-group-change");
-					message = message.replace("~GROUPNAME~", config.linkingUnregisteredGroup);
-					player.sendMessage(message);
-				}
-			}
-		} // if isPlayerRegistered
-
+			joinUnregisteredPlayer(player, playerName);
+		}
 	}
 
 	/**
@@ -103,38 +78,38 @@ public class PlayerListener implements Listener
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event)
 	{
-		webapp.onQuit(event.getPlayer());
+		if (configuration.syncDuringQuit)
+		{
+			webapp.runSynchronizePlayer(event.getPlayer(), false);
+		}
 	} // onPlayerQuit
 
 	/**
 	 * Checks if changing the player's group from the unregistered group to
 	 * the registered group is merited and does so if it is.
-	 *
-	 * @param playerName - name of the player to check and possibly move.
-	 * @param player - player object representing the player.
 	 */
 	private void maybeSwitchToRegistered(String playerName, Player player)
 	{
 		// We don't use the linking registered group if it is empty or group
 		// synchronization is active.
-		if (config.groupSynchronizationActive || config.linkingRegisteredGroup.isEmpty())
+		if (configuration.groupSynchronizationActive || configuration.linkingRegisteredGroup.isEmpty())
 		{
 			return;
 		}
 
 		// if this rule is turned on, we won't change groups unless they're
 		// a member of the unregistered group or they have no groups.
-		if (config.linkingRegisteredFormerUnregisteredOnly && !CommunityBridge.permissionHandler.isMemberOfGroup(playerName, config.linkingUnregisteredGroup) && CommunityBridge.permissionHandler.getGroupsPure(playerName).length != 0)
+		if (configuration.linkingRegisteredFormerUnregisteredOnly && !permissionHandler.isMemberOfGroup(playerName, configuration.linkingUnregisteredGroup) && permissionHandler.getGroupsPure(playerName).length != 0)
 		{
 			return;
 		}
 
-		CommunityBridge.permissionHandler.switchGroup(playerName, config.linkingUnregisteredGroup, config.linkingRegisteredGroup);
+		permissionHandler.switchGroup(playerName, configuration.linkingUnregisteredGroup, configuration.linkingRegisteredGroup);
 
-		if (config.linkingNotifyPlayerGroup)
+		if (configuration.linkingNotifyPlayerGroup)
 		{
-			String message = ChatColor.RED + config.messages.get("link-notify-player-group-change");
-			message = message.replace("~GROUPNAME~", config.linkingRegisteredGroup);
+			String message = ChatColor.RED + configuration.messages.get("link-notify-player-group-change");
+			message = message.replace("~GROUPNAME~", configuration.linkingRegisteredGroup);
 			player.sendMessage(message);
 		}
 	}
@@ -143,12 +118,12 @@ public class PlayerListener implements Listener
 	{
 		log.fine(player.getName() + " linked to web application user ID #" + userPlayerLinker.getUserID(player) + ".");
 
-		if (config.avatarEnabled && config.requireAvatar && webapp.playerHasAvatar(player.getName()) == false)
+		if (configuration.avatarEnabled && configuration.requireAvatar && webapp.playerHasAvatar(player.getName()) == false)
 		{
 			kickPlayer(event, "require-avatar-message");
 		}
 
-		if (config.postCountEnabled && config.requireMinimumPosts && webapp.getUserPostCount(player.getName()) < config.requirePostsPostCount)
+		if (configuration.postCountEnabled && configuration.requireMinimumPosts && webapp.getUserPostCount(player.getName()) < configuration.requirePostsPostCount)
 		{
 			kickPlayer(event, "require-minimum-posts-message");
 		}
@@ -156,18 +131,18 @@ public class PlayerListener implements Listener
 
 	private void preLoginUnregisteredPlayer(AsyncPlayerPreLoginEvent event)
 	{
-		if (config.linkingKickUnregistered)
+		if (configuration.linkingKickUnregistered)
 		{
-			event.setKickMessage(config.messages.get("link-unregistered-player"));
+			event.setKickMessage(configuration.messages.get("link-unregistered-player"));
 			event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST);
 		}
 
-		if (config.requireAvatar)
+		if (configuration.requireAvatar)
 		{
 			kickPlayer(event, "require-avatar-message");
 		}
 
-		if (config.requireMinimumPosts)
+		if (configuration.requireMinimumPosts)
 		{
 			kickPlayer(event, "require-minimum-posts-message");
 		}
@@ -175,7 +150,42 @@ public class PlayerListener implements Listener
 
 	private void kickPlayer(AsyncPlayerPreLoginEvent event, String messageKey)
 	{
-		event.setKickMessage(config.messages.get(messageKey));
+		event.setKickMessage(configuration.messages.get(messageKey));
 		event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
+	}
+
+	private void joinRegisteredPlayer(Player player, String playerName)
+	{
+		if (configuration.linkingNotifyUnregistered)
+		{
+			String message = ChatColor.RED + configuration.messages.get("link-unregistered-player");
+			player.sendMessage(message);
+		} // if config.linkingNotifyUnregistered
+
+		if (!configuration.linkingUnregisteredGroup.isEmpty())
+		{
+			permissionHandler.addToGroup(playerName, configuration.linkingUnregisteredGroup);
+			if (configuration.linkingNotifyPlayerGroup)
+			{
+				String message = ChatColor.RED + configuration.messages.get("link-notify-player-group-change");
+				message = message.replace("~GROUPNAME~", configuration.linkingUnregisteredGroup);
+				player.sendMessage(message);
+			}
+		}
+	}
+
+	private void joinUnregisteredPlayer(Player player, String playerName)
+	{
+		if (configuration.linkingNotifyRegistered)
+		{
+			String message = ChatColor.GREEN + configuration.messages.get("link-registered-player");
+			player.sendMessage(message);
+		}
+
+		if (!configuration.groupSynchronizationActive && !configuration.linkingRegisteredGroup.isEmpty())
+		{
+			maybeSwitchToRegistered(playerName, player);
+		}
+		webapp.onJoin(player);
 	}
 } // PlayerListener class

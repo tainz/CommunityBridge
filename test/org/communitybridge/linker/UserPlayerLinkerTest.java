@@ -41,7 +41,7 @@ public class UserPlayerLinkerTest
 	public void getUserIDByUUIDNeverReturnsNull()
 	{
 		when(userIDDao.getUserID(uuid.toString())).thenReturn(UUID_USER_ID);
-		assertNotNull(userPlayerLinker.getUserIDByUUID(uuid.toString()));
+		assertNotNull(userPlayerLinker.getUserID(uuid.toString()));
 	}
 
 	@Test
@@ -49,7 +49,7 @@ public class UserPlayerLinkerTest
 	{
 		configuration.linkingMethod = "both";
 		when(userIDDao.getUserID(uuid.toString())).thenReturn(UUID_USER_ID);
-		assertEquals(UUID_USER_ID, userPlayerLinker.getUserIDByUUID(uuid.toString()));
+		assertEquals(UUID_USER_ID, userPlayerLinker.getUserID(uuid.toString()));
 	}
 
 	@Test
@@ -57,7 +57,7 @@ public class UserPlayerLinkerTest
 	{
 		configuration.linkingMethod = "uuid";
 		when(userIDDao.getUserID(uuid.toString())).thenReturn("");
-		assertEquals("", userPlayerLinker.getUserIDByUUID(uuid.toString()));
+		assertEquals("", userPlayerLinker.getUserID(uuid.toString()));
 	}
 
 	@Test

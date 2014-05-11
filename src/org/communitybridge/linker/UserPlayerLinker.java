@@ -1,7 +1,6 @@
 package org.communitybridge.linker;
 
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.entity.Player;
 import org.communitybridge.main.Environment;
@@ -38,7 +37,7 @@ public class UserPlayerLinker
 		return userIDDao.getUUID(userID);
 	}
 
-	public String getUserIDByUUID(String uuid)
+	public String getUserID(String uuid)
 	{
 		return getUserIDFromCacheOrDatabase(uuid);
 	}

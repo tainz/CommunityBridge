@@ -59,11 +59,6 @@ public final class CommunityBridge extends JavaPlugin
 		log = new Log(this.getLogger(), Level.CONFIG);
 		config = new Configuration(this, log);
 
-		environment.setConfiguration(config);
-		environment.setLog(log);
-		environment.setSql(sql);
-		environment.setUserPlayerLinker(new UserPlayerLinker(environment, Bukkit.getMaxPlayers() * 4));
-
 		CBCommandExecutor command = new CBCommandExecutor(config, log);
 		getCommand("cbreload").setExecutor(command);
 		getCommand("cbsync").setExecutor(command);
@@ -74,6 +69,12 @@ public final class CommunityBridge extends JavaPlugin
 //		getCommand("cbrank").setExecutor(new CBCommandExecutor(config, log));
 
 		activate();
+
+		environment.setConfiguration(config);
+		environment.setLog(log);
+		environment.setPermissionHandler(permissionHandler);
+		environment.setSql(sql);
+		environment.setUserPlayerLinker(new UserPlayerLinker(environment, Bukkit.getMaxPlayers() * 4));
 
 		if (CommunityBridge.isActive())
 		{

@@ -1,12 +1,14 @@
 package org.communitybridge.main;
 
 import org.communitybridge.linker.UserPlayerLinker;
+import org.communitybridge.permissionhandlers.PermissionHandler;
 import org.communitybridge.utility.Log;
 
 public class Environment
 {
 	private Configuration configuration;
 	private Log log;
+	private PermissionHandler permissionHandler;
 	private SQL sql;
 	private UserPlayerLinker userPlayerLinker;
 
@@ -38,6 +40,16 @@ public class Environment
 	public void setLog(Log log)
 	{
 		this.log = log;
+	}
+
+	public PermissionHandler getPermissionHandler()
+	{
+		return permissionHandler;
+	}
+
+	public void setPermissionHandler(PermissionHandler permissionHandler)
+	{
+		this.permissionHandler = permissionHandler;
 	}
 
 	public UserPlayerLinker getUserPlayerLinker()
