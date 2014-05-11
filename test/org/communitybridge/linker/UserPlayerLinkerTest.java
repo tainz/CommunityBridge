@@ -37,8 +37,31 @@ public class UserPlayerLinkerTest
 		environment.setConfiguration(configuration);
 	}
 
+		@Test
+	public void getUserIDByUUIDNeverReturnsNull()
+	{
+		when(userIDDao.getUserID(uuid.toString())).thenReturn(UUID_USER_ID);
+		assertNotNull(userPlayerLinker.getUserIDByUUID(uuid.toString()));
+	}
+
 	@Test
-	public void getUserIDNeverReturnsNull()
+	public void getUserIDByUUIDWithUUIDReturnsUserID()
+	{
+		configuration.linkingMethod = "both";
+		when(userIDDao.getUserID(uuid.toString())).thenReturn(UUID_USER_ID);
+		assertEquals(UUID_USER_ID, userPlayerLinker.getUserIDByUUID(uuid.toString()));
+	}
+
+	@Test
+	public void getUserIDByUUIDWithoutUUIDReturnsBlank()
+	{
+		configuration.linkingMethod = "uuid";
+		when(userIDDao.getUserID(uuid.toString())).thenReturn("");
+		assertEquals("", userPlayerLinker.getUserIDByUUID(uuid.toString()));
+	}
+
+	@Test
+	public void getUserIDByPlayerNeverReturnsNull()
 	{
 		configuration.linkingMethod = "both";
 		when(player.getUniqueId()).thenReturn(uuid);
@@ -47,7 +70,7 @@ public class UserPlayerLinkerTest
 	}
 
 	@Test
-	public void getUserIDWithoutUUIDWithPlayernameReturnsPlayernameUserID()
+	public void getUserIDbyPlayerWithoutUUIDWithPlayernameReturnsPlayernameUserID()
 	{
 		configuration.linkingMethod = "both";
 		when(player.getName()).thenReturn(PLAYER_NAME);
@@ -58,7 +81,7 @@ public class UserPlayerLinkerTest
 	}
 
 	@Test
-	public void getUserIDWithUUIDandWithPlayernameReturnsUUIDUserID()
+	public void getUserIDByPlayerWithUUIDandWithPlayernameReturnsUUIDUserID()
 	{
 		configuration.linkingMethod = "both";
 		when(player.getUniqueId()).thenReturn(uuid);

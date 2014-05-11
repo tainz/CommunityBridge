@@ -1,6 +1,7 @@
 package org.communitybridge.linker;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.entity.Player;
 import org.communitybridge.main.Environment;
@@ -19,6 +20,12 @@ public class UserPlayerLinker
 		this.userIDDao = new UserIDDao(environment);
 	}
 
+	public void removeUserIDFromCache(Player player)
+	{
+		userIDCache.remove(player.getUniqueId().toString());
+		userIDCache.remove(player.getName());
+	}
+
 	public String getUUID(String userID)
 	{
 		for (Map.Entry<String, String> entry : userIDCache.entrySet())
@@ -29,6 +36,11 @@ public class UserPlayerLinker
 			}
 		}
 		return userIDDao.getUUID(userID);
+	}
+
+	public String getUserIDByUUID(String uuid)
+	{
+		return getUserIDFromCacheOrDatabase(uuid);
 	}
 
 	public String getUserID(Player player)
@@ -46,12 +58,6 @@ public class UserPlayerLinker
 			userID = getUserIDFromCacheOrDatabase(player.getName());
 		}
 		return userID;
-	}
-
-	public void removeUserIDFromCache(Player player)
-	{
-		userIDCache.remove(player.getUniqueId().toString());
-		userIDCache.remove(player.getName());
 	}
 
 	private boolean isValidMethod(String linkingMethod, String valid)
