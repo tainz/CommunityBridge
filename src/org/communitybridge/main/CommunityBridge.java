@@ -95,6 +95,12 @@ public final class CommunityBridge extends JavaPlugin
 			return;
 		}
 
+		// If a feature requires a permissions system we load it up here.
+		if (config.permissionsSystemRequired)
+		{
+			selectPermissionsHandler();
+		}
+
 		if (enableSQL(false) == false)
 		{
 			deactivate();
@@ -104,12 +110,6 @@ public final class CommunityBridge extends JavaPlugin
 		webapp = new WebApplication(this, environment);
 		webapp.loadOnlineUserIDsFromDatabase();
 		getServer().getPluginManager().registerEvents(new PlayerListener(environment, webapp), this);
-
-		// If a feature requires a permissions system we load it up here.
-		if (config.permissionsSystemRequired)
-		{
-			selectPermissionsHandler();
-		}
 
 		if (config.economyEnabled || config.statisticsEnabled && config.walletEnabled)
 		{
