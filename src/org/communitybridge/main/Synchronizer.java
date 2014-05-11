@@ -2,6 +2,7 @@ package org.communitybridge.main;
 
 public class Synchronizer
 {
+	@SuppressWarnings("unused")
 	private Environment environment;
 
 	public Synchronizer(Environment environment)

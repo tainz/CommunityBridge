@@ -4,9 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
+import java.util.UUID;
+import org.bukkit.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.communitybridge.linker.UserPlayerLinker;
 import org.communitybridge.main.Configuration;
 import org.communitybridge.main.Environment;
 import org.communitybridge.main.SQL;
@@ -16,28 +19,32 @@ import org.communitybridge.utility.Log;
 
 public class BanSynchronizer extends Synchronizer
 {
+	private Environment environment;
+	private Configuration configuration;
 	private Log log;
 	private SQL sql;
+	private UserPlayerLinker userPlayerLinker;
 	private File folder;
 	private WebApplication webApplication;
-	private Configuration configuration;
 
 	public BanSynchronizer(File folder, Environment environment, WebApplication webApplication)
 	{
 		super(environment);
+		this.environment = environment;
+		this.configuration = environment.getConfiguration();
 		this.log = environment.getLog();
+		this.sql = environment.getSql();
+		this.userPlayerLinker = environment.getUserPlayerLinker();
 		this.folder = folder;
 		this.webApplication = webApplication;
-		this.configuration = environment.getConfiguration();
-		this.sql = environment.getSql();
 	}
 
 	public void synchronize()
 	{
-		BanState previous = new BanState(configuration.banSynchronizationMethod, folder, log);
+		BanState previous = new BanState(configuration.banSynchronizationMethod, folder, environment);
 		previous.load();
 
-		BanState current = new BanState(configuration.banSynchronizationMethod, folder, log);
+		BanState current = new BanState(configuration.banSynchronizationMethod, folder, environment);
 		current.generate();
 
 		if (isValidDirection(configuration.banSynchronizationDirection, "web"))
@@ -62,25 +69,24 @@ public class BanSynchronizer extends Synchronizer
 		}
 	}
 
-	private void unbanPlayerGame(String playerName)
+	private void unbanPlayerGame(String uuid)
 	{
-		OfflinePlayer playerOffline = Bukkit.getOfflinePlayer(playerName);
-		playerOffline.setBanned(false);
+		OfflinePlayer playerOffline = Bukkit.getOfflinePlayer(UUID.fromString(uuid));
+		Bukkit.getBanList(BanList.Type.NAME).pardon(playerOffline.getName());
 	}
 
-	private void banPlayerGame(String playerName)
+	private void banPlayerGame(String uuidString)
 	{
-		Player player = Bukkit.getPlayerExact(playerName);
+		UUID uuid = UUID.fromString(uuidString);
+
+		Player player = Bukkit.getPlayer(uuid);
 		if (player == null)
 		{
-			OfflinePlayer playerOffline = Bukkit.getOfflinePlayer(playerName);
-			playerOffline.setBanned(true);
+			player = Bukkit.getOfflinePlayer(uuid).getPlayer();
 		}
-		else
-		{
-			player.setBanned(true);
-			player.kickPlayer("Banned via forums.");
-		}
+
+		Bukkit.getBanList(BanList.Type.NAME).addBan(player.getName(), "banned by CommunityBridge synchronization", null, "");
+		player.kickPlayer("Banned via forums.");
 	}
 
 	private void unbanPlayerWeb(String userID)
@@ -236,17 +242,17 @@ public class BanSynchronizer extends Synchronizer
 
 	private void synchronizeWebToGame(BanState previous, BanState current)
 	{
-		for (String userID : previous.getWebBannedUserIDs())
+		for (String userID : previous.getBannedUserIDs())
 		{
-			if (!current.getWebBannedUserIDs().contains(userID))
+			if (!current.getBannedUserIDs().contains(userID))
 			{
 				unbanPlayerGame(webApplication.getPlayerName(userID));
 			}
 		}
 
-		for (String userID : current.getWebBannedUserIDs())
+		for (String userID : current.getBannedUserIDs())
 		{
-			if (!previous.getWebBannedUserIDs().contains(userID))
+			if (!previous.getBannedUserIDs().contains(userID))
 			{
 				banPlayerGame(webApplication.getPlayerName(userID));
 			}
@@ -255,19 +261,19 @@ public class BanSynchronizer extends Synchronizer
 
 	private void synchronizeGameToWeb(BanState previous, BanState current)
 	{
-		for (String playerName : previous.getGameBannedPlayerNames())
+		for (String uuid : previous.getBannedUUIDs())
 		{
-			if (!current.getGameBannedPlayerNames().contains(playerName))
+			if (!current.getBannedUUIDs().contains(uuid))
 			{
-				unbanPlayerWeb(webApplication.getUserID(playerName));
+				unbanPlayerWeb(userPlayerLinker.getUserIDByUUID(uuid));
 			}
 		}
 
-		for (String playerName : current.getGameBannedPlayerNames())
+		for (String uuid : current.getBannedUUIDs())
 		{
-			if (!previous.getGameBannedPlayerNames().contains(playerName))
+			if (!previous.getBannedUUIDs().contains(uuid))
 			{
-				banPlayerWeb(webApplication.getUserID(playerName));
+				banPlayerWeb(userPlayerLinker.getUserIDByUUID(uuid));
 			}
 		}
 	}

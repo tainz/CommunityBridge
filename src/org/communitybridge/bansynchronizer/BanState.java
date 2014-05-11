@@ -11,21 +11,29 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.communitybridge.linker.UserPlayerLinker;
 import org.communitybridge.main.CommunityBridge;
+import org.communitybridge.main.Configuration;
+import org.communitybridge.main.Environment;
+import org.communitybridge.main.SQL;
 import org.communitybridge.utility.Log;
 
 public class BanState
 {
+	private Configuration configuration;
 	private Log log;
+	private SQL sql;
 	private File file;
 	private String storageMethod;
-	private List<String> gameBannedPlayerNames = new ArrayList<String>();
-	private List<String> webBannedUserIDs = new ArrayList<String>();
+	private List<String> bannedUUIDs = new ArrayList<String>();
+	private List<String> bannedUserIDs = new ArrayList<String>();
 
-	public BanState(String storageMethod, File folder, Log log)
+	public BanState(String storageMethod, File folder, Environment environment)
 	{
 		this.file = new File(folder, "banstate.yml");
-		this.log = log;
+		this.configuration = environment.getConfiguration();
+		this.log = environment.getLog();
+		this.sql = environment.getSql();
 		this.storageMethod = storageMethod;
 	}
 
@@ -37,36 +45,36 @@ public class BanState
 
 	public void load()
 	{
-		webBannedUserIDs.clear();
-		gameBannedPlayerNames.clear();
+		bannedUserIDs.clear();
+		bannedUUIDs.clear();
 		if (file.exists())
 		{
 			FileConfiguration banData = YamlConfiguration.loadConfiguration(file);
-			webBannedUserIDs = banData.getStringList("banned-user-ids");
-			gameBannedPlayerNames = banData.getStringList("banned-player-names");
+			bannedUserIDs = banData.getStringList("banned-user-ids");
+			bannedUUIDs = banData.getStringList("banned-uuids");
 		}
 	}
 
 	public void save() throws IOException
 	{
 		FileConfiguration banData = new YamlConfiguration();
-		banData.set("banned-user-ids", webBannedUserIDs);
-		banData.set("banned-player-names", gameBannedPlayerNames);
+		banData.set("banned-user-ids", bannedUserIDs);
+		banData.set("banned-uuids", bannedUUIDs);
 		banData.save(file);
 	}
 
 	private void collectGameBans()
 	{
-		gameBannedPlayerNames.clear();
+		bannedUUIDs.clear();
 		for (OfflinePlayer player : Bukkit.getServer().getBannedPlayers())
 		{
-			gameBannedPlayerNames.add(player.getName());
+			bannedUUIDs.add(player.getPlayer().getUniqueId().toString());
 		}
 	}
 
 	private void collectWebBans()
 	{
-		webBannedUserIDs.clear();
+		bannedUserIDs.clear();
 		if (storageMethod.startsWith("tab"))
 		{
 			collectWebBansTableMethod();
@@ -77,21 +85,21 @@ public class BanState
 		}
 		else if (storageMethod.startsWith("gro"))
 		{
-			collectWebBansGroupMethod(CommunityBridge.config.banSynchronizationBanGroup);
+			collectWebBansGroupMethod(configuration.banSynchronizationBanGroup);
 		}
 	}
 
 	private void collectWebBansTableMethod()
 	{
 		String exceptionBase = "Exception in collectWebBans: ";
-		String query = "SELECT * FROM `" + CommunityBridge.config.banSynchronizationTableName + "`";
+		String query = "SELECT * FROM `" + configuration.banSynchronizationTableName + "`";
 
 		try
 		{
-			ResultSet result = CommunityBridge.sql.sqlQuery(query);
+			ResultSet result = sql.sqlQuery(query);
 			while(result.next())
 			{
-				webBannedUserIDs.add(result.getString(CommunityBridge.config.banSynchronizationUserIDColumn));
+				bannedUserIDs.add(result.getString(configuration.banSynchronizationUserIDColumn));
 			}
 		}
 		catch (MalformedURLException exception)
@@ -112,24 +120,24 @@ public class BanState
 		}
 	}
 
-	public List<String> getGameBannedPlayerNames()
+	public List<String> getBannedUUIDs()
 	{
-		return gameBannedPlayerNames;
+		return bannedUUIDs;
 	}
 
-	public void setGameBannedPlayerNames(List<String> gameBannedPlayerNames)
+	public void setBannedUUIDs(List<String> bannedUUIDs)
 	{
-		this.gameBannedPlayerNames = gameBannedPlayerNames;
+		this.bannedUUIDs = bannedUUIDs;
 	}
 
-	public List<String> getWebBannedUserIDs()
+	public List<String> getBannedUserIDs()
 	{
-		return webBannedUserIDs;
+		return bannedUserIDs;
 	}
 
-	public void setWebBannedUserIDs(List<String> webBannedUserIDs)
+	public void setBannedUserIDs(List<String> bannedUserIDs)
 	{
-		this.webBannedUserIDs = webBannedUserIDs;
+		this.bannedUserIDs = bannedUserIDs;
 	}
 
 	private void collectWebBansGroupMethod(String groupID)
@@ -140,16 +148,16 @@ public class BanState
 	private void collectWebBansUserMethod()
 	{
 		String exceptionBase = "Exception in collectWebBansUser: ";
-		String query = "SELECT * FROM `" + CommunityBridge.config.banSynchronizationTableName + "` "
-								 + "WHERE `" + CommunityBridge.config.banSynchronizationBanColumn + "` = '" + CommunityBridge.config.banSynchronizationValueBanned + "'";
+		String query = "SELECT * FROM `" + configuration.banSynchronizationTableName + "` "
+								 + "WHERE `" + configuration.banSynchronizationBanColumn + "` = '" + configuration.banSynchronizationValueBanned + "'";
 
 		try
 		{
-			ResultSet result = CommunityBridge.sql.sqlQuery(query);
+			ResultSet result = sql.sqlQuery(query);
 
 			while(result.next())
 			{
-				webBannedUserIDs.add(result.getString(CommunityBridge.config.banSynchronizationUserIDColumn));
+				bannedUserIDs.add(result.getString(configuration.banSynchronizationUserIDColumn));
 			}
 		}
 		catch (MalformedURLException exception)
