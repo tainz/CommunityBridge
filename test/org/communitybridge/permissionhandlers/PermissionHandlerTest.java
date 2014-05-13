@@ -1,5 +1,6 @@
 package org.communitybridge.permissionhandlers;
 
+import java.util.List;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.junit.Before;
@@ -120,13 +121,13 @@ public class PermissionHandlerTest
 		}
 
 		@Override
-		public String[] getGroups(Player player)
+		public List<String> getGroups(Player player)
 		{
 			throw new UnsupportedOperationException("No implementation needed for tests.");
 		}
 
 		@Override
-		public String[] getGroupsPure(Player player)
+		public List<String> getGroupsPure(Player player)
 		{
 			throw new UnsupportedOperationException("No implementation needed for tests.");
 		}

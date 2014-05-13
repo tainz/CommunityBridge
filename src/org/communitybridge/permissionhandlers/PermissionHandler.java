@@ -1,5 +1,6 @@
 package org.communitybridge.permissionhandlers;
 
+import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -12,8 +13,8 @@ public abstract class PermissionHandler
 	String[] EMPTY_ARRAY = new String[0];
 
 	public abstract boolean addToGroup(Player player, String groupName);
-	public abstract String [] getGroups(Player player);
-	public abstract String [] getGroupsPure(Player player);
+	public abstract List<String> getGroups(Player player);
+	public abstract List<String> getGroupsPure(Player player);
 	public abstract String getPrimaryGroup(Player player);
 	public abstract boolean isMemberOfGroup(Player player, String groupName);
 	public abstract boolean isPrimaryGroup(Player player, String groupName);

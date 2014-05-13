@@ -97,7 +97,7 @@ public class PlayerListener implements Listener
 
 		// if this rule is turned on, we won't change groups unless they're
 		// a member of the unregistered group or they have no groups.
-		if (configuration.linkingRegisteredFormerUnregisteredOnly && !permissionHandler.isMemberOfGroup(player, configuration.linkingUnregisteredGroup) && permissionHandler.getGroupsPure(player).length != 0)
+		if (configuration.linkingRegisteredFormerUnregisteredOnly && !permissionHandler.isMemberOfGroup(player, configuration.linkingUnregisteredGroup) && !permissionHandler.getGroupsPure(player).isEmpty())
 		{
 			return;
 		}
