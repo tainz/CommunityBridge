@@ -10,22 +10,22 @@ import org.communitybridge.main.CommunityBridge;
 public class AchievementGroup extends Achievement
 {
 	private String groupName;
-	
+
 	@Override
 	public boolean playerQualifies(Player player, PlayerAchievementState state)
 	{
-		return CommunityBridge.permissionHandler.isMemberOfGroup(player.getName(), groupName)
+		return CommunityBridge.permissionHandler.isMemberOfGroup(player, groupName)
 				&& state.getGroupAchievement(groupName) < limit
 				&& canRewardAllItemRewards(player);
 	}
-	
+
 	@Override
 	public void rewardPlayer(Player player, PlayerAchievementState state)
 	{
 		super.rewardPlayer(player, state);
 		state.groupIncrement(groupName);
 	}
-	
+
 	public String getGroupName()
 	{
 		return groupName;

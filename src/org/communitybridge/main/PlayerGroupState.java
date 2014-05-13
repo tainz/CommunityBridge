@@ -41,11 +41,11 @@ public class PlayerGroupState
 	{
 		webappPrimaryGroupID = CommunityBridge.webapp.getUserPrimaryGroupID(userID);
 		webappGroupIDs = CommunityBridge.webapp.getUserSecondaryGroupIDs(userID);
-		permissionsSystemGroupNames = new ArrayList<String>(Arrays.asList(CommunityBridge.permissionHandler.getGroups(player.getName())));
+		permissionsSystemGroupNames = new ArrayList<String>(Arrays.asList(CommunityBridge.permissionHandler.getGroups(player)));
 
 		if (CommunityBridge.permissionHandler.supportsPrimaryGroups())
 		{
-			permissionsSystemPrimaryGroupName = CommunityBridge.permissionHandler.getPrimaryGroup(player.getName());
+			permissionsSystemPrimaryGroupName = CommunityBridge.permissionHandler.getPrimaryGroup(player);
 		}
 		else
 		{

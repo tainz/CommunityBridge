@@ -77,22 +77,6 @@ public class WebApplication extends Synchronizer
 	}
 
 	/**
-	 * Returns a given player's web application user ID.
-	 *
-	 * @param String containing the player's name.
-	 * @return String containing the player's  web application user ID.
-	 */
-	@Deprecated
-	public String getUserID(String playerName)
-	{
-		if (!playerUserIDs.containsKey(playerName))
-		{
-			loadUserIDfromDatabase(playerName);
-		}
-		return playerUserIDs.get(playerName);
-	}
-
-	/**
 	 * Returns true if the user's avatar column contains data.
 	 *
 	 * @param String The player's name.
@@ -477,7 +461,7 @@ public class WebApplication extends Synchronizer
 		// 4. Synchronize secondary group state
 		if (configuration.webappSecondaryGroupEnabled)
 		{
-			synchronizeGroupsSecondary(direction, previous, current, result, userID, playerName);
+			synchronizeGroupsSecondary(direction, previous, current, result, userID, player);
 		}
 		else
 		{
@@ -878,7 +862,7 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	private void synchronizeGroupsSecondary(String direction, PlayerGroupState previous, PlayerGroupState current, PlayerGroupState result, String userID, String playerName)
+	private void synchronizeGroupsSecondary(String direction, PlayerGroupState previous, PlayerGroupState current, PlayerGroupState result, String userID, Player player)
 	{
 		if (isValidDirection(direction, "min"))
 		{
@@ -887,7 +871,7 @@ public class WebApplication extends Synchronizer
 
 		if (isValidDirection(direction, "web"))
 		{
-			synchronizeGroupsSecondaryWebToGame(playerName, previous, current, result);
+			synchronizeGroupsSecondaryWebToGame(player, previous, current, result);
 		}
 	}
 
@@ -919,11 +903,11 @@ public class WebApplication extends Synchronizer
 		String pseudo = "";
 		if (CommunityBridge.permissionHandler.supportsPrimaryGroups())
 		{
-			CommunityBridge.permissionHandler.setPrimaryGroup(playerName, newGroupName, formerGroupName);
+			CommunityBridge.permissionHandler.setPrimaryGroup(player, newGroupName, formerGroupName);
 		}
 		else
 		{
-			CommunityBridge.permissionHandler.switchGroup(playerName, formerGroupName, newGroupName);
+			CommunityBridge.permissionHandler.switchGroup(player, formerGroupName, newGroupName);
 			pseudo = "pseudo-primary ";
 		}
 		result.permissionsSystemPrimaryGroupName = newGroupName;
@@ -996,14 +980,14 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	private void synchronizeGroupsSecondaryWebToGame(String playerName, PlayerGroupState previous, PlayerGroupState current, PlayerGroupState result)
+	private void synchronizeGroupsSecondaryWebToGame(Player player, PlayerGroupState previous, PlayerGroupState current, PlayerGroupState result)
 	{
 		for (String groupID : previous.webappGroupIDs)
 		{
 			if (!current.webappGroupIDs.contains(groupID))
 			{
 				String groupName = configuration.getGroupNameByGroupID(groupID);
-				CommunityBridge.permissionHandler.removeFromGroup(playerName, groupName);
+				CommunityBridge.permissionHandler.removeFromGroup(player, groupName);
 				result.permissionsSystemGroupNames.remove(groupName);
 			}
 		}
@@ -1025,7 +1009,7 @@ public class WebApplication extends Synchronizer
 				}
 				else if (!current.permissionsSystemPrimaryGroupName.equals(groupName) && !current.permissionsSystemGroupNames.contains(groupName))
 				{
-					CommunityBridge.permissionHandler.addToGroup(playerName, groupName);
+					CommunityBridge.permissionHandler.addToGroup(player, groupName);
 					result.permissionsSystemGroupNames.add(groupName);
 				} // Check for null/primaryalreadyset/secondaryalreadyset
 			} // if previousState contains group ID

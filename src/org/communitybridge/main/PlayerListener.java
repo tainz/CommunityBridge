@@ -97,12 +97,12 @@ public class PlayerListener implements Listener
 
 		// if this rule is turned on, we won't change groups unless they're
 		// a member of the unregistered group or they have no groups.
-		if (configuration.linkingRegisteredFormerUnregisteredOnly && !permissionHandler.isMemberOfGroup(playerName, configuration.linkingUnregisteredGroup) && permissionHandler.getGroupsPure(playerName).length != 0)
+		if (configuration.linkingRegisteredFormerUnregisteredOnly && !permissionHandler.isMemberOfGroup(player, configuration.linkingUnregisteredGroup) && permissionHandler.getGroupsPure(player).length != 0)
 		{
 			return;
 		}
 
-		permissionHandler.switchGroup(playerName, configuration.linkingUnregisteredGroup, configuration.linkingRegisteredGroup);
+		permissionHandler.switchGroup(player, configuration.linkingUnregisteredGroup, configuration.linkingRegisteredGroup);
 
 		if (configuration.linkingNotifyPlayerGroup)
 		{
@@ -162,7 +162,7 @@ public class PlayerListener implements Listener
 
 		if (!configuration.linkingUnregisteredGroup.isEmpty())
 		{
-			permissionHandler.addToGroup(playerName, configuration.linkingUnregisteredGroup);
+			permissionHandler.addToGroup(player, configuration.linkingUnregisteredGroup);
 			if (configuration.linkingNotifyPlayerGroup)
 			{
 				String message = ChatColor.RED + configuration.messages.get("link-notify-player-group-change");
