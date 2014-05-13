@@ -13,7 +13,6 @@ import static org.mockito.Mockito.*;
 public class WebApplicationTest
 {
 	private static final String EXCEPTION_MESSAGE = "test message";
-	private static final String PLAYER_NAME = RandomStringUtils.randomAlphabetic(7);
 	private static final String USER_ID = RandomStringUtils.randomNumeric(2);
 	private static final String GROUP_NAME = RandomStringUtils.randomAlphabetic(10);
 	private static final String GROUP_ID = RandomStringUtils.randomAlphabetic(2);
@@ -179,7 +178,7 @@ public class WebApplicationTest
 	private void testUserPrimaryGroupIDGroupsException(Exception exception) throws SQLException, InstantiationException, IllegalAccessException, MalformedURLException
 	{
 		when(webGroupDao.getPrimaryGroupID(anyString())).thenThrow(exception);
-		webApplication.getUserPrimaryGroupID(PLAYER_NAME);
+		webApplication.getUserPrimaryGroupID("");
 		verify(log).severe(WebApplication.EXCEPTION_MESSAGE_GETPRIMARY + exception.getMessage());
 	}
 
@@ -221,7 +220,7 @@ public class WebApplicationTest
 	private void testSecondaryGroupUserIDsGroupsException(Exception exception) throws SQLException, InstantiationException, IllegalAccessException, MalformedURLException
 	{
 		when(webGroupDao.getSecondaryGroupIDs(anyString())).thenThrow(exception);
-		assertEquals(0, webApplication.getUserSecondaryGroupIDs(PLAYER_NAME).size());
+		assertEquals(0, webApplication.getUserSecondaryGroupIDs("").size());
 		verify(log).severe(WebApplication.EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
 	}
 }

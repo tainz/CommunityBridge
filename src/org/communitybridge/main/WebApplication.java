@@ -98,14 +98,14 @@ public class WebApplication extends Synchronizer
 	 * @param String The player's name.
 	 * @return boolean True if the user has an avatar.
 	 */
-	public boolean playerHasAvatar(String playerName)
+	public boolean playerHasAvatar(Player player)
 	{
 		final String exceptionBase = "Exception during WebApplication.playerHasAvatar(): ";
 		String query;
 
 		query = "SELECT `" + configuration.avatarTableName + "`.`" + configuration.avatarAvatarColumn + "` "
 					+ "FROM `" + configuration.avatarTableName + "` "
-					+ "WHERE `" + configuration.avatarUserIDColumn + "` = '" + getUserID(playerName) + "'";
+					+ "WHERE `" + configuration.avatarUserIDColumn + "` = '" + environment.getUserPlayerLinker().getUserID(player) + "'";
 
 		try
 		{
@@ -154,14 +154,14 @@ public class WebApplication extends Synchronizer
 	 * @param String The player's name.
 	 * @return int Number of posts.
 	 */
-	public int getUserPostCount(String playerName)
+	public int getUserPostCount(Player player)
 	{
 		final String exceptionBase = "Exception during WebApplication.getUserPostCount(): ";
 		String query;
 
 		query = "SELECT `" + configuration.postCountTableName + "`.`" + configuration.postCountPostCountColumn + "` "
 					+ "FROM `" + configuration.postCountTableName + "` "
-					+ "WHERE `" + configuration.postCountUserIDColumn + "` = '" + getUserID(playerName) + "'";
+					+ "WHERE `" + configuration.postCountUserIDColumn + "` = '" + environment.getUserPlayerLinker().getUserID(player) + "'";
 
 		try
 		{
@@ -204,11 +204,11 @@ public class WebApplication extends Synchronizer
 	 * @param String player name to retrieve.
 	 * @return String containing the group ID or null if there was an error or it doesn't exist.
 	 */
-	public String getUserPrimaryGroupID(String playerName)
+	public String getUserPrimaryGroupID(String userID)
 	{
 		try
 		{
-			return webGroupDao.getPrimaryGroupID(getUserID(playerName));
+			return webGroupDao.getPrimaryGroupID(userID);
 		}
 		catch (SQLException exception)
 		{
@@ -232,11 +232,11 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	public List<String> getUserSecondaryGroupIDs(String playerName)
+	public List<String> getUserSecondaryGroupIDs(String userID)
 	{
 		try
 		{
-			return webGroupDao.getSecondaryGroupIDs(getUserID(playerName));
+			return webGroupDao.getSecondaryGroupIDs(userID);
 		}
 		catch (SQLException exception)
 		{
@@ -258,16 +258,6 @@ public class WebApplication extends Synchronizer
 			log.severe(EXCEPTION_MESSAGE_GETSECONDARY + exception.getMessage());
 			return EMPTY_LIST;
 		}
-	}
-
-	/**
-	 * Returns true if the player is registered on the web application.
-	 * @param String The name of the player.
-	 * @return boolean True if the player is registered.
-	 */
-	public boolean isPlayerRegistered(String playerName)
-	{
-		return !(getUserID(playerName) == null || getUserID(playerName).isEmpty());
 	}
 
 	/**
@@ -436,9 +426,8 @@ public class WebApplication extends Synchronizer
 	private void synchronizeGroups(Player player)
 	{
 		String playerName = player.getName();
-		String uuid = player.getUniqueId().toString().replace("-", "");
 		String direction = configuration.simpleSynchronizationDirection;
-		String userID = getUserID(playerName);
+		String userID = environment.getUserPlayerLinker().getUserID(player);
 
 		// This can happen if the player disconnects after synchronization has
 		// already begun.
@@ -463,10 +452,10 @@ public class WebApplication extends Synchronizer
 
 		File playerFolder = new File(plugin.getDataFolder(), "Players");
 
-		PlayerGroupState previous = new PlayerGroupState(playerFolder, uuid, playerName);
+		PlayerGroupState previous = new PlayerGroupState(playerFolder, player, userID);
 		previous.load();
 
-		PlayerGroupState current = new PlayerGroupState(playerFolder, uuid, playerName);
+		PlayerGroupState current = new PlayerGroupState(playerFolder, player, userID);
 		current.generate();
 		PlayerGroupState result = current.copy();
 
@@ -582,7 +571,7 @@ public class WebApplication extends Synchronizer
 		int previousGameTime = 0;
 
 		String playerName = player.getName();
-		playerStatistics.setUserID(getUserID(playerName));
+		playerStatistics.setUserID(environment.getUserPlayerLinker().getUserID(player));
 		if (playerStatistics.getUserID() == null)
 		{
 			return;

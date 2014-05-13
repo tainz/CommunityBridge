@@ -276,15 +276,13 @@ public final class CommunityBridge extends JavaPlugin
 	 * Reminds a single player to register if they are not registered.
 	 * If linking-kick-unregistered is turned on, an unregistered player will
 	 * be kicked.
-	 *
-	 * @param Player The player to remind.
 	 */
   private void remindPlayer(Player player)
   {
-		String playerName = player.getName();
-		String id = webapp.getUserID(playerName);
-    if (id == null || id.isEmpty())
+		String userID = environment.getUserPlayerLinker().getUserID(player);
+    if (userID == null || userID.isEmpty())
     {
+			String playerName = player.getName();
       if (config.linkingKickUnregistered)
       {
         player.kickPlayer(config.messages.get("link-unregistered-player"));

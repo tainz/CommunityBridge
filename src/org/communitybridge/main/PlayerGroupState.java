@@ -7,43 +7,45 @@ import java.util.Arrays;
 import java.util.List;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 public class PlayerGroupState
 {
-	private File playerFolder;
-	private String name;
-	private String uuid;
-
-	private File playerFile;
-	private File oldPlayerFile;
-
 	public String webappPrimaryGroupID;
 	public List<String> webappGroupIDs;
 
 	public String permissionsSystemPrimaryGroupName;
 	public List<String> permissionsSystemGroupNames;
-
 	public boolean isNewFile;
 
-	public PlayerGroupState(File playerFolder, String uuid, String name)
+	private File playerFolder;
+	private Player player;
+
+	private File playerFile;
+	private File oldPlayerFile;
+
+	private String userID;
+
+	public PlayerGroupState(File playerFolder, Player player, String userID)
 	{
-		this.name = name;
+		this.player = player;
+		this.userID = userID;
 		this.playerFolder = playerFolder;
-		this.playerFile = new File(playerFolder, uuid + ".yml");
-		this.oldPlayerFile = new File(playerFolder, name + ".yml");
+		this.playerFile = new File(playerFolder, player.getUniqueId().toString().replace("-", "") + ".yml");
+		this.oldPlayerFile = new File(playerFolder, player.getName() + ".yml");
 		this.webappGroupIDs = new ArrayList<String>();
 		this.permissionsSystemGroupNames = new ArrayList<String>();
 	}
 
 	public void generate()
 	{
-		webappPrimaryGroupID = CommunityBridge.webapp.getUserPrimaryGroupID(name);
-		webappGroupIDs = CommunityBridge.webapp.getUserSecondaryGroupIDs(name);
-		permissionsSystemGroupNames = new ArrayList<String>(Arrays.asList(CommunityBridge.permissionHandler.getGroups(name)));
+		webappPrimaryGroupID = CommunityBridge.webapp.getUserPrimaryGroupID(userID);
+		webappGroupIDs = CommunityBridge.webapp.getUserSecondaryGroupIDs(userID);
+		permissionsSystemGroupNames = new ArrayList<String>(Arrays.asList(CommunityBridge.permissionHandler.getGroups(player.getName())));
 
 		if (CommunityBridge.permissionHandler.supportsPrimaryGroups())
 		{
-			permissionsSystemPrimaryGroupName = CommunityBridge.permissionHandler.getPrimaryGroup(name);
+			permissionsSystemPrimaryGroupName = CommunityBridge.permissionHandler.getPrimaryGroup(player.getName());
 		}
 		else
 		{
@@ -94,7 +96,7 @@ public class PlayerGroupState
 
 	public PlayerGroupState copy()
 	{
-		PlayerGroupState copy = new PlayerGroupState(playerFolder, uuid, name);
+		PlayerGroupState copy = new PlayerGroupState(playerFolder, player, userID);
 		copy.isNewFile = isNewFile;
 		copy.permissionsSystemGroupNames.addAll(permissionsSystemGroupNames);
 		copy.permissionsSystemPrimaryGroupName = permissionsSystemPrimaryGroupName;

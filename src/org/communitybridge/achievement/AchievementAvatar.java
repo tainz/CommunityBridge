@@ -9,11 +9,11 @@ public class AchievementAvatar extends Achievement
 	public boolean playerQualifies(Player player, PlayerAchievementState state)
 	{
 		return CommunityBridge.config.avatarEnabled
-				&& CommunityBridge.webapp.playerHasAvatar(player.getName())
+				&& CommunityBridge.webapp.playerHasAvatar(player)
 				&& state.getAvatarAchievements() < limit
 				&& canRewardAllItemRewards(player);
 	}
-	
+
 	@Override
 	public void rewardPlayer(Player player, PlayerAchievementState state)
 	{
