@@ -18,7 +18,7 @@ public class WebApplicationTest
 	private static final String GROUP_ID = RandomStringUtils.randomAlphabetic(2);
 	private static final int COUNT = 0;
 
-	private TestableWebApplication  webApplication;
+	private WebApplication webApplication;
 
 	private Environment environment = new Environment();
 	private Configuration configuration = mock(Configuration.class);
@@ -27,32 +27,13 @@ public class WebApplicationTest
 
 	private WebGroupDao webGroupDao = mock(WebGroupDao.class);
 
-	public class TestableWebApplication extends WebApplication
-	{
-		public TestableWebApplication(Environment environment, WebGroupDao webGroupDao)
-		{
-			super(environment, webGroupDao);
-		}
-
-		public TestableWebApplication(CommunityBridge plugin, Environment environment)
-		{
-			super(plugin, environment);
-		}
-
-		@Override
-		public String getUserID(String playerName)
-		{
-			return USER_ID;
-		}
-	}
-
 	@Before
 	public void setup()
 	{
 		environment.setConfiguration(configuration);
 		environment.setLog(log);
 		environment.setSql(sql);
-		webApplication = new TestableWebApplication(environment, webGroupDao);
+		webApplication = new WebApplication(environment, webGroupDao);
 	}
 
 	@Test
