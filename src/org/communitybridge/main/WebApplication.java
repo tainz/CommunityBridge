@@ -486,7 +486,7 @@ public class WebApplication extends Synchronizer
 	private void synchronizeGroups(Player player)
 	{
 		String playerName = player.getName();
-		String uuid = player.getUniqueId().toString().replace("-", "");
+		String uuid = player.getUniqueId().toString();
 		String direction = configuration.simpleSynchronizationDirection;
 		String userID = getUserID(playerName);
 

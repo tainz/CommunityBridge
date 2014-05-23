@@ -28,6 +28,7 @@ public class PlayerGroupState
 	public PlayerGroupState(File playerFolder, String uuid, String name)
 	{
 		this.name = name;
+		this.uuid = uuid;
 		this.playerFolder = playerFolder;
 		this.playerFile = new File(playerFolder, uuid + ".yml");
 		this.oldPlayerFile = new File(playerFolder, name + ".yml");
@@ -84,6 +85,7 @@ public class PlayerGroupState
 	public void save() throws IOException
 	{
 		FileConfiguration playerData = new YamlConfiguration();
+		playerData.set("last-known-name", name);
 		playerData.set("webapp.primary-group-id", webappPrimaryGroupID);
 		playerData.set("webapp.group-ids", webappGroupIDs);
 		playerData.set("permissions-system.primary-group-name", permissionsSystemPrimaryGroupName);
