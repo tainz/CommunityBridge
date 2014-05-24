@@ -34,6 +34,8 @@ public class PlayerGroupState
 		this.oldPlayerFile = new File(playerFolder, name + ".yml");
 		this.webappGroupIDs = new ArrayList<String>();
 		this.permissionsSystemGroupNames = new ArrayList<String>();
+		this.webappPrimaryGroupID = "";
+		this.permissionsSystemPrimaryGroupName = "";
 	}
 
 	public void generate()
