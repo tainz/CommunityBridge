@@ -246,41 +246,6 @@ public class WebApplication extends Synchronizer
 	}
 
 	/**
-	 * Retrieves user IDs for all connected players, required after a cache
-	 * cleanup and after cb reload.
-	 */
-	public synchronized void loadOnlineUserIDsFromDatabase()
-	{
-		Player [] players =	Bukkit.getOnlinePlayers();
-
-		for (Player player : players)
-		{
-			loadUserIDfromDatabase(player.getName());
-		}
-	}
-
-	public synchronized void loadUserIDfromDatabase(String playerName)
-	{
-		if (playerUserIDs.size() >= (maxPlayers * 4))
-		{
-			playerUserIDs.clear();
-			loadOnlineUserIDsFromDatabase();
-		}
-
-		UserIDDao userIDDao = new UserIDDao(environment);
-		String userID = userIDDao.getUserID(playerName);
-		if (userID.isEmpty())
-		{
-			log.finest("User ID for " + playerName + " not found.");
-		}
-		else
-		{
-			log.finest("User ID '" + userID + "' associated with " + playerName + ".");
-			playerUserIDs.put(playerName, userID);
-		}
-	}
-
-	/**
 	 * Performs operations when a player joins
 	 *
 	 * @param String The player who joined.
