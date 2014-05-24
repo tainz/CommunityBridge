@@ -40,7 +40,12 @@ public class PermissionHandlerPermissionsEx extends PermissionHandler
 	@Override
 	public List<String> getGroups(Player player)
 	{
-		return PermissionsEx.getUser(player).getParentIdentifiers();
+		PermissionUser permissionUser = PermissionsEx.getUser(player);
+		if (permissionUser == null)
+		{
+			return new ArrayList<String>();
+		}
+		return permissionUser.getParentIdentifiers();
 	}
 
 	@Override
@@ -59,9 +64,8 @@ public class PermissionHandlerPermissionsEx extends PermissionHandler
 	@Override
 	public String getPrimaryGroup(Player player)
 	{
-		PermissionUser permissionUser = PermissionsEx.getUser(player);
 		List<String> groups = getGroupsPure(player);
-		if (permissionUser == null || groups.isEmpty())
+		if (groups.isEmpty())
 		{
 			return "";
 		}
@@ -101,7 +105,13 @@ public class PermissionHandlerPermissionsEx extends PermissionHandler
 	@Override
 	public boolean removeFromGroup(Player player, String groupName)
 	{
-		PermissionsEx.getPermissionManager().getUser(player).removeGroup(groupName);
+		PermissionUser permissionUser = PermissionsEx.getUser(player);
+		if (permissionUser == null)
+		{
+			return false;
+		}
+
+		permissionUser.removeGroup(groupName);
 		return true;
 	}
 
