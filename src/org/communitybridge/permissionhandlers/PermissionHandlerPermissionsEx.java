@@ -18,18 +18,7 @@ public class PermissionHandlerPermissionsEx extends PermissionHandler
 	{
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("PermissionsEx");
 
-		validate(plugin, "PermissionsEx");
-
-		String bukkitVersion = Bukkit.getBukkitVersion().replace("R", "");
-		// EXPIRABLE: ST2012-Dec-21: At some point we'll just make these requirements
-		if (StringUtilities.compareVersion(bukkitVersion, "1.4.5.1.0") > -1)
-		{
-			String pexVersion = MinecraftUtilities.getPluginVersion("PermissionsEx");
-			if (StringUtilities.compareVersion("1.19.5", pexVersion) == 1)
-			{
-				throw new IllegalStateException("This version of Minecraft is incompatible with PermissionsEx versions earlier than 1.19.5. Disabling CommunityBridge.");
-			}
-		}
+		validate(plugin, "PermissionsEx", "1.21.4");
 	}
 
 	@Override

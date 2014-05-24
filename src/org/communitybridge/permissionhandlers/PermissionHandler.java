@@ -4,11 +4,13 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.communitybridge.utility.StringUtilities;
 
 public abstract class PermissionHandler
 {
 	protected final String NOT_FOUND = " not found.";
 	protected final String NOT_ENABLED = " is not enabled.";
+	protected final String WRONG_VERSION = " should be at least version ";
 
 	String[] EMPTY_ARRAY = new String[0];
 
@@ -28,7 +30,7 @@ public abstract class PermissionHandler
 		addToGroup(player, newGroupName);
 	}
 
-	protected void validate(Plugin plugin, String name) throws IllegalStateException
+	protected void validate(Plugin plugin, String name, String version) throws IllegalStateException
 	{
 		if (plugin == null)
 		{
@@ -38,6 +40,10 @@ public abstract class PermissionHandler
 		if (!plugin.isEnabled())
 		{
 			throw new IllegalStateException(name + NOT_ENABLED);
+		}
+
+		if (StringUtilities.compareVersion(plugin.getDescription().getVersion(), version) < 0) {
+			throw new IllegalStateException(name + WRONG_VERSION + version);
 		}
 	}
 
