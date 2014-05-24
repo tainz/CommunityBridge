@@ -1,4 +1,4 @@
-package org.communitybridge.main;
+package org.communitybridge.groupsynchronizer;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,6 +7,7 @@ import java.util.List;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.communitybridge.main.CommunityBridge;
 
 public class PlayerGroupState
 {
