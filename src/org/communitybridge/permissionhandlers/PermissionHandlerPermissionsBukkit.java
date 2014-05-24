@@ -26,9 +26,7 @@ public class PermissionHandlerPermissionsBukkit extends PermissionHandler
 	@Override
 	public boolean addToGroup(Player player, String groupName)
 	{
-		return Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-						                                  "permissions player addgroup "
-						                                  + player.getName() + " " + groupName);
+		return Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "permissions player addgroup " + player.getUniqueId().toString() + " " + groupName);
 	}
 
 	@Override
@@ -38,11 +36,11 @@ public class PermissionHandlerPermissionsBukkit extends PermissionHandler
 
 		for (Group group : permissions.getAllGroups())
 		{
-			if (group.getPlayers().contains(player.getName().toLowerCase()))
+			if (group.getPlayers().contains(player.getUniqueId().toString())
+				||group.getPlayers().contains(player.getName().toLowerCase()))
 			{
 				groupNames.add(group.getName());
 			}
-
 		}
 
 		return groupNames;
@@ -57,22 +55,12 @@ public class PermissionHandlerPermissionsBukkit extends PermissionHandler
 	@Override
 	public String getPrimaryGroup(Player player)
 	{
-		String playerName = player.getName();
-		if (permissions.getPlayerInfo(playerName) == null
-		 || permissions.getPlayerInfo(playerName).getGroups() == null
-		 || permissions.getPlayerInfo(playerName).getGroups().isEmpty())
+		List<String> groups = getGroups(player);
+		if (groups.isEmpty())
 		{
 			return "";
 		}
-		String group = permissions.getPlayerInfo(playerName).getGroups().get(0).getName();
-		if (group == null)
-		{
-			return "";
-		}
-		else
-		{
-			return group;
-		}
+		return groups.get(0);
 	}
 
  	@Override
@@ -98,9 +86,7 @@ public class PermissionHandlerPermissionsBukkit extends PermissionHandler
 	@Override
 	public boolean removeFromGroup(Player player, String groupName)
 	{
-		return Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-						                                  "permissions player removegroup "
-						                                + player.getName() + " " + groupName);
+		return Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "permissions player removegroup " + player.getUniqueId().toString() + " " + groupName);
 	}
 
 	/**
