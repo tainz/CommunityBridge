@@ -18,16 +18,16 @@ public abstract class Achievement
 	protected int limit;
 	protected double cashReward;
 	protected Map<Material, Integer> itemRewards = new EnumMap<Material, Integer>(Material.class);
-	
+
 	public abstract boolean playerQualifies(Player player, PlayerAchievementState state);
-	
+
 	public void rewardPlayer(Player player, PlayerAchievementState state)
 	{
 		if (CommunityBridge.config.economyEnabled)
 		{
 			CommunityBridge.economy.depositPlayer(player.getName(), cashReward);
 		}
-		
+
 		for (Entry<Material, Integer> entry : itemRewards.entrySet())
 		{
 			ItemStack stack = new ItemStack(entry.getKey(), entry.getValue());
@@ -35,12 +35,12 @@ public abstract class Achievement
 		}
 		player.updateInventory();
 	}
-	
+
 	protected boolean canRewardAllItemRewards(Player player)
 	{
 		final Inventory testInventory = Bukkit.getServer().createInventory(null, player.getInventory().getType());
-    testInventory.setContents(player.getInventory().getContents());
-		
+		testInventory.setContents(player.getInventory().getContents());
+
 		for (Entry<Material, Integer> entry : itemRewards.entrySet())
 		{
 			ItemStack stack = new ItemStack(entry.getKey(), entry.getValue());
@@ -49,7 +49,7 @@ public abstract class Achievement
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 
@@ -57,16 +57,16 @@ public abstract class Achievement
 	{
 		limit = config.getInt(path + ".Limit", 1);
 		cashReward = config.getDouble(path + ".Money", 0.0);
-		
+
 		ConfigurationSection itemsSection = config.getConfigurationSection(path + ".Items");
-		
+
 		if (itemsSection == null)
 		{
 			return;
 		}
 
 		Set<String> itemSet = itemsSection.getKeys(false);
-		
+
 		for (String key : itemSet)
 		{
 			Material material = Material.getMaterial(key);

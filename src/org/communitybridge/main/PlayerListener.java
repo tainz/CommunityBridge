@@ -58,15 +58,14 @@ public class PlayerListener implements Listener
 	public void onPlayerJoin(PlayerJoinEvent event)
 	{
 		Player player = event.getPlayer();
-		String playerName = player.getName();
 
 		if (userPlayerLinker.getUserID(player).isEmpty())
 		{
-			joinRegisteredPlayer(player, playerName);
+			joinRegisteredPlayer(player);
 		}
 		else
 		{
-			joinUnregisteredPlayer(player, playerName);
+			joinUnregisteredPlayer(player);
 		}
 	}
 
@@ -86,7 +85,7 @@ public class PlayerListener implements Listener
 	 * Checks if changing the player's group from the unregistered group to
 	 * the registered group is merited and does so if it is.
 	 */
-	private void maybeSwitchToRegistered(String playerName, Player player)
+	private void maybeSwitchToRegistered(Player player)
 	{
 		// We don't use the linking registered group if it is empty or group
 		// synchronization is active.
@@ -152,7 +151,7 @@ public class PlayerListener implements Listener
 		event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
 	}
 
-	private void joinRegisteredPlayer(Player player, String playerName)
+	private void joinRegisteredPlayer(Player player)
 	{
 		if (configuration.linkingNotifyUnregistered)
 		{
@@ -172,7 +171,7 @@ public class PlayerListener implements Listener
 		}
 	}
 
-	private void joinUnregisteredPlayer(Player player, String playerName)
+	private void joinUnregisteredPlayer(Player player)
 	{
 		if (configuration.linkingNotifyRegistered)
 		{
@@ -182,7 +181,7 @@ public class PlayerListener implements Listener
 
 		if (!configuration.groupSynchronizationActive && !configuration.linkingRegisteredGroup.isEmpty())
 		{
-			maybeSwitchToRegistered(playerName, player);
+			maybeSwitchToRegistered(player);
 		}
 		webapp.onJoin(player);
 	}
