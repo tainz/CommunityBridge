@@ -26,7 +26,7 @@ public class PermissionHandlerZPermissions extends PermissionHandler
 	@Override
 	public boolean addToGroup(Player player, String groupName)
 	{
-		return Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "permissions group " + groupName + " add " + player.getName());
+		return Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "permissions group " + groupName + " add " + player.getUniqueId().toString());
 	}
 
 	@Override
@@ -44,9 +44,7 @@ public class PermissionHandlerZPermissions extends PermissionHandler
 	@Override
 	public String getPrimaryGroup(Player player)
 	{
-		List<String> groups = getGroups(player);
-
-		return groups.isEmpty() ? "" : groups.get(0);
+		return service.getPlayerPrimaryGroup(player.getUniqueId());
 	}
 
 	@Override
@@ -67,7 +65,7 @@ public class PermissionHandlerZPermissions extends PermissionHandler
 	@Override
 	public boolean removeFromGroup(Player player, String groupName)
 	{
-		return Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "permissions group " + groupName + " remove " + player.getName());
+		return Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "permissions group " + groupName + " remove " + player.getUniqueId().toString());
 	}
 
 	@Override
