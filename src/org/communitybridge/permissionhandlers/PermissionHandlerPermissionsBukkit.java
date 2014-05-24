@@ -36,8 +36,7 @@ public class PermissionHandlerPermissionsBukkit extends PermissionHandler
 
 		for (Group group : permissions.getAllGroups())
 		{
-			if (group.getPlayers().contains(player.getUniqueId().toString())
-				||group.getPlayers().contains(player.getName().toLowerCase()))
+			if (isMemberOfGroup(player, group))
 			{
 				groupNames.add(group.getName());
 			}
@@ -73,7 +72,13 @@ public class PermissionHandlerPermissionsBukkit extends PermissionHandler
 			return false;
 		}
 
-		return group.getPlayers().contains(player.getName().toLowerCase());
+		return isMemberOfGroup(player, group);
+	}
+
+	private boolean isMemberOfGroup(Player player, Group group)
+	{
+		return group.getPlayers().contains(player.getUniqueId().toString())
+				 ||group.getPlayers().contains(player.getName().toLowerCase());
 	}
 
 	@Override
