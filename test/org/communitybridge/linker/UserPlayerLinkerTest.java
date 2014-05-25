@@ -5,6 +5,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.entity.Player;
 import org.communitybridge.main.Configuration;
 import org.communitybridge.main.Environment;
+import org.communitybridge.utility.Log;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -145,7 +146,7 @@ public class UserPlayerLinkerTest
 		when(userIDDao.getUserID(PLAYER_NAME)).thenReturn(NAME_USER_ID);
 		when(userIDDao.getUserID(uuid.toString())).thenReturn(UUID_USER_ID);
 		userPlayerLinker.getUserID(player);
-		userPlayerLinker.removeUserIDFromCache(player);
+		userPlayerLinker.removeUserIDFromCache(uuid.toString(), PLAYER_NAME);
 		assertNull(userPlayerLinker.getUserIDCache().get(uuid.toString()));
 	}
 
@@ -158,7 +159,7 @@ public class UserPlayerLinkerTest
 		when(userIDDao.getUserID(PLAYER_NAME)).thenReturn(NAME_USER_ID);
 		when(userIDDao.getUserID(uuid.toString())).thenReturn(UUID_USER_ID);
 		userPlayerLinker.getUserID(player);
-		userPlayerLinker.removeUserIDFromCache(player);
+		userPlayerLinker.removeUserIDFromCache(uuid.toString(), PLAYER_NAME);
 		assertNull(userPlayerLinker.getUserIDCache().get(PLAYER_NAME));
 	}
 

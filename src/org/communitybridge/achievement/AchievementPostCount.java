@@ -21,7 +21,7 @@ public class AchievementPostCount extends Achievement
 	public boolean playerQualifies(Player player, PlayerAchievementState state)
 	{
 		return environment.getConfiguration().postCountEnabled
-				&& CommunityBridge.webapp.getUserPostCount(player) >= postCount
+				&& CommunityBridge.webapp.getUserPostCount(environment.getUserPlayerLinker().getUserID(player)) >= postCount
 				&& state.getPostCountAchievements(Integer.toString(postCount))< limit
 				&& canRewardAllItemRewards(player);
 	}

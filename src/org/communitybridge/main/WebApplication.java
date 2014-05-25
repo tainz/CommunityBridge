@@ -78,14 +78,14 @@ public class WebApplication extends Synchronizer
 	 * @param String The player's name.
 	 * @return boolean True if the user has an avatar.
 	 */
-	public boolean playerHasAvatar(Player player)
+	public boolean playerHasAvatar(String userID)
 	{
 		final String exceptionBase = "Exception during WebApplication.playerHasAvatar(): ";
 		String query;
 
 		query = "SELECT `" + configuration.avatarTableName + "`.`" + configuration.avatarAvatarColumn + "` "
 					+ "FROM `" + configuration.avatarTableName + "` "
-					+ "WHERE `" + configuration.avatarUserIDColumn + "` = '" + environment.getUserPlayerLinker().getUserID(player) + "'";
+					+ "WHERE `" + configuration.avatarUserIDColumn + "` = '" + userID + "'";
 
 		try
 		{
@@ -134,14 +134,14 @@ public class WebApplication extends Synchronizer
 	 * @param String The player's name.
 	 * @return int Number of posts.
 	 */
-	public int getUserPostCount(Player player)
+	public int getUserPostCount(String userID)
 	{
 		final String exceptionBase = "Exception during WebApplication.getUserPostCount(): ";
 		String query;
 
 		query = "SELECT `" + configuration.postCountTableName + "`.`" + configuration.postCountPostCountColumn + "` "
 					+ "FROM `" + configuration.postCountTableName + "` "
-					+ "WHERE `" + configuration.postCountUserIDColumn + "` = '" + environment.getUserPlayerLinker().getUserID(player) + "'";
+					+ "WHERE `" + configuration.postCountUserIDColumn + "` = '" + userID + "'";
 
 		try
 		{

@@ -38,16 +38,18 @@ public class PlayerListener implements Listener
 	@EventHandler
 	public void onPlayerPreLogin(AsyncPlayerPreLoginEvent event)
 	{
-		Player player = Bukkit.getPlayer(event.getUniqueId());
-		userPlayerLinker.removeUserIDFromCache(player);
+		String uuid = event.getUniqueId().toString();
+		String name = event.getName();
+		userPlayerLinker.removeUserIDFromCache(uuid, name);
 
-		if (userPlayerLinker.getUserID(player).isEmpty())
+		String userID = userPlayerLinker.getUserID(uuid, name);
+		if (userID.isEmpty())
 		{
 			preLoginUnregisteredPlayer(event);
 		}
 		else
 		{
-			preLoginRegisteredPlayer(player, event);
+			preLoginRegisteredPlayer(userID, event);
 		}
 	}
 
@@ -111,16 +113,16 @@ public class PlayerListener implements Listener
 		}
 	}
 
-	private void preLoginRegisteredPlayer(Player player, AsyncPlayerPreLoginEvent event)
+	private void preLoginRegisteredPlayer(String userID, AsyncPlayerPreLoginEvent event)
 	{
-		log.fine(player.getName() + " linked to web application user ID #" + userPlayerLinker.getUserID(player) + ".");
+		log.fine(event.getName() + " linked to web application user ID #" + userID + ".");
 
-		if (configuration.avatarEnabled && configuration.requireAvatar && webapp.playerHasAvatar(player) == false)
+		if (configuration.avatarEnabled && configuration.requireAvatar && webapp.playerHasAvatar(userID) == false)
 		{
 			kickPlayer(event, "require-avatar-message");
 		}
 
-		if (configuration.postCountEnabled && configuration.requireMinimumPosts && webapp.getUserPostCount(player) < configuration.requirePostsPostCount)
+		if (configuration.postCountEnabled && configuration.requireMinimumPosts && webapp.getUserPostCount(userID) < configuration.requirePostsPostCount)
 		{
 			kickPlayer(event, "require-minimum-posts-message");
 		}

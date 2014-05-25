@@ -19,10 +19,10 @@ public class UserPlayerLinker
 		this.userIDDao = new UserIDDao(environment);
 	}
 
-	public void removeUserIDFromCache(Player player)
+	public void removeUserIDFromCache(String uuid, String name)
 	{
-		userIDCache.remove(player.getUniqueId().toString());
-		userIDCache.remove(player.getName());
+		userIDCache.remove(uuid);
+		userIDCache.remove(name);
 	}
 
 	public String getUUID(String userID)
@@ -44,17 +44,22 @@ public class UserPlayerLinker
 
 	public String getUserID(Player player)
 	{
+		return getUserID(player.getUniqueId().toString(), player.getName());
+	}
+
+	public String getUserID(String uuid, String name)
+	{
 		String userID = "";
 		String linkingMethod = environment.getConfiguration().linkingMethod;
 
 		if (isValidMethod(linkingMethod, "uui"))
 		{
-			userID = getUserIDFromCacheOrDatabase(player.getUniqueId().toString());
+			userID = getUserIDFromCacheOrDatabase(uuid);
 		}
 
 		if (userID.isEmpty() && isValidMethod(linkingMethod, "nam"))
 		{
-			userID = getUserIDFromCacheOrDatabase(player.getName());
+			userID = getUserIDFromCacheOrDatabase(name);
 		}
 		return userID;
 	}

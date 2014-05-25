@@ -15,7 +15,7 @@ public class AchievementAvatar extends Achievement
 	public boolean playerQualifies(Player player, PlayerAchievementState state)
 	{
 		return environment.getConfiguration().avatarEnabled
-				&& CommunityBridge.webapp.playerHasAvatar(player)
+				&& CommunityBridge.webapp.playerHasAvatar(environment.getUserPlayerLinker().getUserID(player))
 				&& state.getAvatarAchievements() < limit
 				&& canRewardAllItemRewards(player);
 	}
