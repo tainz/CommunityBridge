@@ -14,6 +14,7 @@ import org.communitybridge.main.CBMetrics.Graph;
 import org.communitybridge.utility.Log;
 import org.communitybridge.permissionhandlers.*;
 import org.communitybridge.utility.MinecraftUtilities;
+import org.communitybridge.utility.StringUtilities;
 
 /**
  * Main plugin class
@@ -55,8 +56,15 @@ public final class CommunityBridge extends JavaPlugin
 	@Override
 	public void onEnable()
   {
-		instance = this;
 		log = new Log(this.getLogger(), Level.CONFIG);
+		if (StringUtilities.compareVersion(MinecraftUtilities.getBukkitVersion(), "1.7.9") < 0)
+		{
+			log.severe("This version of CommunityBridge requires Bukkit 1.7.9 or later.");
+			log = null;
+			Bukkit.getPluginManager().disablePlugin(this);
+			return;
+		}
+		instance = this;
 		config = new Configuration(this, log);
 
 		CBCommandExecutor command = new CBCommandExecutor(config, log);
