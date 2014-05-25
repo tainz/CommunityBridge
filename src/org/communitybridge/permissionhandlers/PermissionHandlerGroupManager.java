@@ -1,261 +1,209 @@
-//package org.communitybridge.permissionhandlers;
-//
-//import org.anjocaido.groupmanager.GroupManager;
-//import org.anjocaido.groupmanager.data.Group;
-//import org.anjocaido.groupmanager.data.User;
-//import org.anjocaido.groupmanager.dataholder.OverloadedWorldHolder;
-//import org.anjocaido.groupmanager.permissions.AnjoPermissionsHandler;
-//import org.bukkit.Bukkit;
-//import org.bukkit.plugin.Plugin;
-//
-///**
-// *	Implements the permission handler interface for GroupManager.
-// *  Notes for GroupManager:
-// *  2013-May-03: GroupManager has a notion of a primary group (an odd notion)
-// *
-// * @author Feaelin
-// */
-//public class PermissionHandlerGroupManager extends PermissionHandler
-//{
-//	private static GroupManager groupManager;
-//
-//	/**
-//	 * Setup for the GroupManager Permissions Handler
-//	 *
-//	 * @throws IllegalStateException When GroupManager is not loaded or not enabled.
-//	 */
-//	public PermissionHandlerGroupManager() throws IllegalStateException
-//	{
-//		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("GroupManager");
-//
-//		validate(plugin, "GroupManager");
-//
-//		groupManager = (GroupManager)plugin;
-//	}
-//
-//	/**
-//	 * Adds a player to a group.
-//	 *
-//	 * @param playerName String containing the player's name.
-//	 * @param groupName  String containing the group's name.
-//	 * @return True if the add succeeded, false if it failed for any reason.
-//	 */
-//	@Override
-//	public boolean addToGroup(String playerName, String groupName)
-//	{
-//		OverloadedWorldHolder worldHolder = groupManager.getWorldsHolder().getWorldDataByPlayerName(playerName);
-//
-//		if (worldHolder == null)
-//		{
-//			return false;
-//    }
-//
-//		User user = worldHolder.getUser(playerName);
-//
-//		if (user == null)
-//		{
-//				return false;
-//		}
-//
-//		Group group = worldHolder.getGroup(groupName);
-//    if (group == null)
-//		{
-//			return false;
-//    }
-//
-//		// If it is a primary group, set as a primary group.
-//		if (user.getGroup().equals(worldHolder.getDefaultGroup()))
-//		{
-//			user.setGroup(group, false);
-//		}
-//		else if (group.getInherits().contains(user.getGroup().getName().toLowerCase()))
-//		{
-//			user.setGroup(group, false);
-//		}
-//		else
-//		{
-//			user.addSubGroup(group);
-//		}
-//
-//		return true;
-//	}
-//
-//	/**
-//	 * Retrieves an array of group names for the player.
-//	 *
-//	 * @param playerName String containing the name of the player.
-//	 * @return An String array containing the group names.
-//	 */
-//	@Override
-//	public String[] getGroups(String playerName)
-//	{
-//		OverloadedWorldHolder worldHolder = groupManager.getWorldsHolder().getWorldDataByPlayerName(playerName);
-//
-//		if (worldHolder == null)
-//		{
-//			return EMPTY_ARRAY;
-//    }
-//
-//		User user = worldHolder.getUser(playerName);
-//
-//		if (user == null)
-//		{
-//				return EMPTY_ARRAY;
-//		}
-//
-//		return user.subGroupListStringCopy().toArray(new String[0]);
-//	}
-//
-//	/**
-//	 * Retrieves an array of group names for the player excluding any 'default' groups.
-//	 *
-//	 * @param playerName String containing the name of the player.
-//	 * @return An String array containing the group names.
-//	 */
-//	@Override
-//	public String [] getGroupsPure(String playerName)
-//	{
-//		return getGroups(playerName);
-//	}
-//
-//	/**
-//	 * Retrieves the primary group for a given player.
-//	 *
-//	 * @param playerName String containing the player's name.
-//	 * @return empty String if the player does not exist, has no groups, or some
-//	 *         other error, otherwise a String containing the group's name.
-//	 */
-//	@Override
-//	public String getPrimaryGroup(String playerName)
-//	{
-//		AnjoPermissionsHandler handler = groupManager.getWorldsHolder().getWorldPermissions(determineWorld(playerName));
-//
-//		if (handler == null)
-//		{
-//			throw new RuntimeException("isMemberOfGroup(): Failed to obtain a GroupManager permissions handler");
-//		}
-//
-//		String group = handler.getGroup(playerName);
-//
-//		if (group == null)
-//		{
-//			return "";
-//		}
-//		else
-//		{
-//			return group;
-//		}
-//	}
-//
-//	/**
-//	 * Determines whether a player is a member of a group.
-//	 *
-//	 * @param playerName String containing the name of the player to check
-//	 * @param groupName  String containing the name of the group to check
-//	 * @return boolean true if the player is a member of the group
-//	 * @throws RuntimeException If it fails to get a GroupManager permissions handler
-//	 */
-//	@Override
-//	public boolean isMemberOfGroup(String playerName, String groupName) throws RuntimeException
-//	{
-//		AnjoPermissionsHandler handler = groupManager.getWorldsHolder().getWorldPermissions(determineWorld(playerName));
-//
-//		if (handler == null)
-//		{
-//			throw new RuntimeException("isMemberOfGroup(): Failed to obtain a GroupManager permissions handler");
-//		}
-//		else
-//		{
-//			return handler.inGroup(playerName, groupName);
-//		}
-//	}
-//
-//	/**
-//	 * Determines whether a player has a group has their primary group.
-//	 *
-//	 * @param playerName String containing the player's name
-//	 * @param groupName  String containing the group's name
-//	 * @return True if the group is the player's primary group.
-//	 */
-//	@Override
-//	public boolean isPrimaryGroup(String playerName, String groupName)
-//	{
-//		String primaryGroup = this.getPrimaryGroup(playerName);
-//		return primaryGroup != null && groupName.equalsIgnoreCase(primaryGroup);
-//	}
-//
-//	@Override
-//	public boolean removeFromGroup(String playerName, String groupName)
-//	{
-//		OverloadedWorldHolder worldHolder = groupManager.getWorldsHolder().getWorldDataByPlayerName(playerName);
-//
-//		if (worldHolder == null)
-//		{
-//			return false;
-//    }
-//
-//		User user = worldHolder.getUser(playerName);
-//
-//		if (user == null)
-//		{
-//				return false;
-//		}
-//
-//		if (user.getGroup() != null && user.getGroup().getName().equalsIgnoreCase(groupName))
-//		{
-//			user.setGroup(worldHolder.getDefaultGroup(), false);
-//			return true;
-//		}
-//		else
-//		{
-//			Group group = worldHolder.getGroup(groupName);
-//			if (group == null)
-//			{
-//				return false;
-//			}
-//			else
-//			{
-//				return user.removeSubGroup(group);
-//			}
-//		}
-//	}
-//
-//	@Override
-//	public boolean setPrimaryGroup(String playerName, String groupName, String formerGroupName)
-//	{
-//		OverloadedWorldHolder worldHolder = groupManager.getWorldsHolder().getWorldDataByPlayerName(playerName);
-//
-//		if (worldHolder == null)
-//		{
-//			return false;
-//    }
-//
-//		User user = worldHolder.getUser(playerName);
-//
-//		if (user == null)
-//		{
-//				return false;
-//		}
-//
-//		Group group = worldHolder.getGroup(groupName);
-//    if (group == null)
-//		{
-//			return false;
-//    }
-//
-//		user.setGroup(group, false);
-//
-//		return true;
-//	}
-//
-//	/**
-//	 * Returns true if the permissions system has a concept of a primary group.
-//	 *
-//	 * @return boolean true if the permissions system can handle primary groups.
-//	 */
-//	@Override
-//	public boolean supportsPrimaryGroups()
-//	{
-//		return true;
-//	}
-//}
+package org.communitybridge.permissionhandlers;
+
+import java.util.ArrayList;
+import java.util.List;
+import org.anjocaido.groupmanager.GroupManager;
+import org.anjocaido.groupmanager.data.Group;
+import org.anjocaido.groupmanager.data.User;
+import org.anjocaido.groupmanager.dataholder.OverloadedWorldHolder;
+import org.anjocaido.groupmanager.permissions.AnjoPermissionsHandler;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+
+/**
+ *  2013-May-03: GroupManager has a notion of a primary group (an odd notion)
+ *
+ */
+public class PermissionHandlerGroupManager extends PermissionHandler
+{
+	private static GroupManager groupManager;
+
+	public PermissionHandlerGroupManager() throws IllegalStateException
+	{
+		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("GroupManager");
+
+		validate(plugin, "GroupManager", "2.13");
+
+		groupManager = (GroupManager)plugin;
+	}
+
+	@Override
+	public boolean addToGroup(Player player, String groupName)
+	{
+		OverloadedWorldHolder worldHolder = groupManager.getWorldsHolder().getWorldDataByPlayerName(player.getName());
+
+		if (worldHolder == null)
+		{
+			return false;
+    }
+
+		User user = worldHolder.getUser(player.getName());
+
+		if (user == null)
+		{
+				return false;
+		}
+
+		Group group = worldHolder.getGroup(groupName);
+    if (group == null)
+		{
+			return false;
+    }
+
+		// If it is a primary group, set as a primary group.
+		if (user.getGroup().equals(worldHolder.getDefaultGroup()))
+		{
+			user.setGroup(group, false);
+		}
+		else if (group.getInherits().contains(user.getGroup().getName().toLowerCase()))
+		{
+			user.setGroup(group, false);
+		}
+		else
+		{
+			user.addSubGroup(group);
+		}
+
+		return true;
+	}
+
+	@Override
+	public List<String> getGroups(Player player)
+	{
+		OverloadedWorldHolder worldHolder = groupManager.getWorldsHolder().getWorldDataByPlayerName(player.getName());
+
+		if (worldHolder == null)
+		{
+			return new ArrayList<String>();
+    }
+
+		User user = worldHolder.getUser(player.getName());
+
+		if (user == null)
+		{
+				return new ArrayList<String>();
+		}
+
+		return user.subGroupListStringCopy();
+	}
+
+	@Override
+	public List<String> getGroupsPure(Player player)
+	{
+		return getGroups(player);
+	}
+
+	@Override
+	public String getPrimaryGroup(Player player)
+	{
+		AnjoPermissionsHandler handler = groupManager.getWorldsHolder().getWorldPermissions(determineWorld(player));
+
+		if (handler == null)
+		{
+			throw new RuntimeException("isMemberOfGroup(): Failed to obtain a GroupManager permissions handler");
+		}
+
+		String group = handler.getGroup(player.getName());
+
+		if (group == null)
+		{
+			return "";
+		}
+		else
+		{
+			return group;
+		}
+	}
+
+	@Override
+	public boolean isMemberOfGroup(Player player, String groupName) throws RuntimeException
+	{
+		AnjoPermissionsHandler handler = groupManager.getWorldsHolder().getWorldPermissions(determineWorld(player));
+
+		if (handler == null)
+		{
+			throw new RuntimeException("isMemberOfGroup(): Failed to obtain a GroupManager permissions handler");
+		}
+		else
+		{
+			return handler.inGroup(player.getName(), groupName);
+		}
+	}
+
+	@Override
+	public boolean isPrimaryGroup(Player player, String groupName)
+	{
+		return groupName.equalsIgnoreCase(getPrimaryGroup(player));
+	}
+
+	@Override
+	public boolean removeFromGroup(Player player, String groupName)
+	{
+		OverloadedWorldHolder worldHolder = groupManager.getWorldsHolder().getWorldDataByPlayerName(player.getName());
+
+		if (worldHolder == null)
+		{
+			return false;
+    }
+
+		User user = worldHolder.getUser(player.getName());
+
+		if (user == null)
+		{
+				return false;
+		}
+
+		if (user.getGroup() != null && user.getGroup().getName().equalsIgnoreCase(groupName))
+		{
+			user.setGroup(worldHolder.getDefaultGroup(), false);
+			return true;
+		}
+		else
+		{
+			Group group = worldHolder.getGroup(groupName);
+			if (group == null)
+			{
+				return false;
+			}
+			else
+			{
+				return user.removeSubGroup(group);
+			}
+		}
+	}
+
+	@Override
+	public boolean setPrimaryGroup(Player player, String groupName, String formerGroupName)
+	{
+		OverloadedWorldHolder worldHolder = groupManager.getWorldsHolder().getWorldDataByPlayerName(player.getName());
+
+		if (worldHolder == null)
+		{
+			return false;
+    }
+
+		User user = worldHolder.getUser(player.getName());
+
+		if (user == null)
+		{
+				return false;
+		}
+
+		Group group = worldHolder.getGroup(groupName);
+    if (group == null)
+		{
+			return false;
+    }
+
+		user.setGroup(group, false);
+
+		return true;
+	}
+
+	@Override
+	public boolean supportsPrimaryGroups()
+	{
+		return true;
+	}
+}

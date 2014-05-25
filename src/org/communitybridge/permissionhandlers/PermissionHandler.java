@@ -12,8 +12,6 @@ public abstract class PermissionHandler
 	protected final String NOT_ENABLED = " is not enabled.";
 	protected final String WRONG_VERSION = " should be at least version ";
 
-	String[] EMPTY_ARRAY = new String[0];
-
 	public abstract boolean addToGroup(Player player, String groupName);
 	public abstract List<String> getGroups(Player player);
 	public abstract List<String> getGroupsPure(Player player);
