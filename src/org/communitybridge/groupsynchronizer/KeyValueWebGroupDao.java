@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.communitybridge.main.Configuration;
+import org.communitybridge.main.Environment;
 import org.communitybridge.main.SQL;
 import org.communitybridge.utility.Log;
 import org.communitybridge.utility.StringUtilities;
@@ -14,9 +15,9 @@ public class KeyValueWebGroupDao extends WebGroupDao
 {
 	public static final String EXCEPTION_MESSAGE_GETSECONDARY = "Exception during KeyValueWebGroupDao.getSecondaryGroups(): ";
 
-	public KeyValueWebGroupDao(Configuration configuration, SQL sql, Log log)
+	public KeyValueWebGroupDao(Environment environment)
 	{
-		super(configuration, sql, log);
+		super(environment);
 	}
 
 	@Override

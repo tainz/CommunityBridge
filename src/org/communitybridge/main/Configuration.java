@@ -24,8 +24,10 @@ import org.communitybridge.achievement.AchievementSectionPostCount;
 
 public class Configuration
 {
+	private Environment environment;
 	private CommunityBridge plugin;
 	private Log log;
+	private SQL sql;
 
 	// Internationalization
 	public String locale;
@@ -164,7 +166,7 @@ public class Configuration
 	public Map<String, Object> webappSecondaryAdditionalColumns = new HashMap<String, Object>();
 
 	// junction, single-column, key-value, multiple-key-value
-	public String webappSecondaryGroupStorageMethod = "";
+	public String webappSecondaryGroupStorageMethod;
 
 	public boolean simpleSynchronizationEnabled;
 	public String simpleSynchronizationDirection;
@@ -204,17 +206,19 @@ public class Configuration
 	public boolean groupSynchronizationActive;
 	public boolean economyEnabled;
 
-	public Configuration(CommunityBridge plugin, Log log)
+	public Configuration(Environment environment)
 	{
-		this.plugin = plugin;
-		this.log = log;
+		this.environment = environment;
+		this.plugin = environment.getPlugin();
+		this.log = environment.getLog();
+		this.sql = environment.getSql();
 		load();
 		loadMessages();
 		loadAchievements();
 		report();
 	}
 
-	public boolean analyze(SQL sql)
+	public boolean analyze()
 	{
 		boolean status = true;
 		boolean temp;
@@ -226,34 +230,34 @@ public class Configuration
 			log.severe("Invalid linking method in the player-user-linking section of the configuration.");
 		}
 
-		status = status & checkTable(sql, "player-user-linking.table-name", linkingTableName);
+		status = status & checkTable("player-user-linking.table-name", linkingTableName);
 		if (status)
 		{
-			status = status & checkColumn(sql, "player-user-linking.user-id-column", linkingTableName, linkingUserIDColumn);
+			status = status & checkColumn("player-user-linking.user-id-column", linkingTableName, linkingUserIDColumn);
 			if (linkingUsesKey)
 			{
-				temp = checkColumn(sql, "player-user-linking.key-column", linkingTableName , linkingKeyColumn);
+				temp = checkColumn("player-user-linking.key-column", linkingTableName , linkingKeyColumn);
 				status = status & temp;
 				if (temp)
 				{
-					checkKeyColumnForKey(sql, "player-user-linking.key-name", linkingTableName, linkingKeyColumn,	linkingKeyName);
+					checkKeyColumnForKey("player-user-linking.key-name", linkingTableName, linkingKeyColumn,	linkingKeyName);
 				}
 
-				status = status & checkColumn(sql, "player-user-linking.value-column", linkingTableName, linkingValueColumn);
+				status = status & checkColumn("player-user-linking.value-column", linkingTableName, linkingValueColumn);
 			}
 			else
 			{
-				status = status & checkColumn(sql, "player-user-linking.identifier-column", linkingTableName, linkingIdentifierColumn);
+				status = status & checkColumn("player-user-linking.identifier-column", linkingTableName, linkingIdentifierColumn);
 			}
 		}
 
 		if (avatarEnabled)
 		{
-			temp = checkTable(sql, "app-avatar-config.table-name", avatarTableName);
+			temp = checkTable("app-avatar-config.table-name", avatarTableName);
 			if (temp)
 			{
-				temp = temp & checkColumn(sql, "app-avatar-config.user-id-column", avatarTableName, avatarUserIDColumn);
-				temp = temp & checkColumn(sql, "app-avatar-config.avatar-column", avatarTableName, avatarAvatarColumn);
+				temp = temp & checkColumn("app-avatar-config.user-id-column", avatarTableName, avatarUserIDColumn);
+				temp = temp & checkColumn("app-avatar-config.avatar-column", avatarTableName, avatarAvatarColumn);
 			}
 			if (!temp)
 			{
@@ -265,12 +269,12 @@ public class Configuration
 
 		if (postCountEnabled)
 		{
-			temp = checkTable(sql, "app-post-count-config.table-name", postCountTableName);
+			temp = checkTable("app-post-count-config.table-name", postCountTableName);
 			status = status & temp;
 			if (temp)
 			{
-				temp = temp & checkColumn(sql, "app-post-count-config.user-id-column", postCountTableName, postCountUserIDColumn);
-				temp = temp & checkColumn(sql, "app-post-count-config.post-count-column", postCountTableName, postCountPostCountColumn);
+				temp = temp & checkColumn("app-post-count-config.user-id-column", postCountTableName, postCountUserIDColumn);
+				temp = temp & checkColumn("app-post-count-config.post-count-column", postCountTableName, postCountPostCountColumn);
 			}
 			if (!temp)
 			{
@@ -283,43 +287,43 @@ public class Configuration
 
 		if (statisticsEnabled)
 		{
-			temp = checkTable(sql, "statistics.table-name", statisticsTableName);
+			temp = checkTable("statistics.table-name", statisticsTableName);
 			status = status & temp;
 			if (temp)
 			{
-				status = status & checkColumn(sql, "statistics.user-id-column", statisticsTableName, statisticsUserIDColumn);
+				status = status & checkColumn("statistics.user-id-column", statisticsTableName, statisticsUserIDColumn);
 
 				if (statisticsUsesInsert && statisticsInsertMethod.startsWith("smf"))
 				{
-					status = status & checkColumn(sql, "statistics.theme-id-column", statisticsTableName, statisticsThemeIDColumn);
-					checkKeyColumnForKey(sql, "statistics.theme-id", statisticsTableName, statisticsThemeIDColumn, statisticsThemeID);
+					status = status & checkColumn("statistics.theme-id-column", statisticsTableName, statisticsThemeIDColumn);
+					checkKeyColumnForKey("statistics.theme-id", statisticsTableName, statisticsThemeIDColumn, statisticsThemeID);
 				}
 
 				if (statisticsUsesKey)
 				{
-					temp = checkColumn(sql, "statistics.key-column", statisticsTableName, statisticsKeyColumn);
-					temp = temp & checkColumn(sql, "statistics.value-column", statisticsTableName, statisticsValueColumn);
+					temp = checkColumn("statistics.key-column", statisticsTableName, statisticsKeyColumn);
+					temp = temp & checkColumn("statistics.value-column", statisticsTableName, statisticsValueColumn);
 					status = status & temp;
 					if (temp)
 					{
 						if (onlineStatusEnabled)
 						{
-							checkKeyColumnForKey(sql, "statistics.trackers.online-status.column-or-key-name", statisticsTableName, statisticsKeyColumn,	onlineStatusColumnOrKey);
+							checkKeyColumnForKey("statistics.trackers.online-status.column-or-key-name", statisticsTableName, statisticsKeyColumn,	onlineStatusColumnOrKey);
 						}
 						if (lastonlineEnabled)
 						{
-							checkKeyColumnForKey(sql, "statistics.trackers.last-online.column-or-key-name", statisticsTableName, statisticsKeyColumn,	lastonlineColumnOrKey);
+							checkKeyColumnForKey("statistics.trackers.last-online.column-or-key-name", statisticsTableName, statisticsKeyColumn,	lastonlineColumnOrKey);
 							if (!lastonlineFormattedColumnOrKey.isEmpty())
 							{
-								checkKeyColumnForKey(sql, "statistics.trackers.last-online.formatted-column-or-key-name", statisticsTableName, statisticsKeyColumn,	lastonlineFormattedColumnOrKey);
+								checkKeyColumnForKey("statistics.trackers.last-online.formatted-column-or-key-name", statisticsTableName, statisticsKeyColumn,	lastonlineFormattedColumnOrKey);
 							}
 						}
 						if (gametimeEnabled)
 						{
-							checkKeyColumnForKey(sql, "statistics.trackers.game-time.column-or-key-name", statisticsTableName, statisticsKeyColumn,	gametimeColumnOrKey);
+							checkKeyColumnForKey("statistics.trackers.game-time.column-or-key-name", statisticsTableName, statisticsKeyColumn,	gametimeColumnOrKey);
 							if (!gametimeFormattedColumnOrKey.isEmpty())
 							{
-								checkKeyColumnForKey(sql, "statistics.trackers.game-time.formatted-column-or-key-name", statisticsTableName, statisticsKeyColumn,	gametimeFormattedColumnOrKey);
+								checkKeyColumnForKey("statistics.trackers.game-time.formatted-column-or-key-name", statisticsTableName, statisticsKeyColumn,	gametimeFormattedColumnOrKey);
 							}
 							if (!lastonlineEnabled)
 							{
@@ -329,52 +333,52 @@ public class Configuration
 						}
 						if (levelEnabled)
 						{
-							checkKeyColumnForKey(sql, "statistics.trackers.level.column-or-key-name", statisticsTableName, statisticsKeyColumn,	levelColumnOrKey);
+							checkKeyColumnForKey("statistics.trackers.level.column-or-key-name", statisticsTableName, statisticsKeyColumn,	levelColumnOrKey);
 						}
 						if (totalxpEnabled)
 						{
-							checkKeyColumnForKey(sql, "statistics.trackers.total-xp.column-or-key-name", statisticsTableName, statisticsKeyColumn, totalxpColumnOrKey);
+							checkKeyColumnForKey("statistics.trackers.total-xp.column-or-key-name", statisticsTableName, statisticsKeyColumn, totalxpColumnOrKey);
 						}
 						if (currentxpEnabled)
 						{
-							checkKeyColumnForKey(sql, "statistics.trackers.current-xp.column-or-key-name", statisticsTableName, statisticsKeyColumn, currentxpColumnOrKey);
+							checkKeyColumnForKey("statistics.trackers.current-xp.column-or-key-name", statisticsTableName, statisticsKeyColumn, currentxpColumnOrKey);
 							if (!currentxpFormattedColumnOrKey.isEmpty())
 							{
-								checkKeyColumnForKey(sql, "statistics.trackers.current-xp.formatted-column-or-key-name", statisticsTableName, statisticsKeyColumn,currentxpFormattedColumnOrKey);
+								checkKeyColumnForKey("statistics.trackers.current-xp.formatted-column-or-key-name", statisticsTableName, statisticsKeyColumn,currentxpFormattedColumnOrKey);
 							}
 						}
 						if (healthEnabled)
 						{
-							checkKeyColumnForKey(sql, "statistics.trackers.health.column-or-key-name", statisticsTableName, statisticsKeyColumn, healthColumnOrKey);
+							checkKeyColumnForKey("statistics.trackers.health.column-or-key-name", statisticsTableName, statisticsKeyColumn, healthColumnOrKey);
 						}
 						if (lifeticksEnabled)
 						{
-							checkKeyColumnForKey(sql, "statistics.trackers.lifeticks.column-or-key-name", statisticsTableName, statisticsKeyColumn,	lifeticksColumnOrKey);
+							checkKeyColumnForKey("statistics.trackers.lifeticks.column-or-key-name", statisticsTableName, statisticsKeyColumn,	lifeticksColumnOrKey);
 							if (!lifeticksFormattedColumnOrKey.isEmpty())
 							{
-								checkKeyColumnForKey(sql, "statistics.trackers.lifeticks.formatted-column-or-key-name", statisticsTableName, statisticsKeyColumn,	lifeticksFormattedColumnOrKey);
+								checkKeyColumnForKey("statistics.trackers.lifeticks.formatted-column-or-key-name", statisticsTableName, statisticsKeyColumn,	lifeticksFormattedColumnOrKey);
 							}
 						}
 						if (walletEnabled)
 						{
-							checkKeyColumnForKey(sql, "statistics.trackers.wallet.column-or-key-name", statisticsTableName, statisticsKeyColumn, walletColumnOrKey);
+							checkKeyColumnForKey("statistics.trackers.wallet.column-or-key-name", statisticsTableName, statisticsKeyColumn, walletColumnOrKey);
 						}
 					}
 				}
 				else
 				{
-					if (onlineStatusEnabled && !checkColumn(sql, "statistics.trackers.online-status.column-or-key-name", statisticsTableName,	onlineStatusColumnOrKey))
+					if (onlineStatusEnabled && !checkColumn("statistics.trackers.online-status.column-or-key-name", statisticsTableName,	onlineStatusColumnOrKey))
 					{
 						onlineStatusEnabled = false;
 					}
 
 					if (lastonlineEnabled)
 					{
-						if(!checkColumn(sql, "statistics.trackers.last-online.column-or-key-name", statisticsTableName,	lastonlineColumnOrKey))
+						if(!checkColumn("statistics.trackers.last-online.column-or-key-name", statisticsTableName,	lastonlineColumnOrKey))
 						{
 							lastonlineEnabled = false;
 						}
-						if (!lastonlineFormattedColumnOrKey.isEmpty() && !checkColumn(sql, "statistics.trackers.last-online.formatted-column-or-key-name", statisticsTableName, lastonlineFormattedColumnOrKey))
+						if (!lastonlineFormattedColumnOrKey.isEmpty() && !checkColumn("statistics.trackers.last-online.formatted-column-or-key-name", statisticsTableName, lastonlineFormattedColumnOrKey))
 						{
 							lastonlineFormattedColumnOrKey = "";
 						}
@@ -382,12 +386,12 @@ public class Configuration
 
 					if (gametimeEnabled)
 					{
-						if (!checkColumn(sql, "statistics.trackers.game-time.column-or-key-name", statisticsTableName,	gametimeColumnOrKey))
+						if (!checkColumn("statistics.trackers.game-time.column-or-key-name", statisticsTableName,	gametimeColumnOrKey))
 						{
 							gametimeEnabled = false;
 						}
 
-						if (!gametimeFormattedColumnOrKey.isEmpty() && !checkColumn(sql, "statistics.trackers.game-time.formatted-column-or-key-name", statisticsTableName, gametimeFormattedColumnOrKey))
+						if (!gametimeFormattedColumnOrKey.isEmpty() && !checkColumn("statistics.trackers.game-time.formatted-column-or-key-name", statisticsTableName, gametimeFormattedColumnOrKey))
 						{
 							gametimeFormattedColumnOrKey = "";
 						}
@@ -400,48 +404,48 @@ public class Configuration
 						}
 					}
 
-					if (levelEnabled && !checkColumn(sql, "statistics.trackers.level.column-or-key-name", statisticsTableName,	levelColumnOrKey))
+					if (levelEnabled && !checkColumn("statistics.trackers.level.column-or-key-name", statisticsTableName,	levelColumnOrKey))
 					{
 						levelEnabled = false;
 					}
 
-					if (totalxpEnabled && !checkColumn(sql, "statistics.trackers.total-xp.column-or-key-name", statisticsTableName, totalxpColumnOrKey))
+					if (totalxpEnabled && !checkColumn("statistics.trackers.total-xp.column-or-key-name", statisticsTableName, totalxpColumnOrKey))
 					{
 						totalxpEnabled = false;
 					}
 
 					if (currentxpEnabled)
 					{
-						if (!checkColumn(sql, "statistics.trackers.current-xp.column-or-key-name", statisticsTableName,	currentxpColumnOrKey))
+						if (!checkColumn("statistics.trackers.current-xp.column-or-key-name", statisticsTableName,	currentxpColumnOrKey))
 						{
 							currentxpEnabled = false;
 						}
 
-						if (!currentxpFormattedColumnOrKey.isEmpty() && !checkColumn(sql, "statistics.trackers.current-xp.formatted-column-or-key-name", statisticsTableName, currentxpFormattedColumnOrKey))
+						if (!currentxpFormattedColumnOrKey.isEmpty() && !checkColumn("statistics.trackers.current-xp.formatted-column-or-key-name", statisticsTableName, currentxpFormattedColumnOrKey))
 						{
 							currentxpFormattedColumnOrKey = "";
 						}
 					}
 
-					if (healthEnabled && !checkColumn(sql, "statistics.trackers.health.column-or-key-name", statisticsTableName, healthColumnOrKey))
+					if (healthEnabled && !checkColumn("statistics.trackers.health.column-or-key-name", statisticsTableName, healthColumnOrKey))
 					{
 						healthEnabled = false;
 					}
 
 					if (lifeticksEnabled)
 					{
-						if (!checkColumn(sql, "statistics.trackers.lifeticks.column-or-key-name", statisticsTableName,	lifeticksColumnOrKey))
+						if (!checkColumn("statistics.trackers.lifeticks.column-or-key-name", statisticsTableName,	lifeticksColumnOrKey))
 						{
 							lifeticksEnabled = false;
 						}
 
-						if (!lifeticksFormattedColumnOrKey.isEmpty() && !checkColumn(sql, "statistics.trackers.lifeticks.formatted-column-or-key-name", statisticsTableName, lifeticksFormattedColumnOrKey))
+						if (!lifeticksFormattedColumnOrKey.isEmpty() && !checkColumn("statistics.trackers.lifeticks.formatted-column-or-key-name", statisticsTableName, lifeticksFormattedColumnOrKey))
 						{
 								lifeticksFormattedColumnOrKey = "";
 						}
 					}
 
-					if (walletEnabled && !checkColumn(sql, "statistics.trackers.wallet.column-or-key-name", statisticsTableName, walletColumnOrKey))
+					if (walletEnabled && !checkColumn("statistics.trackers.wallet.column-or-key-name", statisticsTableName, walletColumnOrKey))
 					{
 						walletEnabled = false;
 					}
@@ -457,15 +461,15 @@ public class Configuration
 
 		if (webappPrimaryGroupEnabled)
 		{
-			temp = checkTable(sql, "app-group-config.primary.table-name", webappPrimaryGroupTable);
-			temp = temp & checkColumn(sql, "app-group-config.primary.user-id-column", webappPrimaryGroupTable, webappPrimaryGroupUserIDColumn);
-			temp = temp & checkColumn(sql, "app-group-config.primary.group-id-column", webappPrimaryGroupTable, webappPrimaryGroupGroupIDColumn);
+			temp = checkTable("app-group-config.primary.table-name", webappPrimaryGroupTable);
+			temp = temp & checkColumn("app-group-config.primary.user-id-column", webappPrimaryGroupTable, webappPrimaryGroupUserIDColumn);
+			temp = temp & checkColumn("app-group-config.primary.group-id-column", webappPrimaryGroupTable, webappPrimaryGroupGroupIDColumn);
 			if (webappPrimaryGroupUsesKey)
 			{
-				temp = temp & checkColumn(sql, "app-group-config.primary.key-column", webappPrimaryGroupTable, webappPrimaryGroupKeyColumn);
+				temp = temp & checkColumn("app-group-config.primary.key-column", webappPrimaryGroupTable, webappPrimaryGroupKeyColumn);
 				if (temp)
 				{
-					checkKeyColumnForKey(sql, "app-group-config.primary.key-name", webappPrimaryGroupTable, webappPrimaryGroupKeyColumn, webappPrimaryGroupKeyName);
+					checkKeyColumnForKey("app-group-config.primary.key-name", webappPrimaryGroupTable, webappPrimaryGroupKeyColumn, webappPrimaryGroupKeyName);
 				}
 				else
 				{
@@ -477,22 +481,22 @@ public class Configuration
 
 		if (webappSecondaryGroupEnabled)
 		{
-			temp = checkTable(sql, "app-group-config.secondary.table-name", webappSecondaryGroupTable);
-			temp = temp & checkColumn(sql, "app-group-config.secondary.user-id-column", webappSecondaryGroupTable, webappSecondaryGroupUserIDColumn);
-			temp = temp & checkColumn(sql, "app-group-config.secondary.group-id-column", webappSecondaryGroupTable, webappSecondaryGroupGroupIDColumn);
+			temp = checkTable("app-group-config.secondary.table-name", webappSecondaryGroupTable);
+			temp = temp & checkColumn("app-group-config.secondary.user-id-column", webappSecondaryGroupTable, webappSecondaryGroupUserIDColumn);
+			temp = temp & checkColumn("app-group-config.secondary.group-id-column", webappSecondaryGroupTable, webappSecondaryGroupGroupIDColumn);
 			if (webappSecondaryGroupStorageMethod.startsWith("mul") || webappSecondaryGroupStorageMethod.startsWith("key"))
 			{
-				temp = temp & checkColumn(sql, "app-group-config.secondary.key-column", webappSecondaryGroupTable, webappSecondaryGroupKeyColumn);
+				temp = temp & checkColumn("app-group-config.secondary.key-column", webappSecondaryGroupTable, webappSecondaryGroupKeyColumn);
 				if (temp)
 				{
-					checkKeyColumnForKey(sql, "app-group-config.secondary.key-name", webappSecondaryGroupTable, webappSecondaryGroupKeyColumn, webappSecondaryGroupKeyName);
+					checkKeyColumnForKey("app-group-config.secondary.key-name", webappSecondaryGroupTable, webappSecondaryGroupKeyColumn, webappSecondaryGroupKeyName);
 				}
 			}
 			if (webappSecondaryGroupStorageMethod.startsWith("jun"))
 			{
 				for (String columnName : webappSecondaryAdditionalColumns.keySet())
 				{
-					temp = temp & checkColumn(sql, "app-group-config.secondary.additional-columns." + columnName, webappSecondaryGroupTable, columnName);
+					temp = temp & checkColumn("app-group-config.secondary.additional-columns." + columnName, webappSecondaryGroupTable, columnName);
 				}
 			}
 			if (!temp)
@@ -509,31 +513,31 @@ public class Configuration
 		}
 
 		// This one needs to be performed after the one above, in case the one above disables sync.
-		if (simpleSynchronizationEnabled && checkSuperUserID(sql) == false)
+		if (simpleSynchronizationEnabled && checkSuperUserID() == false)
 		{
 			simpleSynchronizationEnabled = false;
 			log.severe("Simple synchronization disabled due to prior errors.");
 		}
 
-		if (simpleSynchronizationEnabled && webappPrimaryGroupEnabled && CommunityBridge.permissionHandler.supportsPrimaryGroups() == false && simpleSynchronizationGroupsTreatedAsPrimary.isEmpty())
+		if (simpleSynchronizationEnabled && webappPrimaryGroupEnabled && environment.getPermissionHandler().supportsPrimaryGroups() == false && simpleSynchronizationGroupsTreatedAsPrimary.isEmpty())
 		{
 			log.warning("The permissions system does not support primary groups and primary group synchronization is enabled...but there are no groups listed in the 'groups treated as primary' configuration option.");
 		}
 
 		if (banSynchronizationEnabled)
 		{
-			temp = checkTable(sql, "ban-synchronization.table-name", banSynchronizationTableName);
-			temp = temp & checkColumn(sql, "ban-synchronization.banned-user-id-column", banSynchronizationTableName, banSynchronizationUserIDColumn);
+			temp = checkTable("ban-synchronization.table-name", banSynchronizationTableName);
+			temp = temp & checkColumn("ban-synchronization.banned-user-id-column", banSynchronizationTableName, banSynchronizationUserIDColumn);
 			if (banSynchronizationMethod.startsWith("tab"))
 			{
-				temp = temp & checkColumnIfNotEmpty(sql, "ban-synchronization.ban-reason-column", banSynchronizationTableName, banSynchronizationReasonColumn);
-				temp = temp & checkColumnIfNotEmpty(sql, "ban-synchronization.ban-start-column", banSynchronizationTableName, banSynchronizationStartTimeColumn);
-				temp = temp & checkColumnIfNotEmpty(sql, "ban-synchronization.ban-end-column", banSynchronizationTableName, banSynchronizationEndTimeColumn);
-				temp = temp & checkColumnIfNotEmpty(sql, "ban-synchronization.ban-group-id-column", banSynchronizationTableName, banSynchronizationBanGroupIDColumn);
+				temp = temp & checkColumnIfNotEmpty("ban-synchronization.ban-reason-column", banSynchronizationTableName, banSynchronizationReasonColumn);
+				temp = temp & checkColumnIfNotEmpty("ban-synchronization.ban-start-column", banSynchronizationTableName, banSynchronizationStartTimeColumn);
+				temp = temp & checkColumnIfNotEmpty("ban-synchronization.ban-end-column", banSynchronizationTableName, banSynchronizationEndTimeColumn);
+				temp = temp & checkColumnIfNotEmpty("ban-synchronization.ban-group-id-column", banSynchronizationTableName, banSynchronizationBanGroupIDColumn);
 			}
 			else if (banSynchronizationMethod.startsWith("use"))
 			{
-				temp = temp & checkColumn(sql, "ban-synchronization.ban-column", banSynchronizationTableName, banSynchronizationBanColumn);
+				temp = temp & checkColumn("ban-synchronization.ban-column", banSynchronizationTableName, banSynchronizationBanColumn);
 			}
 			else if (banSynchronizationMethod.startsWith("gro"))
 			{
@@ -598,13 +602,13 @@ public class Configuration
 		return status;
 	}
 
-	private boolean checkColumnIfNotEmpty(SQL sql, String keyName, String tableName, String columnName)
+	private boolean checkColumnIfNotEmpty(String keyName, String tableName, String columnName)
 	{
 		if (columnName.isEmpty())
 		{
 			return true;
 		}
-		return checkColumn(sql, keyName, tableName, columnName);
+		return checkColumn(keyName, tableName, columnName);
 	}
 
 	/**
@@ -616,7 +620,7 @@ public class Configuration
 	 * @param String containing the name of the column.
 	 * @return boolean True if the column exists on the table.
 	 */
-	private boolean checkColumn(SQL sql, String keyName, String tableName, String columnName)
+	private boolean checkColumn(String keyName, String tableName, String columnName)
 	{
 		ResultSet result;
 		String errorBase;
@@ -665,7 +669,7 @@ public class Configuration
 		}
 	}
 
-	private void checkKeyColumnForKey(SQL sql, String yamlKeyName, String tableName,	String keyColumn,	String keyName)
+	private void checkKeyColumnForKey(String yamlKeyName, String tableName,	String keyColumn,	String keyName)
 	{
 		String errorBase = "Error while checking " + yamlKeyName + ": ";
 		String query = "SELECT COUNT(*) FROM `" + tableName + "` "
@@ -715,7 +719,7 @@ public class Configuration
 	 * @param String containing the name of the table to check.
 	 * @return boolean True if the table exists.
 	 */
-	private boolean checkTable(SQL sql, String keyName, String tableName)
+	private boolean checkTable(String keyName, String tableName)
 	{
 		ResultSet result;
 		String errorBase;
@@ -1102,7 +1106,7 @@ public class Configuration
 		{
 			if (key.equalsIgnoreCase("avatar"))
 			{
-				AchievementAvatar achievement = new AchievementAvatar();
+				AchievementAvatar achievement = new AchievementAvatar(environment);
 				achievement.loadFromYamlPath(achievementConfig, key);
 				achievements.add(achievement);
 			}
@@ -1116,7 +1120,7 @@ public class Configuration
 				Set<String> groupNames = groupsSection.getKeys(false);
 				for (String groupName : groupNames)
 				{
-					AchievementGroup achievement = new AchievementGroup();
+					AchievementGroup achievement = new AchievementGroup(environment);
 					achievement.setGroupName(groupName);
 					achievement.loadFromYamlPath(achievementConfig, key + "." + groupName);
 					achievements.add(achievement);
@@ -1132,7 +1136,7 @@ public class Configuration
 				Set<String> postCounts = postCountSection.getKeys(false);
 				for (String postCount : postCounts)
 				{
-					AchievementPostCount achievement = new AchievementPostCount();
+					AchievementPostCount achievement = new AchievementPostCount(environment);
 					achievement.setPostCount(postCount);
 					achievement.loadFromYamlPath(achievementConfig, key + "." + postCount);
 					achievements.add(achievement);
@@ -1156,7 +1160,7 @@ public class Configuration
 					Set<String> postCounts = postCountSection.getKeys(false);
 					for (String postCount : postCounts)
 					{
-						AchievementSectionPostCount achievement = new AchievementSectionPostCount();
+						AchievementSectionPostCount achievement = new AchievementSectionPostCount(environment);
 						achievement.setPostCount(postCount);
 						achievement.setSectionID(sectionID);
 						achievement.loadFromYamlPath(achievementConfig, key + "." + sectionID + "." + postCount);
@@ -1167,12 +1171,6 @@ public class Configuration
 		}
 	}
 
-	/**
-	 * Reloads the configuration either from config.yml or specified file.
-	 *
-	 * @param filename File to load from, will default to config.yml if null/empty.
-	 * @return On error, the error message. Otherwise will be null.
-	 */
 	public String reload(String filename)
 	{
 		loadMessages();
@@ -1184,6 +1182,7 @@ public class Configuration
 			plugin.reloadConfig();
 			load();
 
+			plugin.enableSQL(true);
 			plugin.activate();
 			return null;
 		}
@@ -1194,6 +1193,7 @@ public class Configuration
 		{
 			plugin.deactivate();
 			loadSettings(YamlConfiguration.loadConfiguration(configFile));
+			plugin.enableSQL(true);
 			plugin.activate();
 			return null;
 		}
@@ -1432,7 +1432,7 @@ public class Configuration
 		}
 	}
 
-	private boolean checkSuperUserID(SQL sql)
+	private boolean checkSuperUserID()
 	{
 		String errorBase = "Error while checking super user user id: ";
 		String query = "SELECT `" + linkingUserIDColumn + "`"

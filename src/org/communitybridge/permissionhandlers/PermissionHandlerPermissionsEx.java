@@ -6,8 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.communitybridge.main.CommunityBridge;
-import org.communitybridge.utility.MinecraftUtilities;
-import org.communitybridge.utility.StringUtilities;
 import ru.tehkode.permissions.PermissionGroup;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
@@ -76,23 +74,14 @@ public class PermissionHandlerPermissionsEx extends PermissionHandler
 	@Override
 	public boolean isMemberOfGroup(Player player, String groupName)
 	{
-		try
-		{
-			PermissionUser permissionUser = PermissionsEx.getUser(player);
+		PermissionUser permissionUser = PermissionsEx.getUser(player);
 
-			if (permissionUser == null)
-			{
-				return false;
-			}
-
-			return permissionUser.inGroup(groupName, false);
-		}
-		catch (Error e)
+		if (permissionUser == null)
 		{
-			CommunityBridge.log.severe(e.getMessage());
+			return false;
 		}
 
-		return false;
+		return permissionUser.inGroup(groupName, false);
 	}
 
 	@Override

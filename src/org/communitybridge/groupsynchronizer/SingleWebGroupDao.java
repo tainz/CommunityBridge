@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import static org.communitybridge.groupsynchronizer.WebGroupDao.EMPTY_LIST;
 import org.communitybridge.main.Configuration;
+import org.communitybridge.main.Environment;
 import org.communitybridge.main.SQL;
 import org.communitybridge.utility.Log;
 import org.communitybridge.utility.StringUtilities;
@@ -16,9 +17,9 @@ public class SingleWebGroupDao extends WebGroupDao
 	public static final String EXCEPTION_MESSAGE_GETSECONDARY = "Exception during SingleMethodWebGroupDao.getSecondaryGroups(): ";
 	public static final String EXCEPTION_MESSAGE_GET_USERIDS = "Exception during SingleMethodWebGroupDao.getGroupUserIDs(): ";
 	public static final String EXCEPTION_MESSAGE_GETSECONDARY_USERIDS = "Exception during SingleMethodWebGroupDao.getSecondaryGroupUserIDs(): ";
-	public SingleWebGroupDao(Configuration configuration, SQL sql, Log log)
+	public SingleWebGroupDao(Environment environment)
 	{
-		super(configuration, sql, log);
+		super(environment);
 	}
 
 	@Override

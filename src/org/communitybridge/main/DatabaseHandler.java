@@ -7,9 +7,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
+import org.communitybridge.utility.Log;
 
 public class DatabaseHandler
 {
+	private Log log;
 	private Connection connection;
 	private String dblocation;
 	private String username;
@@ -17,8 +19,9 @@ public class DatabaseHandler
 	private String database;
 	private String localAddress;
 
-	public DatabaseHandler(String dbLocation, String database, String username, String password, String localAddress)
+	public DatabaseHandler(Log log, String dbLocation, String database, String username, String password, String localAddress)
 	{
+		this.log = log;
 		this.dblocation = dbLocation;
 		this.database = database;
 		this.username = username;
@@ -42,12 +45,12 @@ public class DatabaseHandler
 		}
 		catch (ClassNotFoundException exception)
 		{
-			CommunityBridge.log.severe("No MySQL Driver Found:" + exception.getMessage());
+			log.severe("No MySQL Driver Found:" + exception.getMessage());
 			connection = null;
 		}
 		catch (SQLException exception)
 		{
-			CommunityBridge.log.severe("Could not connect to MySQL Server:" + exception.getMessage());
+			log.severe("Could not connect to MySQL Server:" + exception.getMessage());
 			connection = null;
 		}
 	}
@@ -67,15 +70,15 @@ public class DatabaseHandler
 			}
 			catch (MalformedURLException exception)
 			{
-				CommunityBridge.log.severe("MalformedURLException! " + exception.getMessage());
+				log.severe("MalformedURLException! " + exception.getMessage());
 			}
 			catch (InstantiationException exception)
 			{
-				CommunityBridge.log.severe("InstantiationExceptioon! " + exception.getMessage());
+				log.severe("InstantiationExceptioon! " + exception.getMessage());
 			}
 			catch (IllegalAccessException exception)
 			{
-				CommunityBridge.log.severe("IllegalAccessException! " + exception.getMessage());
+				log.severe("IllegalAccessException! " + exception.getMessage());
 			}
 			return false;
 		}
@@ -100,7 +103,7 @@ public class DatabaseHandler
 		}
 		catch (Exception e)
 		{
-			CommunityBridge.log.warning("Failed to close database connection! " + e.getMessage());
+			log.warning("Failed to close database connection! " + e.getMessage());
 		}
 	}
 
@@ -147,7 +150,7 @@ public class DatabaseHandler
 				}
 				catch (SQLException exception2)
 				{
-					CommunityBridge.log.warning("Database Connection Exception: " + exception2.getMessage());
+					log.warning("Database Connection Exception: " + exception2.getMessage());
 				}
 			}
 		}
@@ -207,7 +210,7 @@ public class DatabaseHandler
 		{
 			if (!exception.toString().contains("not return ResultSet"))
 			{
-				CommunityBridge.log.warning("Exception at SQL UPDATE Query: " + exception);
+				log.warning("Exception at SQL UPDATE Query: " + exception);
 			}
 		}
 	}
@@ -228,7 +231,7 @@ public class DatabaseHandler
 		{
 			if (!exception.toString().contains("not return ResultSet"))
 			{
-				CommunityBridge.log.warning("Exception at SQL DELETE Query: " + exception);
+				log.warning("Exception at SQL DELETE Query: " + exception);
 			}
 		}
 	}
@@ -260,7 +263,7 @@ public class DatabaseHandler
 				return false;
 			}
 
-			CommunityBridge.log.warning("Exception at SQL Query: " + exception.getMessage());
+			log.warning("Exception at SQL Query: " + exception.getMessage());
 		}
 		try
 		{
@@ -271,7 +274,7 @@ public class DatabaseHandler
 		}
 		catch (SQLException exception)
 		{
-			CommunityBridge.log.warning("Exception at SQL Query: " + exception.getMessage());
+			log.warning("Exception at SQL Query: " + exception.getMessage());
 		}
 		return false;
 	}

@@ -2,6 +2,7 @@ package org.communitybridge.achievement;
 
 import org.bukkit.entity.Player;
 import org.communitybridge.main.CommunityBridge;
+import org.communitybridge.main.Environment;
 
 /**
  *
@@ -11,10 +12,15 @@ public class AchievementGroup extends Achievement
 {
 	private String groupName;
 
+	public AchievementGroup(Environment environment)
+	{
+		super(environment);
+	}
+	
 	@Override
 	public boolean playerQualifies(Player player, PlayerAchievementState state)
 	{
-		return CommunityBridge.permissionHandler.isMemberOfGroup(player, groupName)
+		return environment.getPermissionHandler().isMemberOfGroup(player, groupName)
 				&& state.getGroupAchievement(groupName) < limit
 				&& canRewardAllItemRewards(player);
 	}

@@ -12,18 +12,26 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.communitybridge.main.CommunityBridge;
+import org.communitybridge.main.Environment;
 
 public abstract class Achievement
 {
+	protected Environment environment;
+
 	protected int limit;
 	protected double cashReward;
 	protected Map<Material, Integer> itemRewards = new EnumMap<Material, Integer>(Material.class);
 
 	public abstract boolean playerQualifies(Player player, PlayerAchievementState state);
 
+	public Achievement(Environment environment)
+	{
+		this.environment = environment;
+	}
+
 	public void rewardPlayer(Player player, PlayerAchievementState state)
 	{
-		if (CommunityBridge.config.economyEnabled)
+		if (environment.getConfiguration().economyEnabled)
 		{
 			CommunityBridge.economy.depositPlayer(player.getName(), cashReward);
 		}
@@ -72,7 +80,7 @@ public abstract class Achievement
 			Material material = Material.getMaterial(key);
 			if (material == null)
 			{
-				CommunityBridge.log.warning("Invalid material in achievements file");
+				environment.getLog().warning("Invalid material in achievements file");
 				continue;
 			}
 		  int amount = itemsSection.getInt(key, 1);

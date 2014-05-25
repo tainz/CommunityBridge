@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import org.communitybridge.main.Configuration;
+import org.communitybridge.main.Environment;
 import org.communitybridge.main.SQL;
 import org.communitybridge.utility.Log;
 
@@ -13,9 +14,9 @@ public class JunctionWebGroupDao extends WebGroupDao
 {
 	public static final String EXCEPTION_MESSAGE_GETSECONDARY = "Error during WebApplication.getUserGroupIDsJunction(): ";
 
-	public JunctionWebGroupDao(Configuration configuration, SQL sql, Log log)
+	public JunctionWebGroupDao(Environment environment)
 	{
-		super(configuration, sql, log);
+		super(environment);
 	}
 
 	@Override

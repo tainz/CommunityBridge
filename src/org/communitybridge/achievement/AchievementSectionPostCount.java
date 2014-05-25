@@ -6,6 +6,7 @@
 package org.communitybridge.achievement;
 
 import org.bukkit.entity.Player;
+import org.communitybridge.main.Environment;
 
 /**
  *
@@ -14,6 +15,11 @@ import org.bukkit.entity.Player;
 public class AchievementSectionPostCount extends AchievementPostCount
 {
 	private String sectionID;
+
+	public AchievementSectionPostCount(Environment environment)
+	{
+		super(environment);
+	}
 	
 	@Override
 	public boolean playerQualifies(Player player, PlayerAchievementState state)

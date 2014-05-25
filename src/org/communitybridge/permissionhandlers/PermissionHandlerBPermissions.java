@@ -30,30 +30,15 @@ public class PermissionHandlerBPermissions extends PermissionHandler
 	@Override
 	public boolean addToGroup(Player player, String groupName)
 	{
-		try
-		{
-			ApiLayer.addGroup(determineWorld(player), CalculableType.USER, player.getName(), groupName);
-		}
-		catch (Error e)
-		{
-			CommunityBridge.log.severe("addToGroup(): " + e.getMessage());
-			return false;
-		}
+		ApiLayer.addGroup(determineWorld(player), CalculableType.USER, player.getName(), groupName);
+
 		return true;
 	}
 
 	@Override
 	public List<String> getGroups(Player player)
 	{
-		List<String> groups = new ArrayList<String>();
-		try
-		{
-			groups = new ArrayList<String>(Arrays.asList(ApiLayer.getGroups(determineWorld(player), CalculableType.USER, player.getName())));
-		}
-		catch (Error e)
-		{
-			CommunityBridge.log.severe("getGroups(): " + e.getMessage());
-		}
+		List<String> groups = new ArrayList<String>(Arrays.asList(ApiLayer.getGroups(determineWorld(player), CalculableType.USER, player.getName())));
 
 		return groups;
 	}
@@ -114,22 +99,15 @@ public class PermissionHandlerBPermissions extends PermissionHandler
 	@Override
 	public boolean removeFromGroup(Player player, String groupName)
 	{
-		try
-		{
-			ApiLayer.removeGroup(determineWorld(player), CalculableType.USER, player.getName(), groupName);
-		}
-		catch (Error e)
-		{
-			CommunityBridge.log.severe("removeFromGroup():" + e.getMessage());
-			return false;
-		}
+
+		ApiLayer.removeGroup(determineWorld(player), CalculableType.USER, player.getName(), groupName);
 
 		return true;
 	}
 
 	/**
-	 * Sets a player's primary group. bPermissions doesn't really have a notion
-	 * of a "primary" group. For now, this simply performs an addToGroup.
+	 * bPermissions doesn't really have a notion of a "primary" group. For now,
+	 * this simply performs an addToGroup.
 	 */
 	@Override
 	public boolean setPrimaryGroup(Player player, String groupName, String formerGroupName)

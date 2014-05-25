@@ -9,6 +9,7 @@ public class Environment
 	private Configuration configuration;
 	private Log log;
 	private PermissionHandler permissionHandler;
+	private CommunityBridge plugin;
 	private SQL sql;
 	private UserPlayerLinker userPlayerLinker;
 
@@ -50,6 +51,16 @@ public class Environment
 	public void setPermissionHandler(PermissionHandler permissionHandler)
 	{
 		this.permissionHandler = permissionHandler;
+	}
+
+	public CommunityBridge getPlugin()
+	{
+		return plugin;
+	}
+
+	public void setPlugin(CommunityBridge plugin)
+	{
+		this.plugin = plugin;
 	}
 
 	public UserPlayerLinker getUserPlayerLinker()

@@ -8,6 +8,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.communitybridge.main.CommunityBridge;
+import org.communitybridge.main.Environment;
+import org.communitybridge.permissionhandlers.PermissionHandler;
 
 public class PlayerGroupState
 {
@@ -18,6 +20,7 @@ public class PlayerGroupState
 	public List<String> permissionsSystemGroupNames;
 	public boolean isNewFile;
 
+	private Environment environment;
 	private File playerFolder;
 	private Player player;
 
@@ -26,8 +29,9 @@ public class PlayerGroupState
 
 	private String userID;
 
-	public PlayerGroupState(File playerFolder, Player player, String userID)
+	public PlayerGroupState(Environment environment, File playerFolder, Player player, String userID)
 	{
+		this.environment = environment;
 		this.player = player;
 		this.userID = userID;
 		this.playerFolder = playerFolder;
@@ -43,15 +47,15 @@ public class PlayerGroupState
 	{
 		webappPrimaryGroupID = CommunityBridge.webapp.getUserPrimaryGroupID(userID);
 		webappGroupIDs = CommunityBridge.webapp.getUserSecondaryGroupIDs(userID);
-		permissionsSystemGroupNames = CommunityBridge.permissionHandler.getGroups(player);
+		permissionsSystemGroupNames = environment.getPermissionHandler().getGroups(player);
 
-		if (CommunityBridge.permissionHandler.supportsPrimaryGroups())
+		if (environment.getPermissionHandler().supportsPrimaryGroups())
 		{
-			permissionsSystemPrimaryGroupName = CommunityBridge.permissionHandler.getPrimaryGroup(player);
+			permissionsSystemPrimaryGroupName = environment.getPermissionHandler().getPrimaryGroup(player);
 		}
 		else
 		{
-			for (String groupName : CommunityBridge.config.simpleSynchronizationGroupsTreatedAsPrimary)
+			for (String groupName : environment.getConfiguration().simpleSynchronizationGroupsTreatedAsPrimary)
 			{
 				if (permissionsSystemGroupNames.contains(groupName))
 				{
@@ -99,7 +103,7 @@ public class PlayerGroupState
 
 	public PlayerGroupState copy()
 	{
-		PlayerGroupState copy = new PlayerGroupState(playerFolder, player, userID);
+		PlayerGroupState copy = new PlayerGroupState(environment, playerFolder, player, userID);
 		copy.isNewFile = isNewFile;
 		copy.permissionsSystemGroupNames.addAll(permissionsSystemGroupNames);
 		copy.permissionsSystemPrimaryGroupName = permissionsSystemPrimaryGroupName;

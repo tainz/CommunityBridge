@@ -16,12 +16,12 @@ public class PlayerAchievementState
 	String playerName;
 	String fileName;
 	File playerFolder;
-	
+
 	private int avatarAchievements;
 	private Map<String, Integer> groupAchievements = new HashMap<String, Integer>();
 	private Map<String, Integer> postCountAchievements = new HashMap<String, Integer>();
 	private Map<SectionPostCount, Integer> sectionPostCountAchievements = new HashMap<SectionPostCount, Integer>();
-	
+
 	public PlayerAchievementState(String playerName, File playerDataFolder)
 	{
 		this.playerName = playerName;
@@ -29,7 +29,7 @@ public class PlayerAchievementState
 		this.playerFolder = playerDataFolder;
 		this.avatarAchievements = 0;
 	}
-	
+
 	public void load()
 	{
 		File playerFile = new File(playerFolder, fileName);
@@ -37,34 +37,27 @@ public class PlayerAchievementState
 		if (playerFile.exists())
 		{
 			YamlConfiguration playerData = YamlConfiguration.loadConfiguration(playerFile);
-			
+
 			avatarAchievements = playerData.getInt("avatar");
-			
+
 			loadGroupAchievementCounts(playerData);
 			loadPostCountAchievementCounts(playerData);
 			loadSectionPostCountAchievementCounts(playerData);
 		}
 	}
-	
-	public void save()
+
+	public void save() throws IOException
 	{
 		File playerFile = new File(playerFolder, fileName);
 
 		FileConfiguration playerData = new YamlConfiguration();
-		
+
 		playerData.set("avatar", avatarAchievements);
-		
+
 		saveGroupAchievements(playerData);
 		savePostCountAchievements(playerData);
 		saveSectionPostCountAchievements(playerData);
-		try
-		{
-			playerData.save(playerFile);
-		}
-		catch (IOException exception)
-		{
-			CommunityBridge.log.severe("Error when saving achivement data for player:" + exception.getMessage());
-		}
+		playerData.save(playerFile);
 	}
 
 	private void loadGroupAchievementCounts(YamlConfiguration playerData)
@@ -85,7 +78,7 @@ public class PlayerAchievementState
 	private void loadPostCountAchievementCounts(YamlConfiguration playerData) throws NumberFormatException
 	{
 		ConfigurationSection postCountSection = playerData.getConfigurationSection("post-counts");
-		
+
 		if (postCountSection != null)
 		{
 			Set<String> postCounts = postCountSection.getKeys(false);
@@ -101,7 +94,7 @@ public class PlayerAchievementState
 	private void loadSectionPostCountAchievementCounts(YamlConfiguration playerData) throws NumberFormatException
 	{
 		ConfigurationSection sectionPostCountSection = playerData.getConfigurationSection("section-post-counts");
-		if (sectionPostCountSection != null) {	
+		if (sectionPostCountSection != null) {
 			Set<String> sectionIDs = sectionPostCountSection.getKeys(false);
 			for (String sectionID : sectionIDs)
 			{
@@ -147,21 +140,21 @@ public class PlayerAchievementState
 	{
 		avatarAchievements++;
 	}
-	
+
 	public void groupIncrement(String groupName)
 	{
 		Integer count = getGroupAchievement(groupName);
 		count++;
 		groupAchievements.put(groupName, count);
 	}
-	
+
 	public void postCountIncrement(String postCount)
 	{
 		Integer count = getPostCountAchievements(postCount);
 		count++;
 		postCountAchievements.put(postCount, count);
 	}
-	
+
 	public void sectionPostCountIncrement(String sectionID, int postCount)
 	{
 		SectionPostCount spt = new SectionPostCount(sectionID, postCount);
@@ -178,24 +171,24 @@ public class PlayerAchievementState
 	public Integer getGroupAchievement(String groupName)
 	{
 		Integer count = groupAchievements.get(groupName);
-		
+
 		if (count == null)
 		{
 			count = new Integer(0);
 		}
-		
+
 		return count;
 	}
 
 	public Integer getPostCountAchievements(String postCount)
 	{
 		Integer count = postCountAchievements.get(postCount);
-		
+
 		if (count == null)
 		{
 			count = new Integer(0);
 		}
-		
+
 		return count;
 	}
 
@@ -208,12 +201,12 @@ public class PlayerAchievementState
 	private Integer getSectionPostCountAchievements(SectionPostCount spt)
 	{
 		Integer count = sectionPostCountAchievements.get(spt);
-		
+
 		if (count == null)
 		{
 			count = new Integer(0);
 		}
-		
+
 		return count;
 	}
 }

@@ -36,39 +36,25 @@ public final class CommunityBridge extends JavaPlugin
 {
 	private Environment environment = new Environment();
 
-	public static Configuration config;
 	public static WebApplication webapp;
-	public static PermissionHandler permissionHandler;
-	@SuppressWarnings("NonConstantLogger")
-	public static Log log;
-	public static SQL sql;
 	public static Economy economy;
 
-	@SuppressWarnings("PMD.UnusedPrivateField")
-	private static CommunityBridge instance;
 	private static boolean active;
 	private static CBMetrics metrics;
 
-	/**
-	 * Handles all the set up for the plugin.
-	 *
-	 */
 	@Override
 	public void onEnable()
   {
-		log = new Log(this.getLogger(), Level.CONFIG);
-		
+		setupEnvironment();
+
 		if (StringUtilities.compareVersion(MinecraftUtilities.getBukkitVersion(), "1.7.9") < 0)
 		{
-			log.severe("This version of CommunityBridge requires Bukkit 1.7.9 or later.");
+			environment.getLog().severe("This version of CommunityBridge requires Bukkit 1.7.9 or later.");
 			Bukkit.getPluginManager().disablePlugin(this);
 			return;
 		}
 
-		instance = this;
-		config = new Configuration(this, log);
-
-		CBCommandExecutor command = new CBCommandExecutor(config, log);
+		CBCommandExecutor command = new CBCommandExecutor(environment);
 		getCommand("cbreload").setExecutor(command);
 		getCommand("cbsync").setExecutor(command);
 		getCommand("cbsyncall").setExecutor(command);
@@ -79,35 +65,21 @@ public final class CommunityBridge extends JavaPlugin
 
 		activate();
 
-		environment.setConfiguration(config);
-		environment.setLog(log);
-		environment.setPermissionHandler(permissionHandler);
-		environment.setSql(sql);
-		environment.setUserPlayerLinker(new UserPlayerLinker(environment, Bukkit.getMaxPlayers() * 4));
-
 		if (CommunityBridge.isActive())
 		{
-			log.info("CommunityBridge is now active.");
+			environment.getLog().info("CommunityBridge is now active.");
 		}
 	}
 
-	/**
-	 * Handles all the setup to be done during activation.
-	 */
-	public void activate()
+	private void setupEnvironment()
 	{
-		if (config.databaseUsername.equals("username")
-		 && config.databasePassword.equals("password"))
-		{
-			log.severe("You need to set configuration options in the config.yml.");
-			deactivate();
-			return;
-		}
+		environment.setPlugin(this);
+		environment.setLog(new Log(this.getLogger(), Level.CONFIG));
+		environment.setConfiguration(new Configuration(environment));
 
-		// If a feature requires a permissions system we load it up here.
-		if (config.permissionsSystemRequired)
+		if (environment.getConfiguration().permissionsSystemRequired)
 		{
-			selectPermissionsHandler();
+			environment.setPermissionHandler(selectPermissionsHandler());
 		}
 
 		if (enableSQL(false) == false)
@@ -116,34 +88,78 @@ public final class CommunityBridge extends JavaPlugin
 			return;
 		}
 
+		environment.setUserPlayerLinker(new UserPlayerLinker(environment, Bukkit.getMaxPlayers() * 4));
+	}
+
+	/**
+	 * (Re)Starts up the SQL connection to the web application.
+	 *
+	 * @return boolean False if the connection fails for any reason.
+	 */
+	public boolean enableSQL(boolean reload)
+	{
+		if (reload)
+		{
+			environment.getSql().close();
+		}
+
+		environment.setSql(
+					new SQL(environment.getLog(),
+									environment.getConfiguration().databaseHost + ":" + environment.getConfiguration().databasePort,
+									environment.getConfiguration().databaseName + "",
+									environment.getConfiguration().databaseUsername + "",
+									environment.getConfiguration().databasePassword + "",
+									environment.getConfiguration().databaseBindingAddress));
+
+		environment.getSql().initialize();
+
+		if (environment.getSql().checkConnection() == false)
+		{
+			environment.getLog().severe("Disabling CommunityBridge due to previous error.");
+			return false;
+		}
+
+		return environment.getConfiguration().analyze();
+	}
+
+	public void activate()
+	{
+		if (environment.getConfiguration().databaseUsername.equals("username")
+		 && environment.getConfiguration().databasePassword.equals("password"))
+		{
+			environment.getLog().severe("You need to set configuration options in the config.yml.");
+			deactivate();
+			return;
+		}
+
 		webapp = new WebApplication(this, environment);
 		getServer().getPluginManager().registerEvents(new PlayerListener(environment, webapp), this);
 
-		if (config.economyEnabled || config.statisticsEnabled && config.walletEnabled)
+		if (environment.getConfiguration().economyEnabled || environment.getConfiguration().statisticsEnabled && environment.getConfiguration().walletEnabled)
 		{
 	    if (getServer().getPluginManager().getPlugin("Vault") == null)
 			{
-				log.warning("Vault not present. Temporarily disabling economy based features.");
-				config.economyEnabled = false;
-				config.walletEnabled = false;
+				environment.getLog().warning("Vault not present. Temporarily disabling economy based features.");
+				environment.getConfiguration().economyEnabled = false;
+				environment.getConfiguration().walletEnabled = false;
 			}
 			else
 			{
         RegisteredServiceProvider<Economy> rsp = Bukkit.getServicesManager().getRegistration(Economy.class);
         if (rsp == null)
 				{
-					log.warning("Failure getting economy service registration. Is an economy plugin installed? Temporarily disabling economy based features.");
-					config.economyEnabled = false;
-					config.walletEnabled = false;
+					environment.getLog().warning("Failure getting economy service registration. Is an economy plugin installed? Temporarily disabling economy based features.");
+					environment.getConfiguration().economyEnabled = false;
+					environment.getConfiguration().walletEnabled = false;
 	      }
 				else
 				{
 	        economy = rsp.getProvider();
 					if (economy == null)
 					{
-						log.warning("Failure getting economy provider. Temporarily disabling economy based features.");
-						config.economyEnabled = false;
-						config.walletEnabled = false;
+						environment.getLog().warning("Failure getting economy provider. Temporarily disabling economy based features.");
+						environment.getConfiguration().economyEnabled = false;
+						environment.getConfiguration().walletEnabled = false;
 					}
 				}
 			}
@@ -151,18 +167,18 @@ public final class CommunityBridge extends JavaPlugin
 
 		activateMetrics();
 
-		if (config.linkingAutoRemind)
+		if (environment.getConfiguration().linkingAutoRemind)
 		{
 			reminderStart();
 		}
 
-		if (config.autoSync)
+		if (environment.getConfiguration().autoSync)
 		{
 			autosyncStart();
 		}
 
 		active = true;
-		log.finest("CommunityBridge activated.");
+		environment.getLog().finest("CommunityBridge activated.");
 	}
 
 	/**
@@ -180,12 +196,8 @@ public final class CommunityBridge extends JavaPlugin
 		getCommand("cbsync").setExecutor(null);
 		getCommand("cbsyncall").setExecutor(null);
 
-		config = null;
-
-		log.config("Disabled...");
-		log = null;
+		environment.getLog().config("Disabled...");
 		environment = null;
-		instance = null;
 	}
 
 	/**
@@ -197,8 +209,6 @@ public final class CommunityBridge extends JavaPlugin
 
 		// Cancel the tasks: autoRemind and autoSync
 		Bukkit.getServer().getScheduler().cancelTasks(this);
-
-		permissionHandler = null;
 
 		// Drop all of our listeners
 		HandlerList.unregisterAll(this);
@@ -213,15 +223,14 @@ public final class CommunityBridge extends JavaPlugin
 			}
 			catch (NoSuchMethodError exception)
 			{
-				log.warning("Metrics cancelTask() method unavailable: " + exception.getMessage());
+				environment.getLog().warning("Metrics cancelTask() method unavailable: " + exception.getMessage());
 			}
 			metrics = null;
 		}
 
-		if (sql != null)
+		if (environment.getSql() != null)
     {
-			sql.close();
-			sql = null;
+			environment.getSql().close();
 		}
 
 		if (economy != null)
@@ -229,7 +238,7 @@ public final class CommunityBridge extends JavaPlugin
 			economy = null;
 		}
 
-		log.finest("CommunityBridge deactivated.");
+		environment.getLog().finest("CommunityBridge deactivated.");
 	}
 
 	/**
@@ -247,7 +256,7 @@ public final class CommunityBridge extends JavaPlugin
 	private void reminderStart()
   {
 		MinecraftUtilities.startTaskTimer(this,
-																			calculateTaskTicks(config.linkingAutoEvery),
+																			calculateTaskTicks(environment.getConfiguration().linkingAutoEvery),
 																			new Runnable()
 																			{
 																				@Override
@@ -257,7 +266,7 @@ public final class CommunityBridge extends JavaPlugin
 																				}
 																			}
 																		 );
-		log.fine("Auto reminder started.");
+		environment.getLog().fine("Auto reminder started.");
   }
 
 	/**
@@ -267,7 +276,7 @@ public final class CommunityBridge extends JavaPlugin
 	private void autosyncStart()
   {
 		MinecraftUtilities.startTaskTimer(this,
-																			calculateTaskTicks(config.autoSyncEvery),
+																			calculateTaskTicks(environment.getConfiguration().autoSyncEvery),
 																			new Runnable()
 																			{
 																				@Override
@@ -277,7 +286,7 @@ public final class CommunityBridge extends JavaPlugin
 																				}
 																			}
 																		 );
-		log.fine("Auto synchronization started.");
+		environment.getLog().fine("Auto synchronization started.");
   }
 
 	/**
@@ -291,15 +300,15 @@ public final class CommunityBridge extends JavaPlugin
     if (userID == null || userID.isEmpty())
     {
 			String playerName = player.getName();
-      if (config.linkingKickUnregistered)
+      if (environment.getConfiguration().linkingKickUnregistered)
       {
-        player.kickPlayer(config.messages.get("link-unregistered-player"));
-				log.info(playerName + " kicked because they are not registered.");
+        player.kickPlayer(environment.getConfiguration().messages.get("link-unregistered-player"));
+				environment.getLog().info(playerName + " kicked because they are not registered.");
       }
       else
       {
-        player.sendMessage(ChatColor.RED + config.messages.get("link-unregistered-reminder"));
-        log.fine(playerName + " issued unregistered reminder notice");
+        player.sendMessage(ChatColor.RED + environment.getConfiguration().messages.get("link-unregistered-reminder"));
+        environment.getLog().fine(playerName + " issued unregistered reminder notice");
       }
     }
   }
@@ -310,7 +319,7 @@ public final class CommunityBridge extends JavaPlugin
 	 */
   private void remindUnregisteredPlayers()
   {
-    log.fine("Running unRegistered auto reminder");
+    environment.getLog().fine("Running unRegistered auto reminder");
 
     for (Player player : Bukkit.getOnlinePlayers())
     {
@@ -319,55 +328,16 @@ public final class CommunityBridge extends JavaPlugin
 
   }
 
-	/**
-	 * (Re)Starts up the SQL connection to the web application.
-	 *
-	 * @return boolean False if the connection fails for any reason.
-	 */
-	public boolean enableSQL(boolean reload)
-	{
-		if (reload)
-		{
-			sql.close();
-		}
-
-		sql = new SQL(config.databaseHost + ":" + config.databasePort,
-									config.databaseName + "",
-									config.databaseUsername + "",
-									config.databasePassword + "",
-									config.databaseBindingAddress);
-		sql.initialize();
-
-		if (sql.checkConnection() == false)
-		{
-			log.severe("Disabling CommunityBridge due to previous error.");
-			return false;
-		}
-
-		if (reload)
-		{
-			environment.setSql(sql);
-			webapp.setSQL(sql);
-		}
-
-		if (config.analyze(sql) == false)
-		{
-			return false;
-		}
-
-		return true;
-	}
-
 	private void activateMetrics()
 	{
-		if (config.usePluginMetrics)
+		if (environment.getConfiguration().usePluginMetrics)
 		{
 			try
 			{
 				metrics = new CBMetrics(this);
 				Graph permsGraph = metrics.createGraph("Permissions Plugin Used");
 
-				if (permissionHandler == null)
+				if (environment.getPermissionHandler() == null)
 				{
 					permsGraph.addPlotter(new CBMetrics.Plotter("None")
 					{
@@ -378,7 +348,7 @@ public final class CommunityBridge extends JavaPlugin
 						}
 					});
 				}
-				else if (config.permissionsSystem.equalsIgnoreCase("bPerms"))
+				else if (environment.getConfiguration().permissionsSystem.equalsIgnoreCase("bPerms"))
 				{
 					permsGraph.addPlotter(new CBMetrics.Plotter("bPermissions")
 					{
@@ -389,7 +359,7 @@ public final class CommunityBridge extends JavaPlugin
 						}
 					});
 				}
-				else if (config.permissionsSystem.equalsIgnoreCase("GroupManager"))
+				else if (environment.getConfiguration().permissionsSystem.equalsIgnoreCase("GroupManager"))
 				{
 					permsGraph.addPlotter(new CBMetrics.Plotter("GroupManager")
 					{
@@ -400,7 +370,7 @@ public final class CommunityBridge extends JavaPlugin
 						}
 					});
 				}
-				else if (config.permissionsSystem.equalsIgnoreCase("PermsBukkit"))
+				else if (environment.getConfiguration().permissionsSystem.equalsIgnoreCase("PermsBukkit"))
 				{
 					permsGraph.addPlotter(new CBMetrics.Plotter("PermissionsBukkit")
 					{
@@ -411,7 +381,7 @@ public final class CommunityBridge extends JavaPlugin
 						}
 					});
 				}
-				else if (config.permissionsSystem.equalsIgnoreCase("PEX"))
+				else if (environment.getConfiguration().permissionsSystem.equalsIgnoreCase("PEX"))
 				{
 					permsGraph.addPlotter(new CBMetrics.Plotter("PermissionsEx")
 					{
@@ -422,7 +392,7 @@ public final class CommunityBridge extends JavaPlugin
 						}
 					});
 				}
-				else if (config.permissionsSystem.equalsIgnoreCase("Vault"))
+				else if (environment.getConfiguration().permissionsSystem.equalsIgnoreCase("Vault"))
 				{
 					permsGraph.addPlotter(new CBMetrics.Plotter("Vault")
 					{
@@ -434,77 +404,79 @@ public final class CommunityBridge extends JavaPlugin
 					});
 				}
 				metrics.start();
-				log.fine("Plugin Metrics activated.");
+				environment.getLog().fine("Plugin Metrics activated.");
 			}
 			catch (IOException e)
 			{
-				log.warning("Plugin Metrics activation failed.");
+				environment.getLog().warning("Plugin Metrics activation failed.");
 			}
 		}
 	}
 
-	private void selectPermissionsHandler()
+	private PermissionHandler selectPermissionsHandler()
 	{
 		try
 		{
-			if (config.permissionsSystem.equalsIgnoreCase("PEX"))
+			if (environment.getConfiguration().permissionsSystem.equalsIgnoreCase("PEX"))
 			{
-				permissionHandler = new PermissionHandlerPermissionsEx();
-				log.config("Permissions System: PermissionsEx (PEX)");
+				environment.getLog().config("Permissions System: PermissionsEx (PEX)");
+				return new PermissionHandlerPermissionsEx();
 			}
-			else if (config.permissionsSystem.equalsIgnoreCase("bPerms"))
+			else if (environment.getConfiguration().permissionsSystem.equalsIgnoreCase("bPerms"))
 			{
-				permissionHandler = new PermissionHandlerBPermissions();
-				log.config("Permissions System: bPermissions (bPerms)");
+				environment.getLog().config("Permissions System: bPermissions (bPerms)");
+				return new PermissionHandlerBPermissions();
 			}
-			else if (config.permissionsSystem.equalsIgnoreCase("GroupManager"))
+			else if (environment.getConfiguration().permissionsSystem.equalsIgnoreCase("GroupManager"))
 			{
-				permissionHandler = new PermissionHandlerGroupManager();
-				log.config("Permissions System: GroupManager");
+				environment.getLog().config("Permissions System: GroupManager");
+				return new PermissionHandlerGroupManager();
 			}
-			else if (config.permissionsSystem.equalsIgnoreCase("PermsBukkit"))
+			else if (environment.getConfiguration().permissionsSystem.equalsIgnoreCase("PermsBukkit"))
 			{
-				permissionHandler = new PermissionHandlerPermissionsBukkit();
-				log.config("Permissions System: PermissionsBukkit (PermsBukkit)");
+				environment.getLog().config("Permissions System: PermissionsBukkit (PermsBukkit)");
+				return new PermissionHandlerPermissionsBukkit();
 			}
-			else if (config.permissionsSystem.equalsIgnoreCase("Vault"))
+			else if (environment.getConfiguration().permissionsSystem.equalsIgnoreCase("Vault"))
 			{
-				permissionHandler = new PermissionHandlerVault();
-				log.config("Permissions System: Vault");
+				environment.getLog().config("Permissions System: Vault");
+				return new PermissionHandlerVault();
 			}
-			else if (config.permissionsSystem.equalsIgnoreCase("zPermissions"))
+			else if (environment.getConfiguration().permissionsSystem.equalsIgnoreCase("zPermissions"))
 			{
-				permissionHandler = new PermissionHandlerZPermissions();
+				environment.getLog().config("Permissions System: ZPermissions");
+				return new PermissionHandlerZPermissions();
 			}
 			else
 			{
-				log.severe("Unknown permissions system in config.yml. Features dependent on a permissions system disabled.");
-				config.disableFeaturesDependentOnPermissions();
+				environment.getLog().severe("Unknown permissions system in config.yml. Features dependent on a permissions system disabled.");
+				environment.getConfiguration().disableFeaturesDependentOnPermissions();
 			}
 		}
 		catch (IllegalStateException e)
 		{
-			log.severe(e.getMessage());
-			log.severe("Disabling features dependent on a permissions system.");
-			config.disableFeaturesDependentOnPermissions();
+			environment.getLog().severe(e.getMessage());
+			environment.getLog().severe("Disabling features dependent on a permissions system.");
+			environment.getConfiguration().disableFeaturesDependentOnPermissions();
 		}
+		return null;
 	}
 
 	private long calculateTaskTicks(final long every)
 	{
-		if (config.autoEveryUnit.startsWith("sec"))
+		if (environment.getConfiguration().autoEveryUnit.startsWith("sec"))
 		{
 			return every * 20; // 20 ticks per second.
 		}
-		else if (config.autoEveryUnit.startsWith("min"))
+		else if (environment.getConfiguration().autoEveryUnit.startsWith("min"))
 		{
 			return every * 1200; // 20 ticks per second, 60 sec/minute
 		}
-		else if (config.autoEveryUnit.startsWith("hou"))
+		else if (environment.getConfiguration().autoEveryUnit.startsWith("hou"))
 		{
 			return every * 72000; // 20 ticks/s 60s/m, 60m/h
 		}
-		else if (config.autoEveryUnit.startsWith("day"))
+		else if (environment.getConfiguration().autoEveryUnit.startsWith("day"))
 		{
 			return every * 1728000; // 20 ticks/s 60s/m, 60m/h, 24h/day
 		}

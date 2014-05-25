@@ -53,7 +53,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.zip.GZIPOutputStream;
-import org.communitybridge.utility.StringUtilities;
 
 public class CBMetrics {
 

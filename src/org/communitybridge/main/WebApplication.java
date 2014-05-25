@@ -12,6 +12,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -23,7 +25,6 @@ import org.communitybridge.groupsynchronizer.KeyValueWebGroupDao;
 import org.communitybridge.groupsynchronizer.MultipleKeyValueWebGroupDao;
 import org.communitybridge.groupsynchronizer.SingleWebGroupDao;
 import org.communitybridge.groupsynchronizer.WebGroupDao;
-import org.communitybridge.linker.UserIDDao;
 import org.communitybridge.utility.Log;
 import org.communitybridge.utility.MinecraftUtilities;
 import org.communitybridge.utility.StringUtilities;
@@ -41,12 +42,9 @@ public class WebApplication extends Synchronizer
 	private Environment environment;
 	private Configuration configuration;
 	private Log log;
-	private SQL sql;
 	private CommunityBridge plugin;
 	private BanSynchronizer banSynchronizer;
 	private WebGroupDao webGroupDao;
-
-	private int maxPlayers;
 
 	private Map<String, String> playerUserIDs = new HashMap<String, String>();
 	private List<Player> playerLocks = new ArrayList<Player>();
@@ -57,7 +55,6 @@ public class WebApplication extends Synchronizer
 		this.environment = environment;
 		this.configuration = environment.getConfiguration();
 		this.log = environment.getLog();
-		this.sql = environment.getSql();
 		this.webGroupDao = webGroupDao;
 	}
 
@@ -67,9 +64,7 @@ public class WebApplication extends Synchronizer
 		this.environment = environment;
 		this.configuration = environment.getConfiguration();
 		this.log = environment.getLog();
-		this.sql = environment.getSql();
 		this.plugin = plugin;
-		maxPlayers = Bukkit.getMaxPlayers();
 		configureDao();
 		if (configuration.banSynchronizationEnabled)
 		{
@@ -95,7 +90,7 @@ public class WebApplication extends Synchronizer
 		try
 		{
 			String avatar = null;
-			ResultSet result = sql.sqlQuery(query);
+			ResultSet result = environment.getSql().sqlQuery(query);
 
 			if (result.next())
 			{
@@ -150,7 +145,7 @@ public class WebApplication extends Synchronizer
 
 		try
 		{
-			ResultSet result = sql.sqlQuery(query);
+			ResultSet result = environment.getSql().sqlQuery(query);
 
 			if (result.next())
 			{
@@ -327,16 +322,6 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	/**
-	 * Sets the SQL object. Typically used during a reload.
-	 *
-	 * @param SQL SQL object to set.
-	 */
-	public final void setSQL(SQL sql)
-	{
-		this.sql = sql;
-	}
-
 	private void setPrimaryGroup(String userID, String groupID)
 	{
 		String exceptionBase = "Exception during setPrimaryGroup(): ";
@@ -349,14 +334,14 @@ public class WebApplication extends Synchronizer
 										 + "SET `" + configuration.webappPrimaryGroupGroupIDColumn + "` = '" + groupID + "' "
 										 + "WHERE `" + configuration.webappPrimaryGroupKeyColumn + "` = '" + configuration.webappPrimaryGroupKeyName + "' "
 										 + "AND `" + configuration.webappPrimaryGroupUserIDColumn + "` = '" + userID + "'";
-				sql.updateQuery(query);
+				environment.getSql().updateQuery(query);
 			}
 			else
 			{
 				String query = "UPDATE `" + configuration.webappPrimaryGroupTable + "` "
 										 + "SET `" + configuration.webappPrimaryGroupGroupIDColumn + "` = '" + groupID + "' "
 										 + "WHERE `" + configuration.webappPrimaryGroupUserIDColumn + "` = '" + userID + "' ";
-				sql.updateQuery(query);
+				environment.getSql().updateQuery(query);
 			}
 		}
 		catch (MalformedURLException exception)
@@ -402,10 +387,10 @@ public class WebApplication extends Synchronizer
 
 		File playerFolder = new File(plugin.getDataFolder(), "Players");
 
-		PlayerGroupState previous = new PlayerGroupState(playerFolder, player, userID);
+		PlayerGroupState previous = new PlayerGroupState(environment, playerFolder, player, userID);
 		previous.load();
 
-		PlayerGroupState current = new PlayerGroupState(playerFolder, player, userID);
+		PlayerGroupState current = new PlayerGroupState(environment, playerFolder, player, userID);
 		current.generate();
 		PlayerGroupState result = current.copy();
 
@@ -539,7 +524,7 @@ public class WebApplication extends Synchronizer
 							+ "WHERE `" + configuration.statisticsUserIDColumn + "` = '" + playerStatistics.getUserID() + "'";
 				try
 				{
-					result = sql.sqlQuery(query);
+					result = environment.getSql().sqlQuery(query);
 					while (result.next())
 					{
 						String key = result.getString(configuration.statisticsKeyColumn);
@@ -577,7 +562,7 @@ public class WebApplication extends Synchronizer
 							+ " WHERE `" + configuration.statisticsUserIDColumn + "` = '" + playerStatistics.getUserID() + "'";
 				try
 				{
-					result = sql.sqlQuery(query);
+					result = environment.getSql().sqlQuery(query);
 
 					if (result.next())
 					{
@@ -708,7 +693,7 @@ public class WebApplication extends Synchronizer
 													 + playerStatistics.getUserID() + "'"
 													 + (configuration.statisticsInsertMethod.startsWith("smf") ? " AND `" + configuration.statisticsThemeIDColumn + "` = '" + configuration.statisticsThemeID + "'" : "");
 
-				ResultSet result = sql.sqlQuery(selectQuery);
+				ResultSet result = environment.getSql().sqlQuery(selectQuery);
 				while (result.next())
 				{
 					foundFields.add(result.getString(configuration.statisticsKeyColumn));
@@ -782,7 +767,7 @@ public class WebApplication extends Synchronizer
 			if (builder.insertFields.size() > 0)
 			{
 				insertQuery = insertQuery + StringUtilities.joinStrings(builder.insertFields, ", ") + ";";
-				sql.insertQuery(insertQuery);
+				environment.getSql().insertQuery(insertQuery);
 			}
 
 			if (builder.updateFields.size() > 0)
@@ -794,7 +779,7 @@ public class WebApplication extends Synchronizer
 										+ " AND `" + configuration.statisticsKeyColumn + "`"
 										+ " IN (" + StringUtilities.joinStrings(builder.inFields, ", ") + ");";
 
-				sql.updateQuery(updateQuery);
+				environment.getSql().updateQuery(updateQuery);
 			}
 		}
 		catch (SQLException exception)
@@ -861,19 +846,19 @@ public class WebApplication extends Synchronizer
 
 		if (configuration.simpleSynchronizationPrimaryGroupNotify)
 		{
-			String message = ChatColor.YELLOW + CommunityBridge.config.messages.get("group-synchronization-primary-notify-player");
+			String message = ChatColor.YELLOW + configuration.messages.get("group-synchronization-primary-notify-player");
 			message = message.replace("~GROUPNAME~", newGroupName);
 			player.sendMessage(message);
 		}
 
 		String pseudo = "";
-		if (CommunityBridge.permissionHandler.supportsPrimaryGroups())
+		if (environment.getPermissionHandler().supportsPrimaryGroups())
 		{
-			CommunityBridge.permissionHandler.setPrimaryGroup(player, newGroupName, formerGroupName);
+			environment.getPermissionHandler().setPrimaryGroup(player, newGroupName, formerGroupName);
 		}
 		else
 		{
-			CommunityBridge.permissionHandler.switchGroup(player, formerGroupName, newGroupName);
+			environment.getPermissionHandler().switchGroup(player, formerGroupName, newGroupName);
 			pseudo = "pseudo-primary ";
 		}
 		result.permissionsSystemPrimaryGroupName = newGroupName;
@@ -953,7 +938,7 @@ public class WebApplication extends Synchronizer
 			if (!current.webappGroupIDs.contains(groupID))
 			{
 				String groupName = configuration.getGroupNameByGroupID(groupID);
-				CommunityBridge.permissionHandler.removeFromGroup(player, groupName);
+				environment.getPermissionHandler().removeFromGroup(player, groupName);
 				result.permissionsSystemGroupNames.remove(groupName);
 			}
 		}
@@ -975,7 +960,7 @@ public class WebApplication extends Synchronizer
 				}
 				else if (!current.permissionsSystemPrimaryGroupName.equals(groupName) && !current.permissionsSystemGroupNames.contains(groupName))
 				{
-					CommunityBridge.permissionHandler.addToGroup(player, groupName);
+					environment.getPermissionHandler().addToGroup(player, groupName);
 					result.permissionsSystemGroupNames.add(groupName);
 				} // Check for null/primaryalreadyset/secondaryalreadyset
 			} // if previousState contains group ID
@@ -993,7 +978,14 @@ public class WebApplication extends Synchronizer
 				achievement.rewardPlayer(player, state);
 			}
 		}
-		state.save();
+		try
+		{
+			state.save();
+		}
+		catch (IOException exception)
+		{
+			log.severe("Exception while saving " + player.getName() + " achievement state: " + exception.getMessage());
+		}
 	}
 
 	public String getPlayerName(String userID)
@@ -1032,7 +1024,7 @@ public class WebApplication extends Synchronizer
 		try
 		{
 			String playerName = null;
-			ResultSet result = sql.sqlQuery(query);
+			ResultSet result = environment.getSql().sqlQuery(query);
 
 			if (result != null && result.next())
 			{
@@ -1071,19 +1063,19 @@ public class WebApplication extends Synchronizer
 	{
 		if (configuration.webappSecondaryGroupStorageMethod.startsWith("sin"))
 		{
-			webGroupDao = new SingleWebGroupDao(configuration, sql, log);
+			webGroupDao = new SingleWebGroupDao(environment);
 		}
 		else if (configuration.webappSecondaryGroupStorageMethod.startsWith("jun"))
 		{
-			webGroupDao = new JunctionWebGroupDao(configuration, sql, log);
+			webGroupDao = new JunctionWebGroupDao(environment);
 		}
 		else if (configuration.webappSecondaryGroupStorageMethod.startsWith("key"))
 		{
-			webGroupDao = new KeyValueWebGroupDao(configuration, sql, log);
+			webGroupDao = new KeyValueWebGroupDao(environment);
 		}
 		else if (configuration.webappSecondaryGroupStorageMethod.startsWith("mul"))
 		{
-			webGroupDao = new MultipleKeyValueWebGroupDao(configuration, sql, log);
+			webGroupDao = new MultipleKeyValueWebGroupDao(environment);
 		}
 		else
 		{
@@ -1228,7 +1220,7 @@ public class WebApplication extends Synchronizer
 
 		try
 		{
-			sql.updateQuery(query);
+			environment.getSql().updateQuery(query);
 		}
 		catch (MalformedURLException exception)
 		{

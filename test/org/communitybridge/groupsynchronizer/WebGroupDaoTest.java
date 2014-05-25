@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.lang.RandomStringUtils;
 import org.communitybridge.main.Configuration;
+import org.communitybridge.main.Environment;
 import org.communitybridge.main.SQL;
 import org.communitybridge.utility.Log;
 import org.junit.Test;
@@ -23,21 +24,20 @@ public class WebGroupDaoTest
 	private static final String group1 = RandomStringUtils.randomNumeric(2);
 	private static final String group2 = RandomStringUtils.randomNumeric(2);
 	private WebGroupDao webGroupDao;
-	private Configuration configuration;
-	private Log log;
-	private SQL sql;
-	private ResultSet result;
+	private	Environment environment = new Environment();
+	private Configuration configuration = mock(Configuration.class);
+	private Log log = mock(Log.class);
+	private SQL sql = mock(SQL.class);
+	private ResultSet result = mock(ResultSet.class);
 
 	@Before
 	public void setup()
 	{
-		configuration = mock(Configuration.class);
+		environment.setConfiguration(configuration);
+		environment.setLog(log);
+		environment.setSql(sql);
 		DaoTestsHelper.setupConfiguration(configuration);
-		log = mock(Log.class);
-		sql = mock(SQL.class);
-		webGroupDao = new TestableWebGroupDao(configuration, sql, log);
-
-		result = mock(ResultSet.class);
+		webGroupDao = new TestableWebGroupDao(environment);
 	}
 
 	@Test
@@ -277,9 +277,9 @@ public class WebGroupDaoTest
 
 	public class TestableWebGroupDao extends WebGroupDao
 	{
-		public TestableWebGroupDao(Configuration configuration, SQL sql, Log log)
+		public TestableWebGroupDao(Environment environment)
 		{
-			super(configuration, sql, log);
+			super(environment);
 		}
 
 		@Override

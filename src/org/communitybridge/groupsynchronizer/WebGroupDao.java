@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import static org.communitybridge.groupsynchronizer.SingleWebGroupDao.EXCEPTION_MESSAGE_GET_USERIDS;
 import org.communitybridge.main.Configuration;
+import org.communitybridge.main.Environment;
 import org.communitybridge.main.SQL;
 import org.communitybridge.utility.Log;
 
@@ -19,11 +20,11 @@ public abstract class WebGroupDao
 	protected Log log;
 	protected ResultSet result;
 
-	WebGroupDao(Configuration configuration, SQL sql, Log log)
+	WebGroupDao(Environment environment)
 	{
-		this.configuration = configuration;
-		this.sql = sql;
-		this.log = log;
+		this.configuration = environment.getConfiguration();
+		this.sql = environment.getSql();
+		this.log = environment.getLog();
 	}
 
 	abstract public void addUserToGroup(String userID, String groupID, int currentGroupCount) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException;
