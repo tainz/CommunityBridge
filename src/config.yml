@@ -181,8 +181,8 @@ player-user-linking:
   uses-key: false
 
   # If you set 'linking-uses-key' to false, then set this to the column that
-  # the minecraft playername is stored in. Otherwise, leave it empty.
-  playername-column:
+  # the minecraft uuid or playername is stored in. Otherwise, leave it empty.
+  identifier-column:
 
   # If you set 'linking-uses-key' to true, then set the key column, value
   # column, and the key-name here. Otherwise, leave these fields empty.
