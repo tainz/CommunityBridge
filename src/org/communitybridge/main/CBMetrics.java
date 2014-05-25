@@ -178,27 +178,11 @@ public class CBMetrics {
 
         graphs.add(graph);
     }
-		
+
 		private BukkitTask startTask(Runnable runnable)
 		{
-			if (StringUtilities.compareVersion(Bukkit.getBukkitVersion(), "1.4.6") > 0)
-			{
-				return Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, runnable, 0, PING_INTERVAL * 1200);		
-			}
-			else
-			{
-				int taskID = Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, runnable, 0, PING_INTERVAL * 1200);
-				
-				for (BukkitTask oneTask : Bukkit.getScheduler().getPendingTasks())
-				{
-					if (oneTask.getTaskId() == taskID)
-					{
-						return oneTask;
-					}
-				}
-				return null;
-			}
-	}
+				return Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, runnable, 0, PING_INTERVAL * 1200);
+		}
 
     /**
      * Start measuring statistics. This will immediately create an async repeating task as the plugin and send the
@@ -327,7 +311,7 @@ public class CBMetrics {
             }
         }
     }
-		
+
 		public void cancelTask()
 		{
 			if (task != null)

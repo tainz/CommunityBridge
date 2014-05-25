@@ -23,29 +23,13 @@ public final class MinecraftUtilities
     return Bukkit.getBukkitVersion();
 	}
 
-	@SuppressWarnings("deprecation")
 	public static void startTask(Plugin plugin, Runnable runnable)
 	{
-		if (StringUtilities.compareVersion(MinecraftUtilities.getBukkitVersion(), "1.4.6") > 0)
-		{
-			Bukkit.getScheduler().runTaskAsynchronously(plugin, runnable);
-		}
-		else
-		{
-			Bukkit.getScheduler().scheduleAsyncDelayedTask(plugin, runnable);
-		}
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, runnable);
 	}
 
-	@SuppressWarnings("deprecation")
 	public static void startTaskTimer(Plugin plugin, long every, Runnable runnable)
 	{
-		if (StringUtilities.compareVersion(MinecraftUtilities.getBukkitVersion(), "1.4.6") > 0)
-		{
-			Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, runnable, every, every);
-		}
-		else
-		{
-			Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, runnable, every, every);
-		}
+		Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, runnable, every, every);
 	}
 }
