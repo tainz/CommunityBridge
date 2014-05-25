@@ -164,7 +164,7 @@ public class Configuration
 	public Map<String, Object> webappSecondaryAdditionalColumns = new HashMap<String, Object>();
 
 	// junction, single-column, key-value, multiple-key-value
-	public String webappSecondaryGroupStorageMethod;
+	public String webappSecondaryGroupStorageMethod = "";
 
 	public boolean simpleSynchronizationEnabled;
 	public String simpleSynchronizationDirection;
@@ -243,7 +243,7 @@ public class Configuration
 			}
 			else
 			{
-				status = status & checkColumn(sql, "player-user-linking.identifer-column", linkingTableName, linkingIdentifierColumn);
+				status = status & checkColumn(sql, "player-user-linking.identifier-column", linkingTableName, linkingIdentifierColumn);
 			}
 		}
 
@@ -849,7 +849,7 @@ public class Configuration
 		linkingUsesKey = config.getBoolean("player-user-linking.uses-key", false);
 		linkingTableName = config.getString("player-user-linking.table-name", "");
 		linkingUserIDColumn = config.getString("player-user-linking.user-id-column", "");
-		linkingIdentifierColumn = config.getString("player-user-linking.identifer-column", "");
+		linkingIdentifierColumn = config.getString("player-user-linking.identifier-column", "");
 
 		if (linkingIdentifierColumn.isEmpty())
 		{
