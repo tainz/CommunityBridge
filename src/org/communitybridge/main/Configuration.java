@@ -24,6 +24,8 @@ import org.communitybridge.achievement.AchievementSectionPostCount;
 
 public class Configuration
 {
+	private static final String DATABASE_CONFIGURATION_PROBLEM = "Database configuration problem. Reload canceled.";
+	
 	private Environment environment;
 	private CommunityBridge plugin;
 	private Log log;
@@ -211,8 +213,14 @@ public class Configuration
 		this.environment = environment;
 		this.plugin = environment.getPlugin();
 		this.log = environment.getLog();
-		this.sql = environment.getSql();
 		load();
+
+		if (enableSQL(false) == false)
+		{
+			plugin.deactivate();
+			return;
+		}
+
 		loadMessages();
 		loadAchievements();
 		report();
@@ -1182,7 +1190,12 @@ public class Configuration
 			plugin.reloadConfig();
 			load();
 
-			plugin.enableSQL(true);
+			if (enableSQL(true) == false)
+			{
+				plugin.deactivate();
+				return DATABASE_CONFIGURATION_PROBLEM;
+			}
+
 			plugin.activate();
 			return null;
 		}
@@ -1193,7 +1206,13 @@ public class Configuration
 		{
 			plugin.deactivate();
 			loadSettings(YamlConfiguration.loadConfiguration(configFile));
-			plugin.enableSQL(true);
+
+			if (enableSQL(true) == false)
+			{
+				plugin.deactivate();
+				return DATABASE_CONFIGURATION_PROBLEM;
+			}
+
 			plugin.activate();
 			return null;
 		}
@@ -1504,5 +1523,29 @@ public class Configuration
 		}
 
 		return YamlConfiguration.loadConfiguration(file);
+	}
+
+	private boolean enableSQL(boolean reload)
+	{
+		if (reload)
+		{
+			environment.getSql().close();
+		}
+
+		environment.setSql(new SQL(environment.getLog(),
+						databaseHost + ":" + databasePort,
+						databaseName + "",
+						databaseUsername + "",
+						databasePassword + "",
+						databaseBindingAddress));
+
+		environment.getSql().initialize();
+		if (environment.getSql().checkConnection() == false)
+		{
+			environment.getLog().severe("Disabling CommunityBridge due to previous error.");
+			return false;
+		}
+
+		return analyze();
 	}
 }

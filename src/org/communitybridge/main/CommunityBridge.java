@@ -82,44 +82,7 @@ public final class CommunityBridge extends JavaPlugin
 			environment.setPermissionHandler(selectPermissionsHandler());
 		}
 
-		if (enableSQL(false) == false)
-		{
-			deactivate();
-			return;
-		}
-
 		environment.setUserPlayerLinker(new UserPlayerLinker(environment, Bukkit.getMaxPlayers() * 4));
-	}
-
-	/**
-	 * (Re)Starts up the SQL connection to the web application.
-	 *
-	 * @return boolean False if the connection fails for any reason.
-	 */
-	public boolean enableSQL(boolean reload)
-	{
-		if (reload)
-		{
-			environment.getSql().close();
-		}
-
-		environment.setSql(
-					new SQL(environment.getLog(),
-									environment.getConfiguration().databaseHost + ":" + environment.getConfiguration().databasePort,
-									environment.getConfiguration().databaseName + "",
-									environment.getConfiguration().databaseUsername + "",
-									environment.getConfiguration().databasePassword + "",
-									environment.getConfiguration().databaseBindingAddress));
-
-		environment.getSql().initialize();
-
-		if (environment.getSql().checkConnection() == false)
-		{
-			environment.getLog().severe("Disabling CommunityBridge due to previous error.");
-			return false;
-		}
-
-		return environment.getConfiguration().analyze();
 	}
 
 	public void activate()
