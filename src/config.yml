@@ -115,7 +115,7 @@ player-user-linking:
   # name - Players are identified by player name in your web application's database.
   # both - Communitybridge will try both ways before giving up.
   linking-method: both
-  
+
   # If you want the player disconnected from the game if they haven't
   # registered, then set this to true. They will be shown the
   # link-unregistered-player message (in message.yml) on the disconnected
@@ -344,7 +344,8 @@ statistics:
 # Some terminology:
 # - Primary group: A group setting such that the setting can only be set to
 #   exactly one group. Most web applications have such a feature. Very few
-#   permissions systems have such a feature.
+#   permissions systems have such a feature. A given player/user can be a member
+#   of only one primary group at a time.
 #   NOTE: If you wish to utilize the primary group synchronization feature and
 #         your permissions system does not support primary groups, then you must
 #         list groups you wish to be synchronized into the web applications
@@ -352,7 +353,9 @@ statistics:
 #         the synchronization options below). The permissions systems that this
 #         applies to are: bPerms, PermissionsBukkit, PermissionsEx, and Vault.
 # - Secondary group(s): A group setting such that the setting can be set to
-#   multiple groups or none.
+#   multiple groups or none. A given player/user can be a member multiple
+#   secondary groups at a time in addition to being member of a single
+#   primary group.
 
 # This section describes to Communitybridge how the web application stores
 # user group/role information.
