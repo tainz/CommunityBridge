@@ -25,7 +25,7 @@ import org.communitybridge.achievement.AchievementSectionPostCount;
 public class Configuration
 {
 	private static final String DATABASE_CONFIGURATION_PROBLEM = "Database configuration problem. Reload canceled.";
-	
+
 	private Environment environment;
 	private CommunityBridge plugin;
 	private Log log;
@@ -1282,7 +1282,7 @@ public class Configuration
 		}
 		else
 		{
-			log.config(  "Linking player name column           : " + linkingIdentifierColumn);
+			log.config(  "Linking identifier column            : " + linkingIdentifierColumn);
 		}
 
 		log.config(    "Avatars config enabled               : " + avatarEnabled);
@@ -1545,7 +1545,7 @@ public class Configuration
 			environment.getLog().severe("Disabling CommunityBridge due to previous error.");
 			return false;
 		}
-
+		sql = environment.getSql();
 		return analyze();
 	}
 }
