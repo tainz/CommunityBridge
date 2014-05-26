@@ -205,7 +205,7 @@ app-avatar-config:
 # Used for post count awards or for requiring a post count.
 app-post-count-config:
   enabled: false
-  # Table that contains the avatar column
+  # Table that contains the post count column
   table-name:
   # Column on the avatar table that contains the user ID.
   user-id-column:
