@@ -64,17 +64,18 @@ public class Configuration
 	public String databaseBindingAddress;
 
 	// Linking Section
-	public boolean linkingAutoRemind;
 	public long linkingAutoEvery;
+	public boolean linkingAutoRemind;
 	public boolean linkingNotifyRegistered;
 	public boolean linkingNotifyUnregistered;
 	public boolean linkingKickUnregistered;
 
+	public String linkingMethod;
 	public String linkingUnregisteredGroup;
 	public String linkingRegisteredGroup;
 	public boolean linkingNotifyPlayerGroup;
 	public boolean linkingRegisteredFormerUnregisteredOnly;
-	public String linkingMethod;
+	public boolean linkingUnregisterFormerRegistered;
 
 	public boolean linkingUsesKey;
 	public String linkingTableName;
@@ -83,7 +84,6 @@ public class Configuration
 	public String linkingKeyName;
 	public String linkingKeyColumn;
 	public String linkingValueColumn;
-	public String simpleSynchronizationSuperUserID;
 
 	// Avatar config
 	public boolean avatarEnabled;
@@ -170,10 +170,12 @@ public class Configuration
 	// junction, single-column, key-value, multiple-key-value
 	public String webappSecondaryGroupStorageMethod;
 
+	// Simple synchronization
 	public boolean simpleSynchronizationEnabled;
+	public boolean simpleSynchronizationPrimaryGroupNotify;
 	public String simpleSynchronizationDirection;
 	public String simpleSynchronizationFirstDirection;
-	public boolean simpleSynchronizationPrimaryGroupNotify;
+	public String simpleSynchronizationSuperUserID;
 	public Map<String, Object> simpleSynchronizationGroupMap = new HashMap<String, Object>();
 	public List<String> simpleSynchronizationGroupsTreatedAsPrimary = new ArrayList<String>();
 
@@ -856,7 +858,8 @@ public class Configuration
 		linkingUnregisteredGroup = config.getString("player-user-linking.unregistered-player-group", "");
 		linkingRegisteredGroup = config.getString("player-user-linking.registered-player-group", "");
 		linkingNotifyPlayerGroup = config.getBoolean("player-user-linking.notify-player-of-group", false);
-		linkingRegisteredFormerUnregisteredOnly = config.getBoolean("player-user-linking.registered-former-unregistered-only", false);
+		linkingRegisteredFormerUnregisteredOnly = config.getBoolean("player-user-linking.registered-former-unregistered-only", true);
+		linkingUnregisterFormerRegistered = config.getBoolean("player-user-linking.unregister-former-registered", false);
 
 		linkingUsesKey = config.getBoolean("player-user-linking.uses-key", false);
 		linkingTableName = config.getString("player-user-linking.table-name", "");
@@ -1271,6 +1274,7 @@ public class Configuration
 		log.config(    "Linking registered group             : " + linkingRegisteredGroup);
 		log.config(    "Linking notify player of group       : " + linkingNotifyPlayerGroup);
 		log.config(    "Linking reg former unregistered only : " + linkingRegisteredFormerUnregisteredOnly);
+		log.config(    "Linking unregister former registered : " + linkingUnregisterFormerRegistered);
 		log.config(    "Linking uses key-value pair          : " + linkingUsesKey);
 		log.config(    "Linking table name                   : " + linkingTableName);
 		log.config(    "Linking user ID column               : " + linkingUserIDColumn);

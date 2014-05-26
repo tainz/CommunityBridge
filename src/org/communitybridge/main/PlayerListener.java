@@ -53,9 +53,6 @@ public class PlayerListener implements Listener
 		}
 	}
 
-	/**
-	 * This method is called by CraftBukkit as the player joins the server.
-	 */
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event)
 	{
@@ -63,17 +60,14 @@ public class PlayerListener implements Listener
 
 		if (userPlayerLinker.getUserID(player).isEmpty())
 		{
-			joinRegisteredPlayer(player);
+			joinUnregistered(player);
 		}
 		else
 		{
-			joinUnregisteredPlayer(player);
+			joinRegistered(player);
 		}
 	}
 
-	/**
-	 * This method is called by CraftBukkit when a player quits/disconnects.
-	 */
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event)
 	{
@@ -82,36 +76,6 @@ public class PlayerListener implements Listener
 			webapp.runSynchronizePlayer(event.getPlayer(), false);
 		}
 	} // onPlayerQuit
-
-	/**
-	 * Checks if changing the player's group from the unregistered group to
-	 * the registered group is merited and does so if it is.
-	 */
-	private void maybeSwitchToRegistered(Player player)
-	{
-		// We don't use the linking registered group if it is empty or group
-		// synchronization is active.
-		if (configuration.groupSynchronizationActive || configuration.linkingRegisteredGroup.isEmpty())
-		{
-			return;
-		}
-
-		// if this rule is turned on, we won't change groups unless they're
-		// a member of the unregistered group or they have no groups.
-		if (configuration.linkingRegisteredFormerUnregisteredOnly && !permissionHandler.isMemberOfGroup(player, configuration.linkingUnregisteredGroup) && !permissionHandler.getGroupsPure(player).isEmpty())
-		{
-			return;
-		}
-
-		permissionHandler.switchGroup(player, configuration.linkingUnregisteredGroup, configuration.linkingRegisteredGroup);
-
-		if (configuration.linkingNotifyPlayerGroup)
-		{
-			String message = ChatColor.RED + configuration.messages.get("link-notify-player-group-change");
-			message = message.replace("~GROUPNAME~", configuration.linkingRegisteredGroup);
-			player.sendMessage(message);
-		}
-	}
 
 	private void preLoginRegisteredPlayer(String userID, AsyncPlayerPreLoginEvent event)
 	{
@@ -153,7 +117,7 @@ public class PlayerListener implements Listener
 		event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
 	}
 
-	private void joinRegisteredPlayer(Player player)
+	private void joinUnregistered(Player player)
 	{
 		if (configuration.linkingNotifyUnregistered)
 		{
@@ -170,10 +134,15 @@ public class PlayerListener implements Listener
 				message = message.replace("~GROUPNAME~", configuration.linkingUnregisteredGroup);
 				player.sendMessage(message);
 			}
+
+			if (configuration.linkingUnregisterFormerRegistered)
+			{
+				permissionHandler.removeFromGroup(player, configuration.linkingRegisteredGroup);
+			}
 		}
 	}
 
-	private void joinUnregisteredPlayer(Player player)
+	private void joinRegistered(Player player)
 	{
 		if (configuration.linkingNotifyRegistered)
 		{
@@ -181,10 +150,34 @@ public class PlayerListener implements Listener
 			player.sendMessage(message);
 		}
 
-		if (!configuration.groupSynchronizationActive && !configuration.linkingRegisteredGroup.isEmpty())
-		{
-			maybeSwitchToRegistered(player);
-		}
+		maybeSwitchToRegistered(player);
+
 		webapp.onJoin(player);
+	}
+
+	private void maybeSwitchToRegistered(Player player)
+	{
+		// We don't use the linking registered group if it is empty or group
+		// synchronization is active.
+		if (configuration.groupSynchronizationActive || configuration.linkingRegisteredGroup.isEmpty())
+		{
+			return;
+		}
+
+		// if this rule is turned on, we won't change groups unless they're
+		// a member of the unregistered group or they have no groups.
+		if (configuration.linkingRegisteredFormerUnregisteredOnly && !permissionHandler.isMemberOfGroup(player, configuration.linkingUnregisteredGroup) && !permissionHandler.getGroupsPure(player).isEmpty())
+		{
+			return;
+		}
+
+		permissionHandler.switchGroup(player, configuration.linkingUnregisteredGroup, configuration.linkingRegisteredGroup);
+
+		if (configuration.linkingNotifyPlayerGroup)
+		{
+			String message = ChatColor.RED + configuration.messages.get("link-notify-player-group-change");
+			message = message.replace("~GROUPNAME~", configuration.linkingRegisteredGroup);
+			player.sendMessage(message);
+		}
 	}
 }
