@@ -23,7 +23,7 @@ public class PermissionHandlerPermissionsEx extends PermissionHandler
 	public boolean addToGroup(Player player, String groupName)
 	{
 		PermissionGroup group = PermissionsEx.getPermissionManager().getGroup(groupName);
-		PermissionUser user = PermissionsEx.getUser(player);
+		PermissionUser user = getPermissionUser(player);
 		if (group == null || user == null)
 		{
 			return false;
@@ -38,7 +38,7 @@ public class PermissionHandlerPermissionsEx extends PermissionHandler
 	@Override
 	public List<String> getGroups(Player player)
 	{
-		PermissionUser permissionUser = PermissionsEx.getUser(player);
+		PermissionUser permissionUser = getPermissionUser(player);
 		if (permissionUser == null)
 		{
 			return new ArrayList<String>();
@@ -74,7 +74,7 @@ public class PermissionHandlerPermissionsEx extends PermissionHandler
 	@Override
 	public boolean isMemberOfGroup(Player player, String groupName)
 	{
-		PermissionUser permissionUser = PermissionsEx.getUser(player);
+		PermissionUser permissionUser = getPermissionUser(player);
 
 		if (permissionUser == null)
 		{
@@ -94,7 +94,7 @@ public class PermissionHandlerPermissionsEx extends PermissionHandler
 	@Override
 	public boolean removeFromGroup(Player player, String groupName)
 	{
-		PermissionUser permissionUser = PermissionsEx.getUser(player);
+		PermissionUser permissionUser = getPermissionUser(player);
 		if (permissionUser == null)
 		{
 			return false;
@@ -123,5 +123,12 @@ public class PermissionHandlerPermissionsEx extends PermissionHandler
 	public boolean supportsPrimaryGroups()
 	{
 		return false;
+	}
+
+	private PermissionUser getPermissionUser(Player player)
+	{
+		PermissionUser user = PermissionsEx.getUser(player);
+		user.getName();
+		return user;
 	}
 }
