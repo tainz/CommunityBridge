@@ -1295,9 +1295,11 @@ public class Configuration
 
 		log.config(    "Post count config enabled            : " + postCountEnabled);
 		if (postCountEnabled)
+		{
 			log.config(  "Post count table name                : " + postCountTableName);
 			log.config(  "Post count user ID column            : " + postCountUserIDColumn);
 			log.config(  "Post count post count column         : " + postCountPostCountColumn);
+		}
 
 		log.config(    "Require avatars                      : " + requireAvatar);
 		log.config(    "Require minimum posts                : " + requireMinimumPosts);
