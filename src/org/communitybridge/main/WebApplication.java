@@ -12,8 +12,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -72,12 +70,6 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	/**
-	 * Returns true if the user's avatar column contains data.
-	 *
-	 * @param String The player's name.
-	 * @return boolean True if the user has an avatar.
-	 */
 	public boolean playerHasAvatar(String userID)
 	{
 		final String exceptionBase = "Exception during WebApplication.playerHasAvatar(): ";
@@ -128,12 +120,6 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	/**
-	 * Fetches the user's post count from the web application.
-	 *
-	 * @param String The player's name.
-	 * @return int Number of posts.
-	 */
 	public int getUserPostCount(String userID)
 	{
 		final String exceptionBase = "Exception during WebApplication.getUserPostCount(): ";
@@ -178,12 +164,6 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	/**
-	 * Retrieves a player's primary group ID from the web application database.
-	 *
-	 * @param String player name to retrieve.
-	 * @return String containing the group ID or null if there was an error or it doesn't exist.
-	 */
 	public String getUserPrimaryGroupID(String userID)
 	{
 		try
@@ -240,11 +220,6 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	/**
-	 * Performs operations when a player joins
-	 *
-	 * @param String The player who joined.
-	 */
 	public void onJoin(Player player)
 	{
 		if (configuration.syncDuringJoin)
@@ -253,12 +228,6 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	/**
-	 * If statistics is enabled, this method sets up an update statistics task
-	 * for the given player.
-	 *
-	 * @param String The player's name.
-	 */
 	public void runSynchronizePlayer(final Player player, final boolean online)
 	{
 		MinecraftUtilities.startTask(plugin,
@@ -431,11 +400,6 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	/**
-	 * Handles adding a group to the user's group list on the web application.
-	 *
-	 * @param String Name from permissions system of group added.
-	 */
 	protected void addGroup(String userID, String groupID, int currentGroupCount)
 	{
 		try
@@ -460,11 +424,6 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	/**
-	 * Handles removing a group from the user's group list on the web application.
-	 *
-	 * @param String Name from permissions system of group to remove.
-	 */
 	protected void removeGroup(String userID, String groupName)
 	{
 		try
@@ -489,12 +448,6 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	/**
-	 * Update the player's statistical information on the forum.
-	 *
-	 * @param String Name of player to update
-	 * @param boolean Set to true if the player is currently online
-	 */
 	private void updateStatistics(Player player, boolean online)
 	{
 		PlayerStatistics playerStatistics = new PlayerStatistics(configuration.dateFormat);
@@ -651,11 +604,6 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	/**
-	 * Called by updateStatistics() to update a statistics table that uses Key-Value Pairs.
-	 *
-	 * @param PlayerStatistics Bean containing the player's statistics
-	 */
 	private void updateStatisticsKeyStyle(PlayerStatistics playerStatistics)
 	{
 		/* To collapse multiple MySQL queries into one query, we're using the
@@ -850,26 +798,7 @@ public class WebApplication extends Synchronizer
 			message = message.replace("~GROUPNAME~", newGroupName);
 			player.sendMessage(message);
 		}
-
-		String pseudo = "";
-		if (environment.getPermissionHandler().supportsPrimaryGroups())
-		{
-			environment.getPermissionHandler().setPrimaryGroup(player, newGroupName, formerGroupName);
-		}
-		else
-		{
-			environment.getPermissionHandler().switchGroup(player, formerGroupName, newGroupName);
-			pseudo = "pseudo-primary ";
-		}
-		result.permissionsSystemPrimaryGroupName = newGroupName;
-		if (formerGroupName == null)
-		{
-			log.fine("Placed player '" + playerName + "' in " + pseudo + "permissions group '" + newGroupName + "'.");
-		}
-		else
-		{
-			log.fine("Moved player '" + playerName + "' to " + pseudo + "permissions group '" + newGroupName + "' from '" + formerGroupName + "'.");
-		}
+		setPermissionHandlerPrimaryGroup(player, newGroupName, formerGroupName, result);
 	}
 
 	private void synchronizeGroupsPrimaryGameToWeb(String userID, String playerName, PlayerGroupState previous, PlayerGroupState current, PlayerGroupState result)
@@ -958,12 +887,15 @@ public class WebApplication extends Synchronizer
 				{
 					result.webappGroupIDs.remove(groupID);
 				}
+				else if (configuration.simpleSynchronizationWebappSecondaryGroupsTreatedAsPrimary.contains(groupName))
+				{
+					setPermissionHandlerPrimaryGroup(player, groupName, current.permissionsSystemPrimaryGroupName, result);
+				}
 				else if (!current.permissionsSystemPrimaryGroupName.equals(groupName) && !current.permissionsSystemGroupNames.contains(groupName))
 				{
 					environment.getPermissionHandler().addToGroup(player, groupName);
 					result.permissionsSystemGroupNames.add(groupName);
-				} // Check for null/primaryalreadyset/secondaryalreadyset
-			} // if previousState contains group ID
+				}			} // if previousState contains group ID
 		} // for each group ID in currentState
 	}
 
@@ -1084,6 +1016,29 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
+	private void setPermissionHandlerPrimaryGroup(Player player, String newGroupName, String formerGroupName, PlayerGroupState result)
+	{
+		String pseudo = "";
+		if (environment.getPermissionHandler().supportsPrimaryGroups())
+		{
+			environment.getPermissionHandler().setPrimaryGroup(player, newGroupName, formerGroupName);
+		}
+		else
+		{
+			environment.getPermissionHandler().switchGroup(player, formerGroupName, newGroupName);
+			pseudo = "pseudo-primary ";
+		}
+		result.permissionsSystemPrimaryGroupName = newGroupName;
+		if (formerGroupName == null)
+		{
+			log.fine("Placed player '" + player.getName() + "' in " + pseudo + "permissions group '" + newGroupName + "'.");
+		}
+		else
+		{
+			log.fine("Moved player '" + player.getName() + "' to " + pseudo + "permissions group '" + newGroupName + "' from '" + formerGroupName + "'.");
+		}
+	}
+
 	private class FieldBuilder
 	{
 		public List<String> insertFields;
@@ -1141,11 +1096,6 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	/**
-	 * Called by updateStatistics when updating a table that columns (instead of keyvalue pairs).
-	 *
-	 * @param PlayerStatistics Bean containing the player's statistics
-	 */
 	private void updateStatisticsKeylessStyle(PlayerStatistics playerStatistics)
 	{
 		String query;

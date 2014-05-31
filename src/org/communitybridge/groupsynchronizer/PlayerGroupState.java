@@ -9,7 +9,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.communitybridge.main.CommunityBridge;
 import org.communitybridge.main.Environment;
-import org.communitybridge.permissionhandlers.PermissionHandler;
 
 public class PlayerGroupState
 {

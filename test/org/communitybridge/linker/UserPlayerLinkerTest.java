@@ -5,7 +5,6 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.entity.Player;
 import org.communitybridge.main.Configuration;
 import org.communitybridge.main.Environment;
-import org.communitybridge.utility.Log;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;

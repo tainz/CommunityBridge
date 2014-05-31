@@ -178,6 +178,7 @@ public class Configuration
 	public String simpleSynchronizationSuperUserID;
 	public Map<String, Object> simpleSynchronizationGroupMap = new HashMap<String, Object>();
 	public List<String> simpleSynchronizationGroupsTreatedAsPrimary = new ArrayList<String>();
+	public List<String> simpleSynchronizationWebappSecondaryGroupsTreatedAsPrimary = new ArrayList<String>();
 
 	// Ban synchronization
 	public boolean banSynchronizationEnabled;
@@ -1003,6 +1004,11 @@ public class Configuration
 			simpleSynchronizationGroupsTreatedAsPrimary = config.getStringList("simple-synchronization.groups-treated-as-primary");
 		}
 
+		if (config.contains("simple-synchronization.webapp-secondary-groups-treated-as-primary"))
+		{
+			simpleSynchronizationWebappSecondaryGroupsTreatedAsPrimary = config.getStringList("simple-synchronization.webapp-secondary-groups-treated-as-primary");
+		}
+
 		// Ban synchronization
 		banSynchronizationEnabled = config.getBoolean("ban-synchronization.enabled", false);
 		banSynchronizationDirection = config.getString("simple-synchronization.direction", "two-way").toLowerCase();
@@ -1426,6 +1432,7 @@ public class Configuration
 			log.config(  "Simple synchronization firstdirection: " + simpleSynchronizationFirstDirection);
 			log.config(  "Simple synchronization notification  : " + simpleSynchronizationPrimaryGroupNotify);
 			log.config(  "Simple synchronization P-groups      : " + simpleSynchronizationGroupsTreatedAsPrimary.toString());
+			log.config(  "Simple synchronization WSP-groups    : " + simpleSynchronizationWebappSecondaryGroupsTreatedAsPrimary.toString());
 		}
 
 		log.config(    "Ban synchronization enabled          : " + banSynchronizationEnabled);

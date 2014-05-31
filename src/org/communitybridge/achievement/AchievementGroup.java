@@ -1,7 +1,6 @@
 package org.communitybridge.achievement;
 
 import org.bukkit.entity.Player;
-import org.communitybridge.main.CommunityBridge;
 import org.communitybridge.main.Environment;
 
 /**
@@ -16,7 +15,7 @@ public class AchievementGroup extends Achievement
 	{
 		super(environment);
 	}
-	
+
 	@Override
 	public boolean playerQualifies(Player player, PlayerAchievementState state)
 	{

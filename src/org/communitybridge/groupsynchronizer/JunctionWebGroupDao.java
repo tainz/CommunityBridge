@@ -5,10 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
-import org.communitybridge.main.Configuration;
 import org.communitybridge.main.Environment;
-import org.communitybridge.main.SQL;
-import org.communitybridge.utility.Log;
 
 public class JunctionWebGroupDao extends WebGroupDao
 {

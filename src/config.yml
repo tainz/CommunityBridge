@@ -153,7 +153,7 @@ player-user-linking:
   # * they have no assigned groups
   # then set this to true.
   registered-former-unregistered-only: true
-  
+
   # If you want a player to be added to the 'unregistered-player-group' if they
   # are no longer registered, set this to true.
   unregister-former-registered: false
@@ -479,7 +479,15 @@ simple-synchronization:
   # be synchronized into the user's primary group field on the web application
   # here. Be sure to include these groups in the group-mapping as well.
   # Sample: groups-treated-as-primary: [guest, member, premium]
+  #         note that the brackets are required.
   groups-treated-as-primary: []
+
+  # If you have groups that are secondary groups on the web application that
+  # you wish to be treated as if they are primary on your permissions system
+  # (that is, these groups will be mutually exclusive), List them here.
+  # Sample: groups-treated-as-primary: [guest, member, premium]
+  #         note that the brackets are required.
+  webapp-secondary-groups-treated-as-primary: []
 
   # List groups and group IDs to be synchronized here. On the left side of
   # the colon put a web application's group ID. On the right side of the colon
