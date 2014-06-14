@@ -32,6 +32,8 @@ public class PlayerGroupState
 		this.playerFolder = playerFolder;
 		this.playerFile = new File(playerFolder, uuid + ".yml");
 		this.oldPlayerFile = new File(playerFolder, name + ".yml");
+		this.webappPrimaryGroupID = "";
+		this.permissionsSystemPrimaryGroupName = "";
 		this.webappGroupIDs = new ArrayList<String>();
 		this.permissionsSystemGroupNames = new ArrayList<String>();
 	}
