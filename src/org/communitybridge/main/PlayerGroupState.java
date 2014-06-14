@@ -36,8 +36,6 @@ public class PlayerGroupState
 		this.permissionsSystemPrimaryGroupName = "";
 		this.webappGroupIDs = new ArrayList<String>();
 		this.permissionsSystemGroupNames = new ArrayList<String>();
-		this.webappPrimaryGroupID = "";
-		this.permissionsSystemPrimaryGroupName = "";
 	}
 
 	public void generate()
