@@ -24,7 +24,7 @@ public class SingleWebGroupDao extends WebGroupDao
 	@Override
 	public void addUserToGroup(String userID, String groupID, int currentGroupCount) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
-		if (currentGroupCount > 1)
+		if (currentGroupCount >= 1)
 		{
 			groupID = configuration.webappSecondaryGroupGroupIDDelimiter + groupID;
 		}
