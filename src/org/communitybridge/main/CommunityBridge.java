@@ -77,10 +77,7 @@ public final class CommunityBridge extends JavaPlugin
 		environment.setLog(new Log(this.getLogger(), Level.CONFIG));
 		environment.setConfiguration(new Configuration(environment));
 
-		if (environment.getConfiguration().permissionsSystemRequired)
-		{
-			environment.setPermissionHandler(selectPermissionsHandler());
-		}
+		// PermissionHandler set by Configuration initialization.
 
 		environment.setUserPlayerLinker(new UserPlayerLinker(environment, Bukkit.getMaxPlayers() * 4));
 	}
@@ -374,55 +371,6 @@ public final class CommunityBridge extends JavaPlugin
 				environment.getLog().warning("Plugin Metrics activation failed.");
 			}
 		}
-	}
-
-	private PermissionHandler selectPermissionsHandler()
-	{
-		try
-		{
-			if (environment.getConfiguration().permissionsSystem.equalsIgnoreCase("PEX"))
-			{
-				environment.getLog().config("Permissions System: PermissionsEx (PEX)");
-				return new PermissionHandlerPermissionsEx();
-			}
-			else if (environment.getConfiguration().permissionsSystem.equalsIgnoreCase("bPerms"))
-			{
-				environment.getLog().config("Permissions System: bPermissions (bPerms)");
-				return new PermissionHandlerBPermissions();
-			}
-			else if (environment.getConfiguration().permissionsSystem.equalsIgnoreCase("GroupManager"))
-			{
-				environment.getLog().config("Permissions System: GroupManager");
-				return new PermissionHandlerGroupManager();
-			}
-			else if (environment.getConfiguration().permissionsSystem.equalsIgnoreCase("PermsBukkit"))
-			{
-				environment.getLog().config("Permissions System: PermissionsBukkit (PermsBukkit)");
-				return new PermissionHandlerPermissionsBukkit();
-			}
-			else if (environment.getConfiguration().permissionsSystem.equalsIgnoreCase("Vault"))
-			{
-				environment.getLog().config("Permissions System: Vault");
-				return new PermissionHandlerVault();
-			}
-			else if (environment.getConfiguration().permissionsSystem.equalsIgnoreCase("zPermissions"))
-			{
-				environment.getLog().config("Permissions System: ZPermissions");
-				return new PermissionHandlerZPermissions();
-			}
-			else
-			{
-				environment.getLog().severe("Unknown permissions system in config.yml. Features dependent on a permissions system disabled.");
-				environment.getConfiguration().disableFeaturesDependentOnPermissions();
-			}
-		}
-		catch (IllegalStateException e)
-		{
-			environment.getLog().severe(e.getMessage());
-			environment.getLog().severe("Disabling features dependent on a permissions system.");
-			environment.getConfiguration().disableFeaturesDependentOnPermissions();
-		}
-		return null;
 	}
 
 	private long calculateTaskTicks(final long every)

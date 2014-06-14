@@ -21,6 +21,13 @@ import org.communitybridge.achievement.AchievementAvatar;
 import org.communitybridge.achievement.AchievementGroup;
 import org.communitybridge.achievement.AchievementPostCount;
 import org.communitybridge.achievement.AchievementSectionPostCount;
+import org.communitybridge.permissionhandlers.PermissionHandler;
+import org.communitybridge.permissionhandlers.PermissionHandlerBPermissions;
+import org.communitybridge.permissionhandlers.PermissionHandlerGroupManager;
+import org.communitybridge.permissionhandlers.PermissionHandlerPermissionsBukkit;
+import org.communitybridge.permissionhandlers.PermissionHandlerPermissionsEx;
+import org.communitybridge.permissionhandlers.PermissionHandlerVault;
+import org.communitybridge.permissionhandlers.PermissionHandlerZPermissions;
 
 public class Configuration
 {
@@ -1041,6 +1048,60 @@ public class Configuration
 		groupSynchronizationActive = simpleSynchronizationEnabled && (webappPrimaryGroupEnabled || webappSecondaryGroupEnabled);
 		playerDataRequired = groupSynchronizationActive;
 		permissionsSystemRequired = !linkingUnregisteredGroup.isEmpty() || !linkingRegisteredGroup.isEmpty() || groupSynchronizationActive;
+
+		if (permissionsSystemRequired)
+		{
+			environment.setPermissionHandler(selectPermissionsHandler());
+		}
+	}
+
+	private PermissionHandler selectPermissionsHandler()
+	{
+		try
+		{
+			if (permissionsSystem.equalsIgnoreCase("PEX"))
+			{
+				environment.getLog().config("Permissions System: PermissionsEx (PEX)");
+				return new PermissionHandlerPermissionsEx();
+			}
+			else if (permissionsSystem.equalsIgnoreCase("bPerms"))
+			{
+				environment.getLog().config("Permissions System: bPermissions (bPerms)");
+				return new PermissionHandlerBPermissions();
+			}
+			else if (permissionsSystem.equalsIgnoreCase("GroupManager"))
+			{
+				environment.getLog().config("Permissions System: GroupManager");
+				return new PermissionHandlerGroupManager();
+			}
+			else if (permissionsSystem.equalsIgnoreCase("PermsBukkit"))
+			{
+				environment.getLog().config("Permissions System: PermissionsBukkit (PermsBukkit)");
+				return new PermissionHandlerPermissionsBukkit();
+			}
+			else if (permissionsSystem.equalsIgnoreCase("Vault"))
+			{
+				environment.getLog().config("Permissions System: Vault");
+				return new PermissionHandlerVault();
+			}
+			else if (permissionsSystem.equalsIgnoreCase("zPermissions"))
+			{
+				environment.getLog().config("Permissions System: ZPermissions");
+				return new PermissionHandlerZPermissions();
+			}
+			else
+			{
+				environment.getLog().severe("Unknown permissions system in config.yml. Features dependent on a permissions system disabled.");
+				disableFeaturesDependentOnPermissions();
+			}
+		}
+		catch (IllegalStateException e)
+		{
+			environment.getLog().severe(e.getMessage());
+			environment.getLog().severe("Disabling features dependent on a permissions system.");
+			disableFeaturesDependentOnPermissions();
+		}
+		return null;
 	}
 
 	/**
