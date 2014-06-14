@@ -54,7 +54,7 @@ public class SingleWebGroupDaoTest
 	@Test
 	public void addGroupWithOneCountUsesCorrectQuery() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
-		String query = getAddGroupUpdateQuery("");
+		String query = getAddGroupUpdateQuery(",");
 		doNothing().when(sql).updateQuery(query);
 		webGroupDao.addUserToGroup(USER_ID, GROUP_ID, 1);
 		verify(sql).updateQuery(query);
