@@ -34,7 +34,7 @@ public class PermissionHandlerVault extends PermissionHandler
 	@Override
 	public List<String> getGroups(Player player)
 	{
-		return new ArrayList(Arrays.asList(vault.getPlayerGroups(determineWorld(player), player.getName())));
+		return new ArrayList<String>(Arrays.asList(vault.getPlayerGroups(determineWorld(player), player.getName())));
 	}
 
 	@Override
