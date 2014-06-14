@@ -42,7 +42,7 @@ public class PermissionHandlerPermissionsEx extends PermissionHandler
 		{
 			return new ArrayList<String>();
 		}
-		return permissionUser.getParentIdentifiers();
+		return new ArrayList<String>(permissionUser.getParentIdentifiers());
 	}
 
 	@Override
