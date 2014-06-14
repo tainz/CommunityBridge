@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 
 public class SynchronizerTest
 {
-	TestableSynchronizer synchronizer = new TestableSynchronizer();
+	Synchronizer synchronizer = new Synchronizer();
 
 	@Test
 	public void isValidDirectionReturnsTrueForTwo()
@@ -36,9 +36,5 @@ public class SynchronizerTest
 	public void isValidDirectionReturnsFalseForSomethingElseAgainstWeb()
 	{
 		assertFalse(synchronizer.isValidDirection("aaa" + RandomStringUtils.randomAlphabetic(3), "web"));
-	}
-
-	public class TestableSynchronizer extends Synchronizer
-	{
 	}
 }
