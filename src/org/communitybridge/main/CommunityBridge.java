@@ -46,6 +46,7 @@ public final class CommunityBridge extends JavaPlugin
 	public void onEnable()
   {
 		setupEnvironment();
+		javaVersionCheck();
 
 		if (StringUtilities.compareVersion(MinecraftUtilities.getBukkitVersion(), "1.7.9") < 0)
 		{
@@ -395,6 +396,16 @@ public final class CommunityBridge extends JavaPlugin
 		{
 			// Effectively defaulting to ticks.
 			return every;
+		}
+	}
+
+	private void javaVersionCheck()
+	{
+		int javaVersion = Integer.parseInt(System.getProperty("java.version").split("\\.")[1]);
+
+		if (javaVersion < 7)
+		{
+			environment.getLog().warning("Future versions of CommunityBridge may require Java 7 or later. It is recommended you upgrade your JRE.");
 		}
 	}
 }
