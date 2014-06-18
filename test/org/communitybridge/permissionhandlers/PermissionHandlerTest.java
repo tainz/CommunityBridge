@@ -130,7 +130,6 @@ public class PermissionHandlerTest
 	{
 		when(plugin.isEnabled()).thenReturn(false);
 
-		String name = "someplugin";
 		try
 		{
 			permissionHandler.validate(plugin, name, pluginVersion);
