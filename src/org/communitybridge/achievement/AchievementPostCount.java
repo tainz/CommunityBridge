@@ -4,10 +4,6 @@ import org.bukkit.entity.Player;
 import org.communitybridge.main.CommunityBridge;
 import org.communitybridge.main.Environment;
 
-/**
- *
- * @author Iain E. Davis <iain@ruhlendavis.org>
- */
 public class AchievementPostCount extends Achievement
 {
 	private int postCount;

@@ -3,10 +3,6 @@ package org.communitybridge.achievement;
 import org.bukkit.entity.Player;
 import org.communitybridge.main.Environment;
 
-/**
- *
- * @author Iain E. Davis <iain@ruhlendavis.org>
- */
 public class AchievementGroup extends Achievement
 {
 	private String groupName;
