@@ -23,7 +23,7 @@ public class PermissionHandlerGroupManager extends PermissionHandler
 	{
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("GroupManager");
 
-		validate(plugin, "GroupManager", "2.13");
+		validate(plugin, "GroupManager", "2.1.6");
 
 		groupManager = (GroupManager)plugin;
 	}
