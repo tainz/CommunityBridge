@@ -33,7 +33,7 @@ public abstract class Achievement
 	{
 		if (environment.getConfiguration().economyEnabled)
 		{
-			CommunityBridge.economy.depositPlayer(player.getName(), cashReward);
+			environment.getEconomy().depositPlayer(player, cashReward);
 		}
 
 		for (Entry<Material, Integer> entry : itemRewards.entrySet())

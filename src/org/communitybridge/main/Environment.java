@@ -1,15 +1,17 @@
 package org.communitybridge.main;
 
+import net.milkbowl.vault.economy.Economy;
 import org.communitybridge.linker.UserPlayerLinker;
 import org.communitybridge.permissionhandlers.PermissionHandler;
 import org.communitybridge.utility.Log;
 
 public class Environment
 {
+	private CommunityBridge plugin;
 	private Configuration configuration;
+	private Economy economy;
 	private Log log;
 	private PermissionHandler permissionHandler;
-	private CommunityBridge plugin;
 	private SQL sql;
 	private UserPlayerLinker userPlayerLinker;
 
@@ -21,6 +23,16 @@ public class Environment
 	public void setConfiguration(Configuration configuration)
 	{
 		this.configuration = configuration;
+	}
+
+	public Economy getEconomy()
+	{
+		return economy;
+	}
+
+	public void setEconomy(Economy economy)
+	{
+		this.economy = economy;
 	}
 
 	public SQL getSql()

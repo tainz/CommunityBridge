@@ -37,7 +37,6 @@ public final class CommunityBridge extends JavaPlugin
 	private Environment environment = new Environment();
 
 	public static WebApplication webapp;
-	public static Economy economy;
 
 	private static boolean active;
 	private static CBMetrics metrics;
@@ -101,8 +100,7 @@ public final class CommunityBridge extends JavaPlugin
 	    if (getServer().getPluginManager().getPlugin("Vault") == null)
 			{
 				environment.getLog().warning("Vault not present. Temporarily disabling economy based features.");
-				environment.getConfiguration().economyEnabled = false;
-				environment.getConfiguration().walletEnabled = false;
+				disableEconomyBasedFeatures();
 			}
 			else
 			{
@@ -110,17 +108,15 @@ public final class CommunityBridge extends JavaPlugin
         if (rsp == null)
 				{
 					environment.getLog().warning("Failure getting economy service registration. Is an economy plugin installed? Temporarily disabling economy based features.");
-					environment.getConfiguration().economyEnabled = false;
-					environment.getConfiguration().walletEnabled = false;
+					disableEconomyBasedFeatures();
 	      }
 				else
 				{
-	        economy = rsp.getProvider();
-					if (economy == null)
+	        environment.setEconomy(rsp.getProvider());
+					if (environment.getEconomy() == null)
 					{
 						environment.getLog().warning("Failure getting economy provider. Temporarily disabling economy based features.");
-						environment.getConfiguration().economyEnabled = false;
-						environment.getConfiguration().walletEnabled = false;
+						disableEconomyBasedFeatures();
 					}
 				}
 			}
@@ -194,26 +190,19 @@ public final class CommunityBridge extends JavaPlugin
 			environment.getSql().close();
 		}
 
-		if (economy != null)
+		if (environment.getEconomy() != null)
 		{
-			economy = null;
+			environment.setEconomy(null);
 		}
 
 		environment.getLog().finest("CommunityBridge deactivated.");
 	}
 
-	/**
-	 * Returns true if the plugin is active.
-	 */
 	public static boolean isActive()
 	{
 		return active;
 	}
 
-	/**
-	 * Called by activate() if the auto reminder to register is turned on, this
-	 * method starts up the reminder task.
-	 */
 	private void reminderStart()
   {
 		MinecraftUtilities.startTaskTimer(this,
@@ -407,5 +396,11 @@ public final class CommunityBridge extends JavaPlugin
 		{
 			environment.getLog().warning("Future versions of CommunityBridge may require Java 7 or later. It is recommended you upgrade your JRE.");
 		}
+	}
+
+	private void disableEconomyBasedFeatures()
+	{
+		environment.getConfiguration().economyEnabled = false;
+		environment.getConfiguration().walletEnabled = false;
 	}
 }

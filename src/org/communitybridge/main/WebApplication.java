@@ -591,7 +591,7 @@ public class WebApplication extends Synchronizer
 
 		if (configuration.walletEnabled)
 		{
-			playerStatistics.setWallet(CommunityBridge.economy.getBalance(playerName));
+			playerStatistics.setWallet(environment.getEconomy().getBalance(player));
 		}
 
 		if (configuration.statisticsUsesKey)
