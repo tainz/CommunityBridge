@@ -50,6 +50,9 @@ general:
   #       exist. That is, you need to have used mangadd <groupname>)
   #       Also, GroupManager announces primary group changes with no option
   #       to override this behavior.
+  # NOTE: PermissionsBukkit will not create groups on the fly. So any groups you
+  #       specify in the linking or synchronization sections must already
+  #       exist.
   # NOTE: zPermissions will not create groups on the fly. So any groups you
   #       specify in the linking or synchronization sections must already
   #       exist. That is, you need to have used: permissions group <group>
