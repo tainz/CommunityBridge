@@ -20,7 +20,7 @@ public class PermissionHandlerVault extends PermissionHandler
 	public PermissionHandlerVault() throws IllegalStateException
 	{
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Vault");
-		validate(plugin, "Vault", "1.2");
+		validate(plugin, "Vault", "1.4.1");
 		RegisteredServiceProvider<Permission> rsp = Bukkit.getServer().getServicesManager().getRegistration(Permission.class);
 		vault = rsp.getProvider();
 	}
@@ -28,13 +28,13 @@ public class PermissionHandlerVault extends PermissionHandler
 	@Override
 	public boolean addToGroup(Player player, String groupName)
 	{
-		return vault.playerAddGroup(determineWorld(player), player.getName(), groupName);
+		return vault.playerAddGroup(determineWorld(player), player, groupName);
 	}
 
 	@Override
 	public List<String> getGroups(Player player)
 	{
-		return new ArrayList<String>(Arrays.asList(vault.getPlayerGroups(determineWorld(player), player.getName())));
+		return new ArrayList<String>(Arrays.asList(vault.getPlayerGroups(determineWorld(player), player)));
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class PermissionHandlerVault extends PermissionHandler
 	@Override
 	public boolean isMemberOfGroup(Player player, String groupName)
 	{
-		return vault.playerInGroup(determineWorld(player), player.getName(), groupName);
+		return vault.playerInGroup(determineWorld(player), player, groupName);
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class PermissionHandlerVault extends PermissionHandler
 	@Override
 	public boolean removeFromGroup(Player player, String groupName)
 	{
-		return vault.playerRemoveGroup(determineWorld(player), player.getName(), groupName);
+		return vault.playerRemoveGroup(determineWorld(player), player, groupName);
 	}
 
 	@Override
