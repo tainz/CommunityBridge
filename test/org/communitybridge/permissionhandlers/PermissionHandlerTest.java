@@ -38,6 +38,14 @@ public class PermissionHandlerTest
 	}
 
 	@Test
+	public void switchGroupCallsDoesNotCallRemoveGroupOnNull()
+	{
+		permissionHandler.switchGroup(player, null, groupTwo);
+		assertEquals("", permissionHandler.removePlayer);
+		assertEquals("", permissionHandler.removeGroup);
+	}
+
+	@Test
 	public void switchGroupCallsAddGroup()
 	{
 		permissionHandler.switchGroup(player, groupOne, groupTwo);
@@ -140,10 +148,10 @@ public class PermissionHandlerTest
 
 	public class TestablePermissionHandler extends PermissionHandler
 	{
-		public String addPlayer;
-		public String addGroup;
-		public String removePlayer;
-		public String removeGroup;
+		public String addPlayer = "";
+		public String addGroup = "";
+		public String removePlayer = "";
+		public String removeGroup = "";
 
 		@Override
 		public boolean addToGroup(Player player, String groupName)

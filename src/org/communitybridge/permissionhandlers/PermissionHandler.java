@@ -24,7 +24,10 @@ public abstract class PermissionHandler
 
 	public void switchGroup(Player player, String formerGroupName, String newGroupName)
 	{
-		removeFromGroup(player, formerGroupName);
+		if (formerGroupName != null)
+		{
+			removeFromGroup(player, formerGroupName);
+		}
 		addToGroup(player, newGroupName);
 	}
 
