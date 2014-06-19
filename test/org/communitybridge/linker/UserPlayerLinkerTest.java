@@ -2,7 +2,6 @@ package org.communitybridge.linker;
 
 import java.util.UUID;
 import org.apache.commons.lang.RandomStringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.communitybridge.main.Configuration;
 import org.communitybridge.main.Environment;
@@ -12,12 +11,9 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import static org.mockito.Matchers.anyString;
-import org.mockito.Mockito;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserPlayerLinkerTest

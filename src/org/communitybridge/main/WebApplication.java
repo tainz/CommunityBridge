@@ -7,11 +7,8 @@ import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -44,7 +41,6 @@ public class WebApplication extends Synchronizer
 	private BanSynchronizer banSynchronizer;
 	private WebGroupDao webGroupDao;
 
-	private Map<String, String> playerUserIDs = new HashMap<String, String>();
 	private List<Player> playerLocks = new ArrayList<Player>();
 
 	public WebApplication(Environment environment, WebGroupDao webGroupDao)
@@ -458,7 +454,6 @@ public class WebApplication extends Synchronizer
 		int previousLastOnline = 0;
 		int previousGameTime = 0;
 
-		String playerName = player.getName();
 		playerStatistics.setUserID(environment.getUserPlayerLinker().getUserID(player));
 		if (playerStatistics.getUserID() == null)
 		{

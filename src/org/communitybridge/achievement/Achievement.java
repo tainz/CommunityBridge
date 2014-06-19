@@ -11,7 +11,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.communitybridge.main.CommunityBridge;
 import org.communitybridge.main.Environment;
 
 public abstract class Achievement
