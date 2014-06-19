@@ -58,11 +58,6 @@ public class PermissionHandlerBPermissions extends PermissionHandler
 		return groupList;
 	}
 
-	/**
-	 * Note that for bPermissions, it returns the first group on the player's
-	 * group list for their current world, or the default world if they are
-	 * offline.
-	 */
 	@Override
 	public String getPrimaryGroup(Player player)
 	{
@@ -78,11 +73,6 @@ public class PermissionHandlerBPermissions extends PermissionHandler
 		}
 	}
 
-	/**
-	 * Checks to see if a player is the member of a group.
-	 * Note that it checks the groups for their current world, or it checks the
-	 * default world if they are offline.
-	 */
 	@Override
 	public boolean isMemberOfGroup(Player player, String groupName)
 	{
