@@ -27,9 +27,9 @@ public class BanState
 	private List<String> bannedUUIDs = new ArrayList<String>();
 	private List<String> bannedUserIDs = new ArrayList<String>();
 
-	public BanState(String storageMethod, File folder, Environment environment)
+	public BanState(String storageMethod, Environment environment)
 	{
-		this.file = new File(folder, "banstate.yml");
+		this.file = new File(environment.getPlugin().getDataFolder(), "banstate.yml");
 		this.configuration = environment.getConfiguration();
 		this.log = environment.getLog();
 		this.sql = environment.getSql();

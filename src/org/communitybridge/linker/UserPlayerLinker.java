@@ -1,7 +1,10 @@
 package org.communitybridge.linker;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.communitybridge.main.Environment;
 
@@ -10,6 +13,7 @@ public class UserPlayerLinker
 	private ConcurrentHashMap<String, String> userIDCache = new ConcurrentHashMap<String, String>();
 	private Environment environment;
 	private UserIDDao userIDDao;
+	private BukkitDao bukkitDao;
 	private int cacheLimit;
 
 	public UserPlayerLinker(Environment environment, int cacheLimit)
@@ -17,6 +21,7 @@ public class UserPlayerLinker
 		this.cacheLimit = cacheLimit;
 		this.environment = environment;
 		this.userIDDao = new UserIDDao(environment);
+		this.bukkitDao = new BukkitDao();
 	}
 
 	public void removeUserIDFromCache(String uuid, String name)
@@ -25,7 +30,23 @@ public class UserPlayerLinker
 		userIDCache.remove(name);
 	}
 
-	public String getUUID(String userID)
+	public String getPlayerName(String userID)
+	{
+		String identifier = getIdentifier(userID);
+		UUID uuid;
+
+		try
+		{
+			uuid = UUID.fromString(identifier);
+		}
+		catch(IllegalArgumentException exception)
+		{
+			return identifier;
+		}
+		return bukkitDao.getPlayer(uuid).getName();
+	}
+
+	private String getIdentifier(String userID)
 	{
 		for (Map.Entry<String, String> entry : userIDCache.entrySet())
 		{
@@ -35,6 +56,11 @@ public class UserPlayerLinker
 			}
 		}
 		return userIDDao.getUUID(userID);
+	}
+
+	public String getUUID(String userID)
+	{
+		return getIdentifier(userID);
 	}
 
 	public String getUserID(String uuid)

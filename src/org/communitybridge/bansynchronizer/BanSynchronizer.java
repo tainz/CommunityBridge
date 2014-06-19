@@ -1,6 +1,5 @@
 package org.communitybridge.bansynchronizer;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
@@ -9,12 +8,9 @@ import org.bukkit.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.communitybridge.linker.UserPlayerLinker;
 import org.communitybridge.main.Configuration;
 import org.communitybridge.main.Environment;
-import org.communitybridge.main.SQL;
 import org.communitybridge.main.Synchronizer;
-import org.communitybridge.main.WebApplication;
 import org.communitybridge.utility.Log;
 
 public class BanSynchronizer extends Synchronizer
@@ -22,29 +18,21 @@ public class BanSynchronizer extends Synchronizer
 	private Environment environment;
 	private Configuration configuration;
 	private Log log;
-	private SQL sql;
-	private UserPlayerLinker userPlayerLinker;
-	private File folder;
-	private WebApplication webApplication;
 
-	public BanSynchronizer(File folder, Environment environment, WebApplication webApplication)
+	public BanSynchronizer(Environment environment)
 	{
 		super(environment);
 		this.environment = environment;
 		this.configuration = environment.getConfiguration();
 		this.log = environment.getLog();
-		this.sql = environment.getSql();
-		this.userPlayerLinker = environment.getUserPlayerLinker();
-		this.folder = folder;
-		this.webApplication = webApplication;
 	}
 
 	public void synchronize()
 	{
-		BanState previous = new BanState(configuration.banSynchronizationMethod, folder, environment);
+		BanState previous = new BanState(configuration.banSynchronizationMethod, environment);
 		previous.load();
 
-		BanState current = new BanState(configuration.banSynchronizationMethod, folder, environment);
+		BanState current = new BanState(configuration.banSynchronizationMethod, environment);
 		current.generate();
 
 		if (isValidDirection(configuration.banSynchronizationDirection, "web"))
@@ -122,7 +110,7 @@ public class BanSynchronizer extends Synchronizer
 
 		try
 		{
-			sql.updateQuery(query);
+			environment.getSql().updateQuery(query);
 		}
 		catch (MalformedURLException exception)
 		{
@@ -147,7 +135,7 @@ public class BanSynchronizer extends Synchronizer
 
 		try
 		{
-			sql.updateQuery(query);
+			environment.getSql().updateQuery(query);
 		}
 		catch (MalformedURLException exception)
 		{
@@ -196,7 +184,7 @@ public class BanSynchronizer extends Synchronizer
 
 		try
 		{
-			sql.insertQuery(query);
+			environment.getSql().insertQuery(query);
 		}
 		catch (MalformedURLException exception)
 		{
@@ -224,7 +212,7 @@ public class BanSynchronizer extends Synchronizer
 
 		try
 		{
-			sql.deleteQuery(query);
+			environment.getSql().deleteQuery(query);
 		}
 		catch (MalformedURLException exception)
 		{
@@ -246,7 +234,7 @@ public class BanSynchronizer extends Synchronizer
 		{
 			if (!current.getBannedUserIDs().contains(userID))
 			{
-				unbanPlayerGame(webApplication.getPlayerName(userID));
+				unbanPlayerGame(environment.getUserPlayerLinker().getPlayerName(userID));
 			}
 		}
 
@@ -254,7 +242,7 @@ public class BanSynchronizer extends Synchronizer
 		{
 			if (!previous.getBannedUserIDs().contains(userID))
 			{
-				banPlayerGame(webApplication.getPlayerName(userID));
+				banPlayerGame(environment.getUserPlayerLinker().getPlayerName(userID));
 			}
 		}
 	}
@@ -265,7 +253,7 @@ public class BanSynchronizer extends Synchronizer
 		{
 			if (!current.getBannedUUIDs().contains(uuid))
 			{
-				unbanPlayerWeb(userPlayerLinker.getUserID(uuid));
+				unbanPlayerWeb(environment.getUserPlayerLinker().getUserID(uuid));
 			}
 		}
 
@@ -273,7 +261,7 @@ public class BanSynchronizer extends Synchronizer
 		{
 			if (!previous.getBannedUUIDs().contains(uuid))
 			{
-				banPlayerWeb(userPlayerLinker.getUserID(uuid));
+				banPlayerWeb(environment.getUserPlayerLinker().getUserID(uuid));
 			}
 		}
 	}

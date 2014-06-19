@@ -2,6 +2,7 @@ package org.communitybridge.linker;
 
 import java.util.UUID;
 import org.apache.commons.lang.RandomStringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.communitybridge.main.Configuration;
 import org.communitybridge.main.Environment;
@@ -11,9 +12,12 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import static org.mockito.Matchers.anyString;
+import org.mockito.Mockito;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserPlayerLinkerTest
@@ -27,6 +31,7 @@ public class UserPlayerLinkerTest
 	private UserIDDao userIDDao = mock(UserIDDao.class);
 	private Environment environment = new Environment();
 	private Configuration configuration = mock(Configuration.class);
+	private BukkitDao bukkit = mock(BukkitDao.class);
 
 	@InjectMocks
 	UserPlayerLinker userPlayerLinker = new UserPlayerLinker(environment, 1);
@@ -34,10 +39,10 @@ public class UserPlayerLinkerTest
 	@Before
 	public void setup()
 	{
-		environment.setConfiguration(configuration);
+			environment.setConfiguration(configuration);
 	}
 
-		@Test
+	@Test
 	public void getUserIDByUUIDNeverReturnsNull()
 	{
 		when(userIDDao.getUserID(uuid.toString())).thenReturn(UUID_USER_ID);
@@ -208,5 +213,74 @@ public class UserPlayerLinkerTest
 		when(player.getName()).thenReturn(PLAYER_NAME);
 		when(userIDDao.getUUID(UUID_USER_ID)).thenReturn(uuid.toString());
 		assertEquals(uuid.toString(), userPlayerLinker.getUUID(UUID_USER_ID));
+	}
+
+	@Test
+	public void getPlayerNameNeverReturnsNull()
+	{
+			configuration.linkingMethod = "both";
+			when(userIDDao.getUUID(anyString())).thenReturn(uuid.toString());
+			when(bukkit.getPlayer(uuid)).thenReturn(player);
+			when(player.getName()).thenReturn(PLAYER_NAME);
+			assertNotNull(userPlayerLinker.getPlayerName(UUID_USER_ID));
+	}
+
+	@Test
+	public void getPlayerNameInNameModeReturnsPreviouslyCachedName()
+	{
+		configuration.linkingMethod = "name";
+		when(player.getName()).thenReturn(PLAYER_NAME);
+		when(userIDDao.getUserID(PLAYER_NAME)).thenReturn(NAME_USER_ID);
+		when(player.getUniqueId()).thenReturn(uuid);
+		userPlayerLinker.getUserID(player);
+		assertEquals(PLAYER_NAME, userPlayerLinker.getPlayerName(NAME_USER_ID));
+	}
+
+	@Test
+	public void getPlayerNameInUUIDModeReturnsNameByPreviouslyCachedUUID()
+	{
+		configuration.linkingMethod = "uuid";
+		when(player.getName()).thenReturn(PLAYER_NAME);
+		when(player.getUniqueId()).thenReturn(uuid);
+		when(userIDDao.getUserID(uuid.toString())).thenReturn(UUID_USER_ID);
+		when(bukkit.getPlayer(uuid)).thenReturn(player);
+		userPlayerLinker.getUserID(player);
+		assertEquals(PLAYER_NAME, userPlayerLinker.getPlayerName(UUID_USER_ID));
+	}
+
+	@Test
+	public void getPlayerNameInBothModeReturnsNameByPreviouslyCachedUUID()
+	{
+		configuration.linkingMethod = "both";
+		when(player.getName()).thenReturn(PLAYER_NAME);
+		when(player.getUniqueId()).thenReturn(uuid);
+		when(userIDDao.getUserID(uuid.toString())).thenReturn(UUID_USER_ID);
+		when(bukkit.getPlayer(uuid)).thenReturn(player);
+		userPlayerLinker.getUserID(player);
+		assertEquals(PLAYER_NAME, userPlayerLinker.getPlayerName(UUID_USER_ID));
+	}
+
+	@Test
+	public void getPlayerNameInBothModeReturnsPreviouslyCachedName()
+	{
+		configuration.linkingMethod = "both";
+		when(player.getName()).thenReturn(PLAYER_NAME);
+		when(userIDDao.getUserID(PLAYER_NAME)).thenReturn(NAME_USER_ID);
+		when(userIDDao.getUserID(uuid.toString())).thenReturn("");
+		when(player.getUniqueId()).thenReturn(uuid);
+		userPlayerLinker.getUserID(player);
+		assertEquals(PLAYER_NAME, userPlayerLinker.getPlayerName(NAME_USER_ID));
+	}
+
+	@Test
+	public void getPlayerNameInBothModeReturnsNormalName()
+	{
+		configuration.linkingMethod = "both";
+		when(player.getName()).thenReturn(PLAYER_NAME);
+		when(player.getUniqueId()).thenReturn(uuid);
+		when(userIDDao.getUserID(uuid.toString())).thenReturn(UUID_USER_ID);
+		when(userIDDao.getUUID(UUID_USER_ID)).thenReturn(uuid.toString());
+		when(bukkit.getPlayer(uuid)).thenReturn(player);
+		assertEquals(PLAYER_NAME, userPlayerLinker.getPlayerName(UUID_USER_ID));
 	}
 }

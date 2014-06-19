@@ -56,17 +56,17 @@ public class WebApplication extends Synchronizer
 		this.webGroupDao = webGroupDao;
 	}
 
-	public WebApplication(CommunityBridge plugin, Environment environment)
+	public WebApplication(Environment environment)
 	{
 		super(environment);
 		this.environment = environment;
 		this.configuration = environment.getConfiguration();
 		this.log = environment.getLog();
-		this.plugin = plugin;
+		this.plugin = environment.getPlugin();
 		configureDao();
 		if (configuration.banSynchronizationEnabled)
 		{
-			banSynchronizer = new BanSynchronizer(plugin.getDataFolder(), environment, this);
+			banSynchronizer = new BanSynchronizer(environment);
 		}
 	}
 
@@ -917,77 +917,6 @@ public class WebApplication extends Synchronizer
 		catch (IOException exception)
 		{
 			log.severe("Exception while saving " + player.getName() + " achievement state: " + exception.getMessage());
-		}
-	}
-
-	public String getPlayerName(String userID)
-	{
-		for (Entry<String, String> entry : playerUserIDs.entrySet())
-		{
-			if (userID.equals(entry.getValue()))
-			{
-				return entry.getKey();
-			}
-		}
-
-		String playerName = loadPlayerNameFromDatabase(userID);
-		return playerName;
-	}
-
-	private String loadPlayerNameFromDatabase(String userID)
-	{
-		final String exceptionBase = "Exception during WebApplication.getPlayerName(): ";
-		String query;
-
-		if (configuration.linkingUsesKey)
-		{
-			query = "SELECT `" + configuration.linkingValueColumn + "` "
-						+ "FROM `" + configuration.linkingTableName + "` "
-						+ "WHERE `" + configuration.linkingKeyColumn + "` = '" + configuration.linkingKeyName + "' "
-						+ "AND `" + configuration.linkingUserIDColumn + "` = '" + userID + "'";
-		}
-		else
-		{
-			query = "SELECT `" + configuration.linkingIdentifierColumn + "` "
-						+ "FROM `" + configuration.linkingTableName + "` "
-						+ "WHERE `" + configuration.linkingUserIDColumn + "` = '" + userID + "'";
-		}
-
-		try
-		{
-			String playerName = null;
-			ResultSet result = environment.getSql().sqlQuery(query);
-
-			if (result != null && result.next())
-			{
-				playerName = result.getString(1);
-			}
-
-			if (playerName == null)
-			{
-				log.finest("Player name for " + userID + " not found.");
-			}
-			return playerName;
-		}
-		catch (SQLException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-			return null;
-		}
-		catch (MalformedURLException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-			return null;
-		}
-		catch (InstantiationException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-			return null;
-		}
-		catch (IllegalAccessException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-			return null;
 		}
 	}
 

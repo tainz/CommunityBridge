@@ -92,7 +92,7 @@ public final class CommunityBridge extends JavaPlugin
 			return;
 		}
 
-		webapp = new WebApplication(this, environment);
+		webapp = new WebApplication(environment);
 		getServer().getPluginManager().registerEvents(new PlayerListener(environment, webapp), this);
 
 		if (environment.getConfiguration().economyEnabled || environment.getConfiguration().statisticsEnabled && environment.getConfiguration().walletEnabled)
