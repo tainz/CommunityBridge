@@ -13,10 +13,13 @@ public class CBCommandExecutor implements CommandExecutor
 	private Configuration configuration;
 	private Log log;
 
+	private BukkitWrapper bukkit;
+
 	public CBCommandExecutor(Environment environment)
 	{
 		this.configuration = environment.getConfiguration();
 		this.log = environment.getLog();
+		this.bukkit = new BukkitWrapper();
 	}
 
 	@Override
@@ -145,7 +148,7 @@ public class CBCommandExecutor implements CommandExecutor
 
 	private void commandSyncTarget(CommandSender sender, String playerName)
 	{
-		Player player  = Bukkit.getServer().getPlayerExact(playerName);
+		Player player  = bukkit.getServer().getPlayerExact(playerName);
 		if (player == null)
 		{
 			String message = configuration.messages.get("cbsync-target-not-found").replace("~PLAYERNAME~", playerName);

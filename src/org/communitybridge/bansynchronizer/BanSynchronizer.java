@@ -5,9 +5,9 @@ import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.UUID;
 import org.bukkit.BanList;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.communitybridge.main.BukkitWrapper;
 import org.communitybridge.main.Configuration;
 import org.communitybridge.main.Environment;
 import org.communitybridge.main.Synchronizer;
@@ -19,12 +19,15 @@ public class BanSynchronizer extends Synchronizer
 	private Configuration configuration;
 	private Log log;
 
+	private BukkitWrapper bukkit;
+
 	public BanSynchronizer(Environment environment)
 	{
 		super(environment);
 		this.environment = environment;
 		this.configuration = environment.getConfiguration();
 		this.log = environment.getLog();
+		this.bukkit = new BukkitWrapper();
 	}
 
 	public void synchronize()
@@ -59,21 +62,21 @@ public class BanSynchronizer extends Synchronizer
 
 	private void unbanPlayerGame(String uuid)
 	{
-		OfflinePlayer playerOffline = Bukkit.getOfflinePlayer(UUID.fromString(uuid));
-		Bukkit.getBanList(BanList.Type.NAME).pardon(playerOffline.getName());
+		OfflinePlayer playerOffline = bukkit.getOfflinePlayer(UUID.fromString(uuid));
+		bukkit.getBanList(BanList.Type.NAME).pardon(playerOffline.getName());
 	}
 
 	private void banPlayerGame(String uuidString)
 	{
 		UUID uuid = UUID.fromString(uuidString);
 
-		Player player = Bukkit.getPlayer(uuid);
+		Player player = bukkit.getPlayer(uuid);
 		if (player == null)
 		{
-			player = Bukkit.getOfflinePlayer(uuid).getPlayer();
+			player = bukkit.getOfflinePlayer(uuid).getPlayer();
 		}
 
-		Bukkit.getBanList(BanList.Type.NAME).addBan(player.getName(), "banned by CommunityBridge synchronization", null, "");
+		bukkit.getBanList(BanList.Type.NAME).addBan(player.getName(), "banned by CommunityBridge synchronization", null, "");
 		player.kickPlayer("Banned via forums.");
 	}
 

@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.communitybridge.main.BukkitWrapper;
 import org.communitybridge.main.CommunityBridge;
 import org.communitybridge.main.Configuration;
 import org.communitybridge.main.Environment;
@@ -24,6 +25,7 @@ public class BanState
 	private SQL sql;
 	private File file;
 	private String storageMethod;
+	private BukkitWrapper bukkit;
 	private List<String> bannedUUIDs = new ArrayList<String>();
 	private List<String> bannedUserIDs = new ArrayList<String>();
 
@@ -34,6 +36,7 @@ public class BanState
 		this.log = environment.getLog();
 		this.sql = environment.getSql();
 		this.storageMethod = storageMethod;
+		this.bukkit = new BukkitWrapper();
 	}
 
 	public void generate()
@@ -68,7 +71,7 @@ public class BanState
 	private void collectGameBans()
 	{
 		bannedUUIDs.clear();
-		for (OfflinePlayer player : Bukkit.getServer().getBannedPlayers())
+		for (OfflinePlayer player : bukkit.getServer().getBannedPlayers())
 		{
 			bannedUUIDs.add(player.getPlayer().getUniqueId().toString());
 		}
@@ -188,7 +191,7 @@ public class BanState
 			List<String> names = banData.getStringList("banned-player-names");
 			for (String name : names)
 			{
-				bannedUUIDs.add(Bukkit.getOfflinePlayer(name).getUniqueId().toString());
+				bannedUUIDs.add(bukkit.getOfflinePlayer(name).getUniqueId().toString());
 			}
 		}
 	}

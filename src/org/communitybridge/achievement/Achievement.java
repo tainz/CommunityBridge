@@ -11,6 +11,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.communitybridge.main.BukkitWrapper;
 import org.communitybridge.main.Environment;
 
 public abstract class Achievement
@@ -21,11 +22,14 @@ public abstract class Achievement
 	protected double cashReward;
 	protected Map<Material, Integer> itemRewards = new EnumMap<Material, Integer>(Material.class);
 
+	private BukkitWrapper bukkit;
+
 	public abstract boolean playerQualifies(Player player, PlayerAchievementState state);
 
 	public Achievement(Environment environment)
 	{
 		this.environment = environment;
+		bukkit = new BukkitWrapper();
 	}
 
 	public void rewardPlayer(Player player, PlayerAchievementState state)
@@ -45,7 +49,7 @@ public abstract class Achievement
 
 	protected boolean canRewardAllItemRewards(Player player)
 	{
-		final Inventory testInventory = Bukkit.getServer().createInventory(null, player.getInventory().getType());
+		final Inventory testInventory = bukkit.getServer().createInventory(null, player.getInventory().getType());
 		testInventory.setContents(player.getInventory().getContents());
 
 		for (Entry<Material, Integer> entry : itemRewards.entrySet())
