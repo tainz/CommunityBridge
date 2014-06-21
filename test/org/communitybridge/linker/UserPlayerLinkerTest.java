@@ -1,5 +1,6 @@
 package org.communitybridge.linker;
 
+import org.communitybridge.main.BukkitWrapper;
 import java.util.UUID;
 import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.entity.Player;
@@ -27,7 +28,7 @@ public class UserPlayerLinkerTest
 	private UserIDDao userIDDao = mock(UserIDDao.class);
 	private Environment environment = new Environment();
 	private Configuration configuration = mock(Configuration.class);
-	private BukkitDao bukkit = mock(BukkitDao.class);
+	private BukkitWrapper bukkit = mock(BukkitWrapper.class);
 
 	@InjectMocks
 	UserPlayerLinker userPlayerLinker = new UserPlayerLinker(environment, 1);

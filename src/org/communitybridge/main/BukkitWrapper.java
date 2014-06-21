@@ -1,12 +1,12 @@
-package org.communitybridge.linker;
+package org.communitybridge.main;
 
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
-public class BukkitDao
+public class BukkitWrapper
 {
-	OfflinePlayer getPlayer(UUID uuid)
+	public OfflinePlayer getPlayer(UUID uuid)
 	{
 		return Bukkit.getPlayer(uuid);
 	}

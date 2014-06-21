@@ -1,5 +1,6 @@
 package org.communitybridge.linker;
 
+import org.communitybridge.main.BukkitWrapper;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,7 +12,7 @@ public class UserPlayerLinker
 	private ConcurrentHashMap<String, String> userIDCache = new ConcurrentHashMap<String, String>();
 	private Environment environment;
 	private UserIDDao userIDDao;
-	private BukkitDao bukkitDao;
+	private BukkitWrapper bukkit;
 	private int cacheLimit;
 
 	public UserPlayerLinker(Environment environment, int cacheLimit)
@@ -19,7 +20,7 @@ public class UserPlayerLinker
 		this.cacheLimit = cacheLimit;
 		this.environment = environment;
 		this.userIDDao = new UserIDDao(environment);
-		this.bukkitDao = new BukkitDao();
+		this.bukkit = new BukkitWrapper();
 	}
 
 	public void removeUserIDFromCache(String uuid, String name)
@@ -41,7 +42,7 @@ public class UserPlayerLinker
 		{
 			return identifier;
 		}
-		return bukkitDao.getPlayer(uuid).getName();
+		return bukkit.getPlayer(uuid).getName();
 	}
 
 	private String getIdentifier(String userID)
