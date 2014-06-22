@@ -4,6 +4,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.communitybridge.main.BukkitWrapper;
 import org.communitybridge.utility.StringUtilities;
 
 public abstract class PermissionHandler
@@ -11,6 +12,8 @@ public abstract class PermissionHandler
 	protected final String NOT_FOUND = " not found.";
 	protected final String NOT_ENABLED = " is not enabled.";
 	protected final String WRONG_VERSION = " should be at least version ";
+
+	protected BukkitWrapper bukkit = new BukkitWrapper();
 
 	public abstract boolean addToGroup(Player player, String groupName);
 	public abstract List<String> getGroups(Player player);
@@ -53,7 +56,7 @@ public abstract class PermissionHandler
 		String worldName;
 		if (player == null)
 		{
-			worldName = Bukkit.getServer().getWorlds().get(0).getName();
+			worldName = bukkit.getServer().getWorlds().get(0).getName();
 		}
 		else
 		{

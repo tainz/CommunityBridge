@@ -1,12 +1,17 @@
 package org.communitybridge.permissionhandlers;
 
+import java.util.ArrayList;
 import java.util.List;
+import org.bukkit.Server;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.communitybridge.main.BukkitWrapper;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.mockito.InjectMocks;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -21,12 +26,33 @@ public class PermissionHandlerTest
 	private final String groupOne = "groupOne";
 	private final String groupTwo = "groupTwo";
 
-	TestablePermissionHandler permissionHandler = new TestablePermissionHandler();
+	private BukkitWrapper bukkit = mock(BukkitWrapper.class);
+	private TestablePermissionHandler permissionHandler = new TestablePermissionHandler(bukkit);
 
-	@Before
-	public void setUp()
+	@Test
+	public void determineWorldFetchesPlayersWorld()
 	{
-		permissionHandler = new TestablePermissionHandler();
+		World world = mock(World.class);
+
+		when(player.getWorld()).thenReturn(world);
+		String worldName = "worldName";
+		when(world.getName()).thenReturn(worldName);
+		assertEquals(worldName, permissionHandler.determineWorld(player));
+	}
+
+	@Test
+	public void determineWorldUsesDefaultWorld()
+	{
+		String worldName = "worldName";
+		Server server = mock(Server.class);
+		World world = mock(World.class);
+		List<World> worlds = new ArrayList<World>();
+		worlds.add(world);
+
+		when(bukkit.getServer()).thenReturn(server);
+		when(server.getWorlds()).thenReturn(worlds);
+		when(world.getName()).thenReturn(worldName);
+		assertEquals(worldName, permissionHandler.determineWorld(null));
 	}
 
 	@Test
@@ -151,6 +177,11 @@ public class PermissionHandlerTest
 		public String addGroup = "";
 		public String removePlayer = "";
 		public String removeGroup = "";
+
+		public TestablePermissionHandler(BukkitWrapper bukkit)
+		{
+			this.bukkit = bukkit;
+		}
 
 		@Override
 		public boolean addToGroup(Player player, String groupName)
