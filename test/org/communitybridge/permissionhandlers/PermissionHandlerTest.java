@@ -8,10 +8,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.communitybridge.main.BukkitWrapper;
-import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.mockito.InjectMocks;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
