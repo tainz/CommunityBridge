@@ -21,14 +21,13 @@ public abstract class Achievement
 	protected double cashReward;
 	protected Map<Material, Integer> itemRewards = new EnumMap<Material, Integer>(Material.class);
 
-	private BukkitWrapper bukkit;
+	protected BukkitWrapper bukkit = new BukkitWrapper();
 
 	public abstract boolean playerQualifies(Player player, PlayerAchievementState state);
 
 	public Achievement(Environment environment)
 	{
 		this.environment = environment;
-		bukkit = new BukkitWrapper();
 	}
 
 	public void rewardPlayer(Player player, PlayerAchievementState state)
@@ -43,7 +42,10 @@ public abstract class Achievement
 			ItemStack stack = new ItemStack(entry.getKey(), entry.getValue());
 			player.getInventory().addItem(stack);
 		}
-		player.updateInventory();
+		if (!itemRewards.isEmpty())
+		{
+			player.updateInventory();
+		}
 	}
 
 	protected boolean canRewardAllItemRewards(Player player)
