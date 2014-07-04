@@ -65,12 +65,12 @@ public abstract class Achievement
 		return true;
 	}
 
-	public void loadFromYamlPath(YamlConfiguration config, String path)
+	public void load(YamlConfiguration configuration, String path)
 	{
-		limit = config.getInt(path + ".Limit", 1);
-		cashReward = config.getDouble(path + ".Money", 0.0);
+		limit = configuration.getInt(path + ".Limit", 1);
+		cashReward = configuration.getDouble(path + ".Money", 0.0);
 
-		ConfigurationSection itemsSection = config.getConfigurationSection(path + ".Items");
+		ConfigurationSection itemsSection = configuration.getConfigurationSection(path + ".Items");
 
 		if (itemsSection == null)
 		{

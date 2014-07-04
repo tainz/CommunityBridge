@@ -1185,7 +1185,7 @@ public class Configuration
 			if (key.equalsIgnoreCase("avatar"))
 			{
 				AchievementAvatar achievement = new AchievementAvatar(environment);
-				achievement.loadFromYamlPath(achievementConfig, key);
+				achievement.load(achievementConfig, key);
 				achievements.add(achievement);
 			}
 			else if (key.equalsIgnoreCase("groups"))
@@ -1200,7 +1200,7 @@ public class Configuration
 				{
 					AchievementGroup achievement = new AchievementGroup(environment);
 					achievement.setGroupName(groupName);
-					achievement.loadFromYamlPath(achievementConfig, key + "." + groupName);
+					achievement.load(achievementConfig, key + "." + groupName);
 					achievements.add(achievement);
 				}
 			}
@@ -1216,7 +1216,7 @@ public class Configuration
 				{
 					AchievementPostCount achievement = new AchievementPostCount(environment);
 					achievement.setPostCount(postCount);
-					achievement.loadFromYamlPath(achievementConfig, key + "." + postCount);
+					achievement.load(achievementConfig, key + "." + postCount);
 					achievements.add(achievement);
 				}
 			}
@@ -1241,7 +1241,7 @@ public class Configuration
 						AchievementSectionPostCount achievement = new AchievementSectionPostCount(environment);
 						achievement.setPostCount(postCount);
 						achievement.setSectionID(sectionID);
-						achievement.loadFromYamlPath(achievementConfig, key + "." + sectionID + "." + postCount);
+						achievement.load(achievementConfig, key + "." + sectionID + "." + postCount);
 						achievements.add(achievement);
 					}
 				}

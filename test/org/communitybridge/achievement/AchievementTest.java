@@ -4,9 +4,12 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import net.milkbowl.vault.economy.Economy;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.bukkit.Material;
 import org.bukkit.Server;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
@@ -125,6 +128,58 @@ public class AchievementTest
 		when(otherInventory.addItem(any(ItemStack.class))).thenReturn(rejected);
 
 		assertFalse(achievement.canRewardAllItemRewards(player));
+	}
+
+	@Test
+	public void loadReadsLimit()
+	{
+		String path = RandomStringUtils.randomAlphabetic(7);
+		YamlConfiguration yamlConfiguration = new YamlConfiguration();
+		int limit = RandomUtils.nextInt(1,10);
+		yamlConfiguration.set(path + ".Limit", limit);
+		achievement.load(yamlConfiguration, path);
+		assertEquals(limit, achievement.getLimit());
+	}
+
+	@Test
+	public void loadReadsCashReward()
+	{
+		String path = RandomStringUtils.randomAlphabetic(7);
+		YamlConfiguration yamlConfiguration = new YamlConfiguration();
+		double cash = RandomUtils.nextDouble(1,10);
+		yamlConfiguration.set(path + ".Money", cash);
+		achievement.load(yamlConfiguration, path);
+		assertEquals(cash, achievement.getCashReward(), 0);
+	}
+
+	@Test
+	public void loadReadsOneItem()
+	{
+		String path = RandomStringUtils.randomAlphabetic(7);
+		YamlConfiguration yamlConfiguration = new YamlConfiguration();
+		ConfigurationSection itemsSection = yamlConfiguration.createSection(path + ".Items");
+		Integer expected = RandomUtils.nextInt(1, 10);
+		itemsSection.set("EMERALD", expected);
+		achievement.load(yamlConfiguration, path);
+		Integer actual = achievement.getItemRewards().get(Material.EMERALD);
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	public void loadReadsMultipleItems()
+	{
+		String path = RandomStringUtils.randomAlphabetic(7);
+		YamlConfiguration yamlConfiguration = new YamlConfiguration();
+		ConfigurationSection itemsSection = yamlConfiguration.createSection(path + ".Items");
+		Integer expectedEmerald = RandomUtils.nextInt(2, 10);
+		Integer expectedCoal = RandomUtils.nextInt(2, 25);
+		itemsSection.set("EMERALD", expectedEmerald);
+		itemsSection.set("COAL", expectedCoal);
+		achievement.load(yamlConfiguration, path);
+		Integer actual = achievement.getItemRewards().get(Material.EMERALD);
+		assertEquals(expectedEmerald, actual);
+		actual = achievement.getItemRewards().get(Material.COAL);
+		assertEquals(expectedCoal, actual);
 	}
 
 	private void setupRewards()
