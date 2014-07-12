@@ -4,6 +4,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
@@ -103,5 +104,21 @@ public class AchievementAvatarTest
 		when(otherInventory.addItem(any(ItemStack.class))).thenReturn(rejected);
 
 		assertFalse(achievement.playerQualifies(player, state));
+	}
+
+	@Test
+	public void rewardPlayerRewardsPlayer()
+	{
+		achievement.rewardPlayer(player, state);
+		int rewardCount = achievement.getItemRewards().size();
+		verify(playerInventory, times(rewardCount)).addItem(any(ItemStack.class));
+	}
+
+	@Test
+	public void rewardPlayerIncrementsState()
+	{
+		int expected = state.getAvatarAchievements() + 1;
+		achievement.rewardPlayer(player, state);
+		assertEquals(expected, state.getAvatarAchievements());
 	}
 }
