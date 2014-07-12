@@ -254,15 +254,19 @@ public class WebApplication extends Synchronizer
 
 	public void synchronizeAll()
 	{
+		environment.getLog().finest("Running player synchronization.");
 		Player[] onlinePlayers = Bukkit.getOnlinePlayers();
 		for (Player player : onlinePlayers)
 		{
 			synchronizePlayer(player, true);
 		}
+		environment.getLog().finest("Player synchronization complete.");
 
 		if (configuration.banSynchronizationEnabled)
 		{
+			environment.getLog().finest("Running ban synchronization.");
 			banSynchronizer.synchronize();
+			environment.getLog().finest("Ban synchronization complete.");
 		}
 	}
 
