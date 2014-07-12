@@ -3,6 +3,7 @@ package org.communitybridge.main;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -34,7 +35,7 @@ public class PlayerListener implements Listener
 	 * We perform the initial linking here so that we can reject the login if
 	 * linking-kick-unregistered is turned on.
 	 */
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerPreLogin(AsyncPlayerPreLoginEvent event)
 	{
 		String uuid = event.getUniqueId().toString();
@@ -52,7 +53,7 @@ public class PlayerListener implements Listener
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerJoin(PlayerJoinEvent event)
 	{
 		Player player = event.getPlayer();
@@ -67,7 +68,7 @@ public class PlayerListener implements Listener
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerQuit(PlayerQuitEvent event)
 	{
 		if (configuration.syncDuringQuit)
