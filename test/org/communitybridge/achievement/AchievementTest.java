@@ -24,13 +24,13 @@ import static org.mockito.Mockito.*;
 
 public class AchievementTest
 {
-	Player player = mock(Player.class);
-	Environment environment = new Environment();
-	Configuration configuration = mock(Configuration.class);
-	PlayerInventory playerInventory = mock(PlayerInventory.class);
-	PlayerInventory otherInventory = mock(PlayerInventory.class);
-	BukkitWrapper bukkit = mock(BukkitWrapper.class);
-	Server server = mock(Server.class);
+	private Player player = mock(Player.class);
+	private Environment environment = new Environment();
+	private Configuration configuration = mock(Configuration.class);
+	private PlayerInventory playerInventory = mock(PlayerInventory.class);
+	private PlayerInventory otherInventory = mock(PlayerInventory.class);
+	private BukkitWrapper bukkit = mock(BukkitWrapper.class);
+	private Server server = mock(Server.class);
 
 	Achievement achievement = new TestableAchievement(environment, bukkit);
 

@@ -2,6 +2,7 @@ package org.communitybridge.achievement;
 
 import org.bukkit.entity.Player;
 import org.communitybridge.main.CommunityBridge;
+import org.communitybridge.main.Configuration;
 import org.communitybridge.main.Environment;
 
 public class AchievementAvatar extends Achievement
