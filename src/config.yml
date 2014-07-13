@@ -45,14 +45,10 @@ general:
   sync-during-join: true
   sync-during-quit: true
 
-  # NOTE: GroupManager will not create groups on the fly. So any groups you
-  #       specify in the linking or synchronization sections must already
-  #       exist. That is, you need to have used mangadd <groupname>)
-  #       Also, GroupManager announces primary group changes with no option
-  #       to override this behavior.
   # NOTE: PermissionsBukkit will not create groups on the fly. So any groups you
   #       specify in the linking or synchronization sections must already
-  #       exist.
+  #       exist. It will not be feasible to fix this issue due to the lack of
+  #       a real API.
   # NOTE: zPermissions will not create groups on the fly. So any groups you
   #       specify in the linking or synchronization sections must already
   #       exist. That is, you need to have used: permissions group <group>
@@ -144,9 +140,6 @@ player-user-linking:
   # in a group based on (un)registered status, set the following.
   # If left blank the setting won't be used. If a group-synchronization
   # feature is turned on, the 'registered-player-group' won't be used.
-  # NOTE: GroupManager will not create groups on the fly. So the groups you
-  #       specify here must already exist. That is, you need to have used
-  #       mangadd <groupname>)
   unregistered-player-group:
   registered-player-group:
   notify-player-of-group: true
@@ -497,9 +490,6 @@ simple-synchronization:
   # put the corresponding permissions group name. Only list group IDs and
   # group names you wish to be synchronized.
 
-  # NOTE: GroupManager will not create groups on the fly. So any groups you
-  #       specify here must already exist. That is, you need to have used
-  #       mangadd <groupname>.
   # NOTE: Regarding ladders(promotions/inherited groups): Either ALL of the
   #       groups that are part of a ladder need to have entries on this table
   #       and have corresponding group on the web application or NONE of them
