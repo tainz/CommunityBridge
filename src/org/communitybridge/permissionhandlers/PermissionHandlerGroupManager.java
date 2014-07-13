@@ -44,12 +44,7 @@ public class PermissionHandlerGroupManager extends PermissionHandler
 		{
 				return false;
 		}
-
-		Group group = worldHolder.getGroup(groupName);
-    if (group == null)
-		{
-			return false;
-    }
+		Group group = getOrCreateGroup(worldHolder, groupName);
 
 		// If it is a primary group, set as a primary group.
 		if (user.getGroup().equals(worldHolder.getDefaultGroup()))
@@ -161,15 +156,8 @@ public class PermissionHandlerGroupManager extends PermissionHandler
 		}
 		else
 		{
-			Group group = worldHolder.getGroup(groupName);
-			if (group == null)
-			{
-				return false;
-			}
-			else
-			{
-				return user.removeSubGroup(group);
-			}
+			Group group = getOrCreateGroup(worldHolder, groupName);
+			return user.removeSubGroup(group);
 		}
 	}
 
@@ -190,12 +178,7 @@ public class PermissionHandlerGroupManager extends PermissionHandler
 				return false;
 		}
 
-		Group group = worldHolder.getGroup(groupName);
-    if (group == null)
-		{
-			return false;
-    }
-
+		Group group = getOrCreateGroup(worldHolder, groupName);
 		user.setGroup(group, false);
 
 		return true;
@@ -205,5 +188,17 @@ public class PermissionHandlerGroupManager extends PermissionHandler
 	public boolean supportsPrimaryGroups()
 	{
 		return true;
+	}
+
+	private Group getOrCreateGroup(OverloadedWorldHolder worldHolder, String groupName)
+	{
+		Group group = worldHolder.getGroup(groupName);
+
+		if (group == null)
+		{
+			group = worldHolder.createGroup(groupName);
+		}
+
+		return group;
 	}
 }
