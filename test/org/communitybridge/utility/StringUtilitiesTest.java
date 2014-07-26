@@ -110,67 +110,67 @@ public class StringUtilitiesTest
 	}
 
 	@Test
-	public void compareVersionShouldReturnZeroWithEqualSameLengthVersions()
+	public void compareVersionWithEqualSameLengthVersionsShouldReturnZero()
 	{
 		assertEquals(0, StringUtilities.compareVersion("1.2.3", "1.2.3"));
 	}
 
 	@Test
-	public void compareVersionShouldReturnZeroWithLeftLongerVersionsEqual()
+	public void compareVersionWithLeftLongerVersionsEqualShouldReturnZero()
 	{
 		assertEquals(0, StringUtilities.compareVersion("1.2.0", "1.2"));
 	}
 
 	@Test
-	public void compareVersionShouldReturnZeroWithRightLongerVersionsEqual()
+	public void compareVersionWithRightLongerVersionsEqualShouldReturnZero()
 	{
 		assertEquals(0, StringUtilities.compareVersion("1.2", "1.2.0"));
 	}
 
 	@Test
-	public void compareVersionShouldReturnOneWithLeftLongerLeftGreater()
+	public void compareVersionWithLeftLongerLeftGreaterShouldReturnOne()
 	{
 		assertEquals(1, StringUtilities.compareVersion("1.2.3", "1.2"));
 	}
 
 	@Test
-	public void compareVersionShouldReturnNegativeOneWithRightLongerRightGreater()
+	public void compareVersionWithRightLongerRightGreaterShouldReturnNegativeOne()
 	{
 		assertEquals(-1, StringUtilities.compareVersion("1.2", "1.2.3"));
 	}
 
 	@Test
-	public void compareVersionShouldReturnOneWithFirstPartLeftGreaterThanRight()
+	public void compareVersionWithFirstPartLeftGreaterThanRightShouldReturnOne()
 	{
 		assertEquals(1, StringUtilities.compareVersion("2.1", "1.1"));
 	}
 
 	@Test
-	public void compareVersionShouldReturnNegativeOneWithFirstPartRightGreaterThanRight()
+	public void compareVersionWithFirstPartRightGreaterThanRightShouldReturnNegativeOne()
 	{
 		assertEquals(-1, StringUtilities.compareVersion("1.1", "2.1"));
 	}
 
 	@Test
-	public void compareVersionShouldReturnOneWithLastPartLeftGreaterThanRight()
+	public void compareVersionWithLastPartLeftGreaterThanRightShouldReturnOne()
 	{
 		assertEquals(1, StringUtilities.compareVersion("1.1", "1.0"));
 	}
 
 	@Test
-	public void compareVersionShouldReturnNegativeOneWithLastPartRightGreaterThanLeft()
+	public void compareVersionWithLastPartRightGreaterThanLeftShouldReturnNegativeOne()
 	{
 		assertEquals(-1, StringUtilities.compareVersion("1.0", "1.1"));
 	}
 
 	@Test
-	public void compareVersionShouldReturnOneWithMiddlePartLeftGreaterThanRight()
+	public void compareVersionWithMiddlePartLeftGreaterThanRightShouldReturnOne()
 	{
 		assertEquals(1, StringUtilities.compareVersion("1.2.0", "1.1.10"));
 	}
 
 	@Test
-	public void compareVersionShouldReturnNegativeOneWithMiddlePartRightGreaterThanLeft()
+	public void compareVersionWithMiddlePartRightGreaterThanLeftShouldReturnNegativeOne()
 	{
 		assertEquals(-1, StringUtilities.compareVersion("1.0.15", "1.1.15"));
 	}
@@ -206,6 +206,15 @@ public class StringUtilitiesTest
 		assertEquals(0, StringUtilities.compareVersion("1.0.1", "1-0-1"));
 		assertEquals(1, StringUtilities.compareVersion("1-1.0", "1-0.0"));
 		assertEquals(-1, StringUtilities.compareVersion("1-0.0", "1-1.0"));
+	}
+
+	@Test
+	public void compareVersionShouldStripOtherStuff()
+	{
+		assertEquals(0, StringUtilities.compareVersion("1-a0.b1", "1-g0.h1"));
+		assertEquals(0, StringUtilities.compareVersion("1.b0.a1", "1-e0-f1"));
+		assertEquals(1, StringUtilities.compareVersion("1-a1.b0", "1-c0.d0"));
+		assertEquals(-1, StringUtilities.compareVersion("1-c0.d0", "1-b1.a0"));
 	}
 
 	/*
