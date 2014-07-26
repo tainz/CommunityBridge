@@ -455,8 +455,8 @@ public class WebApplication extends Synchronizer
 		String query;
 		ResultSet result;
 
-		long previousLastOnline = 0;
-		long previousGameTime = 0;
+		int previousLastOnline = 0;
+		int previousGameTime = 0;
 
 		playerStatistics.setUserID(environment.getUserPlayerLinker().getUserID(player));
 		if (playerStatistics.getUserID() == null)

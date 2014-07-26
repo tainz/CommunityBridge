@@ -42,9 +42,9 @@ public class PlayerStatistics
 		this.onlineStatus = onlineStatus;
 	}
 
-	public long getLastOnlineTimeInSeconds()
+	public int getLastOnlineTimeInSeconds()
 	{
-		return lastOnlineTime / 1000L;
+		return (int)(lastOnlineTime / 1000L);
 	}
 
 	public String getLastOnlineTimeFormatted()
