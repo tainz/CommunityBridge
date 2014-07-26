@@ -11,21 +11,19 @@ import org.communitybridge.main.Environment;
 
 public class PlayerState
 {
-	private String webappPrimaryGroupID;
-	private List<String> webappGroupIDs;
-
-	private String permissionsSystemPrimaryGroupName;
-	private List<String> permissionsSystemGroupNames;
-	public boolean isNewFile;
-
 	private Environment environment;
 	private File playerFolder;
 	private Player player;
+	private String userID = "";
 
-	private File playerFile;
-	private File oldPlayerFile;
+	private String webappPrimaryGroupID = "";
+	private List<String> webappGroupIDs = new ArrayList<String>();
 
-	private String userID;
+	private String permissionsSystemPrimaryGroupName = "";
+	private List<String> permissionsSystemGroupNames= new ArrayList<String>();
+
+	private boolean isNewFile;
+	FileConfiguration playerData = new YamlConfiguration();
 
 	public PlayerState(Environment environment, File playerFolder, Player player, String userID)
 	{
@@ -33,12 +31,15 @@ public class PlayerState
 		this.player = player;
 		this.userID = userID;
 		this.playerFolder = playerFolder;
-		this.playerFile = new File(playerFolder, player.getUniqueId().toString() + ".yml");
-		this.oldPlayerFile = new File(playerFolder, player.getName() + ".yml");
-		this.webappGroupIDs = new ArrayList<String>();
-		this.permissionsSystemGroupNames = new ArrayList<String>();
-		this.webappPrimaryGroupID = "";
-		this.permissionsSystemPrimaryGroupName = "";
+	}
+
+	PlayerState(Environment environment, File playerFolder, Player player, String userID, YamlConfiguration playerData)
+	{
+		this.environment = environment;
+		this.player = player;
+		this.userID = userID;
+		this.playerFolder = playerFolder;
+		this.playerData = playerData;
 	}
 
 	public void generate()
@@ -66,15 +67,15 @@ public class PlayerState
 
 	public void load()
 	{
-		if (playerFile.exists())
+		if (getPlayerFile(playerFolder, player).exists())
 		{
-			loadFromFile(playerFile);
+			loadFromFile(getPlayerFile(playerFolder, player));
 		}
 		else
 		{
-			if (oldPlayerFile.exists())
+			if (getOldPlayerFile(playerFolder, player).exists())
 			{
-				loadFromFile(oldPlayerFile);
+				loadFromFile(getOldPlayerFile(playerFolder, player));
 			}
 			else
 			{
@@ -89,14 +90,13 @@ public class PlayerState
 
 	public void save() throws IOException
 	{
-		FileConfiguration playerData = new YamlConfiguration();
 		playerData.set("last-known-name", player.getName());
 		playerData.set("webapp.primary-group-id", webappPrimaryGroupID);
 		playerData.set("webapp.group-ids", webappGroupIDs);
 		playerData.set("permissions-system.primary-group-name", permissionsSystemPrimaryGroupName);
 		playerData.set("permissions-system.group-names", permissionsSystemGroupNames);
 
-		playerData.save(playerFile);
+		playerData.save(getPlayerFile(playerFolder, player));
 	}
 
 	public PlayerState copy()
@@ -158,5 +158,25 @@ public class PlayerState
 	public void setPermissionsSystemGroupNames(List<String> permissionsSystemGroupNames)
 	{
 		this.permissionsSystemGroupNames = permissionsSystemGroupNames;
+	}
+
+	public boolean isIsNewFile()
+	{
+		return isNewFile;
+	}
+
+	public void setIsNewFile(boolean isNewFile)
+	{
+		this.isNewFile = isNewFile;
+	}
+
+	private File getOldPlayerFile(File playerFolder, Player player)
+	{
+		return new File(playerFolder, player.getName() + ".yml");
+	}
+
+	private File getPlayerFile(File playerFolder, Player player)
+	{
+		return new File(playerFolder, player.getUniqueId().toString() + ".yml");
 	}
 }

@@ -361,7 +361,7 @@ public class WebApplication extends Synchronizer
 		current.generate();
 		PlayerState result = current.copy();
 
-		if(configuration.simpleSynchronizationFirstDirection.startsWith("web") && previous.isNewFile) {
+		if(configuration.simpleSynchronizationFirstDirection.startsWith("web") && previous.isIsNewFile()) {
 			direction = "web";
 		}
 
