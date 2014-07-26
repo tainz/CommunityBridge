@@ -7,7 +7,6 @@ import java.util.List;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.communitybridge.main.CommunityBridge;
 import org.communitybridge.main.Environment;
 
 public class PlayerState
@@ -44,8 +43,8 @@ public class PlayerState
 
 	public void generate()
 	{
-		webappPrimaryGroupID = CommunityBridge.webapp.getUserPrimaryGroupID(userID);
-		webappGroupIDs = CommunityBridge.webapp.getUserSecondaryGroupIDs(userID);
+		webappPrimaryGroupID = environment.getWebApplication().getUserPrimaryGroupID(userID);
+		webappGroupIDs = environment.getWebApplication().getUserSecondaryGroupIDs(userID);
 		permissionsSystemGroupNames = environment.getPermissionHandler().getGroups(player);
 
 		if (environment.getPermissionHandler().supportsPrimaryGroups())

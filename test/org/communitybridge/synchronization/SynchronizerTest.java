@@ -1,6 +1,5 @@
 package org.communitybridge.synchronization;
 
-import org.communitybridge.synchronization.Synchronizer;
 import org.apache.commons.lang.RandomStringUtils;
 import org.communitybridge.main.Environment;
 import org.junit.Test;

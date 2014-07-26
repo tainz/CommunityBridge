@@ -36,8 +36,6 @@ public final class CommunityBridge extends JavaPlugin
 {
 	private Environment environment = new Environment();
 
-	public static WebApplication webapp;
-
 	private static boolean active;
 	private static CBMetrics metrics;
 
@@ -92,8 +90,9 @@ public final class CommunityBridge extends JavaPlugin
 			return;
 		}
 
-		webapp = new WebApplication(environment);
-		getServer().getPluginManager().registerEvents(new PlayerListener(environment, webapp), this);
+		environment.setWebApplication(new WebApplication(environment));
+
+		getServer().getPluginManager().registerEvents(new PlayerListener(environment), this);
 
 		if (environment.getConfiguration().economyEnabled || environment.getConfiguration().statisticsEnabled && environment.getConfiguration().walletEnabled)
 		{
@@ -170,8 +169,6 @@ public final class CommunityBridge extends JavaPlugin
 		// Drop all of our listeners
 		HandlerList.unregisterAll(this);
 
-		webapp = null;
-
 		if (metrics != null)
 		{
 			try
@@ -232,7 +229,7 @@ public final class CommunityBridge extends JavaPlugin
 																				@Override
 																				public void run()
 																				{
-																					webapp.synchronizeAll();
+																					environment.getWebApplication().synchronizeAll();
 																				}
 																			}
 																		 );

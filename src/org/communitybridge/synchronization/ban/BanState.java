@@ -11,30 +11,20 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.communitybridge.main.BukkitWrapper;
-import org.communitybridge.main.CommunityBridge;
-import org.communitybridge.main.Configuration;
 import org.communitybridge.main.Environment;
-import org.communitybridge.main.SQL;
-import org.communitybridge.utility.Log;
 
 public class BanState
 {
-	private Configuration configuration;
-	private Log log;
-	private SQL sql;
+	private Environment environment;
 	private File file;
-	private String storageMethod;
 	private BukkitWrapper bukkit;
 	private List<String> bannedUUIDs = new ArrayList<String>();
 	private List<String> bannedUserIDs = new ArrayList<String>();
 
-	public BanState(String storageMethod, Environment environment)
+	public BanState(Environment environment)
 	{
+		this.environment = environment;
 		this.file = new File(environment.getPlugin().getDataFolder(), "banstate.yml");
-		this.configuration = environment.getConfiguration();
-		this.log = environment.getLog();
-		this.sql = environment.getSql();
-		this.storageMethod = storageMethod;
 		this.bukkit = new BukkitWrapper();
 	}
 
@@ -79,48 +69,48 @@ public class BanState
 	private void collectWebBans()
 	{
 		bannedUserIDs.clear();
-		if (storageMethod.startsWith("tab"))
+		if (environment.getConfiguration().banSynchronizationMethod.startsWith("tab"))
 		{
 			collectWebBansTableMethod();
 		}
-		else if (storageMethod.startsWith("use"))
+		else if (environment.getConfiguration().banSynchronizationMethod.startsWith("use"))
 		{
 			collectWebBansUserMethod();
 		}
-		else if (storageMethod.startsWith("gro"))
+		else if (environment.getConfiguration().banSynchronizationMethod.startsWith("gro"))
 		{
-			collectWebBansGroupMethod(configuration.banSynchronizationBanGroup);
+			collectWebBansGroupMethod(environment.getConfiguration().banSynchronizationBanGroup);
 		}
 	}
 
 	private void collectWebBansTableMethod()
 	{
 		String exceptionBase = "Exception in collectWebBans: ";
-		String query = "SELECT * FROM `" + configuration.banSynchronizationTableName + "`";
+		String query = "SELECT * FROM `" + environment.getConfiguration().banSynchronizationTableName + "`";
 
 		try
 		{
-			ResultSet result = sql.sqlQuery(query);
+			ResultSet result = environment.getSql().sqlQuery(query);
 			while(result.next())
 			{
-				bannedUserIDs.add(result.getString(configuration.banSynchronizationUserIDColumn));
+				bannedUserIDs.add(result.getString(environment.getConfiguration().banSynchronizationUserIDColumn));
 			}
 		}
 		catch (MalformedURLException exception)
 		{
-			log.severe(exceptionBase + exception.getMessage());
+			environment.getLog().severe(exceptionBase + exception.getMessage());
 		}
 		catch (InstantiationException exception)
 		{
-			log.severe(exceptionBase + exception.getMessage());
+			environment.getLog().severe(exceptionBase + exception.getMessage());
 		}
 		catch (IllegalAccessException exception)
 		{
-			log.severe(exceptionBase + exception.getMessage());
+			environment.getLog().severe(exceptionBase + exception.getMessage());
 		}
 		catch (SQLException exception)
 		{
-			log.severe(exceptionBase + exception.getMessage());
+			environment.getLog().severe(exceptionBase + exception.getMessage());
 		}
 	}
 
@@ -146,39 +136,39 @@ public class BanState
 
 	private void collectWebBansGroupMethod(String groupID)
 	{
-		CommunityBridge.webapp.getWebGroupDao().getGroupUserIDs(groupID);
+		environment.getWebApplication().getWebGroupDao().getGroupUserIDs(groupID);
 	}
 
 	private void collectWebBansUserMethod()
 	{
 		String exceptionBase = "Exception in collectWebBansUser: ";
-		String query = "SELECT * FROM `" + configuration.banSynchronizationTableName + "` "
-								 + "WHERE `" + configuration.banSynchronizationBanColumn + "` = '" + configuration.banSynchronizationValueBanned + "'";
+		String query = "SELECT * FROM `" + environment.getConfiguration().banSynchronizationTableName + "` "
+								 + "WHERE `" + environment.getConfiguration().banSynchronizationBanColumn + "` = '" + environment.getConfiguration().banSynchronizationValueBanned + "'";
 
 		try
 		{
-			ResultSet result = sql.sqlQuery(query);
+			ResultSet result = environment.getSql().sqlQuery(query);
 
 			while(result.next())
 			{
-				bannedUserIDs.add(result.getString(configuration.banSynchronizationUserIDColumn));
+				bannedUserIDs.add(result.getString(environment.getConfiguration().banSynchronizationUserIDColumn));
 			}
 		}
 		catch (MalformedURLException exception)
 		{
-			log.severe(exceptionBase + exception.getMessage());
+			environment.getLog().severe(exceptionBase + exception.getMessage());
 		}
 		catch (InstantiationException exception)
 		{
-			log.severe(exceptionBase + exception.getMessage());
+			environment.getLog().severe(exceptionBase + exception.getMessage());
 		}
 		catch (IllegalAccessException exception)
 		{
-			log.severe(exceptionBase + exception.getMessage());
+			environment.getLog().severe(exceptionBase + exception.getMessage());
 		}
 		catch (SQLException exception)
 		{
-			log.severe(exceptionBase + exception.getMessage());
+			environment.getLog().severe(exceptionBase + exception.getMessage());
 		}
 	}
 

@@ -35,7 +35,6 @@ public class WebApplication extends Synchronizer
 	protected	static final String EXCEPTION_MESSAGE_GETUSERID = "Exception during WebApplication.getUserIDfromDatabase(): ";
 
 	private final Boolean synchronizationLock = true;
-	private Environment environment;
 	private Configuration configuration;
 	private Log log;
 	private CommunityBridge plugin;

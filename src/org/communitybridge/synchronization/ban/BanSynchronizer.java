@@ -30,10 +30,10 @@ public class BanSynchronizer extends Synchronizer
 
 	public void synchronize()
 	{
-		BanState previous = new BanState(configuration.banSynchronizationMethod, environment);
+		BanState previous = new BanState(environment);
 		previous.load();
 
-		BanState current = new BanState(configuration.banSynchronizationMethod, environment);
+		BanState current = new BanState(environment);
 		current.generate();
 
 		if (isValidDirection(configuration.banSynchronizationDirection, "web"))

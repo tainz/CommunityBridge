@@ -2,10 +2,6 @@ package org.communitybridge.utility;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -20,10 +16,8 @@ public class StringUtilitiesTest
 			fail("Should not search for an empty character list.");
 		}
 		catch (IllegalArgumentException exception)
-		{}
-		catch (Exception exception)
 		{
-			fail("Unexpected exception caught:" + exception.getMessage());
+			assertNotNull(exception);
 		}
 	}
 
@@ -36,10 +30,8 @@ public class StringUtilitiesTest
 			fail("Should not search for an empty character list.");
 		}
 		catch (IllegalArgumentException exception)
-		{}
-		catch (Exception exception)
 		{
-			fail("Unexpected exception caught:" + exception.getMessage());
+			assertNotNull(exception);
 		}
 	}
 
@@ -52,10 +44,8 @@ public class StringUtilitiesTest
 			fail("Should not search a null string.");
 		}
 		catch (IllegalArgumentException exception)
-		{}
-		catch (Exception exception)
 		{
-			fail("Unexpected exception caught: " + exception.getMessage());
+			assertNotNull(exception);
 		}
 	}
 

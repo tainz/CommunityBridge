@@ -1,7 +1,6 @@
 package org.communitybridge.achievement;
 
 import org.bukkit.entity.Player;
-import org.communitybridge.main.CommunityBridge;
 import org.communitybridge.main.Environment;
 
 public class AchievementPostCount extends Achievement
@@ -17,7 +16,7 @@ public class AchievementPostCount extends Achievement
 	public boolean playerQualifies(Player player, PlayerAchievementState state)
 	{
 		return environment.getConfiguration().postCountEnabled
-				&& CommunityBridge.webapp.getUserPostCount(environment.getUserPlayerLinker().getUserID(player)) >= postCount
+				&& environment.getWebApplication().getUserPostCount(environment.getUserPlayerLinker().getUserID(player)) >= postCount
 				&& state.getPostCountAchievements(Integer.toString(postCount))< limit
 				&& canRewardAllItemRewards(player);
 	}
