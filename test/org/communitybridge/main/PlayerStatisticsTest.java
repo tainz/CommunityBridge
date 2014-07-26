@@ -14,11 +14,11 @@ public class PlayerStatisticsTest
 	@Before
 	public void setup()
 	{
-		dateFormat = new SimpleDateFormat();
+		dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a");
 		dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 		playerStatistics = new PlayerStatistics(dateFormat);
 	}
-	
+
 	@Test
 	public void testGetGameTimeFormatted()
 	{
@@ -36,8 +36,8 @@ public class PlayerStatisticsTest
 	@Test
 	public void testGetLastOnlineTimeFormatted()
 	{
-		playerStatistics.setLastOnlineTime(0);
-		assertEquals("1/1/70 12:00 AM", playerStatistics.getLastOnlineTimeFormatted());
+		playerStatistics.setLastOnlineTime(1406378311373L);
+		assertEquals("2014-07-26 12:38:31 PM", playerStatistics.getLastOnlineTimeFormatted());
 	}
 
 	@Test
@@ -45,5 +45,11 @@ public class PlayerStatisticsTest
 	{
 		playerStatistics.setLifeTicks(0);
 		assertEquals("0 seconds", playerStatistics.getLifeTicksFormatted());
+	}
+
+	@Test
+	public void testGetLastOnlineTimeInSeconds() {
+		playerStatistics.setLastOnlineTime(1406378311373L);
+		assertEquals(1406378311, playerStatistics.getLastOnlineTimeInSeconds());
 	}
 }

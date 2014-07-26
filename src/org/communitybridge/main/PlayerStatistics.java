@@ -1,7 +1,6 @@
 package org.communitybridge.main;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import org.communitybridge.utility.StringUtilities;
 
 public class PlayerStatistics
@@ -9,8 +8,8 @@ public class PlayerStatistics
 	private final SimpleDateFormat dateFormat;
 	private String userID;
 	private String onlineStatus;
-	private int lastOnlineTime;
-	private int gameTime;
+	private long lastOnlineTime;
+	private long gameTime;
 	private int level;
 	private int totalXP;
 	private float currentXP;
@@ -43,32 +42,32 @@ public class PlayerStatistics
 		this.onlineStatus = onlineStatus;
 	}
 
-	public int getLastOnlineTime()
+	public long getLastOnlineTimeInSeconds()
 	{
-		return lastOnlineTime;
+		return lastOnlineTime / 1000L;
 	}
 
 	public String getLastOnlineTimeFormatted()
 	{
-		return dateFormat.format(new Date(getLastOnlineTime()));
+		return dateFormat.format(lastOnlineTime);
 	}
 
-	public void setLastOnlineTime(int lastonlineTime)
+	public void setLastOnlineTime(long lastonlineTime)
 	{
 		this.lastOnlineTime = lastonlineTime;
 	}
 
-	public int getGameTime()
+	public long getGameTime()
 	{
 		return gameTime;
 	}
 
 	public String getGameTimeFormatted()
 	{
-		return StringUtilities.timeElapsedtoString(getGameTime());
+		return StringUtilities.timeElapsedToString(gameTime);
 	}
 
-	public void setGameTime(int gameTime)
+	public void setGameTime(long gameTime)
 	{
 		this.gameTime = gameTime;
 	}
@@ -125,7 +124,7 @@ public class PlayerStatistics
 
 	public String getLifeTicksFormatted()
 	{
-		return StringUtilities.timeElapsedtoString((int)(getLifeTicks() / 20));
+		return StringUtilities.timeElapsedToString(lifeTicks / 20);
 	}
 
 	public void setLifeTicks(int lifeticks)

@@ -455,8 +455,8 @@ public class WebApplication extends Synchronizer
 		String query;
 		ResultSet result;
 
-		int previousLastOnline = 0;
-		int previousGameTime = 0;
+		long previousLastOnline = 0;
+		long previousGameTime = 0;
 
 		playerStatistics.setUserID(environment.getUserPlayerLinker().getUserID(player));
 		if (playerStatistics.getUserID() == null)
@@ -555,12 +555,12 @@ public class WebApplication extends Synchronizer
 
 		if (configuration.lastonlineEnabled)
 		{
-			playerStatistics.setLastOnlineTime((int) (System.currentTimeMillis() / 1000L));
+			playerStatistics.setLastOnlineTime(System.currentTimeMillis());
 		}
 
 		if (configuration.gametimeEnabled && previousLastOnline > 0)
 		{
-			playerStatistics.setGameTime(previousGameTime + playerStatistics.getLastOnlineTime() - previousLastOnline);
+			playerStatistics.setGameTime(previousGameTime + playerStatistics.getLastOnlineTimeInSeconds() - previousLastOnline);
 		}
 
 		if (configuration.levelEnabled)
@@ -656,7 +656,7 @@ public class WebApplication extends Synchronizer
 
 			if (configuration.lastonlineEnabled)
 			{
-				builder.add(playerStatistics.getUserID(), configuration.lastonlineColumnOrKey, playerStatistics.getLastOnlineTime());
+				builder.add(playerStatistics.getUserID(), configuration.lastonlineColumnOrKey, playerStatistics.getLastOnlineTimeInSeconds());
 				if (!configuration.lastonlineFormattedColumnOrKey.isEmpty())
 				{
 					builder.add(playerStatistics.getUserID(), configuration.lastonlineFormattedColumnOrKey, playerStatistics.getLastOnlineTimeFormatted());
@@ -1038,7 +1038,7 @@ public class WebApplication extends Synchronizer
 
 		if (configuration.lastonlineEnabled)
 		{
-			fields.add("`" + configuration.lastonlineColumnOrKey + "` = '" + playerStatistics.getLastOnlineTime() + "'");
+			fields.add("`" + configuration.lastonlineColumnOrKey + "` = '" + playerStatistics.getLastOnlineTimeInSeconds() + "'");
 			if (!configuration.lastonlineFormattedColumnOrKey.isEmpty())
 			{
 				fields.add("`" + configuration.lastonlineFormattedColumnOrKey + "` = '" + playerStatistics.getLastOnlineTimeFormatted() + "'");
