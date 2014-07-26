@@ -352,12 +352,10 @@ public class WebApplication extends Synchronizer
 			direction = "web";
 		}
 
-		File playerFolder = new File(plugin.getDataFolder(), "Players");
-
-		PlayerState previous = new PlayerState(environment, playerFolder, player, userID);
+		PlayerState previous = new PlayerState(environment, player, userID);
 		previous.load();
 
-		PlayerState current = new PlayerState(environment, playerFolder, player, userID);
+		PlayerState current = new PlayerState(environment, player, userID);
 		current.generate();
 		PlayerState result = current.copy();
 

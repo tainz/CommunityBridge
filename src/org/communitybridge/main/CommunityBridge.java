@@ -32,7 +32,7 @@ import org.communitybridge.utility.StringUtilities;
  * @author Iain E. Davis <iain@ruhlendavis.org>
  */
 
-public final class CommunityBridge extends JavaPlugin
+public class CommunityBridge extends JavaPlugin
 {
 	private Environment environment = new Environment();
 

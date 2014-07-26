@@ -12,7 +12,6 @@ import org.communitybridge.main.Environment;
 public class PlayerState
 {
 	private Environment environment;
-	private File playerFolder;
 	private Player player;
 	private String userID = "";
 
@@ -24,22 +23,25 @@ public class PlayerState
 
 	private boolean isNewFile;
 	FileConfiguration playerData = new YamlConfiguration();
+	File playerFile;
+	File oldPlayerFile;
 
-	public PlayerState(Environment environment, File playerFolder, Player player, String userID)
+	public PlayerState(Environment environment, Player player, String userID)
 	{
 		this.environment = environment;
 		this.player = player;
 		this.userID = userID;
-		this.playerFolder = playerFolder;
+		setupPlayerFile(player);
 	}
 
-	PlayerState(Environment environment, File playerFolder, Player player, String userID, YamlConfiguration playerData)
+	PlayerState(Environment environment, Player player, String userID, YamlConfiguration playerData)
 	{
 		this.environment = environment;
 		this.player = player;
 		this.userID = userID;
-		this.playerFolder = playerFolder;
 		this.playerData = playerData;
+		setupPlayerFile(player);
+
 	}
 
 	public void generate()
@@ -67,15 +69,15 @@ public class PlayerState
 
 	public void load()
 	{
-		if (getPlayerFile(playerFolder, player).exists())
+		if (playerFile.exists())
 		{
-			loadFromFile(getPlayerFile(playerFolder, player));
+			loadFromFile(playerFile);
 		}
 		else
 		{
-			if (getOldPlayerFile(playerFolder, player).exists())
+			if (oldPlayerFile.exists())
 			{
-				loadFromFile(getOldPlayerFile(playerFolder, player));
+				loadFromFile(oldPlayerFile);
 			}
 			else
 			{
@@ -96,12 +98,12 @@ public class PlayerState
 		playerData.set("permissions-system.primary-group-name", permissionsSystemPrimaryGroupName);
 		playerData.set("permissions-system.group-names", permissionsSystemGroupNames);
 
-		playerData.save(getPlayerFile(playerFolder, player));
+		playerData.save(playerFile);
 	}
 
 	public PlayerState copy()
 	{
-		PlayerState copy = new PlayerState(environment, playerFolder, player, userID);
+		PlayerState copy = new PlayerState(environment, player, userID);
 		copy.isNewFile = isNewFile;
 		copy.setPermissionsSystemGroupNames(permissionsSystemGroupNames);
 		copy.setPermissionsSystemPrimaryGroupName(permissionsSystemPrimaryGroupName);
@@ -112,7 +114,7 @@ public class PlayerState
 
 	private void loadFromFile(File file)
 	{
-		FileConfiguration playerData = YamlConfiguration.loadConfiguration(file);
+		playerData = YamlConfiguration.loadConfiguration(file);
 		permissionsSystemGroupNames = playerData.getStringList("permissions-system.group-names");
 		permissionsSystemPrimaryGroupName = playerData.getString("permissions-system.primary-group-name", "");
 		webappGroupIDs = playerData.getStringList("webapp.group-ids");
@@ -170,13 +172,10 @@ public class PlayerState
 		this.isNewFile = isNewFile;
 	}
 
-	private File getOldPlayerFile(File playerFolder, Player player)
+	private void setupPlayerFile(Player player)
 	{
-		return new File(playerFolder, player.getName() + ".yml");
-	}
-
-	private File getPlayerFile(File playerFolder, Player player)
-	{
-		return new File(playerFolder, player.getUniqueId().toString() + ".yml");
+		File playerFolder = new File(environment.getPlugin().getDataFolder(), "Players");
+		playerFile = new File(playerFolder, player.getUniqueId().toString() + ".yml");
+		oldPlayerFile = new File(playerFolder, player.getName() + ".yml");
 	}
 }
