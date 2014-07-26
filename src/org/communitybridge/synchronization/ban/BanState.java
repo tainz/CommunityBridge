@@ -1,4 +1,4 @@
-package org.communitybridge.bansynchronizer;
+package org.communitybridge.synchronization.ban;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package org.communitybridge.groupsynchronizer;
+package org.communitybridge.synchronization;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import org.communitybridge.main.CommunityBridge;
 import org.communitybridge.main.Environment;
 
-public class PlayerGroupState
+public class PlayerState
 {
 	public String webappPrimaryGroupID;
 	public List<String> webappGroupIDs;
@@ -28,7 +28,7 @@ public class PlayerGroupState
 
 	private String userID;
 
-	public PlayerGroupState(Environment environment, File playerFolder, Player player, String userID)
+	public PlayerState(Environment environment, File playerFolder, Player player, String userID)
 	{
 		this.environment = environment;
 		this.player = player;
@@ -100,9 +100,9 @@ public class PlayerGroupState
 		playerData.save(playerFile);
 	}
 
-	public PlayerGroupState copy()
+	public PlayerState copy()
 	{
-		PlayerGroupState copy = new PlayerGroupState(environment, playerFolder, player, userID);
+		PlayerState copy = new PlayerState(environment, playerFolder, player, userID);
 		copy.isNewFile = isNewFile;
 		copy.permissionsSystemGroupNames.addAll(permissionsSystemGroupNames);
 		copy.permissionsSystemPrimaryGroupName = permissionsSystemPrimaryGroupName;

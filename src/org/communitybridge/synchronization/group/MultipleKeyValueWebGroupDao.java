@@ -1,17 +1,16 @@
-package org.communitybridge.groupsynchronizer;
+package org.communitybridge.synchronization.group;
 
 import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 import org.communitybridge.main.Environment;
 
-public class JunctionWebGroupDao extends WebGroupDao
+public class MultipleKeyValueWebGroupDao extends WebGroupDao
 {
-	public static final String EXCEPTION_MESSAGE_GETSECONDARY = "Error during WebApplication.getUserGroupIDsJunction(): ";
+	public static final String EXCEPTION_MESSAGE_GETSECONDARY = "Exception during MultipleKeyValueWebGroupDao.getSecondaryGroups(): ";
 
-	public JunctionWebGroupDao(Environment environment)
+	public MultipleKeyValueWebGroupDao(Environment environment)
 	{
 		super(environment);
 	}
@@ -19,19 +18,9 @@ public class JunctionWebGroupDao extends WebGroupDao
 	@Override
 	public void addUserToGroup(String userID, String groupID, int currentGroupCount) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
-		String columns = "(`" + configuration.webappSecondaryGroupUserIDColumn + "`, `" + configuration.webappSecondaryGroupGroupIDColumn;
-		String values = "VALUES ('" + userID + "', '" + groupID;
-
-		for (Entry entry : configuration.webappSecondaryAdditionalColumns.entrySet())
-		{
-			columns = columns + "`, `" + entry.getKey();
-			values = values + "', '" + entry.getValue();
-		}
-
-		columns = columns + "`) ";
-		values = values + "')";
-
-		String query = "INSERT INTO `" + configuration.webappSecondaryGroupTable + "` " + columns + values;
+		String query = "INSERT INTO `" + configuration.webappSecondaryGroupTable + "` "
+								 + "(`" + configuration.webappSecondaryGroupUserIDColumn + "`, `" + configuration.webappSecondaryGroupKeyColumn + "`, `" + configuration.webappSecondaryGroupGroupIDColumn + "`) "
+								 + "VALUES ('" + userID + "', '" + configuration.webappSecondaryGroupKeyName + "', '" + groupID + "')";
 		sql.insertQuery(query);
 	}
 
@@ -39,7 +28,7 @@ public class JunctionWebGroupDao extends WebGroupDao
 	public void removeUserFromGroup(String userID, String groupID) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
 		String query = "DELETE FROM `" + configuration.webappSecondaryGroupTable + "` "
-								 + "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' "
+								 + "WHERE `" + configuration.webappSecondaryGroupKeyColumn + "` = '" + configuration.webappSecondaryGroupKeyName + "' "
 								 + "AND `" + configuration.webappSecondaryGroupGroupIDColumn + "` = '" + groupID + "' ";
 		sql.deleteQuery(query);
 	}
@@ -48,17 +37,20 @@ public class JunctionWebGroupDao extends WebGroupDao
 	public List<String> getSecondaryGroupIDs(String userID) throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
 		List<String> groupIDs = new ArrayList<String>();
-		String query = "SELECT `" + configuration.webappSecondaryGroupGroupIDColumn + "` "
+
+		String query =
+						"SELECT `" + configuration.webappSecondaryGroupGroupIDColumn + "` "
 					+ "FROM `" + configuration.webappSecondaryGroupTable + "` "
-					+ "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' ";
+					+ "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + userID + "' "
+					+ "AND `" + configuration.webappSecondaryGroupKeyColumn + "` = '" + configuration.webappSecondaryGroupKeyName + "' ";
 
-		result = sql.sqlQuery(query);
+			result = sql.sqlQuery(query);
 
-		while (result.next())
-		{
-			addCleanID(result.getString(configuration.webappSecondaryGroupGroupIDColumn), groupIDs);
-		}
-		return groupIDs;
+			while (result.next())
+			{
+				addCleanID(result.getString(configuration.webappSecondaryGroupGroupIDColumn), groupIDs);
+			}
+			return groupIDs;
 	}
 
 	@Override
@@ -69,7 +61,8 @@ public class JunctionWebGroupDao extends WebGroupDao
 		String query =
 						"SELECT `" + configuration.webappSecondaryGroupUserIDColumn + "` "
 					+ "FROM `" + configuration.webappSecondaryGroupTable + "` "
-					+ "WHERE `" + configuration.webappSecondaryGroupGroupIDColumn + "` = '" + groupID + "' ";
+					+ "WHERE `" + configuration.webappSecondaryGroupGroupIDColumn + "` = '" + groupID + "' "
+					+ "AND `" + configuration.webappSecondaryGroupKeyColumn + "` = '" + configuration.webappSecondaryGroupKeyName + "' ";
 
 			result = sql.sqlQuery(query);
 

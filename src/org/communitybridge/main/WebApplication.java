@@ -1,6 +1,7 @@
 package org.communitybridge.main;
 
-import org.communitybridge.groupsynchronizer.PlayerGroupState;
+import org.communitybridge.synchronization.Synchronizer;
+import org.communitybridge.synchronization.PlayerState;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -14,12 +15,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.communitybridge.achievement.Achievement;
 import org.communitybridge.achievement.PlayerAchievementState;
-import org.communitybridge.bansynchronizer.BanSynchronizer;
-import org.communitybridge.groupsynchronizer.JunctionWebGroupDao;
-import org.communitybridge.groupsynchronizer.KeyValueWebGroupDao;
-import org.communitybridge.groupsynchronizer.MultipleKeyValueWebGroupDao;
-import org.communitybridge.groupsynchronizer.SingleWebGroupDao;
-import org.communitybridge.groupsynchronizer.WebGroupDao;
+import org.communitybridge.synchronization.ban.BanSynchronizer;
+import org.communitybridge.synchronization.group.JunctionWebGroupDao;
+import org.communitybridge.synchronization.group.KeyValueWebGroupDao;
+import org.communitybridge.synchronization.group.MultipleKeyValueWebGroupDao;
+import org.communitybridge.synchronization.group.SingleWebGroupDao;
+import org.communitybridge.synchronization.group.WebGroupDao;
 import org.communitybridge.utility.Log;
 import org.communitybridge.utility.MinecraftUtilities;
 import org.communitybridge.utility.StringUtilities;
@@ -356,12 +357,12 @@ public class WebApplication extends Synchronizer
 
 		File playerFolder = new File(plugin.getDataFolder(), "Players");
 
-		PlayerGroupState previous = new PlayerGroupState(environment, playerFolder, player, userID);
+		PlayerState previous = new PlayerState(environment, playerFolder, player, userID);
 		previous.load();
 
-		PlayerGroupState current = new PlayerGroupState(environment, playerFolder, player, userID);
+		PlayerState current = new PlayerState(environment, playerFolder, player, userID);
 		current.generate();
-		PlayerGroupState result = current.copy();
+		PlayerState result = current.copy();
 
 		if(configuration.simpleSynchronizationFirstDirection.startsWith("web") && previous.isNewFile) {
 			direction = "web";
@@ -747,7 +748,7 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	private void synchronizeGroupsPrimary(String direction, PlayerGroupState previous, PlayerGroupState current, PlayerGroupState result, String playerName, Player player, String userID)
+	private void synchronizeGroupsPrimary(String direction, PlayerState previous, PlayerState current, PlayerState result, String playerName, Player player, String userID)
 	{
 		if (isValidDirection(direction, "web") && !previous.webappPrimaryGroupID.equals(current.webappPrimaryGroupID))
 		{
@@ -760,7 +761,7 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	private void synchronizeGroupsSecondary(String direction, PlayerGroupState previous, PlayerGroupState current, PlayerGroupState result, String userID, Player player)
+	private void synchronizeGroupsSecondary(String direction, PlayerState previous, PlayerState current, PlayerState result, String userID, Player player)
 	{
 		if (isValidDirection(direction, "min"))
 		{
@@ -773,7 +774,7 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	private void synchronizeGroupsPrimaryWebToGame(Player player, PlayerGroupState previous, PlayerGroupState current, PlayerGroupState result)
+	private void synchronizeGroupsPrimaryWebToGame(Player player, PlayerState previous, PlayerState current, PlayerState result)
 	{
 		if (previous.webappPrimaryGroupID.equalsIgnoreCase(current.webappPrimaryGroupID))
 		{
@@ -800,7 +801,7 @@ public class WebApplication extends Synchronizer
 		setPermissionHandlerPrimaryGroup(player, newGroupName, formerGroupName, result);
 	}
 
-	private void synchronizeGroupsPrimaryGameToWeb(String userID, String playerName, PlayerGroupState previous, PlayerGroupState current, PlayerGroupState result)
+	private void synchronizeGroupsPrimaryGameToWeb(String userID, String playerName, PlayerState previous, PlayerState current, PlayerState result)
 	{
 		String groupID = configuration.getWebappGroupIDbyGroupName(current.permissionsSystemPrimaryGroupName);
 
@@ -817,7 +818,7 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	private void synchronizeGroupsSecondaryGameToWeb(String userID, PlayerGroupState previous, PlayerGroupState current, PlayerGroupState result)
+	private void synchronizeGroupsSecondaryGameToWeb(String userID, PlayerState previous, PlayerState current, PlayerState result)
 	{
 		for (String groupName : previous.permissionsSystemGroupNames)
 		{
@@ -859,7 +860,7 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	private void synchronizeGroupsSecondaryWebToGame(Player player, PlayerGroupState previous, PlayerGroupState current, PlayerGroupState result)
+	private void synchronizeGroupsSecondaryWebToGame(Player player, PlayerState previous, PlayerState current, PlayerState result)
 	{
 		for (String groupID : previous.webappGroupIDs)
 		{
@@ -944,7 +945,7 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	private void setPermissionHandlerPrimaryGroup(Player player, String newGroupName, String formerGroupName, PlayerGroupState result)
+	private void setPermissionHandlerPrimaryGroup(Player player, String newGroupName, String formerGroupName, PlayerState result)
 	{
 		String pseudo = "";
 		if (environment.getPermissionHandler().supportsPrimaryGroups())
