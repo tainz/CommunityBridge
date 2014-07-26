@@ -46,7 +46,6 @@ public class WebApplication extends Synchronizer
 	public WebApplication(Environment environment, WebGroupDao webGroupDao)
 	{
 		super(environment);
-		this.environment = environment;
 		this.configuration = environment.getConfiguration();
 		this.log = environment.getLog();
 		this.webGroupDao = webGroupDao;
@@ -55,7 +54,6 @@ public class WebApplication extends Synchronizer
 	public WebApplication(Environment environment)
 	{
 		super(environment);
-		this.environment = environment;
 		this.configuration = environment.getConfiguration();
 		this.log = environment.getLog();
 		this.plugin = environment.getPlugin();
@@ -374,8 +372,8 @@ public class WebApplication extends Synchronizer
 		else
 		{
 			// With synchronization turned off the currentState should always be the previous state.
-			current.permissionsSystemPrimaryGroupName = previous.permissionsSystemPrimaryGroupName;
-			current.webappPrimaryGroupID = previous.webappPrimaryGroupID;
+			current.setPermissionsSystemPrimaryGroupName(previous.getPermissionsSystemPrimaryGroupName());
+			current.setWebappPrimaryGroupID(previous.getWebappPrimaryGroupID());
 		}
 
 		// 4. Synchronize secondary group state
@@ -386,8 +384,8 @@ public class WebApplication extends Synchronizer
 		else
 		{
 			// With synchronization turned off the currentState should always be the previous state.
-			current.permissionsSystemGroupNames = previous.permissionsSystemGroupNames;
-			current.webappGroupIDs = previous.webappGroupIDs;
+			current.setPermissionsSystemGroupNames(previous.getPermissionsSystemGroupNames());
+			current.setWebappGroupIDs(previous.getWebappGroupIDs());
 		}
 		// 5. Save newly created state
 		try
@@ -749,12 +747,12 @@ public class WebApplication extends Synchronizer
 
 	private void synchronizeGroupsPrimary(String direction, PlayerState previous, PlayerState current, PlayerState result, String playerName, Player player, String userID)
 	{
-		if (isValidDirection(direction, "web") && !previous.webappPrimaryGroupID.equals(current.webappPrimaryGroupID))
+		if (isValidDirection(direction, "web") && !previous.getWebappPrimaryGroupID().equals(current.getWebappPrimaryGroupID()))
 		{
 			synchronizeGroupsPrimaryWebToGame(player, previous, current, result);
 		}
 
-		if (isValidDirection(direction, "min") && !previous.permissionsSystemPrimaryGroupName.equals(current.permissionsSystemPrimaryGroupName))
+		if (isValidDirection(direction, "min") && !previous.getPermissionsSystemPrimaryGroupName().equals(current.getPermissionsSystemPrimaryGroupName()))
 		{
 			synchronizeGroupsPrimaryGameToWeb(userID, playerName, previous, current, result);
 		}
@@ -775,19 +773,19 @@ public class WebApplication extends Synchronizer
 
 	private void synchronizeGroupsPrimaryWebToGame(Player player, PlayerState previous, PlayerState current, PlayerState result)
 	{
-		if (previous.webappPrimaryGroupID.equalsIgnoreCase(current.webappPrimaryGroupID))
+		if (previous.getWebappPrimaryGroupID().equalsIgnoreCase(current.getWebappPrimaryGroupID()))
 		{
 			return;
 		}
 
-		String formerGroupName = configuration.getGroupNameByGroupID(previous.webappPrimaryGroupID);
-		String newGroupName = configuration.getGroupNameByGroupID(current.webappPrimaryGroupID);
+		String formerGroupName = configuration.getGroupNameByGroupID(previous.getWebappPrimaryGroupID());
+		String newGroupName = configuration.getGroupNameByGroupID(current.getWebappPrimaryGroupID());
 		String playerName = player.getName();
 
 		if (newGroupName == null)
 		{
-			log.warning("Not changing permissions group due to permissions system group name lookup failure for web application group ID: " + current.webappPrimaryGroupID + ". Player '" + playerName + "' primary group state unchanged.");
-			result.webappPrimaryGroupID = previous.webappPrimaryGroupID;
+			log.warning("Not changing permissions group due to permissions system group name lookup failure for web application group ID: " + current.getWebappPrimaryGroupID() + ". Player '" + playerName + "' primary group state unchanged.");
+			result.setWebappPrimaryGroupID(previous.getWebappPrimaryGroupID());
 			return;
 		}
 
@@ -802,16 +800,16 @@ public class WebApplication extends Synchronizer
 
 	private void synchronizeGroupsPrimaryGameToWeb(String userID, String playerName, PlayerState previous, PlayerState current, PlayerState result)
 	{
-		String groupID = configuration.getWebappGroupIDbyGroupName(current.permissionsSystemPrimaryGroupName);
+		String groupID = configuration.getWebappGroupIDbyGroupName(current.getPermissionsSystemPrimaryGroupName());
 
 		if (groupID == null)
 		{
-			log.warning("Not changing web application group due to web application group ID lookup failure for: " + current.permissionsSystemPrimaryGroupName + ". Player '" + playerName + "' primary group state unchanged.");
-			result.permissionsSystemPrimaryGroupName = previous.permissionsSystemPrimaryGroupName;
+			log.warning("Not changing web application group due to web application group ID lookup failure for: " + current.getPermissionsSystemPrimaryGroupName() + ". Player '" + playerName + "' primary group state unchanged.");
+			result.setPermissionsSystemPrimaryGroupName(previous.getPermissionsSystemPrimaryGroupName());
 		}
 		else
 		{
-			result.webappPrimaryGroupID = groupID;
+			result.setWebappPrimaryGroupID(groupID);
 			setPrimaryGroup(userID, groupID);
 			log.fine("Moved player '" + playerName + "' to web application group ID '" + groupID + "'.");
 		}
@@ -819,22 +817,22 @@ public class WebApplication extends Synchronizer
 
 	private void synchronizeGroupsSecondaryGameToWeb(String userID, PlayerState previous, PlayerState current, PlayerState result)
 	{
-		for (String groupName : previous.permissionsSystemGroupNames)
+		for (String groupName : previous.getPermissionsSystemGroupNames())
 		{
-			if (!current.permissionsSystemGroupNames.contains(groupName) && !configuration.simpleSynchronizationGroupsTreatedAsPrimary.contains(groupName))
+			if (!current.getPermissionsSystemGroupNames().contains(groupName) && !configuration.simpleSynchronizationGroupsTreatedAsPrimary.contains(groupName))
 			{
 				String groupID = configuration.getWebappGroupIDbyGroupName(groupName);
 				removeGroup(userID, groupName);
-				result.webappGroupIDs.remove(groupID);
+				result.getWebappGroupIDs().remove(groupID);
 			}
 		}
 
 		int addedCount = 0;
-		for (Iterator<String> iterator = current.permissionsSystemGroupNames.iterator(); iterator.hasNext();)
+		for (Iterator<String> iterator = current.getPermissionsSystemGroupNames().iterator(); iterator.hasNext();)
 		{
 			String groupName = iterator.next();
 
-			if (!previous.permissionsSystemGroupNames.contains(groupName))
+			if (!previous.getPermissionsSystemGroupNames().contains(groupName))
 			{
 				String groupID = configuration.getWebappGroupIDbyGroupName(groupName);
 
@@ -843,16 +841,16 @@ public class WebApplication extends Synchronizer
 				// the mapping later, we'll see it as a 'new' group and synchronize.
 				if (groupID == null)
 				{
-					result.permissionsSystemGroupNames.remove(groupName);
+					result.getPermissionsSystemGroupNames().remove(groupName);
 				}
-				else if (current.webappGroupIDs.contains(groupID))
+				else if (current.getWebappGroupIDs().contains(groupID))
 				{
 					log.warning("We thought we needed to add a secondary group ID " + groupID + "...but we didn't?");
 				}
 				else
 				{
-					addGroup(userID, groupID, result.webappGroupIDs.size() + addedCount);
-					result.webappGroupIDs.add(groupID);
+					addGroup(userID, groupID, result.getWebappGroupIDs().size() + addedCount);
+					result.getWebappGroupIDs().add(groupID);
 					addedCount++;
 				}
 			}
@@ -861,21 +859,21 @@ public class WebApplication extends Synchronizer
 
 	private void synchronizeGroupsSecondaryWebToGame(Player player, PlayerState previous, PlayerState current, PlayerState result)
 	{
-		for (String groupID : previous.webappGroupIDs)
+		for (String groupID : previous.getWebappGroupIDs())
 		{
-			if (!current.webappGroupIDs.contains(groupID))
+			if (!current.getWebappGroupIDs().contains(groupID))
 			{
 				String groupName = configuration.getGroupNameByGroupID(groupID);
 				environment.getPermissionHandler().removeFromGroup(player, groupName);
-				result.permissionsSystemGroupNames.remove(groupName);
+				result.getPermissionsSystemGroupNames().remove(groupName);
 			}
 		}
 
-		for (Iterator<String> iterator = current.webappGroupIDs.iterator(); iterator.hasNext();)
+		for (Iterator<String> iterator = current.getWebappGroupIDs().iterator(); iterator.hasNext();)
 		{
 			String groupID = iterator.next();
 
-			if (!previous.webappGroupIDs.contains(groupID))
+			if (!previous.getWebappGroupIDs().contains(groupID))
 			{
 				String groupName = configuration.getGroupNameByGroupID(groupID);
 
@@ -884,16 +882,16 @@ public class WebApplication extends Synchronizer
 				// and we will synchronize.
 				if (groupName == null)
 				{
-					result.webappGroupIDs.remove(groupID);
+					result.getWebappGroupIDs().remove(groupID);
 				}
 				else if (configuration.simpleSynchronizationWebappSecondaryGroupsTreatedAsPrimary.contains(groupName))
 				{
-					setPermissionHandlerPrimaryGroup(player, groupName, current.permissionsSystemPrimaryGroupName, result);
+					setPermissionHandlerPrimaryGroup(player, groupName, current.getPermissionsSystemPrimaryGroupName(), result);
 				}
-				else if (!current.permissionsSystemPrimaryGroupName.equals(groupName) && !current.permissionsSystemGroupNames.contains(groupName))
+				else if (!current.getPermissionsSystemPrimaryGroupName().equals(groupName) && !current.getPermissionsSystemGroupNames().contains(groupName))
 				{
 					environment.getPermissionHandler().addToGroup(player, groupName);
-					result.permissionsSystemGroupNames.add(groupName);
+					result.getPermissionsSystemGroupNames().add(groupName);
 				}			} // if previousState contains group ID
 		} // for each group ID in currentState
 	}
@@ -956,7 +954,7 @@ public class WebApplication extends Synchronizer
 			environment.getPermissionHandler().switchGroup(player, formerGroupName, newGroupName);
 			pseudo = "pseudo-primary ";
 		}
-		result.permissionsSystemPrimaryGroupName = newGroupName;
+		result.setPermissionsSystemPrimaryGroupName(newGroupName);
 		if (formerGroupName == null)
 		{
 			log.fine("Placed player '" + player.getName() + "' in " + pseudo + "permissions group '" + newGroupName + "'.");
