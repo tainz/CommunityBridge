@@ -117,7 +117,7 @@ public class PlayerStateTest
 
 		state.generate();
 
-		assertEquals(money, state.getMoney(), 0);
+		assertEquals(money, state.getMinecraftMoney(), 0);
 	}
 
 	@Test
@@ -172,7 +172,7 @@ public class PlayerStateTest
 		state.generate();
 		PlayerState copy = state.copy();
 
-		assertEquals(state.getMoney(), copy.getMoney(), 0);
+		assertEquals(state.getMinecraftMoney(), copy.getMinecraftMoney(), 0);
 	}
 
 	@Test
@@ -198,7 +198,7 @@ public class PlayerStateTest
 		state.save();
 
 		verify(playerData).set("last-known-name", PLAYER_NAME);
-		verify(playerData).set("money", money);
+		verify(playerData).set("minecraft-money", money);
 		verify(playerData).set("permissions-system.primary-group-name", PRIMARY_GROUP_NAME);
 		verify(playerData).set("permissions-system.group-names", GROUP_NAMES);
 		verify(playerData).set("webapp.primary-group-id", PRIMARY_GROUP_ID);
@@ -252,7 +252,7 @@ public class PlayerStateTest
 		when(oldPlayerFile.exists()).thenReturn(true);
 		PowerMockito.mockStatic(YamlConfiguration.class);
 		when(YamlConfiguration.loadConfiguration(playerFile)).thenReturn(playerData);
-		when(playerData.getDouble("money", 0)).thenReturn(money);
+		when(playerData.getDouble("minecraft-money", 0)).thenReturn(money);
 		when(playerData.getStringList("permissions-system.group-names")).thenReturn(GROUP_NAMES);
 		when(playerData.getString("permissions-system.primary-group-name", "")).thenReturn(PRIMARY_GROUP_NAME);
 		when(playerData.getStringList("webapp.group-ids")).thenReturn(GROUP_IDS);
@@ -260,7 +260,7 @@ public class PlayerStateTest
 		state.load();
 
 		assertEquals(false, state.isIsNewFile());
-		assertEquals(money, state.getMoney(), 0);
+		assertEquals(money, state.getMinecraftMoney(), 0);
 		assertEquals(PRIMARY_GROUP_ID, state.getWebappPrimaryGroupID());
 		assertEquals(PRIMARY_GROUP_NAME, state.getPermissionsSystemPrimaryGroupName());
 		for (String group : GROUP_NAMES)

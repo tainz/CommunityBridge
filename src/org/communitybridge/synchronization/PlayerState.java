@@ -21,7 +21,7 @@ public class PlayerState
 	private String permissionsSystemPrimaryGroupName = "";
 	private List<String> permissionsSystemGroupNames= new ArrayList<String>();
 
-	private double money = 0;
+	private double minecraftMoney = 0;
 
 	private boolean isNewFile;
 
@@ -51,7 +51,7 @@ public class PlayerState
 	{
 		if (environment.getConfiguration().economyEnabled)
 		{
-			money = environment.getEconomy().getBalance(player);
+			minecraftMoney = environment.getEconomy().getBalance(player);
 		}
 		webappPrimaryGroupID = environment.getWebApplication().getUserPrimaryGroupID(userID);
 		webappGroupIDs = environment.getWebApplication().getUserSecondaryGroupIDs(userID);
@@ -100,7 +100,7 @@ public class PlayerState
 	public void save() throws IOException
 	{
 		playerData.set("last-known-name", player.getName());
-		playerData.set("money", money);
+		playerData.set("minecraft-money", minecraftMoney);
 		playerData.set("permissions-system.primary-group-name", permissionsSystemPrimaryGroupName);
 		playerData.set("permissions-system.group-names", permissionsSystemGroupNames);
 		playerData.set("webapp.primary-group-id", webappPrimaryGroupID);
@@ -113,7 +113,7 @@ public class PlayerState
 	{
 		PlayerState copy = new PlayerState(environment, player, userID);
 		copy.isNewFile = isNewFile;
-		copy.setMoney(money);
+		copy.setMinecraftMoney(minecraftMoney);
 		copy.setPermissionsSystemGroupNames(permissionsSystemGroupNames);
 		copy.setPermissionsSystemPrimaryGroupName(permissionsSystemPrimaryGroupName);
 		copy.setWebappGroupIDs(webappGroupIDs);
@@ -124,7 +124,7 @@ public class PlayerState
 	private void loadFromFile(File file)
 	{
 		playerData = YamlConfiguration.loadConfiguration(file);
-		money = playerData.getDouble("money", 0.0);
+		minecraftMoney = playerData.getDouble("minecraft-money", 0.0);
 		permissionsSystemGroupNames = playerData.getStringList("permissions-system.group-names");
 		permissionsSystemPrimaryGroupName = playerData.getString("permissions-system.primary-group-name", "");
 		webappGroupIDs = playerData.getStringList("webapp.group-ids");
@@ -189,13 +189,13 @@ public class PlayerState
 		oldPlayerFile = new File(playerFolder, player.getName() + ".yml");
 	}
 
-	public double getMoney()
+	public double getMinecraftMoney()
 	{
-		return money;
+		return minecraftMoney;
 	}
 
-	public void setMoney(double money)
+	public void setMinecraftMoney(double money)
 	{
-		this.money = money;
+		this.minecraftMoney = money;
 	}
 }
