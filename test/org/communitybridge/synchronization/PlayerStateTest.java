@@ -108,16 +108,29 @@ public class PlayerStateTest
 	}
 
 	@Test
-	public void generateSetsMoney()
+	public void generateSetsMinecraftWallet()
 	{
-		double money = RandomUtils.nextDouble() + 1;
+		double wallet = RandomUtils.nextDouble() + 1;
 		configuration.economyEnabled = true;
+		configuration.walletEnabled = true;
 
-		when(economy.getBalance(player)).thenReturn(money);
+		when(economy.getBalance(player)).thenReturn(wallet);
 
 		state.generate();
 
-		assertEquals(money, state.getMinecraftMoney(), 0);
+		assertEquals(wallet, state.getMinecraftWallet(), 0);
+	}
+
+	@Test
+	public void generateSetsWebApplicationWallet()
+	{
+		double wallet = RandomUtils.nextDouble() + 1;
+		configuration.economyEnabled = true;
+		configuration.walletEnabled = true;
+		when(webApplication.getBalance(USER_ID)).thenReturn(wallet);
+		state.generate();
+
+		assertEquals(wallet, state.getWebApplicationWallet(), 0);
 	}
 
 	@Test
@@ -172,7 +185,7 @@ public class PlayerStateTest
 		state.generate();
 		PlayerState copy = state.copy();
 
-		assertEquals(state.getMinecraftMoney(), copy.getMinecraftMoney(), 0);
+		assertEquals(state.getMinecraftWallet(), copy.getMinecraftWallet(), 0);
 	}
 
 	@Test
@@ -189,6 +202,7 @@ public class PlayerStateTest
 	{
 		double money = RandomUtils.nextDouble() + 1;
 		configuration.economyEnabled = true;
+		configuration.walletEnabled = true;
 
 		when(economy.getBalance(player)).thenReturn(money);
 		doNothing().when(playerData).set(anyString(), anyString());
@@ -260,7 +274,7 @@ public class PlayerStateTest
 		state.load();
 
 		assertEquals(false, state.isIsNewFile());
-		assertEquals(money, state.getMinecraftMoney(), 0);
+		assertEquals(money, state.getMinecraftWallet(), 0);
 		assertEquals(PRIMARY_GROUP_ID, state.getWebappPrimaryGroupID());
 		assertEquals(PRIMARY_GROUP_NAME, state.getPermissionsSystemPrimaryGroupName());
 		for (String group : GROUP_NAMES)

@@ -953,6 +953,11 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
+	public double getBalance(String userID)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
 	private class FieldBuilder
 	{
 		public List<String> insertFields;
