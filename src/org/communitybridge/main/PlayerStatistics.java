@@ -15,7 +15,6 @@ public class PlayerStatistics
 	private float currentXP;
 	private double health;
 	private int lifeTicks;
-	private double wallet;
 
 	PlayerStatistics(SimpleDateFormat dateFormat)
 	{
@@ -130,15 +129,5 @@ public class PlayerStatistics
 	public void setLifeTicks(int lifeticks)
 	{
 		this.lifeTicks = lifeticks;
-	}
-
-	public double getWallet()
-	{
-		return wallet;
-	}
-
-	public void setWallet(double wallet)
-	{
-		this.wallet = wallet;
 	}
 }

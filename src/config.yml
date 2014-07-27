@@ -108,12 +108,48 @@ database:
 # Settings associated with linking a Minecraft player with a web application's
 # user. As this feature is a prerequisite for all other features, it cannot
 # be disabled.
+
+# This is where we specify how to associate a Minecraft player with a web
+# application user. We do this by matching up the player name with a name
+# stored in the web application's database.
+
+# If you want your players to use the same name on both the server and the
+# web application, then you will need to provide the table and column
+# information where the web application relates its user IDs with the user's
+# name/login ID/login/username.
+
+# If you want to allow them to use a different name on the web application,
+# you need to add a custom field or column to your web application's database
+# for their minecraft name and specify below where the minecraft name is stored
+# in the web application's database.
 player-user-linking:
   # Use this to specify which method you are using: uuid, name, or both.
   # uuid - Players are identified by uuid in your web application's database.
   # name - Players are identified by player name in your web application's database.
   # both - Communitybridge will try both ways before giving up.
   linking-method: both
+
+  # The name of the table which contains the columns:
+  table-name:
+
+  # Column on the table that contains the user ID. Typically, the column will be
+  # named something like user_id or member_id and contains a unique number for each
+  # user.
+  user-id-column:
+
+  # If the player name is stored in a key-value pair of columns instead of
+  # its own column, set this to true:
+  uses-key: false
+
+  # If you set 'linking-uses-key' to false, then set this to the column that
+  # the minecraft uuid or playername is stored in. Otherwise, leave it empty.
+  identifier-column:
+
+  # If you set 'linking-uses-key' to true, then set the key column, value
+  # column, and the key-name here. Otherwise, leave these fields empty.
+  key-name:
+  key-column:
+  value-column:
 
   # If you want the player disconnected from the game if they haven't
   # registered, then set this to true. They will be shown the
@@ -154,190 +190,6 @@ player-user-linking:
   # are no longer registered, set this to true.
   unregister-former-registered: false
 
-  # This is where we specify how to associate a Minecraft player with a web
-  # application user. We do this by matching up the player name with a name
-  # stored in the web application's database.
-  #
-  # If you want your players to use the same name on both the server and the
-  # web application, then you will need to provide the table and column
-  # information where the web application relates its user IDs with the user's
-  # name/login ID/login/username.
-  #
-  # If you want to allow them to use a different name on the web application,
-  # you need to add a custom field or column to your web application's database
-  # for their minecraft name and specify below where the minecraft name is stored
-  # in the web application's database.
-
-  # The name of the table which contains the columns:
-  table-name:
-
-  # Column on the table that contains the user ID. Typically, the column will be
-  # named something like user_id or member_id and contains a unique number for each
-  # user.
-  user-id-column:
-
-  # If the player name is stored in a key-value pair of columns instead of
-  # its own column, set this to true:
-  uses-key: false
-
-  # If you set 'linking-uses-key' to false, then set this to the column that
-  # the minecraft uuid or playername is stored in. Otherwise, leave it empty.
-  identifier-column:
-
-  # If you set 'linking-uses-key' to true, then set the key column, value
-  # column, and the key-name here. Otherwise, leave these fields empty.
-  key-name:
-  key-column:
-  value-column:
-
-# Used either for requiring and avatar or rewarding the existence of an avatar.
-app-avatar-config:
-  enabled: false
-  # Table that contains the avatar column
-  table-name:
-  # Column on the avatar table that contains the user ID.
-  user-id-column:
-  # Column on the avatar table that contains the avatar information. If this
-  # column contains data, the user is assumed by CommunityBridge to have an
-  # avatar.
-  avatar-column:
-
-# Used for post count awards or for requiring a post count.
-app-post-count-config:
-  enabled: false
-  # Table that contains the post count column
-  table-name:
-  # Column on the avatar table that contains the user ID.
-  user-id-column:
-  # Column containing the user's post count.
-  post-count-column:
-
-#                             Requirements
-# -----------------------------------------------------------------------------
-requirement:
-  # Set this to true to require an avatar to be set to access the game.
-  # Requires app-avatar-config settings to be enabled and configured correctly.
-  avatar: false
-  # Require the player to have at least this many posts before being able to
-  # play. Requires app-post-count-config settings to be enabled and configured
-  # correctly.
-  post-count:
-    enabled: false
-    minimum: 0
-
-#                             Statistics Tracking
-# -----------------------------------------------------------------------------
-# In general, to make this work, your web application will need to support
-# custom profile fields or a similar feature. CommunityBridge will put the
-# information in the database. It is up to you to configure your web application
-# so that it displays the information.
-statistics:
-  # Enables statistics tracking. Nothing will be tracked unless you also enable
-  # at least one of the trackers below.
-  enabled: false
-  # Name of the table to insert the tracking information on to.
-  table-name:
-  # Name of the column that contains the player's User ID on the table.
-  user-id-column:
-  # Set this to true if data on the table is stored in key-value pairs.
-  uses-key: false
-
-  # If uses-key is true, set these as well. These settings are not used if
-  # uses-key is false.
-  key-column:
-  value-column:
-
-  # Some web applications require an insert the first time a custom profile
-  # field is filled with data (SMF, for example). If that's the case, enable
-  # this and provide the required information.
-  insert:
-    enabled: false
-    # Options are: generic and smf.
-    method: generic
-
-    # Required for the 'smf' method, ignored for other methods. Most likely id_theme.
-    theme-id-column: id_theme
-
-    # Required for the 'smf' method, ignored for other methods. Most likely value is 1.
-    theme-id: 1
-
-  # Individual trackers
-  # -------------------
-  trackers:
-    # Below each tracker can be enabled and configured. For each tracker:
-    # * If uses key is true, set column-or-key-name to the key name OR
-    #   If uses key is false, set column-or-key-name to the column name
-    # For some trackers, there is a formatted version as well. For those
-    # trackers, the formatted version is optional. If you wish to use the
-    # formatted version, set the formatted-column-or-key-name appropriately.
-    # If set, the formatted column will be filled in with a human readable
-    # string.
-
-    # Online Status: Show a player is playing on the server in the forums.
-    online-status:
-      enabled: false
-      column-or-key-name:
-      # Set this to what should be stored in the field when the user is online.
-      online-value:
-      # Set this to what should be stored in the field when the user is offline.
-      offline-value:
-
-    # Last Online: Record the time that player was last online
-    last-online:
-      enabled: false
-      # Numeric column, should be able to store a 32 bit integer. Will be seconds since epoch.
-      column-or-key-name:
-      # String (varchar, etc.) column at least 60 characters in length.
-      formatted-column-or-key-name:
-
-    # Game Time: Record how much time the player has played.
-    # Requires the last-online tracker to be turned on as well.
-    game-time:
-      enabled: false
-      # Numeric column, should be able to store a 32 bit integer. Time played in seconds.
-      column-or-key-name:
-      formatted-column-or-key-name:
-
-    # Player's current level
-    level:
-      enabled: false
-      # Numeric column, a single byte will be sufficient in most cases.
-      column-or-key-name:
-
-    # Player's current progress toward next level
-    current-xp:
-      enabled: false
-      # Numeric floating point column.
-      column-or-key-name:
-      # String column with at least 4 characters capacity.
-      formatted-column-or-key-name:
-
-    # Player's XP total
-    total-xp:
-      enabled: false
-      # Numeric column, capable of storing a 32 bit integer.
-      column-or-key-name:
-
-    # Player's current health
-    health:
-      enabled: false
-      # Numeric column, a single byte should be sufficient.
-      column-or-key-name:
-
-    # Lifeticks; the amount of time the player has been alive.
-    lifeticks:
-      enabled: false
-      # Numeric column, capable of storing a 32 bit integer.
-      column-or-key-name:
-      # String field with at least 100 characters of storage.
-      formatted-column-or-key-name:
-
-    # Wallet. The amount of money the player currently has. REQUIRES VAULT.
-    wallet:
-      enabled: false
-      # Numeric column capable of storing a "double" floating point number.
-      column-or-key-name:
-
 #                     Web Application Group Configuration
 # -----------------------------------------------------------------------------
 #
@@ -347,8 +199,8 @@ statistics:
 #   permissions systems have such a feature. A given player/user can be a member
 #   of only one primary group at a time.
 #   NOTE: If you wish to utilize the primary group synchronization feature and
-#         your permissions system does not support primary groups, then you must
-#         list groups you wish to be synchronized into the web applications
+#         your permissions system does not support primary groups, then you
+#         must list groups you wish to be synchronized into the web applications
 #         primary group field in the "groups-treated-as-primary" setting (see
 #         the synchronization options below). The permissions systems that this
 #         applies to are: bPerms, PermissionsBukkit, PermissionsEx, and Vault.
@@ -358,7 +210,8 @@ statistics:
 #   primary group.
 
 # This section describes to Communitybridge how the web application stores
-# user group/role information.
+# user group/role information. This section is required for group
+# synchronization to work.
 app-group-config:
   # If the web application has a primary group/role feature, configure it here.
   primary:
@@ -500,6 +353,160 @@ simple-synchronization:
     '2' : 'member'
     '3' : 'premium'
 
+#                     Other Miscellaneous Database Configurations
+# -----------------------------------------------------------------------------
+# Used either for requiring and avatar or rewarding the existence of an avatar.
+app-avatar-config:
+  enabled: false
+  # Table that contains the avatar column
+  table-name:
+  # Column on the avatar table that contains the user ID.
+  user-id-column:
+  # Column on the avatar table that contains the avatar information. If this
+  # column contains data, the user is assumed by CommunityBridge to have an
+  # avatar.
+  avatar-column:
+
+# Used for post count awards or for requiring a post count.
+app-post-count-config:
+  enabled: false
+  # Table that contains the post count column
+  table-name:
+  # Column on the avatar table that contains the user ID.
+  user-id-column:
+  # Column containing the user's post count.
+  post-count-column:
+
+# Used for synchronizing cash. Requires Vault.
+app-wallet-config:
+  enabled: false
+  # Table that contains the user's money score
+  table-name:
+  # Column on the table that contains the user ID.
+  user-id-column:
+  # Column or key containing the user's money score should be able to store a double
+  column-or-key-name:
+  # If stored in a key-value pair, set this to true.
+  uses-key: false
+  # If uses-key is true, set these as well. These settings are not used if
+  # uses-key is false.
+  key-column:
+  value-column:
+
+#                             Statistics Tracking
+# -----------------------------------------------------------------------------
+# In general, to make this work, your web application will need to support
+# custom profile fields or a similar feature. CommunityBridge will put the
+# information in the database. It is up to you to configure your web application
+# so that it displays the information.
+statistics:
+  # Enables statistics tracking. Nothing will be tracked unless you also enable
+  # at least one of the trackers below.
+  enabled: false
+  # Name of the table to insert the tracking information on to.
+  table-name:
+  # Name of the column that contains the player's User ID on the table.
+  user-id-column:
+  # Set this to true if data on the table is stored in key-value pairs.
+  uses-key: false
+
+  # If uses-key is true, set these as well. These settings are not used if
+  # uses-key is false.
+  key-column:
+  value-column:
+
+  # Some web applications require an insert the first time a custom profile
+  # field is filled with data (SMF, for example). If that's the case, enable
+  # this and provide the required information.
+  insert:
+    enabled: false
+    # Options are: generic and smf.
+    method: generic
+
+    # Required for the 'smf' method, ignored for other methods. Most likely id_theme.
+    theme-id-column: id_theme
+
+    # Required for the 'smf' method, ignored for other methods. Most likely value is 1.
+    theme-id: 1
+
+  # Individual trackers
+  # -------------------
+  trackers:
+    # Below each tracker can be enabled and configured. For each tracker:
+    # * If uses key is true, set column-or-key-name to the key name OR
+    #   If uses key is false, set column-or-key-name to the column name
+    # For some trackers, there is a formatted version as well. For those
+    # trackers, the formatted version is optional. If you wish to use the
+    # formatted version, set the formatted-column-or-key-name appropriately.
+    # If set, the formatted column will be filled in with a human readable
+    # string.
+
+    # Online Status: Show a player is playing on the server in the forums.
+    online-status:
+      enabled: false
+      column-or-key-name:
+      # Set this to what should be stored in the field when the user is online.
+      online-value:
+      # Set this to what should be stored in the field when the user is offline.
+      offline-value:
+
+    # Last Online: Record the time that player was last online
+    last-online:
+      enabled: false
+      # Numeric column, should be able to store a 32 bit integer. Will be seconds since epoch.
+      column-or-key-name:
+      # String (varchar, etc.) column at least 60 characters in length.
+      formatted-column-or-key-name:
+
+    # Game Time: Record how much time the player has played.
+    # Requires the last-online tracker to be turned on as well.
+    game-time:
+      enabled: false
+      # Numeric column, should be able to store a 32 bit integer. Time played in seconds.
+      column-or-key-name:
+      formatted-column-or-key-name:
+
+    # Player's current level
+    level:
+      enabled: false
+      # Numeric column, a single byte will be sufficient in most cases.
+      column-or-key-name:
+
+    # Player's current progress toward next level
+    current-xp:
+      enabled: false
+      # Numeric floating point column.
+      column-or-key-name:
+      # String column with at least 4 characters capacity.
+      formatted-column-or-key-name:
+
+    # Player's XP total
+    total-xp:
+      enabled: false
+      # Numeric column, capable of storing a 32 bit integer.
+      column-or-key-name:
+
+    # Player's current health
+    health:
+      enabled: false
+      # Numeric column, a single byte should be sufficient.
+      column-or-key-name:
+
+    # Lifeticks; the amount of time the player has been alive.
+    lifeticks:
+      enabled: false
+      # Numeric column, capable of storing a 32 bit integer.
+      column-or-key-name:
+      # String field with at least 100 characters of storage.
+      formatted-column-or-key-name:
+
+    # Wallet. The amount of money the player currently has. REQUIRES VAULT.
+    wallet:
+      enabled: false
+      # Configuration for wallet is in the app-wallet-config section.
+
+#                             Ban Synchronization
+# -----------------------------------------------------------------------------
 ban-synchronization:
   enabled: false
 
@@ -555,3 +562,16 @@ ban-synchronization:
   ban-group-id-column:
   # The ban-group-id. Leave blank if your web application does not support this.
   ban-group-id:
+
+#                             Requirements
+# -----------------------------------------------------------------------------
+requirement:
+  # Set this to true to require an avatar to be set to access the game.
+  # Requires app-avatar-config settings to be enabled and configured correctly.
+  avatar: false
+  # Require the player to have at least this many posts before being able to
+  # play. Requires app-post-count-config settings to be enabled and configured
+  # correctly.
+  post-count:
+    enabled: false
+    minimum: 0

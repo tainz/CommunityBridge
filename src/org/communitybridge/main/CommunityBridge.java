@@ -95,7 +95,7 @@ public class CommunityBridge extends JavaPlugin
 
 		getServer().getPluginManager().registerEvents(new PlayerListener(environment), this);
 
-		if (environment.getConfiguration().economyEnabled || environment.getConfiguration().statisticsEnabled && environment.getConfiguration().walletEnabled)
+		if (environment.getConfiguration().economyEnabled	|| environment.getConfiguration().walletEnabled)
 		{
 	    if (getServer().getPluginManager().getPlugin("Vault") == null)
 			{

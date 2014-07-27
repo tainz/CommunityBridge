@@ -584,11 +584,6 @@ public class WebApplication extends Synchronizer
 			playerStatistics.setLifeTicks(player.getTicksLived());
 		}
 
-		if (configuration.walletEnabled)
-		{
-			playerStatistics.setWallet(environment.getEconomy().getBalance(player));
-		}
-
 		if (configuration.statisticsUsesKey)
 		{
 			updateStatisticsKeyStyle(playerStatistics);
@@ -700,11 +695,6 @@ public class WebApplication extends Synchronizer
 				{
 					builder.add(playerStatistics.getUserID(), configuration.lifeticksFormattedColumnOrKey, playerStatistics.getLifeTicksFormatted());
 				}
-			}
-
-			if (configuration.walletEnabled)
-			{
-				builder.add(playerStatistics.getUserID(), configuration.walletColumnOrKey, playerStatistics.getWallet());
 			}
 
 			if (builder.insertFields.size() > 0)
@@ -1081,11 +1071,6 @@ public class WebApplication extends Synchronizer
 			{
 				fields.add("`" + configuration.lifeticksFormattedColumnOrKey + "` = '" + playerStatistics.getLifeTicksFormatted() + "'");
 			}
-		}
-
-		if (configuration.walletEnabled)
-		{
-			fields.add("`" + configuration.walletColumnOrKey + "` = '" + playerStatistics.getWallet() + "'");
 		}
 
 		query = query + StringUtilities.joinStrings(fields, ", ") + " WHERE `" + configuration.statisticsUserIDColumn + "` = '" + playerStatistics.getUserID() + "'";
