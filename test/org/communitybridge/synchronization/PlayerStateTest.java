@@ -18,8 +18,14 @@ import org.communitybridge.permissionhandlers.PermissionHandler;
 import org.junit.Test;
 import org.junit.Before;
 import static org.junit.Assert.*;
+import org.junit.runner.RunWith;
 import static org.mockito.Mockito.*;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(YamlConfiguration.class)
 public class PlayerStateTest
 {
 	private static final String PLAYER_NAME = RandomStringUtils.randomAlphabetic(9);
@@ -39,6 +45,8 @@ public class PlayerStateTest
 	private WebApplication webApplication = mock(WebApplication.class);
 
 	private YamlConfiguration playerData = mock(YamlConfiguration.class);
+	private File playerFile = mock(File.class);
+	private File oldPlayerFile = mock(File.class);
 
 	private PlayerState state;
 
@@ -56,7 +64,7 @@ public class PlayerStateTest
 		when(permissionHandler.supportsPrimaryGroups()).thenReturn(true);
 		when(permissionHandler.getPrimaryGroup(player)).thenReturn(PRIMARY_GROUP_NAME);
 		when(permissionHandler.getGroups(player)).thenReturn(GROUP_NAMES);
-		state = new PlayerState(environment, player, USER_ID, playerData);
+		state = new PlayerState(environment, player, USER_ID, playerData, playerFile, oldPlayerFile);
 	}
 
 	@Test
@@ -160,5 +168,66 @@ public class PlayerStateTest
 		verify(playerData).set("permissions-system.primary-group-name", PRIMARY_GROUP_NAME);
 		verify(playerData).set("permissions-system.group-names", GROUP_NAMES);
 		verify(playerData).save(any(File.class));
+	}
+
+	@Test
+	public void loadHandlesNewFile() throws IOException
+	{
+		when(playerFile.exists()).thenReturn(false);
+		when(oldPlayerFile.exists()).thenReturn(false);
+		state.load();
+		assertEquals(true, state.isIsNewFile());
+		assertEquals("", state.getWebappPrimaryGroupID());
+		assertTrue("Group name list should be empty", state.getPermissionsSystemGroupNames().isEmpty());
+		assertTrue("Group id list should be empty", state.getWebappGroupIDs().isEmpty());
+		assertEquals("", state.getPermissionsSystemPrimaryGroupName());
+	}
+
+	@Test
+	public void loadLoadsFromOldPlayerFile() throws IOException
+	{
+		when(playerFile.exists()).thenReturn(false);
+		when(oldPlayerFile.exists()).thenReturn(true);
+		PowerMockito.mockStatic(YamlConfiguration.class);
+		when(YamlConfiguration.loadConfiguration(oldPlayerFile)).thenReturn(playerData);
+		state.load();
+		PowerMockito.verifyStatic();
+		YamlConfiguration.loadConfiguration(oldPlayerFile);
+	}
+
+	public void loadLoadsFromNewPlayerFile() throws IOException
+	{
+		when(playerFile.exists()).thenReturn(true);
+		when(oldPlayerFile.exists()).thenReturn(true);
+		PowerMockito.mockStatic(YamlConfiguration.class);
+		when(YamlConfiguration.loadConfiguration(playerFile)).thenReturn(playerData);
+		state.load();
+		PowerMockito.verifyStatic();
+		YamlConfiguration.loadConfiguration(oldPlayerFile);
+	}
+
+	public void loadLoadsData() throws IOException
+	{
+		when(playerFile.exists()).thenReturn(true);
+		when(oldPlayerFile.exists()).thenReturn(true);
+		PowerMockito.mockStatic(YamlConfiguration.class);
+		when(YamlConfiguration.loadConfiguration(playerFile)).thenReturn(playerData);
+		when(playerData.getStringList("permissions-system.group-names")).thenReturn(GROUP_NAMES);
+		when(playerData.getStringList("webapp.group-ids")).thenReturn(GROUP_IDS);
+		when(playerData.getString("webapp.primary-group-id", "")).thenReturn(PRIMARY_GROUP_ID);
+		when(playerData.getString("permissions-system.primary-group-name", "")).thenReturn(PRIMARY_GROUP_NAME);
+		state.load();
+
+		assertEquals(false, state.isIsNewFile());
+		assertEquals(PRIMARY_GROUP_ID, state.getWebappPrimaryGroupID());
+		assertEquals(PRIMARY_GROUP_NAME, state.getPermissionsSystemPrimaryGroupName());
+		for (String group : GROUP_NAMES)
+		{
+			assertTrue(group + " missing.", state.getPermissionsSystemGroupNames().contains(group));
+		}
+		for (String id : GROUP_IDS)
+		{
+			assertTrue(id + " missing.", state.getWebappGroupIDs().contains(id));
+		}
 	}
 }

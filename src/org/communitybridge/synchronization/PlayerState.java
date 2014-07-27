@@ -22,9 +22,9 @@ public class PlayerState
 	private List<String> permissionsSystemGroupNames= new ArrayList<String>();
 
 	private boolean isNewFile;
-	FileConfiguration playerData = new YamlConfiguration();
-	File playerFile;
-	File oldPlayerFile;
+	private FileConfiguration playerData = new YamlConfiguration();
+	private File playerFile;
+	private File oldPlayerFile;
 
 	public PlayerState(Environment environment, Player player, String userID)
 	{
@@ -34,14 +34,14 @@ public class PlayerState
 		setupPlayerFile(player);
 	}
 
-	PlayerState(Environment environment, Player player, String userID, YamlConfiguration playerData)
+	PlayerState(Environment environment, Player player, String userID, YamlConfiguration playerData, File playerFile, File oldPlayerFile)
 	{
 		this.environment = environment;
 		this.player = player;
 		this.userID = userID;
 		this.playerData = playerData;
-		setupPlayerFile(player);
-
+		this.playerFile = playerFile;
+		this.oldPlayerFile = oldPlayerFile;
 	}
 
 	public void generate()
