@@ -7,6 +7,7 @@ import org.communitybridge.utility.Log;
 
 public class Environment
 {
+	private BukkitWrapper bukkit;
 	private CommunityBridge plugin;
 	private Configuration configuration;
 	private Economy economy;
@@ -94,5 +95,16 @@ public class Environment
 	public void setWebApplication(WebApplication webApplication)
 	{
 		this.webApplication = webApplication;
+	}
+
+
+	public BukkitWrapper getBukkit()
+	{
+		return bukkit;
+	}
+
+	public void setBukkit(BukkitWrapper bukkit)
+	{
+		this.bukkit = bukkit;
 	}
 }

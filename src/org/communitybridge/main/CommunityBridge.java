@@ -71,6 +71,7 @@ public class CommunityBridge extends JavaPlugin
 
 	private void setupEnvironment()
 	{
+		environment.setBukkit(new BukkitWrapper());
 		environment.setPlugin(this);
 		environment.setLog(new Log(this.getLogger(), Level.CONFIG));
 		environment.setConfiguration(new Configuration(environment));
