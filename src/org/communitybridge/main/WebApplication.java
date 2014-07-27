@@ -15,6 +15,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.communitybridge.achievement.Achievement;
 import org.communitybridge.achievement.PlayerAchievementState;
+import org.communitybridge.synchronization.PlayerSynchronizer;
 import org.communitybridge.synchronization.ban.BanSynchronizer;
 import org.communitybridge.synchronization.group.JunctionWebGroupDao;
 import org.communitybridge.synchronization.group.KeyValueWebGroupDao;
@@ -39,6 +40,7 @@ public class WebApplication extends Synchronizer
 	private Log log;
 	private CommunityBridge plugin;
 	private BanSynchronizer banSynchronizer;
+	private PlayerSynchronizer playerSynchronizer;
 	private WebGroupDao webGroupDao;
 
 	private List<Player> playerLocks = new ArrayList<Player>();
@@ -58,6 +60,12 @@ public class WebApplication extends Synchronizer
 		this.log = environment.getLog();
 		this.plugin = environment.getPlugin();
 		configureDao();
+
+		if (environment.getConfiguration().playerSynchronizerRequired)
+		{
+			playerSynchronizer = new PlayerSynchronizer(environment);
+		}
+
 		if (configuration.banSynchronizationEnabled)
 		{
 			banSynchronizer = new BanSynchronizer(environment);
@@ -252,13 +260,7 @@ public class WebApplication extends Synchronizer
 
 	public void synchronizeAll()
 	{
-		environment.getLog().finest("Running player synchronization.");
-		Player[] onlinePlayers = Bukkit.getOnlinePlayers();
-		for (Player player : onlinePlayers)
-		{
-			synchronizePlayer(player, true);
-		}
-		environment.getLog().finest("Player synchronization complete.");
+		playerSynchronizer.synchronize();
 
 		if (configuration.banSynchronizationEnabled)
 		{
@@ -325,7 +327,7 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	private void synchronizeGroups(Player player)
+	public void synchronizeGroups(Player player)
 	{
 		String playerName = player.getName();
 		String direction = configuration.simpleSynchronizationDirection;
@@ -444,7 +446,7 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	private void updateStatistics(Player player, boolean online)
+	public void updateStatistics(Player player, boolean online)
 	{
 		PlayerStatistics playerStatistics = new PlayerStatistics(configuration.dateFormat);
 
@@ -884,7 +886,7 @@ public class WebApplication extends Synchronizer
 		} // for each group ID in currentState
 	}
 
-	private void rewardAchievements(Player player)
+	public void rewardAchievements(Player player)
 	{
 		PlayerAchievementState state = new PlayerAchievementState(player.getName(), new File(plugin.getDataFolder(), "Players"));
 		state.load();

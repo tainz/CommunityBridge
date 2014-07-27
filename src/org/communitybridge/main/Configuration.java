@@ -220,6 +220,7 @@ public class Configuration
 
 	// These are not in the config.yml. They are calculated.
 	public boolean playerDataRequired;
+	public boolean playerSynchronizerRequired;
 	public boolean permissionsSystemRequired;
 	public boolean groupSynchronizationActive;
 	public boolean economyEnabled;
@@ -1090,7 +1091,8 @@ public class Configuration
 
 		// These are calculated from settings above.
 		groupSynchronizationActive = simpleSynchronizationEnabled && (webappPrimaryGroupEnabled || webappSecondaryGroupEnabled);
-		playerDataRequired = groupSynchronizationActive;
+		playerDataRequired = groupSynchronizationActive || walletEnabled;
+		playerSynchronizerRequired = groupSynchronizationActive || statisticsEnabled || useAchievements || walletEnabled;
 		permissionsSystemRequired = !linkingUnregisteredGroup.isEmpty() || !linkingRegisteredGroup.isEmpty() || groupSynchronizationActive;
 
 		if (permissionsSystemRequired)
