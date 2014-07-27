@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import net.milkbowl.vault.economy.Economy;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -38,6 +39,7 @@ public class PlayerStateTest
 	private static final UUID UUID = new UUID(RandomUtils.nextLong(), RandomUtils.nextLong());
 
 	private Environment environment = new Environment();
+	private Economy economy = mock(Economy.class);
 	private PermissionHandler permissionHandler = mock(PermissionHandler.class);
 	private Configuration configuration = mock(Configuration.class);
   private CommunityBridge plugin = mock(CommunityBridge.class);
@@ -53,6 +55,7 @@ public class PlayerStateTest
 	@Before
 	public void beforeEach() {
 		environment.setConfiguration(configuration);
+		environment.setEconomy(economy);
 		environment.setPermissionHandler(permissionHandler);
 		environment.setPlugin(plugin);
 		environment.setWebApplication(webApplication);
@@ -105,6 +108,19 @@ public class PlayerStateTest
 	}
 
 	@Test
+	public void generateSetsMoney()
+	{
+		double money = RandomUtils.nextDouble() + 1;
+		configuration.economyEnabled = true;
+
+		when(economy.getBalance(player)).thenReturn(money);
+
+		state.generate();
+
+		assertEquals(money, state.getMoney(), 0);
+	}
+
+	@Test
 	public void copyNeverReturnsNull()
 	{
 		state.generate();
@@ -147,6 +163,19 @@ public class PlayerStateTest
 	}
 
 	@Test
+	public void copyCopiesGroupMoney()
+	{
+		double money = RandomUtils.nextDouble() + 1;
+		configuration.economyEnabled = true;
+
+		when(economy.getBalance(player)).thenReturn(money);
+		state.generate();
+		PlayerState copy = state.copy();
+
+		assertEquals(state.getMoney(), copy.getMoney(), 0);
+	}
+
+	@Test
 	public void copyCopiesNewFile()
 	{
 		state.generate();
@@ -158,15 +187,22 @@ public class PlayerStateTest
 	@Test
 	public void saveSavesData() throws IOException
 	{
+		double money = RandomUtils.nextDouble() + 1;
+		configuration.economyEnabled = true;
+
+		when(economy.getBalance(player)).thenReturn(money);
 		doNothing().when(playerData).set(anyString(), anyString());
 		doNothing().when(playerData).save(any(File.class));
+
 		state.generate();
 		state.save();
+
 		verify(playerData).set("last-known-name", PLAYER_NAME);
-		verify(playerData).set("webapp.primary-group-id", PRIMARY_GROUP_ID);
-		verify(playerData).set("webapp.group-ids", GROUP_IDS);
+		verify(playerData).set("money", money);
 		verify(playerData).set("permissions-system.primary-group-name", PRIMARY_GROUP_NAME);
 		verify(playerData).set("permissions-system.group-names", GROUP_NAMES);
+		verify(playerData).set("webapp.primary-group-id", PRIMARY_GROUP_ID);
+		verify(playerData).set("webapp.group-ids", GROUP_IDS);
 		verify(playerData).save(any(File.class));
 	}
 
@@ -195,6 +231,7 @@ public class PlayerStateTest
 		YamlConfiguration.loadConfiguration(oldPlayerFile);
 	}
 
+	@Test
 	public void loadLoadsFromNewPlayerFile() throws IOException
 	{
 		when(playerFile.exists()).thenReturn(true);
@@ -203,22 +240,27 @@ public class PlayerStateTest
 		when(YamlConfiguration.loadConfiguration(playerFile)).thenReturn(playerData);
 		state.load();
 		PowerMockito.verifyStatic();
-		YamlConfiguration.loadConfiguration(oldPlayerFile);
+		YamlConfiguration.loadConfiguration(playerFile);
 	}
 
+	@Test
 	public void loadLoadsData() throws IOException
 	{
+		double money = RandomUtils.nextDouble() + 1;
+
 		when(playerFile.exists()).thenReturn(true);
 		when(oldPlayerFile.exists()).thenReturn(true);
 		PowerMockito.mockStatic(YamlConfiguration.class);
 		when(YamlConfiguration.loadConfiguration(playerFile)).thenReturn(playerData);
+		when(playerData.getDouble("money", 0)).thenReturn(money);
 		when(playerData.getStringList("permissions-system.group-names")).thenReturn(GROUP_NAMES);
+		when(playerData.getString("permissions-system.primary-group-name", "")).thenReturn(PRIMARY_GROUP_NAME);
 		when(playerData.getStringList("webapp.group-ids")).thenReturn(GROUP_IDS);
 		when(playerData.getString("webapp.primary-group-id", "")).thenReturn(PRIMARY_GROUP_ID);
-		when(playerData.getString("permissions-system.primary-group-name", "")).thenReturn(PRIMARY_GROUP_NAME);
 		state.load();
 
 		assertEquals(false, state.isIsNewFile());
+		assertEquals(money, state.getMoney(), 0);
 		assertEquals(PRIMARY_GROUP_ID, state.getWebappPrimaryGroupID());
 		assertEquals(PRIMARY_GROUP_NAME, state.getPermissionsSystemPrimaryGroupName());
 		for (String group : GROUP_NAMES)
