@@ -1,7 +1,6 @@
 package org.communitybridge.synchronization;
 
 import java.util.ArrayList;
-import java.util.List;
 import org.bukkit.entity.Player;
 import org.communitybridge.main.BukkitWrapper;
 import org.communitybridge.main.Configuration;
@@ -107,7 +106,7 @@ public class PlayerSynchronizerTest
 	public void synchronizeShouldRemovePlayerFromLock()
 	{
 		synchronizer.synchronize();
-		
+
 		InOrder inOrder = inOrder(webApplication, playerLocks);
 		inOrder.verify(playerLocks).add(player);
 		inOrder.verify(webApplication).synchronizeGroups(player);
