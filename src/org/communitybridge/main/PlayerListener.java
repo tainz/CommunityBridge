@@ -140,7 +140,10 @@ public class PlayerListener implements Listener
 
 		maybeSwitchToRegistered(player);
 
-		environment.getWebApplication().onJoin(player);
+		if (environment.getConfiguration().syncDuringJoin)
+		{
+			environment.getWebApplication().runSynchronizePlayer(player, true);
+		}
 	}
 
 	private void maybeSwitchToRegistered(Player player)

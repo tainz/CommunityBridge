@@ -52,7 +52,7 @@ public class PermissionHandlerBPermissions extends PermissionHandler
 		{
 			if (group.next().equalsIgnoreCase("default"))
 			{
-                                     group.remove();
+				group.remove();
 			}
 		}
 		return groupList;

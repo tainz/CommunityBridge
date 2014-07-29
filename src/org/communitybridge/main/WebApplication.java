@@ -221,14 +221,6 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	public void onJoin(Player player)
-	{
-		if (configuration.syncDuringJoin)
-		{
-			runSynchronizePlayer(player, true);
-		}
-	}
-
 	public void runSynchronizePlayer(final Player player, final boolean online)
 	{
 		MinecraftUtilities.startTask(plugin,
@@ -237,7 +229,7 @@ public class WebApplication extends Synchronizer
 																		@Override
 																		public void run()
 																		{
-																			synchronizePlayer(player, online);
+																			playerSynchronizer.synchronizePlayer(player, online);
 																		}
 																	}
 																);
@@ -266,27 +258,6 @@ public class WebApplication extends Synchronizer
 			environment.getLog().finest("Running ban synchronization.");
 			banSynchronizer.synchronize();
 			environment.getLog().finest("Ban synchronization complete.");
-		}
-	}
-
-	private void synchronizePlayer(Player player, boolean online)
-	{
-		if (!playerLocks.contains(player))
-		{
-			synchronized (synchronizationLock) { playerLocks.add(player);}
-			if (configuration.groupSynchronizationActive)
-			{
-				synchronizeGroups(player);
-			}
-			if (configuration.statisticsEnabled)
-			{
-				updateStatistics(player, online);
-			}
-			if (configuration.useAchievements)
-			{
-				rewardAchievements(player);
-			}
-			synchronized (synchronizationLock) { playerLocks.remove(player); }
 		}
 	}
 
@@ -326,11 +297,10 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	public void synchronizeGroups(Player player)
+	public void synchronizeGroups(Player player, String userID)
 	{
 		String playerName = player.getName();
 		String direction = configuration.simpleSynchronizationDirection;
-		String userID = environment.getUserPlayerLinker().getUserID(player);
 
 		// This can happen if the player disconnects after synchronization has
 		// already begun.

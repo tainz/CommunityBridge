@@ -25,14 +25,25 @@ public class PlayerSynchronizer extends Synchronizer
 		environment.getLog().finest("Player synchronization complete.");
 	}
 
-	private void synchronizePlayer(Player player, boolean online)
+	public void synchronizePlayer(Player player, boolean online)
 	{
 		if (!playerLocks.contains(player))
 		{
 			synchronized (synchronizationLock) { playerLocks.add(player);}
+			String userID = environment.getUserPlayerLinker().getUserID(player);
+			if (userID == null)
+			{
+				return;
+			}
+//		PlayerState previous = new PlayerState(environment, player, userID);
+//		previous.load();
+//
+//		PlayerState current = new PlayerState(environment, player, userID);
+//		current.generate();
+//		PlayerState result = current.copy();
 			if (environment.getConfiguration().groupSynchronizationActive)
 			{
-				environment.getWebApplication().synchronizeGroups(player);
+				environment.getWebApplication().synchronizeGroups(player, userID);
 			}
 			if (environment.getConfiguration().statisticsEnabled)
 			{
