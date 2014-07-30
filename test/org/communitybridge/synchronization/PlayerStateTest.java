@@ -33,8 +33,8 @@ public class PlayerStateTest
 	private static final String PRIMARY_GROUP_NAME = RandomStringUtils.randomAlphabetic(7);
 	private static final String USER_ID = RandomStringUtils.randomNumeric(3);
 	private static final String PRIMARY_GROUP_ID = RandomStringUtils.randomNumeric(2);
-	private static final List<String> GROUP_NAMES = new ArrayList<String>(Arrays.asList(new String[] {"group1", "group2", "group3"}));
-	private static final List<String> GROUP_IDS = new ArrayList<String>(Arrays.asList(new String[] {"01", "02", "03"}));
+	private static final List<String> GROUP_NAMES = new ArrayList<String>(Arrays.asList(new String[] {RandomStringUtils.randomAlphabetic(7), RandomStringUtils.randomAlphabetic(7), RandomStringUtils.randomAlphabetic(7)}));
+	private static final List<String> GROUP_IDS = new ArrayList<String>(Arrays.asList(new String[] {RandomStringUtils.randomNumeric(2), RandomStringUtils.randomNumeric(2), RandomStringUtils.randomNumeric(2)}));
 
 	private static final UUID UUID = new UUID(RandomUtils.nextLong(), RandomUtils.nextLong());
 
@@ -60,6 +60,10 @@ public class PlayerStateTest
 		environment.setPlugin(plugin);
 		environment.setWebApplication(webApplication);
 		configuration.simpleSynchronizationGroupsTreatedAsPrimary = new ArrayList<String>();
+		configuration.simpleSynchronizationGroupsTreatedAsPrimary.add(PRIMARY_GROUP_NAME);
+		configuration.groupSynchronizationActive = true;
+		configuration.webappPrimaryGroupEnabled = true;
+		configuration.webappSecondaryGroupEnabled = true;
 		when(player.getUniqueId()).thenReturn(UUID);
 		when(player.getName()).thenReturn(PLAYER_NAME);
 		when(webApplication.getUserPrimaryGroupID(USER_ID)).thenReturn(PRIMARY_GROUP_ID);
@@ -79,6 +83,25 @@ public class PlayerStateTest
 	}
 
 	@Test
+	public void generateWhenGroupSynchronizationInactiveDoesNotSetPrimaryGroupId()
+	{
+		configuration.groupSynchronizationActive = false;
+		state.generate();
+
+		assertEquals("", state.getWebappPrimaryGroupID());
+	}
+
+	@Test
+	public void generateWhenPrimaryGroupInactiveDoesNotSetPrimaryGroupId()
+	{
+		configuration.groupSynchronizationActive = true;
+		configuration.webappPrimaryGroupEnabled = false;
+		state.generate();
+
+		assertEquals("", state.getWebappPrimaryGroupID());
+	}
+
+	@Test
 	public void generateSetsGroupIds()
 	{
 		state.generate();
@@ -89,11 +112,65 @@ public class PlayerStateTest
 	}
 
 	@Test
+	public void generateWhenGroupSynchronizationInactiveDoesNotSetGroupIds()
+	{
+		configuration.groupSynchronizationActive = false;
+		state.generate();
+
+		assertTrue(state.getWebappGroupIDs().isEmpty());
+	}
+
+	@Test
+	public void generateWhenSecondaryGroupInactiveDoesNotSetGroupIds()
+	{
+		configuration.groupSynchronizationActive = true;
+		configuration.webappSecondaryGroupEnabled = false;
+		state.generate();
+
+		assertTrue(state.getWebappGroupIDs().isEmpty());
+	}
+
+	@Test
 	public void generateSetsPrimaryGroupName()
 	{
 		state.generate();
 		assertEquals(PRIMARY_GROUP_NAME, state.getPermissionsSystemPrimaryGroupName());
+	}
 
+	@Test
+	public void generateWhenPrimaryGroupNotSupportedSetsPrimaryGroupName()
+	{
+		when(permissionHandler.supportsPrimaryGroups()).thenReturn(false);
+		GROUP_NAMES.add(PRIMARY_GROUP_NAME);
+		state.generate();
+		assertEquals(PRIMARY_GROUP_NAME, state.getPermissionsSystemPrimaryGroupName());
+	}
+
+	@Test
+	public void generateWhenPrimaryGroupNotSupportedSetsBlankOnNotFound()
+	{
+		when(permissionHandler.supportsPrimaryGroups()).thenReturn(false);
+		state.generate();
+		assertEquals("", state.getPermissionsSystemPrimaryGroupName());
+	}
+
+	@Test
+	public void generateWhenGroupSynchronizationInactiveDoesNotSetPrimaryGroupName()
+	{
+		configuration.groupSynchronizationActive = false;
+		state.generate();
+
+		assertEquals("", state.getPermissionsSystemPrimaryGroupName());
+	}
+
+	@Test
+	public void generateWhenPrimaryGroupInactiveDoesNotSetPrimaryGroupName()
+	{
+		configuration.groupSynchronizationActive = true;
+		configuration.webappPrimaryGroupEnabled = false;
+		state.generate();
+
+		assertEquals("", state.getPermissionsSystemPrimaryGroupName());
 	}
 
 	@Test
@@ -105,6 +182,25 @@ public class PlayerStateTest
 		{
 			assertTrue(group + "missing", state.getPermissionsSystemGroupNames().contains(group));
 		}
+	}
+
+	@Test
+	public void generateWhenGroupSynchronizationInactiveDoesNotSetGroupNames()
+	{
+		configuration.groupSynchronizationActive = false;
+		state.generate();
+
+		assertTrue(state.getPermissionsSystemGroupNames().isEmpty());
+	}
+
+	@Test
+	public void generateWhenSecondaryGroupInactiveDoesNotSetGroupNames()
+	{
+		configuration.groupSynchronizationActive = true;
+		configuration.webappSecondaryGroupEnabled = false;
+		state.generate();
+
+		assertTrue(state.getPermissionsSystemGroupNames().isEmpty());
 	}
 
 	@Test
@@ -176,7 +272,7 @@ public class PlayerStateTest
 	}
 
 	@Test
-	public void copyCopiesGroupMoney()
+	public void copyCopiesMinecraftMoney()
 	{
 		double money = RandomUtils.nextDouble() + 1;
 		configuration.economyEnabled = true;
@@ -277,10 +373,12 @@ public class PlayerStateTest
 		assertEquals(money, state.getMinecraftWallet(), 0);
 		assertEquals(PRIMARY_GROUP_ID, state.getWebappPrimaryGroupID());
 		assertEquals(PRIMARY_GROUP_NAME, state.getPermissionsSystemPrimaryGroupName());
+
 		for (String group : GROUP_NAMES)
 		{
 			assertTrue(group + " missing.", state.getPermissionsSystemGroupNames().contains(group));
 		}
+
 		for (String id : GROUP_IDS)
 		{
 			assertTrue(id + " missing.", state.getWebappGroupIDs().contains(id));

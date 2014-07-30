@@ -55,23 +55,17 @@ public class PlayerState
 			minecraftWallet = environment.getEconomy().getBalance(player);
 			webApplicationWallet = environment.getWebApplication().getBalance(userID);
 		}
-		webappPrimaryGroupID = environment.getWebApplication().getUserPrimaryGroupID(userID);
-		webappGroupIDs = environment.getWebApplication().getUserSecondaryGroupIDs(userID);
-		permissionsSystemGroupNames = environment.getPermissionHandler().getGroups(player);
-
-		if (environment.getPermissionHandler().supportsPrimaryGroups())
+		if (environment.getConfiguration().groupSynchronizationActive)
 		{
-			permissionsSystemPrimaryGroupName = environment.getPermissionHandler().getPrimaryGroup(player);
-		}
-		else
-		{
-			for (String groupName : environment.getConfiguration().simpleSynchronizationGroupsTreatedAsPrimary)
+			if (environment.getConfiguration().webappSecondaryGroupEnabled)
 			{
-				if (permissionsSystemGroupNames.contains(groupName))
-				{
-					permissionsSystemPrimaryGroupName = groupName;
-					permissionsSystemGroupNames.remove(groupName);
-				}
+				permissionsSystemGroupNames = environment.getPermissionHandler().getGroups(player);
+				webappGroupIDs = environment.getWebApplication().getUserSecondaryGroupIDs(userID);
+			}
+			if (environment.getConfiguration().webappPrimaryGroupEnabled)
+			{
+				permissionsSystemPrimaryGroupName = getPrimaryGroupName();
+				webappPrimaryGroupID = environment.getWebApplication().getUserPrimaryGroupID(userID);
 			}
 		}
 	}
@@ -179,11 +173,6 @@ public class PlayerState
 		return isNewFile;
 	}
 
-	public void setIsNewFile(boolean isNewFile)
-	{
-		this.isNewFile = isNewFile;
-	}
-
 	private void setupPlayerFile(Player player)
 	{
 		File playerFolder = new File(environment.getPlugin().getDataFolder(), "Players");
@@ -209,5 +198,25 @@ public class PlayerState
 	public void setWebApplicationWallet(double wallet)
 	{
 		this.webApplicationWallet = wallet;
+	}
+
+	private String getPrimaryGroupName()
+	{
+		if (environment.getPermissionHandler().supportsPrimaryGroups())
+		{
+			return environment.getPermissionHandler().getPrimaryGroup(player);
+		}
+		else
+		{
+			for (String groupName : environment.getConfiguration().simpleSynchronizationGroupsTreatedAsPrimary)
+			{
+				if (permissionsSystemGroupNames.contains(groupName))
+				{
+					permissionsSystemGroupNames.remove(groupName);
+					return groupName;
+				}
+			}
+			return "";
+		}
 	}
 }
