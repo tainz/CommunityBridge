@@ -34,15 +34,12 @@ public class WebApplication extends Synchronizer
 	protected	static final String EXCEPTION_MESSAGE_REMOVEGROUP = "Exception during WebApplication.addGroup(): ";
 	protected	static final String EXCEPTION_MESSAGE_GETUSERID = "Exception during WebApplication.getUserIDfromDatabase(): ";
 
-	private final Boolean synchronizationLock = true;
 	private Configuration configuration;
 	private Log log;
 	private CommunityBridge plugin;
 	private BanSynchronizer banSynchronizer;
 	private PlayerSynchronizer playerSynchronizer;
 	private WebGroupDao webGroupDao;
-
-	private List<Player> playerLocks = new ArrayList<Player>();
 
 	public WebApplication(Environment environment, WebGroupDao webGroupDao)
 	{
