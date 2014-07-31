@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -93,7 +95,7 @@ public class PlayerState
 		}
 	}
 
-	public void save() throws IOException
+	public void save()
 	{
 		playerData.set("last-known-name", player.getName());
 		playerData.set("minecraft-money", minecraftWallet);
@@ -101,8 +103,15 @@ public class PlayerState
 		playerData.set("permissions-system.group-names", permissionsSystemGroupNames);
 		playerData.set("webapp.primary-group-id", webappPrimaryGroupID);
 		playerData.set("webapp.group-ids", webappGroupIDs);
-
-		playerData.save(playerFile);
+		
+		try
+		{
+			playerData.save(playerFile);
+		}
+		catch (IOException exception)
+		{
+			environment.getLog().severe("Exception while saving player state for " + player.getName() + ": " + exception.getMessage());
+		}
 	}
 
 	public PlayerState copy()

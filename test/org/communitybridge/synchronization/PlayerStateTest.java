@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.milkbowl.vault.economy.Economy;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.math.RandomUtils;
@@ -16,6 +18,7 @@ import org.communitybridge.main.Configuration;
 import org.communitybridge.main.Environment;
 import org.communitybridge.main.WebApplication;
 import org.communitybridge.permissionhandlers.PermissionHandler;
+import org.communitybridge.utility.Log;
 import org.junit.Test;
 import org.junit.Before;
 import static org.junit.Assert.*;
@@ -43,6 +46,7 @@ public class PlayerStateTest
 	private PermissionHandler permissionHandler = mock(PermissionHandler.class);
 	private Configuration configuration = mock(Configuration.class);
   private CommunityBridge plugin = mock(CommunityBridge.class);
+	private Log log = mock(Log.class);
 	private Player player = mock(Player.class);
 	private WebApplication webApplication = mock(WebApplication.class);
 
@@ -56,6 +60,7 @@ public class PlayerStateTest
 	public void beforeEach() {
 		environment.setConfiguration(configuration);
 		environment.setEconomy(economy);
+		environment.setLog(log);
 		environment.setPermissionHandler(permissionHandler);
 		environment.setPlugin(plugin);
 		environment.setWebApplication(webApplication);
@@ -301,8 +306,6 @@ public class PlayerStateTest
 		configuration.walletEnabled = true;
 
 		when(economy.getBalance(player)).thenReturn(money);
-		doNothing().when(playerData).set(anyString(), anyString());
-		doNothing().when(playerData).save(any(File.class));
 
 		state.generate();
 		state.save();
@@ -314,6 +317,23 @@ public class PlayerStateTest
 		verify(playerData).set("webapp.primary-group-id", PRIMARY_GROUP_ID);
 		verify(playerData).set("webapp.group-ids", GROUP_IDS);
 		verify(playerData).save(any(File.class));
+	}
+
+	@Test
+	public void saveHandlesIOException() throws IOException
+	{
+		double money = RandomUtils.nextDouble() + 1;
+		configuration.economyEnabled = true;
+		configuration.walletEnabled = true;
+
+		when(economy.getBalance(player)).thenReturn(money);
+		doNothing().when(playerData).set(anyString(), anyString());
+		String exceptionMessage = RandomStringUtils.randomAlphabetic(18);
+		doThrow(new IOException(exceptionMessage)).when(playerData).save(any(File.class));
+
+		state.generate();
+		state.save();
+		verify(log).severe("Exception while saving player state for " + player.getName() + ": " + exceptionMessage);
 	}
 
 	@Test

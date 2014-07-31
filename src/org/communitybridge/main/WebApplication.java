@@ -354,14 +354,7 @@ public class WebApplication extends Synchronizer
 			current.setWebappGroupIDs(previous.getWebappGroupIDs());
 		}
 		// 5. Save newly created state
-		try
-		{
-			result.save();
-		}
-		catch (IOException exception)
-		{
-			log.severe("Exception when saving group state for player " + playerName + ": " + exception.getMessage());
-		}
+		result.save();
 	}
 
 	protected void addGroup(String userID, String groupID, int currentGroupCount)
