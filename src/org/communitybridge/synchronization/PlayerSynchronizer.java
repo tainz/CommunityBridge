@@ -35,15 +35,23 @@ public class PlayerSynchronizer extends Synchronizer
 			{
 				return;
 			}
-//		PlayerState previous = new PlayerState(environment, player, userID);
-//		previous.load();
-//
-//		PlayerState current = new PlayerState(environment, player, userID);
-//		current.generate();
-//		PlayerState result = current.copy();
+			PlayerState previous = new PlayerState(environment, player, userID);
+			PlayerState current = new PlayerState(environment, player, userID);
+			previous.load();
+			current.generate();
+			PlayerState result = current.copy();
+
 			if (environment.getConfiguration().groupSynchronizationActive)
 			{
-				environment.getWebApplication().synchronizeGroups(player, userID);
+				result = environment.getWebApplication().synchronizeGroups(player, userID, previous, current, result);
+			}
+			if (environment.getConfiguration().walletEnabled)
+			{
+				result = synchronizeWallet(player, userID, previous, current, result);
+			}
+			if (environment.getConfiguration().groupSynchronizationActive || environment.getConfiguration().walletEnabled)
+			{
+				result.save();
 			}
 			if (environment.getConfiguration().statisticsEnabled)
 			{
@@ -55,5 +63,10 @@ public class PlayerSynchronizer extends Synchronizer
 			}
 			synchronized (synchronizationLock) { playerLocks.remove(player); }
 		}
+	}
+
+	private PlayerState synchronizeWallet(Player player, String userID, PlayerState previous, PlayerState current, PlayerState result)
+	{
+		return result;
 	}
 }

@@ -294,7 +294,7 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	public void synchronizeGroups(Player player, String userID)
+	public PlayerState synchronizeGroups(Player player, String userID, PlayerState previous, PlayerState current, PlayerState result)
 	{
 		String playerName = player.getName();
 		String direction = configuration.simpleSynchronizationDirection;
@@ -303,7 +303,7 @@ public class WebApplication extends Synchronizer
 		// already begun.
 		if (userID == null)
 		{
-			return;
+			return null;
 		}
 
 		if (userID.equalsIgnoreCase(configuration.simpleSynchronizationSuperUserID))
@@ -312,20 +312,13 @@ public class WebApplication extends Synchronizer
 			// we'll do nothing at all with the super-user.
 			if (direction.startsWith("min"))
 			{
-				return;
+				return null;
 			}
 
 			// Otherwise, we'll temporarily override the direction to be one-way
 			// for the super-user.
 			direction = "web";
 		}
-
-		PlayerState previous = new PlayerState(environment, player, userID);
-		previous.load();
-
-		PlayerState current = new PlayerState(environment, player, userID);
-		current.generate();
-		PlayerState result = current.copy();
 
 		if(configuration.simpleSynchronizationFirstDirection.startsWith("web") && previous.isIsNewFile()) {
 			direction = "web";
@@ -354,7 +347,7 @@ public class WebApplication extends Synchronizer
 			current.setWebappGroupIDs(previous.getWebappGroupIDs());
 		}
 		// 5. Save newly created state
-		result.save();
+		return result;
 	}
 
 	protected void addGroup(String userID, String groupID, int currentGroupCount)
