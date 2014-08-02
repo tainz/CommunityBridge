@@ -170,16 +170,6 @@ public class PlayerStateTest
 	}
 
 	@Test
-	public void generateWhenPrimaryGroupInactiveDoesNotSetPrimaryGroupName()
-	{
-		configuration.groupSynchronizationActive = true;
-		configuration.webappPrimaryGroupEnabled = false;
-		state.generate(environment, player, USER_ID);
-
-		assertEquals("", state.getPermissionsSystemPrimaryGroupName());
-	}
-
-	@Test
 	public void generateSetsGroupNames()
 	{
 		state.generate(environment, player, USER_ID);
@@ -194,16 +184,6 @@ public class PlayerStateTest
 	public void generateWhenGroupSynchronizationInactiveDoesNotSetGroupNames()
 	{
 		configuration.groupSynchronizationActive = false;
-		state.generate(environment, player, USER_ID);
-
-		assertTrue(state.getPermissionsSystemGroupNames().isEmpty());
-	}
-
-	@Test
-	public void generateWhenSecondaryGroupInactiveDoesNotSetGroupNames()
-	{
-		configuration.groupSynchronizationActive = true;
-		configuration.webappSecondaryGroupEnabled = false;
 		state.generate(environment, player, USER_ID);
 
 		assertTrue(state.getPermissionsSystemGroupNames().isEmpty());

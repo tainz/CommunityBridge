@@ -35,14 +35,14 @@ public class PlayerState
 		}
 		if (environment.getConfiguration().groupSynchronizationActive)
 		{
+			permissionsSystemGroupNames = environment.getPermissionHandler().getGroups(player);
+			permissionsSystemPrimaryGroupName = getPrimaryGroupName(player, environment);
 			if (environment.getConfiguration().webappSecondaryGroupEnabled)
 			{
-				permissionsSystemGroupNames = environment.getPermissionHandler().getGroups(player);
 				webappGroupIDs = environment.getWebApplication().getUserSecondaryGroupIDs(userID);
 			}
 			if (environment.getConfiguration().webappPrimaryGroupEnabled)
 			{
-				permissionsSystemPrimaryGroupName = getPrimaryGroupName(player, environment);
 				webappPrimaryGroupID = environment.getWebApplication().getUserPrimaryGroupID(userID);
 			}
 		}
