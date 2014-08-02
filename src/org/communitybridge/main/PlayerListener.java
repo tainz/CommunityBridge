@@ -61,7 +61,7 @@ public class PlayerListener implements Listener
 	{
 		if (environment.getConfiguration().syncDuringQuit)
 		{
-			environment.getWebApplication().runSynchronizePlayer(event.getPlayer(), false);
+			environment.getWebApplication().runSynchronizePlayer(environment, event.getPlayer(), false);
 		}
 	} // onPlayerQuit
 
@@ -142,7 +142,7 @@ public class PlayerListener implements Listener
 
 		if (environment.getConfiguration().syncDuringJoin)
 		{
-			environment.getWebApplication().runSynchronizePlayer(player, true);
+			environment.getWebApplication().runSynchronizePlayer(environment, player, true);
 		}
 	}
 

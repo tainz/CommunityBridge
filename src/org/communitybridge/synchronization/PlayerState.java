@@ -13,10 +13,6 @@ import org.communitybridge.main.Environment;
 
 public class PlayerState
 {
-	private Environment environment;
-	private Player player;
-	private String userID = "";
-
 	private String webappPrimaryGroupID = "";
 	private List<String> webappGroupIDs = new ArrayList<String>();
 
@@ -29,28 +25,8 @@ public class PlayerState
 	private boolean isNewFile;
 
 	private FileConfiguration playerData = new YamlConfiguration();
-	private File playerFile;
-	private File oldPlayerFile;
 
-	public PlayerState(Environment environment, Player player, String userID)
-	{
-		this.environment = environment;
-		this.player = player;
-		this.userID = userID;
-		setupPlayerFile(player);
-	}
-
-	PlayerState(Environment environment, Player player, String userID, YamlConfiguration playerData, File playerFile, File oldPlayerFile)
-	{
-		this.environment = environment;
-		this.player = player;
-		this.userID = userID;
-		this.playerData = playerData;
-		this.playerFile = playerFile;
-		this.oldPlayerFile = oldPlayerFile;
-	}
-
-	public void generate()
+	public void generate(Environment environment, Player player, String userID)
 	{
 		if (environment.getConfiguration().economyEnabled && environment.getConfiguration().walletEnabled)
 		{
@@ -66,36 +42,35 @@ public class PlayerState
 			}
 			if (environment.getConfiguration().webappPrimaryGroupEnabled)
 			{
-				permissionsSystemPrimaryGroupName = getPrimaryGroupName();
+				permissionsSystemPrimaryGroupName = getPrimaryGroupName(player, environment);
 				webappPrimaryGroupID = environment.getWebApplication().getUserPrimaryGroupID(userID);
 			}
 		}
 	}
 
-	public void load()
+	public void load(File file)
 	{
-		if (playerFile.exists())
+		if (file.exists())
 		{
-			loadFromFile(playerFile);
+			playerData = YamlConfiguration.loadConfiguration(file);
+			minecraftWallet = playerData.getDouble("minecraft-money", 0.0);
+			permissionsSystemGroupNames = playerData.getStringList("permissions-system.group-names");
+			permissionsSystemPrimaryGroupName = playerData.getString("permissions-system.primary-group-name", "");
+			webappGroupIDs = playerData.getStringList("webapp.group-ids");
+			webappPrimaryGroupID = playerData.getString("webapp.primary-group-id", "");
+			isNewFile = false;
 		}
 		else
 		{
-			if (oldPlayerFile.exists())
-			{
-				loadFromFile(oldPlayerFile);
-			}
-			else
-			{
-				isNewFile = true;
-				permissionsSystemGroupNames = new ArrayList<String>();
-				permissionsSystemPrimaryGroupName = "";
-				webappPrimaryGroupID = "";
-				webappGroupIDs = new ArrayList<String>();
-			}
+			isNewFile = true;
+			permissionsSystemGroupNames = new ArrayList<String>();
+			permissionsSystemPrimaryGroupName = "";
+			webappPrimaryGroupID = "";
+			webappGroupIDs = new ArrayList<String>();
 		}
 	}
 
-	public void save()
+	public void save(Player player, File file, Environment environment)
 	{
 		playerData.set("last-known-name", player.getName());
 		playerData.set("minecraft-money", minecraftWallet);
@@ -103,10 +78,10 @@ public class PlayerState
 		playerData.set("permissions-system.group-names", permissionsSystemGroupNames);
 		playerData.set("webapp.primary-group-id", webappPrimaryGroupID);
 		playerData.set("webapp.group-ids", webappGroupIDs);
-		
+
 		try
 		{
-			playerData.save(playerFile);
+			playerData.save(file);
 		}
 		catch (IOException exception)
 		{
@@ -116,7 +91,7 @@ public class PlayerState
 
 	public PlayerState copy()
 	{
-		PlayerState copy = new PlayerState(environment, player, userID);
+		PlayerState copy = new PlayerState();
 		copy.isNewFile = isNewFile;
 		copy.setMinecraftWallet(minecraftWallet);
 		copy.setPermissionsSystemGroupNames(permissionsSystemGroupNames);
@@ -128,13 +103,7 @@ public class PlayerState
 
 	private void loadFromFile(File file)
 	{
-		playerData = YamlConfiguration.loadConfiguration(file);
-		minecraftWallet = playerData.getDouble("minecraft-money", 0.0);
-		permissionsSystemGroupNames = playerData.getStringList("permissions-system.group-names");
-		permissionsSystemPrimaryGroupName = playerData.getString("permissions-system.primary-group-name", "");
-		webappGroupIDs = playerData.getStringList("webapp.group-ids");
-		webappPrimaryGroupID = playerData.getString("webapp.primary-group-id", "");
-		isNewFile = false;
+
 	}
 
 	public String getWebappPrimaryGroupID()
@@ -182,13 +151,6 @@ public class PlayerState
 		return isNewFile;
 	}
 
-	private void setupPlayerFile(Player player)
-	{
-		File playerFolder = new File(environment.getPlugin().getDataFolder(), "Players");
-		playerFile = new File(playerFolder, player.getUniqueId().toString() + ".yml");
-		oldPlayerFile = new File(playerFolder, player.getName() + ".yml");
-	}
-
 	public double getMinecraftWallet()
 	{
 		return minecraftWallet;
@@ -209,7 +171,7 @@ public class PlayerState
 		this.webApplicationWallet = wallet;
 	}
 
-	private String getPrimaryGroupName()
+	private String getPrimaryGroupName(Player player, Environment environment)
 	{
 		if (environment.getPermissionHandler().supportsPrimaryGroups())
 		{

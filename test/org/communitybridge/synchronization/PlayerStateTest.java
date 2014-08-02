@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.junit.Before;
 import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import static org.mockito.Mockito.*;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -54,7 +55,8 @@ public class PlayerStateTest
 	private File playerFile = mock(File.class);
 	private File oldPlayerFile = mock(File.class);
 
-	private PlayerState state;
+	@InjectMocks
+	private PlayerState state = new PlayerState();
 
 	@Before
 	public void beforeEach() {
@@ -76,13 +78,12 @@ public class PlayerStateTest
 		when(permissionHandler.supportsPrimaryGroups()).thenReturn(true);
 		when(permissionHandler.getPrimaryGroup(player)).thenReturn(PRIMARY_GROUP_NAME);
 		when(permissionHandler.getGroups(player)).thenReturn(GROUP_NAMES);
-		state = new PlayerState(environment, player, USER_ID, playerData, playerFile, oldPlayerFile);
 	}
 
 	@Test
 	public void generateSetsPrimaryGroupId()
 	{
-		state.generate();
+		state.generate(environment, player, USER_ID);
 
 		assertEquals(PRIMARY_GROUP_ID, state.getWebappPrimaryGroupID());
 	}
@@ -91,7 +92,7 @@ public class PlayerStateTest
 	public void generateWhenGroupSynchronizationInactiveDoesNotSetPrimaryGroupId()
 	{
 		configuration.groupSynchronizationActive = false;
-		state.generate();
+		state.generate(environment, player, USER_ID);
 
 		assertEquals("", state.getWebappPrimaryGroupID());
 	}
@@ -101,7 +102,7 @@ public class PlayerStateTest
 	{
 		configuration.groupSynchronizationActive = true;
 		configuration.webappPrimaryGroupEnabled = false;
-		state.generate();
+		state.generate(environment, player, USER_ID);
 
 		assertEquals("", state.getWebappPrimaryGroupID());
 	}
@@ -109,7 +110,7 @@ public class PlayerStateTest
 	@Test
 	public void generateSetsGroupIds()
 	{
-		state.generate();
+		state.generate(environment, player, USER_ID);
 		for (String id : GROUP_IDS)
 		{
 			assertTrue(id + "missing", state.getWebappGroupIDs().contains(id));
@@ -120,7 +121,7 @@ public class PlayerStateTest
 	public void generateWhenGroupSynchronizationInactiveDoesNotSetGroupIds()
 	{
 		configuration.groupSynchronizationActive = false;
-		state.generate();
+		state.generate(environment, player, USER_ID);
 
 		assertTrue(state.getWebappGroupIDs().isEmpty());
 	}
@@ -130,7 +131,7 @@ public class PlayerStateTest
 	{
 		configuration.groupSynchronizationActive = true;
 		configuration.webappSecondaryGroupEnabled = false;
-		state.generate();
+		state.generate(environment, player, USER_ID);
 
 		assertTrue(state.getWebappGroupIDs().isEmpty());
 	}
@@ -138,7 +139,7 @@ public class PlayerStateTest
 	@Test
 	public void generateSetsPrimaryGroupName()
 	{
-		state.generate();
+		state.generate(environment, player, USER_ID);
 		assertEquals(PRIMARY_GROUP_NAME, state.getPermissionsSystemPrimaryGroupName());
 	}
 
@@ -147,7 +148,7 @@ public class PlayerStateTest
 	{
 		when(permissionHandler.supportsPrimaryGroups()).thenReturn(false);
 		GROUP_NAMES.add(PRIMARY_GROUP_NAME);
-		state.generate();
+		state.generate(environment, player, USER_ID);
 		assertEquals(PRIMARY_GROUP_NAME, state.getPermissionsSystemPrimaryGroupName());
 	}
 
@@ -155,7 +156,7 @@ public class PlayerStateTest
 	public void generateWhenPrimaryGroupNotSupportedSetsBlankOnNotFound()
 	{
 		when(permissionHandler.supportsPrimaryGroups()).thenReturn(false);
-		state.generate();
+		state.generate(environment, player, USER_ID);
 		assertEquals("", state.getPermissionsSystemPrimaryGroupName());
 	}
 
@@ -163,7 +164,7 @@ public class PlayerStateTest
 	public void generateWhenGroupSynchronizationInactiveDoesNotSetPrimaryGroupName()
 	{
 		configuration.groupSynchronizationActive = false;
-		state.generate();
+		state.generate(environment, player, USER_ID);
 
 		assertEquals("", state.getPermissionsSystemPrimaryGroupName());
 	}
@@ -173,7 +174,7 @@ public class PlayerStateTest
 	{
 		configuration.groupSynchronizationActive = true;
 		configuration.webappPrimaryGroupEnabled = false;
-		state.generate();
+		state.generate(environment, player, USER_ID);
 
 		assertEquals("", state.getPermissionsSystemPrimaryGroupName());
 	}
@@ -181,7 +182,7 @@ public class PlayerStateTest
 	@Test
 	public void generateSetsGroupNames()
 	{
-		state.generate();
+		state.generate(environment, player, USER_ID);
 
 		for (String group : GROUP_NAMES)
 		{
@@ -193,7 +194,7 @@ public class PlayerStateTest
 	public void generateWhenGroupSynchronizationInactiveDoesNotSetGroupNames()
 	{
 		configuration.groupSynchronizationActive = false;
-		state.generate();
+		state.generate(environment, player, USER_ID);
 
 		assertTrue(state.getPermissionsSystemGroupNames().isEmpty());
 	}
@@ -203,7 +204,7 @@ public class PlayerStateTest
 	{
 		configuration.groupSynchronizationActive = true;
 		configuration.webappSecondaryGroupEnabled = false;
-		state.generate();
+		state.generate(environment, player, USER_ID);
 
 		assertTrue(state.getPermissionsSystemGroupNames().isEmpty());
 	}
@@ -217,7 +218,7 @@ public class PlayerStateTest
 
 		when(economy.getBalance(player)).thenReturn(wallet);
 
-		state.generate();
+		state.generate(environment, player, USER_ID);
 
 		assertEquals(wallet, state.getMinecraftWallet(), 0);
 	}
@@ -229,7 +230,7 @@ public class PlayerStateTest
 		configuration.economyEnabled = true;
 		configuration.walletEnabled = true;
 		when(webApplication.getBalance(USER_ID)).thenReturn(wallet);
-		state.generate();
+		state.generate(environment, player, USER_ID);
 
 		assertEquals(wallet, state.getWebApplicationWallet(), 0);
 	}
@@ -237,7 +238,7 @@ public class PlayerStateTest
 	@Test
 	public void copyNeverReturnsNull()
 	{
-		state.generate();
+		state.generate(environment, player, USER_ID);
 		PlayerState copy = state.copy();
 		assertNotNull(copy);
 	}
@@ -245,7 +246,7 @@ public class PlayerStateTest
 	@Test
 	public void copyCopiesPrimaryGroupId()
 	{
-		state.generate();
+		state.generate(environment, player, USER_ID);
 		PlayerState copy = state.copy();
 		assertEquals(state.getWebappPrimaryGroupID(), copy.getWebappPrimaryGroupID());
 	}
@@ -253,7 +254,7 @@ public class PlayerStateTest
 	@Test
 	public void copyCopiesGroupIds()
 	{
-		state.generate();
+		state.generate(environment, player, USER_ID);
 		PlayerState copy = state.copy();
 		assertEquals(state.getWebappGroupIDs(), copy.getWebappGroupIDs());
 	}
@@ -261,7 +262,7 @@ public class PlayerStateTest
 	@Test
 	public void copyCopiesPrimaryGroupName()
 	{
-		state.generate();
+		state.generate(environment, player, USER_ID);
 		PlayerState copy = state.copy();
 
 		assertEquals(state.getPermissionsSystemPrimaryGroupName(), copy.getPermissionsSystemPrimaryGroupName());
@@ -270,7 +271,7 @@ public class PlayerStateTest
 	@Test
 	public void copyCopiesGroupNames()
 	{
-		state.generate();
+		state.generate(environment, player, USER_ID);
 		PlayerState copy = state.copy();
 
 		assertEquals(state.getPermissionsSystemGroupNames(), copy.getPermissionsSystemGroupNames());
@@ -283,7 +284,7 @@ public class PlayerStateTest
 		configuration.economyEnabled = true;
 
 		when(economy.getBalance(player)).thenReturn(money);
-		state.generate();
+		state.generate(environment, player, USER_ID);
 		PlayerState copy = state.copy();
 
 		assertEquals(state.getMinecraftWallet(), copy.getMinecraftWallet(), 0);
@@ -292,7 +293,7 @@ public class PlayerStateTest
 	@Test
 	public void copyCopiesNewFile()
 	{
-		state.generate();
+		state.generate(environment, player, USER_ID);
 		PlayerState copy = state.copy();
 
 		assertEquals(state.isIsNewFile(), copy.isIsNewFile());
@@ -307,8 +308,8 @@ public class PlayerStateTest
 
 		when(economy.getBalance(player)).thenReturn(money);
 
-		state.generate();
-		state.save();
+		state.generate(environment, player, USER_ID);
+		state.save(player, playerFile, environment);
 
 		verify(playerData).set("last-known-name", PLAYER_NAME);
 		verify(playerData).set("minecraft-money", money);
@@ -331,8 +332,8 @@ public class PlayerStateTest
 		String exceptionMessage = RandomStringUtils.randomAlphabetic(18);
 		doThrow(new IOException(exceptionMessage)).when(playerData).save(any(File.class));
 
-		state.generate();
-		state.save();
+		state.generate(environment, player, USER_ID);
+		state.save(player, playerFile, environment);
 		verify(log).severe("Exception while saving player state for " + player.getName() + ": " + exceptionMessage);
 	}
 
@@ -341,36 +342,12 @@ public class PlayerStateTest
 	{
 		when(playerFile.exists()).thenReturn(false);
 		when(oldPlayerFile.exists()).thenReturn(false);
-		state.load();
+		state.load(playerFile);
 		assertEquals(true, state.isIsNewFile());
 		assertEquals("", state.getWebappPrimaryGroupID());
 		assertTrue("Group name list should be empty", state.getPermissionsSystemGroupNames().isEmpty());
 		assertTrue("Group id list should be empty", state.getWebappGroupIDs().isEmpty());
 		assertEquals("", state.getPermissionsSystemPrimaryGroupName());
-	}
-
-	@Test
-	public void loadLoadsFromOldPlayerFile() throws IOException
-	{
-		when(playerFile.exists()).thenReturn(false);
-		when(oldPlayerFile.exists()).thenReturn(true);
-		PowerMockito.mockStatic(YamlConfiguration.class);
-		when(YamlConfiguration.loadConfiguration(oldPlayerFile)).thenReturn(playerData);
-		state.load();
-		PowerMockito.verifyStatic();
-		YamlConfiguration.loadConfiguration(oldPlayerFile);
-	}
-
-	@Test
-	public void loadLoadsFromNewPlayerFile() throws IOException
-	{
-		when(playerFile.exists()).thenReturn(true);
-		when(oldPlayerFile.exists()).thenReturn(true);
-		PowerMockito.mockStatic(YamlConfiguration.class);
-		when(YamlConfiguration.loadConfiguration(playerFile)).thenReturn(playerData);
-		state.load();
-		PowerMockito.verifyStatic();
-		YamlConfiguration.loadConfiguration(playerFile);
 	}
 
 	@Test
@@ -387,7 +364,7 @@ public class PlayerStateTest
 		when(playerData.getString("permissions-system.primary-group-name", "")).thenReturn(PRIMARY_GROUP_NAME);
 		when(playerData.getStringList("webapp.group-ids")).thenReturn(GROUP_IDS);
 		when(playerData.getString("webapp.primary-group-id", "")).thenReturn(PRIMARY_GROUP_ID);
-		state.load();
+		state.load(playerFile);
 
 		assertEquals(false, state.isIsNewFile());
 		assertEquals(money, state.getMinecraftWallet(), 0);

@@ -128,7 +128,7 @@ public class CBCommandExecutor implements CommandExecutor
 		if (sender instanceof Player)
 		{
 			sendOrLog(sender, environment.getConfiguration().messages.get("cbsync"), ChatColor.GREEN, false);
-			environment.getWebApplication().runSynchronizePlayer((Player) sender, true);
+			environment.getWebApplication().runSynchronizePlayer(environment, (Player) sender, true);
 		}
 		else
 		{
@@ -154,7 +154,7 @@ public class CBCommandExecutor implements CommandExecutor
 		{
 			String message = environment.getConfiguration().messages.get("cbsync-target").replace("~PLAYERNAME~", player.getName());
 			sendAndLog(sender, message, ChatColor.GREEN, true);
-			environment.getWebApplication().runSynchronizePlayer(player, true);
+			environment.getWebApplication().runSynchronizePlayer(environment, player, true);
 		}
 	}
 }

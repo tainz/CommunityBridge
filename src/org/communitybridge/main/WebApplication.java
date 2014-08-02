@@ -218,7 +218,7 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	public void runSynchronizePlayer(final Player player, final boolean online)
+	public void runSynchronizePlayer(final Environment environment, final Player player, final boolean online)
 	{
 		MinecraftUtilities.startTask(plugin,
 																	new Runnable()
@@ -226,7 +226,7 @@ public class WebApplication extends Synchronizer
 																		@Override
 																		public void run()
 																		{
-																			playerSynchronizer.synchronizePlayer(player, online);
+																			playerSynchronizer.synchronizePlayer(environment, player, online);
 																		}
 																	}
 																);
@@ -248,7 +248,7 @@ public class WebApplication extends Synchronizer
 
 	public void synchronizeAll()
 	{
-		playerSynchronizer.synchronize();
+		playerSynchronizer.synchronize(environment);
 
 		if (configuration.banSynchronizationEnabled)
 		{
