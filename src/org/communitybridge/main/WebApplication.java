@@ -894,7 +894,8 @@ public class WebApplication extends Synchronizer
 				{
 					environment.getPermissionHandler().addToGroup(player, groupName);
 					result.permissionsSystemGroupNames.add(groupName);
-				}			} // if previousState contains group ID
+				}
+			} // if previousState contains group ID
 		} // for each group ID in currentState
 	}
 
@@ -957,7 +958,7 @@ public class WebApplication extends Synchronizer
 			pseudo = "pseudo-primary ";
 		}
 		result.permissionsSystemPrimaryGroupName = newGroupName;
-		if (formerGroupName == null)
+		if (formerGroupName == null || formerGroupName.isEmpty())
 		{
 			log.fine("Placed player '" + player.getName() + "' in " + pseudo + "permissions group '" + newGroupName + "'.");
 		}
