@@ -54,7 +54,7 @@ public class PlayerSynchronizer extends Synchronizer
 			}
 			if (environment.getConfiguration().groupSynchronizationActive || environment.getConfiguration().walletEnabled)
 			{
-				result.save(player, determinePlayerFile(environment, player, false), environment);
+				result.save(player, determinePlayerFile(environment, player, false), environment.getLog());
 			}
 			if (environment.getConfiguration().statisticsEnabled)
 			{

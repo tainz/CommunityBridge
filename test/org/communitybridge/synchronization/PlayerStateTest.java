@@ -289,7 +289,7 @@ public class PlayerStateTest
 		when(economy.getBalance(player)).thenReturn(money);
 
 		state.generate(environment, player, USER_ID);
-		state.save(player, playerFile, environment);
+		state.save(player, playerFile, environment.getLog());
 
 		verify(playerData).set("last-known-name", PLAYER_NAME);
 		verify(playerData).set("minecraft-money", money);
@@ -313,7 +313,7 @@ public class PlayerStateTest
 		doThrow(new IOException(exceptionMessage)).when(playerData).save(any(File.class));
 
 		state.generate(environment, player, USER_ID);
-		state.save(player, playerFile, environment);
+		state.save(player, playerFile, environment.getLog());
 		verify(log).severe("Exception while saving player state for " + player.getName() + ": " + exceptionMessage);
 	}
 

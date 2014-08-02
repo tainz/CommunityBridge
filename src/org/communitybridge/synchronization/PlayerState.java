@@ -10,6 +10,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.communitybridge.main.Environment;
+import org.communitybridge.utility.Log;
 
 public class PlayerState
 {
@@ -70,7 +71,7 @@ public class PlayerState
 		}
 	}
 
-	public void save(Player player, File file, Environment environment)
+	public void save(Player player, File file, Log log)
 	{
 		playerData.set("last-known-name", player.getName());
 		playerData.set("minecraft-money", minecraftWallet);
@@ -85,7 +86,7 @@ public class PlayerState
 		}
 		catch (IOException exception)
 		{
-			environment.getLog().severe("Exception while saving player state for " + player.getName() + ": " + exception.getMessage());
+			log.severe("Exception while saving player state for " + player.getName() + ": " + exception.getMessage());
 		}
 	}
 
@@ -99,11 +100,6 @@ public class PlayerState
 		copy.setWebappGroupIDs(webappGroupIDs);
 		copy.setWebappPrimaryGroupID(webappPrimaryGroupID);
 		return copy;
-	}
-
-	private void loadFromFile(File file)
-	{
-
 	}
 
 	public String getWebappPrimaryGroupID()
