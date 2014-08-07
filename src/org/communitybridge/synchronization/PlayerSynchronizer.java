@@ -10,8 +10,9 @@ public class PlayerSynchronizer extends Synchronizer
 {
 	private final Boolean synchronizationLock = true;
 	private List<Player> playerLocks = new ArrayList<Player>();
-	private PlayerState previous;
-	private PlayerState current;
+	private PlayerState previous = new PlayerState();
+	private PlayerState current = new PlayerState();
+	private PlayerState result;
 
 	public PlayerSynchronizer(Environment environment)
 	{
@@ -30,6 +31,8 @@ public class PlayerSynchronizer extends Synchronizer
 
 	public void synchronizePlayer(Environment environment, Player player, boolean online)
 	{
+		PlayerFileFetcher fetcher = new PlayerFileFetcher();
+
 		if (!playerLocks.contains(player))
 		{
 			synchronized (synchronizationLock) { playerLocks.add(player);}
@@ -38,11 +41,12 @@ public class PlayerSynchronizer extends Synchronizer
 			{
 				return;
 			}
-			previous = new PlayerState();
-			current = new PlayerState();
-			previous.load(determinePlayerFile(environment, player, true));
+
+			File playerFile = fetcher.getPlayerFile(environment.getPlugin().getDataFolder(), player, true);
+
+			previous.load(playerFile);
 			current.generate(environment, player, userID);
-			PlayerState result = current.copy();
+			result = current.copy();
 
 			if (environment.getConfiguration().groupSynchronizationActive)
 			{
@@ -54,7 +58,8 @@ public class PlayerSynchronizer extends Synchronizer
 			}
 			if (environment.getConfiguration().groupSynchronizationActive || environment.getConfiguration().walletEnabled)
 			{
-				result.save(player, determinePlayerFile(environment, player, false), environment.getLog());
+				playerFile = fetcher.getPlayerFile(environment.getPlugin().getDataFolder(), player, false);
+				result.save(player, playerFile, environment.getLog());
 			}
 			if (environment.getConfiguration().statisticsEnabled)
 			{
@@ -84,15 +89,5 @@ public class PlayerSynchronizer extends Synchronizer
 			environment.getEconomy().depositPlayer(player, change);
 		}
 		return result;
-	}
-
-	private File determinePlayerFile(Environment environment, Player player, boolean allowOld)
-	{
-		File folder = new File(environment.getPlugin().getDataFolder(), "Players");
-		File file = new File(folder, player.getUniqueId().toString() + ".yml");
-		if (!file.exists() && allowOld) {
-			file = new File(folder, player.getName() + ".yml");
-		}
-		return file;
 	}
 }
