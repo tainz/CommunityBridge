@@ -14,7 +14,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.communitybridge.achievement.Achievement;
 import org.communitybridge.achievement.PlayerAchievementState;
-import org.communitybridge.synchronization.PlayerSynchronizer;
+import org.communitybridge.synchronization.PlayerSynchronizationDispatcher;
 import org.communitybridge.synchronization.ban.BanSynchronizer;
 import org.communitybridge.synchronization.group.JunctionWebGroupDao;
 import org.communitybridge.synchronization.group.KeyValueWebGroupDao;
@@ -38,7 +38,7 @@ public class WebApplication extends Synchronizer
 	private Log log;
 	private CommunityBridge plugin;
 	private BanSynchronizer banSynchronizer;
-	private PlayerSynchronizer playerSynchronizer;
+	private PlayerSynchronizationDispatcher playerSynchronizer;
 	private WebGroupDao webGroupDao;
 
 	public WebApplication(Environment environment, WebGroupDao webGroupDao)
@@ -59,7 +59,7 @@ public class WebApplication extends Synchronizer
 
 		if (environment.getConfiguration().playerSynchronizerRequired)
 		{
-			playerSynchronizer = new PlayerSynchronizer(environment);
+			playerSynchronizer = new PlayerSynchronizationDispatcher();
 		}
 
 		if (configuration.banSynchronizationEnabled)
@@ -909,6 +909,11 @@ public class WebApplication extends Synchronizer
 	}
 
 	public double getBalance(String userID)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	public void setBalance(String USER_ID, double expected)
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
