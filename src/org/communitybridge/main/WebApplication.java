@@ -330,9 +330,11 @@ public class WebApplication extends Synchronizer
 		}
 		else
 		{
-			// With synchronization turned off the currentState should always be the previous state.
+			// With synchronization turned off the current/result should always be the previous state.
 			current.setPermissionsSystemPrimaryGroupName(previous.getPermissionsSystemPrimaryGroupName());
 			current.setWebappPrimaryGroupID(previous.getWebappPrimaryGroupID());
+			result.setPermissionsSystemPrimaryGroupName(previous.getPermissionsSystemPrimaryGroupName());
+			result.setWebappPrimaryGroupID(previous.getWebappPrimaryGroupID());
 		}
 
 		// 4. Synchronize secondary group state
@@ -343,8 +345,8 @@ public class WebApplication extends Synchronizer
 		else
 		{
 			// With synchronization turned off the currentState should always be the previous state.
-			current.setPermissionsSystemGroupNames(previous.getPermissionsSystemGroupNames());
-			current.setWebappGroupIDs(previous.getWebappGroupIDs());
+			result.setPermissionsSystemGroupNames(previous.getPermissionsSystemGroupNames());
+			result.setWebappGroupIDs(previous.getWebappGroupIDs());
 		}
 		// 5. Save newly created state
 		return result;
