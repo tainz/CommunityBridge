@@ -1,5 +1,7 @@
-package org.communitybridge.synchronization.group;
+package org.communitybridge.synchronization.dao;
 
+import org.communitybridge.synchronization.dao.SingleWebGroupDao;
+import org.communitybridge.synchronization.dao.WebGroupDao;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;

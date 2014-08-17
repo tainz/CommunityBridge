@@ -1,4 +1,4 @@
-package org.communitybridge.synchronization.group;
+package org.communitybridge.synchronization.dao;
 
 import java.net.MalformedURLException;
 import java.sql.SQLException;

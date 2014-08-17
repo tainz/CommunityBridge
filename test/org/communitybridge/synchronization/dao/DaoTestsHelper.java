@@ -1,4 +1,4 @@
-package org.communitybridge.synchronization.group;
+package org.communitybridge.synchronization.dao;
 
 import java.util.LinkedHashMap;
 import org.communitybridge.main.Configuration;
