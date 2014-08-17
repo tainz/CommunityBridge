@@ -1,18 +1,14 @@
 package org.communitybridge.synchronization;
 
 import java.net.MalformedURLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.entity.Player;
 import org.communitybridge.main.Environment;
-import org.communitybridge.main.WebApplication;
 import org.communitybridge.synchronization.dao.MoneyDao;
 
 public class MoneySynchronizer extends Synchronizer implements PlayerSynchronizer
 {
 	private MoneyDao money = new MoneyDao();
-	private final Boolean synchronizationLock = false;
 
 	MoneySynchronizer(Environment environment)
 	{
@@ -63,7 +59,7 @@ public class MoneySynchronizer extends Synchronizer implements PlayerSynchronize
 	{
 		double change = current.getWebApplicationWallet() - previous.getWebApplicationWallet();
 		result.setMinecraftWallet(current.getMinecraftWallet() + change);
-		
+
 		if (change > 0)
 		{
 			economy.depositPlayer(player, change);
