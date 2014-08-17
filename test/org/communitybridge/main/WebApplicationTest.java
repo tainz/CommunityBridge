@@ -3,7 +3,7 @@ package org.communitybridge.main;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
 import org.apache.commons.lang.RandomStringUtils;
-import org.communitybridge.groupsynchronizer.WebGroupDao;
+import org.communitybridge.synchronization.group.WebGroupDao;
 import org.communitybridge.utility.Log;
 import org.junit.Test;
 import static org.junit.Assert.*;

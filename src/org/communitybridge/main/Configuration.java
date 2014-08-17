@@ -104,6 +104,15 @@ public class Configuration
 	public String	postCountUserIDColumn;
 	public String postCountPostCountColumn;
 
+	// Wallet config
+	public boolean walletEnabled;
+	public boolean walletUsesKey;
+	public String	walletTableName;
+	public String	walletUserIDColumn;
+	public String walletColumnOrKey;
+	public String walletKeyColumn;
+	public String walletValueColumn;
+
 	// Requirements Section
 	public boolean requireAvatar;
 	public boolean requireMinimumPosts;
@@ -150,9 +159,6 @@ public class Configuration
 
 	public boolean healthEnabled;
 	public String healthColumnOrKey;
-
-	public boolean walletEnabled;
-	public String walletColumnOrKey;
 
 	// Web App group configuration
 	// - primary
@@ -214,6 +220,7 @@ public class Configuration
 
 	// These are not in the config.yml. They are calculated.
 	public boolean playerDataRequired;
+	public boolean playerSynchronizerRequired;
 	public boolean permissionsSystemRequired;
 	public boolean groupSynchronizationActive;
 	public boolean economyEnabled;
@@ -303,6 +310,30 @@ public class Configuration
 
 		}
 
+		if (walletEnabled)
+		{
+			temp = checkTable("app-wallet-config.table-name", walletTableName);
+			if (temp)
+			{
+				temp = temp & checkColumn("app-wallet-config.user-id-column", walletTableName, walletUserIDColumn);
+				if (walletUsesKey)
+				{
+					temp = temp & checkColumn("app-wallet-config.key-column", walletTableName, walletKeyColumn);
+					temp = temp & checkColumn("app-wallet-config.value-column", walletTableName, walletValueColumn);
+					checkKeyColumnForKey("app-wallet-config.column-or-key-name", walletTableName, walletKeyColumn,	walletColumnOrKey);
+				}
+				else
+				{
+					temp = temp & checkColumn("app-wallet-config.column-or-key-name", walletTableName, walletColumnOrKey);
+				}
+			}
+			if (!temp)
+			{
+				log.warning("Temporarily disabling wallet features due to previous error(s).");
+				walletEnabled = false;
+			}
+		}
+
 		if (statisticsEnabled)
 		{
 			temp = checkTable("statistics.table-name", statisticsTableName);
@@ -376,10 +407,6 @@ public class Configuration
 							{
 								checkKeyColumnForKey("statistics.trackers.lifeticks.formatted-column-or-key-name", statisticsTableName, statisticsKeyColumn,	lifeticksFormattedColumnOrKey);
 							}
-						}
-						if (walletEnabled)
-						{
-							checkKeyColumnForKey("statistics.trackers.wallet.column-or-key-name", statisticsTableName, statisticsKeyColumn, walletColumnOrKey);
 						}
 					}
 				}
@@ -463,12 +490,8 @@ public class Configuration
 						}
 					}
 
-					if (walletEnabled && !checkColumn("statistics.trackers.wallet.column-or-key-name", statisticsTableName, walletColumnOrKey))
-					{
-						walletEnabled = false;
-					}
-
-					if (!(onlineStatusEnabled || lastonlineEnabled || gametimeEnabled || levelEnabled || totalxpEnabled || currentxpEnabled || healthEnabled || lifeticksEnabled || walletEnabled))
+					if (!(onlineStatusEnabled || lastonlineEnabled || gametimeEnabled || levelEnabled
+								|| totalxpEnabled || currentxpEnabled || healthEnabled || lifeticksEnabled))
 					{
 						log.warning("Statistics tracking is enabled, but none of the individual trackers are enabled. Temporarily disabling statistics tracking.");
 						statisticsEnabled = false;
@@ -826,10 +849,7 @@ public class Configuration
 
 		usePluginMetrics = config.getBoolean("general.plugin-metrics", true);
 		useAchievements = config.getBoolean("general.use-achievements", false);
-		if (useAchievements)
-		{
-			economyEnabled = true;
-		}
+
 		permissionsSystem = config.getString("general.permissions-system", "");
 
 		autoEveryUnit = config.getString("general.auto-every-unit", "ticks").toLowerCase();
@@ -903,6 +923,19 @@ public class Configuration
 			postCountPostCountColumn = config.getString("app-post-count-config.post-count-column", "");
 		}
 
+		walletEnabled = config.getBoolean("app-wallet-config.enabled", false);
+		if (walletEnabled)
+		{
+			walletTableName = config.getString("app-wallet-config.table-name", "");
+			walletUserIDColumn = config.getString("app-wallet-config.user-id-column", "");
+			walletColumnOrKey = config.getString("app-wallet-config.column-or-key-name", "");
+			walletUsesKey = config.getBoolean("app-wallet-config.uses-key", false);
+			if (walletUsesKey)
+			{
+				walletKeyColumn =  config.getString("app-wallet-config.key-column", "");
+				walletValueColumn =  config.getString("app-wallet-config.value-column", "");
+			}
+		}
 		// Requirements Section
 		requireAvatar = config.getBoolean("requirement.avatar", false) && avatarEnabled;
 		requireMinimumPosts = config.getBoolean("requirement.post-count.enabled", false) && postCountEnabled;
@@ -966,8 +999,17 @@ public class Configuration
 		lifeticksColumnOrKey = config.getString("statistics.trackers.lifeticks.column-or-key-name", "");
 		lifeticksFormattedColumnOrKey = config.getString("statistics.trackers.lifeticks.formatted-column-or-key-name", "");
 
-		walletEnabled = config.getBoolean("statistics.trackers.wallet.enabled", false);
-		walletColumnOrKey = config.getString("statistics.trackers.wallet.column-or-key-name", "");
+		boolean oldStatistic = config.getBoolean("statistics.trackers.wallet.enabled", false);
+		String oldColumn = config.getString("statistics.trackers.wallet.column-or-key-name", "");
+		if (oldStatistic && !oldColumn.isEmpty())
+		{
+			environment.getLog().warning("Wallet configuration in the statistics section is deprecated. Use the new app-wallet-config section instead.");
+			walletEnabled = true;
+			walletTableName = statisticsTableName;
+			walletUsesKey = statisticsUsesKey;
+			walletKeyColumn =  statisticsKeyColumn;
+			walletValueColumn =  statisticsValueColumn;
+		}
 
 		// Web App group configuration
 		// - Primary
@@ -1046,8 +1088,10 @@ public class Configuration
 
 		// These are calculated from settings above.
 		groupSynchronizationActive = simpleSynchronizationEnabled && (webappPrimaryGroupEnabled || webappSecondaryGroupEnabled);
-		playerDataRequired = groupSynchronizationActive;
+		playerDataRequired = groupSynchronizationActive || walletEnabled;
+		playerSynchronizerRequired = groupSynchronizationActive || statisticsEnabled || useAchievements || walletEnabled;
 		permissionsSystemRequired = !linkingUnregisteredGroup.isEmpty() || !linkingRegisteredGroup.isEmpty() || groupSynchronizationActive;
+		economyEnabled = useAchievements || walletEnabled;
 
 		if (permissionsSystemRequired)
 		{
@@ -1371,7 +1415,23 @@ public class Configuration
 			log.config(  "Post count user ID column            : " + postCountUserIDColumn);
 			log.config(  "Post count post count column         : " + postCountPostCountColumn);
 		}
-
+		log.config(    "Wallet config enabled                : " + walletEnabled);
+		if (walletEnabled)
+		{
+			log.config(  "Wallet table name                    : " + walletTableName);
+			log.config(  "Wallet user ID column                : " + walletUserIDColumn);
+			log.config(  "Wallet uses key                      : " + walletUsesKey);
+			if (walletUsesKey)
+			{
+				log.config("Wallet key                           : " + walletColumnOrKey);
+				log.config("Wallet key column                    : " + walletKeyColumn);
+				log.config("Wallet value column                  : " + walletValueColumn);
+			}
+			else
+			{
+				log.config("Wallet column                        : " + walletColumnOrKey);
+			}
+		}
 		log.config(    "Require avatars                      : " + requireAvatar);
 		log.config(    "Require minimum posts                : " + requireMinimumPosts);
 		if (requireMinimumPosts)
@@ -1438,10 +1498,6 @@ public class Configuration
 			if (healthEnabled)
 			{
 				log.config("Tracking health column/key           : " + healthColumnOrKey);
-			}
-			if (walletEnabled)
-			{
-				log.config("Tracking wallet column/key           : " + walletColumnOrKey);
 			}
 		}
 

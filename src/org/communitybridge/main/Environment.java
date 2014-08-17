@@ -7,6 +7,7 @@ import org.communitybridge.utility.Log;
 
 public class Environment
 {
+	private BukkitWrapper bukkit;
 	private CommunityBridge plugin;
 	private Configuration configuration;
 	private Economy economy;
@@ -14,6 +15,7 @@ public class Environment
 	private PermissionHandler permissionHandler;
 	private SQL sql;
 	private UserPlayerLinker userPlayerLinker;
+	private WebApplication webApplication;
 
 	public Configuration getConfiguration()
 	{
@@ -83,5 +85,26 @@ public class Environment
 	public void setUserPlayerLinker(UserPlayerLinker userPlayerLinker)
 	{
 		this.userPlayerLinker = userPlayerLinker;
+	}
+
+	public WebApplication getWebApplication()
+	{
+		return webApplication;
+	}
+
+	public void setWebApplication(WebApplication webApplication)
+	{
+		this.webApplication = webApplication;
+	}
+
+
+	public BukkitWrapper getBukkit()
+	{
+		return bukkit;
+	}
+
+	public void setBukkit(BukkitWrapper bukkit)
+	{
+		this.bukkit = bukkit;
 	}
 }

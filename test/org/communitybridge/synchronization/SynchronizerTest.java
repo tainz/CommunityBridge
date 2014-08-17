@@ -1,6 +1,7 @@
-package org.communitybridge.main;
+package org.communitybridge.synchronization;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.communitybridge.main.Environment;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

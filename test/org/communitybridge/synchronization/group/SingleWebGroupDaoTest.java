@@ -1,4 +1,4 @@
-package org.communitybridge.groupsynchronizer;
+package org.communitybridge.synchronization.group;
 
 import java.net.MalformedURLException;
 import java.sql.ResultSet;

@@ -39,4 +39,9 @@ public class BukkitWrapper
 	{
 		return Bukkit.getPluginManager();
 	}
+
+	public Player[] getOnlinePlayers()
+	{
+		return Bukkit.getOnlinePlayers();
+	}
 }

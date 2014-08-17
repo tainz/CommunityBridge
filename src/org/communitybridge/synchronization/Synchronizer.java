@@ -1,9 +1,10 @@
-package org.communitybridge.main;
+package org.communitybridge.synchronization;
+
+import org.communitybridge.main.Environment;
 
 public class Synchronizer
 {
-	@SuppressWarnings("unused")
-	private Environment environment;
+	protected Environment environment;
 
 	public Synchronizer(Environment environment)
 	{

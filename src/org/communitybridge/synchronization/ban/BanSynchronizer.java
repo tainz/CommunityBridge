@@ -1,4 +1,4 @@
-package org.communitybridge.bansynchronizer;
+package org.communitybridge.synchronization.ban;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -10,12 +10,11 @@ import org.bukkit.entity.Player;
 import org.communitybridge.main.BukkitWrapper;
 import org.communitybridge.main.Configuration;
 import org.communitybridge.main.Environment;
-import org.communitybridge.main.Synchronizer;
+import org.communitybridge.synchronization.Synchronizer;
 import org.communitybridge.utility.Log;
 
 public class BanSynchronizer extends Synchronizer
 {
-	private Environment environment;
 	private Configuration configuration;
 	private Log log;
 
@@ -24,7 +23,6 @@ public class BanSynchronizer extends Synchronizer
 	public BanSynchronizer(Environment environment)
 	{
 		super(environment);
-		this.environment = environment;
 		this.configuration = environment.getConfiguration();
 		this.log = environment.getLog();
 		this.bukkit = new BukkitWrapper();
@@ -32,10 +30,10 @@ public class BanSynchronizer extends Synchronizer
 
 	public void synchronize()
 	{
-		BanState previous = new BanState(configuration.banSynchronizationMethod, environment);
+		BanState previous = new BanState(environment);
 		previous.load();
 
-		BanState current = new BanState(configuration.banSynchronizationMethod, environment);
+		BanState current = new BanState(environment);
 		current.generate();
 
 		if (isValidDirection(configuration.banSynchronizationDirection, "web"))

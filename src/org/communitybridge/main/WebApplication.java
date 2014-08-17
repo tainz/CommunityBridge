@@ -1,6 +1,7 @@
 package org.communitybridge.main;
 
-import org.communitybridge.groupsynchronizer.PlayerGroupState;
+import org.communitybridge.synchronization.Synchronizer;
+import org.communitybridge.synchronization.PlayerState;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -9,17 +10,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.communitybridge.achievement.Achievement;
 import org.communitybridge.achievement.PlayerAchievementState;
-import org.communitybridge.bansynchronizer.BanSynchronizer;
-import org.communitybridge.groupsynchronizer.JunctionWebGroupDao;
-import org.communitybridge.groupsynchronizer.KeyValueWebGroupDao;
-import org.communitybridge.groupsynchronizer.MultipleKeyValueWebGroupDao;
-import org.communitybridge.groupsynchronizer.SingleWebGroupDao;
-import org.communitybridge.groupsynchronizer.WebGroupDao;
+import org.communitybridge.synchronization.PlayerSynchronizationDispatcher;
+import org.communitybridge.synchronization.ban.BanSynchronizer;
+import org.communitybridge.synchronization.group.JunctionWebGroupDao;
+import org.communitybridge.synchronization.group.KeyValueWebGroupDao;
+import org.communitybridge.synchronization.group.MultipleKeyValueWebGroupDao;
+import org.communitybridge.synchronization.group.SingleWebGroupDao;
+import org.communitybridge.synchronization.group.WebGroupDao;
 import org.communitybridge.utility.Log;
 import org.communitybridge.utility.MinecraftUtilities;
 import org.communitybridge.utility.StringUtilities;
@@ -33,20 +34,16 @@ public class WebApplication extends Synchronizer
 	protected	static final String EXCEPTION_MESSAGE_REMOVEGROUP = "Exception during WebApplication.addGroup(): ";
 	protected	static final String EXCEPTION_MESSAGE_GETUSERID = "Exception during WebApplication.getUserIDfromDatabase(): ";
 
-	private final Boolean synchronizationLock = true;
-	private Environment environment;
 	private Configuration configuration;
 	private Log log;
 	private CommunityBridge plugin;
 	private BanSynchronizer banSynchronizer;
+	private PlayerSynchronizationDispatcher playerSynchronizer;
 	private WebGroupDao webGroupDao;
-
-	private List<Player> playerLocks = new ArrayList<Player>();
 
 	public WebApplication(Environment environment, WebGroupDao webGroupDao)
 	{
 		super(environment);
-		this.environment = environment;
 		this.configuration = environment.getConfiguration();
 		this.log = environment.getLog();
 		this.webGroupDao = webGroupDao;
@@ -55,11 +52,16 @@ public class WebApplication extends Synchronizer
 	public WebApplication(Environment environment)
 	{
 		super(environment);
-		this.environment = environment;
 		this.configuration = environment.getConfiguration();
 		this.log = environment.getLog();
 		this.plugin = environment.getPlugin();
 		configureDao();
+
+		if (environment.getConfiguration().playerSynchronizerRequired)
+		{
+			playerSynchronizer = new PlayerSynchronizationDispatcher();
+		}
+
 		if (configuration.banSynchronizationEnabled)
 		{
 			banSynchronizer = new BanSynchronizer(environment);
@@ -216,15 +218,7 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	public void onJoin(Player player)
-	{
-		if (configuration.syncDuringJoin)
-		{
-			runSynchronizePlayer(player, true);
-		}
-	}
-
-	public void runSynchronizePlayer(final Player player, final boolean online)
+	public void runSynchronizePlayer(final Environment environment, final Player player, final boolean online)
 	{
 		MinecraftUtilities.startTask(plugin,
 																	new Runnable()
@@ -232,7 +226,7 @@ public class WebApplication extends Synchronizer
 																		@Override
 																		public void run()
 																		{
-																			synchronizePlayer(player, online);
+																			playerSynchronizer.synchronizePlayer(environment, player, online);
 																		}
 																	}
 																);
@@ -254,40 +248,13 @@ public class WebApplication extends Synchronizer
 
 	public void synchronizeAll()
 	{
-		environment.getLog().finest("Running player synchronization.");
-		Player[] onlinePlayers = Bukkit.getOnlinePlayers();
-		for (Player player : onlinePlayers)
-		{
-			synchronizePlayer(player, true);
-		}
-		environment.getLog().finest("Player synchronization complete.");
+		playerSynchronizer.synchronize(environment);
 
 		if (configuration.banSynchronizationEnabled)
 		{
 			environment.getLog().finest("Running ban synchronization.");
 			banSynchronizer.synchronize();
 			environment.getLog().finest("Ban synchronization complete.");
-		}
-	}
-
-	private void synchronizePlayer(Player player, boolean online)
-	{
-		if (!playerLocks.contains(player))
-		{
-			synchronized (synchronizationLock) { playerLocks.add(player);}
-			if (configuration.groupSynchronizationActive)
-			{
-				synchronizeGroups(player);
-			}
-			if (configuration.statisticsEnabled)
-			{
-				updateStatistics(player, online);
-			}
-			if (configuration.useAchievements)
-			{
-				rewardAchievements(player);
-			}
-			synchronized (synchronizationLock) { playerLocks.remove(player); }
 		}
 	}
 
@@ -327,17 +294,16 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	private void synchronizeGroups(Player player)
+	public PlayerState synchronizeGroups(Player player, String userID, PlayerState previous, PlayerState current, PlayerState result)
 	{
 		String playerName = player.getName();
 		String direction = configuration.simpleSynchronizationDirection;
-		String userID = environment.getUserPlayerLinker().getUserID(player);
 
 		// This can happen if the player disconnects after synchronization has
 		// already begun.
 		if (userID == null)
 		{
-			return;
+			return null;
 		}
 
 		if (userID.equalsIgnoreCase(configuration.simpleSynchronizationSuperUserID))
@@ -346,7 +312,7 @@ public class WebApplication extends Synchronizer
 			// we'll do nothing at all with the super-user.
 			if (direction.startsWith("min"))
 			{
-				return;
+				return null;
 			}
 
 			// Otherwise, we'll temporarily override the direction to be one-way
@@ -354,16 +320,7 @@ public class WebApplication extends Synchronizer
 			direction = "web";
 		}
 
-		File playerFolder = new File(plugin.getDataFolder(), "Players");
-
-		PlayerGroupState previous = new PlayerGroupState(environment, playerFolder, player, userID);
-		previous.load();
-
-		PlayerGroupState current = new PlayerGroupState(environment, playerFolder, player, userID);
-		current.generate();
-		PlayerGroupState result = current.copy();
-
-		if(configuration.simpleSynchronizationFirstDirection.startsWith("web") && previous.isNewFile) {
+		if(configuration.simpleSynchronizationFirstDirection.startsWith("web") && previous.isIsNewFile()) {
 			direction = "web";
 		}
 
@@ -374,8 +331,8 @@ public class WebApplication extends Synchronizer
 		else
 		{
 			// With synchronization turned off the currentState should always be the previous state.
-			current.permissionsSystemPrimaryGroupName = previous.permissionsSystemPrimaryGroupName;
-			current.webappPrimaryGroupID = previous.webappPrimaryGroupID;
+			current.setPermissionsSystemPrimaryGroupName(previous.getPermissionsSystemPrimaryGroupName());
+			current.setWebappPrimaryGroupID(previous.getWebappPrimaryGroupID());
 		}
 
 		// 4. Synchronize secondary group state
@@ -386,18 +343,11 @@ public class WebApplication extends Synchronizer
 		else
 		{
 			// With synchronization turned off the currentState should always be the previous state.
-			current.permissionsSystemGroupNames = previous.permissionsSystemGroupNames;
-			current.webappGroupIDs = previous.webappGroupIDs;
+			current.setPermissionsSystemGroupNames(previous.getPermissionsSystemGroupNames());
+			current.setWebappGroupIDs(previous.getWebappGroupIDs());
 		}
 		// 5. Save newly created state
-		try
-		{
-			result.save();
-		}
-		catch (IOException exception)
-		{
-			log.severe("Exception when saving group state for player " + playerName + ": " + exception.getMessage());
-		}
+		return result;
 	}
 
 	protected void addGroup(String userID, String groupID, int currentGroupCount)
@@ -448,7 +398,7 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	private void updateStatistics(Player player, boolean online)
+	public void updateStatistics(Player player, boolean online)
 	{
 		PlayerStatistics playerStatistics = new PlayerStatistics(configuration.dateFormat);
 
@@ -588,11 +538,6 @@ public class WebApplication extends Synchronizer
 			playerStatistics.setLifeTicks(player.getTicksLived());
 		}
 
-		if (configuration.walletEnabled)
-		{
-			playerStatistics.setWallet(environment.getEconomy().getBalance(player));
-		}
-
 		if (configuration.statisticsUsesKey)
 		{
 			updateStatisticsKeyStyle(playerStatistics);
@@ -706,11 +651,6 @@ public class WebApplication extends Synchronizer
 				}
 			}
 
-			if (configuration.walletEnabled)
-			{
-				builder.add(playerStatistics.getUserID(), configuration.walletColumnOrKey, playerStatistics.getWallet());
-			}
-
 			if (builder.insertFields.size() > 0)
 			{
 				insertQuery = insertQuery + StringUtilities.joinStrings(builder.insertFields, ", ") + ";";
@@ -747,20 +687,20 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	private void synchronizeGroupsPrimary(String direction, PlayerGroupState previous, PlayerGroupState current, PlayerGroupState result, String playerName, Player player, String userID)
+	private void synchronizeGroupsPrimary(String direction, PlayerState previous, PlayerState current, PlayerState result, String playerName, Player player, String userID)
 	{
-		if (isValidDirection(direction, "web") && !previous.webappPrimaryGroupID.equals(current.webappPrimaryGroupID))
+		if (isValidDirection(direction, "web") && !previous.getWebappPrimaryGroupID().equals(current.getWebappPrimaryGroupID()))
 		{
 			synchronizeGroupsPrimaryWebToGame(player, previous, current, result);
 		}
 
-		if (isValidDirection(direction, "min") && !previous.permissionsSystemPrimaryGroupName.equals(current.permissionsSystemPrimaryGroupName))
+		if (isValidDirection(direction, "min") && !previous.getPermissionsSystemPrimaryGroupName().equals(current.getPermissionsSystemPrimaryGroupName()))
 		{
 			synchronizeGroupsPrimaryGameToWeb(userID, playerName, previous, current, result);
 		}
 	}
 
-	private void synchronizeGroupsSecondary(String direction, PlayerGroupState previous, PlayerGroupState current, PlayerGroupState result, String userID, Player player)
+	private void synchronizeGroupsSecondary(String direction, PlayerState previous, PlayerState current, PlayerState result, String userID, Player player)
 	{
 		if (isValidDirection(direction, "min"))
 		{
@@ -773,21 +713,21 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	private void synchronizeGroupsPrimaryWebToGame(Player player, PlayerGroupState previous, PlayerGroupState current, PlayerGroupState result)
+	private void synchronizeGroupsPrimaryWebToGame(Player player, PlayerState previous, PlayerState current, PlayerState result)
 	{
-		if (previous.webappPrimaryGroupID.equalsIgnoreCase(current.webappPrimaryGroupID))
+		if (previous.getWebappPrimaryGroupID().equalsIgnoreCase(current.getWebappPrimaryGroupID()))
 		{
 			return;
 		}
 
-		String formerGroupName = configuration.getGroupNameByGroupID(previous.webappPrimaryGroupID);
-		String newGroupName = configuration.getGroupNameByGroupID(current.webappPrimaryGroupID);
+		String formerGroupName = configuration.getGroupNameByGroupID(previous.getWebappPrimaryGroupID());
+		String newGroupName = configuration.getGroupNameByGroupID(current.getWebappPrimaryGroupID());
 		String playerName = player.getName();
 
 		if (newGroupName == null)
 		{
-			log.warning("Not changing permissions group due to permissions system group name lookup failure for web application group ID: " + current.webappPrimaryGroupID + ". Player '" + playerName + "' primary group state unchanged.");
-			result.webappPrimaryGroupID = previous.webappPrimaryGroupID;
+			log.warning("Not changing permissions group due to permissions system group name lookup failure for web application group ID: " + current.getWebappPrimaryGroupID() + ". Player '" + playerName + "' primary group state unchanged.");
+			result.setWebappPrimaryGroupID(previous.getWebappPrimaryGroupID());
 			return;
 		}
 
@@ -800,41 +740,41 @@ public class WebApplication extends Synchronizer
 		setPermissionHandlerPrimaryGroup(player, newGroupName, formerGroupName, result);
 	}
 
-	private void synchronizeGroupsPrimaryGameToWeb(String userID, String playerName, PlayerGroupState previous, PlayerGroupState current, PlayerGroupState result)
+	private void synchronizeGroupsPrimaryGameToWeb(String userID, String playerName, PlayerState previous, PlayerState current, PlayerState result)
 	{
-		String groupID = configuration.getWebappGroupIDbyGroupName(current.permissionsSystemPrimaryGroupName);
+		String groupID = configuration.getWebappGroupIDbyGroupName(current.getPermissionsSystemPrimaryGroupName());
 
 		if (groupID == null)
 		{
-			log.warning("Not changing web application group due to web application group ID lookup failure for: " + current.permissionsSystemPrimaryGroupName + ". Player '" + playerName + "' primary group state unchanged.");
-			result.permissionsSystemPrimaryGroupName = previous.permissionsSystemPrimaryGroupName;
+			log.warning("Not changing web application group due to web application group ID lookup failure for: " + current.getPermissionsSystemPrimaryGroupName() + ". Player '" + playerName + "' primary group state unchanged.");
+			result.setPermissionsSystemPrimaryGroupName(previous.getPermissionsSystemPrimaryGroupName());
 		}
 		else
 		{
-			result.webappPrimaryGroupID = groupID;
+			result.setWebappPrimaryGroupID(groupID);
 			setPrimaryGroup(userID, groupID);
 			log.fine("Moved player '" + playerName + "' to web application group ID '" + groupID + "'.");
 		}
 	}
 
-	private void synchronizeGroupsSecondaryGameToWeb(String userID, PlayerGroupState previous, PlayerGroupState current, PlayerGroupState result)
+	private void synchronizeGroupsSecondaryGameToWeb(String userID, PlayerState previous, PlayerState current, PlayerState result)
 	{
-		for (String groupName : previous.permissionsSystemGroupNames)
+		for (String groupName : previous.getPermissionsSystemGroupNames())
 		{
-			if (!current.permissionsSystemGroupNames.contains(groupName) && !configuration.simpleSynchronizationGroupsTreatedAsPrimary.contains(groupName))
+			if (!current.getPermissionsSystemGroupNames().contains(groupName) && !configuration.simpleSynchronizationGroupsTreatedAsPrimary.contains(groupName))
 			{
 				String groupID = configuration.getWebappGroupIDbyGroupName(groupName);
 				removeGroup(userID, groupName);
-				result.webappGroupIDs.remove(groupID);
+				result.getWebappGroupIDs().remove(groupID);
 			}
 		}
 
 		int addedCount = 0;
-		for (Iterator<String> iterator = current.permissionsSystemGroupNames.iterator(); iterator.hasNext();)
+		for (Iterator<String> iterator = current.getPermissionsSystemGroupNames().iterator(); iterator.hasNext();)
 		{
 			String groupName = iterator.next();
 
-			if (!previous.permissionsSystemGroupNames.contains(groupName))
+			if (!previous.getPermissionsSystemGroupNames().contains(groupName))
 			{
 				String groupID = configuration.getWebappGroupIDbyGroupName(groupName);
 
@@ -843,39 +783,39 @@ public class WebApplication extends Synchronizer
 				// the mapping later, we'll see it as a 'new' group and synchronize.
 				if (groupID == null)
 				{
-					result.permissionsSystemGroupNames.remove(groupName);
+					result.getPermissionsSystemGroupNames().remove(groupName);
 				}
-				else if (current.webappGroupIDs.contains(groupID))
+				else if (current.getWebappGroupIDs().contains(groupID))
 				{
 					log.warning("We thought we needed to add a secondary group ID " + groupID + "...but we didn't?");
 				}
 				else
 				{
-					addGroup(userID, groupID, result.webappGroupIDs.size() + addedCount);
-					result.webappGroupIDs.add(groupID);
+					addGroup(userID, groupID, result.getWebappGroupIDs().size() + addedCount);
+					result.getWebappGroupIDs().add(groupID);
 					addedCount++;
 				}
 			}
 		}
 	}
 
-	private void synchronizeGroupsSecondaryWebToGame(Player player, PlayerGroupState previous, PlayerGroupState current, PlayerGroupState result)
+	private void synchronizeGroupsSecondaryWebToGame(Player player, PlayerState previous, PlayerState current, PlayerState result)
 	{
-		for (String groupID : previous.webappGroupIDs)
+		for (String groupID : previous.getWebappGroupIDs())
 		{
-			if (!current.webappGroupIDs.contains(groupID))
+			if (!current.getWebappGroupIDs().contains(groupID))
 			{
 				String groupName = configuration.getGroupNameByGroupID(groupID);
 				environment.getPermissionHandler().removeFromGroup(player, groupName);
-				result.permissionsSystemGroupNames.remove(groupName);
+				result.getPermissionsSystemGroupNames().remove(groupName);
 			}
 		}
 
-		for (Iterator<String> iterator = current.webappGroupIDs.iterator(); iterator.hasNext();)
+		for (Iterator<String> iterator = current.getWebappGroupIDs().iterator(); iterator.hasNext();)
 		{
 			String groupID = iterator.next();
 
-			if (!previous.webappGroupIDs.contains(groupID))
+			if (!previous.getWebappGroupIDs().contains(groupID))
 			{
 				String groupName = configuration.getGroupNameByGroupID(groupID);
 
@@ -884,22 +824,22 @@ public class WebApplication extends Synchronizer
 				// and we will synchronize.
 				if (groupName == null)
 				{
-					result.webappGroupIDs.remove(groupID);
+					result.getWebappGroupIDs().remove(groupID);
 				}
 				else if (configuration.simpleSynchronizationWebappSecondaryGroupsTreatedAsPrimary.contains(groupName))
 				{
-					setPermissionHandlerPrimaryGroup(player, groupName, current.permissionsSystemPrimaryGroupName, result);
+					setPermissionHandlerPrimaryGroup(player, groupName, current.getPermissionsSystemPrimaryGroupName(), result);
 				}
-				else if (!current.permissionsSystemPrimaryGroupName.equals(groupName) && !current.permissionsSystemGroupNames.contains(groupName))
+				else if (!current.getPermissionsSystemPrimaryGroupName().equals(groupName) && !current.getPermissionsSystemGroupNames().contains(groupName))
 				{
 					environment.getPermissionHandler().addToGroup(player, groupName);
-					result.permissionsSystemGroupNames.add(groupName);
+					result.getPermissionsSystemGroupNames().add(groupName);
 				}
 			} // if previousState contains group ID
 		} // for each group ID in currentState
 	}
 
-	private void rewardAchievements(Player player)
+	public void rewardAchievements(Player player)
 	{
 		PlayerAchievementState state = new PlayerAchievementState(player.getName(), new File(plugin.getDataFolder(), "Players"));
 		state.load();
@@ -945,7 +885,7 @@ public class WebApplication extends Synchronizer
 		}
 	}
 
-	private void setPermissionHandlerPrimaryGroup(Player player, String newGroupName, String formerGroupName, PlayerGroupState result)
+	private void setPermissionHandlerPrimaryGroup(Player player, String newGroupName, String formerGroupName, PlayerState result)
 	{
 		String pseudo = "";
 		if (environment.getPermissionHandler().supportsPrimaryGroups())
@@ -957,7 +897,7 @@ public class WebApplication extends Synchronizer
 			environment.getPermissionHandler().switchGroup(player, formerGroupName, newGroupName);
 			pseudo = "pseudo-primary ";
 		}
-		result.permissionsSystemPrimaryGroupName = newGroupName;
+		result.setPermissionsSystemPrimaryGroupName(newGroupName);
 		if (formerGroupName == null || formerGroupName.isEmpty())
 		{
 			log.fine("Placed player '" + player.getName() + "' in " + pseudo + "permissions group '" + newGroupName + "'.");
@@ -966,6 +906,16 @@ public class WebApplication extends Synchronizer
 		{
 			log.fine("Moved player '" + player.getName() + "' to " + pseudo + "permissions group '" + newGroupName + "' from '" + formerGroupName + "'.");
 		}
+	}
+
+	public double getBalance(String userID)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	public void setBalance(String USER_ID, double expected)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	private class FieldBuilder
@@ -1086,11 +1036,6 @@ public class WebApplication extends Synchronizer
 			{
 				fields.add("`" + configuration.lifeticksFormattedColumnOrKey + "` = '" + playerStatistics.getLifeTicksFormatted() + "'");
 			}
-		}
-
-		if (configuration.walletEnabled)
-		{
-			fields.add("`" + configuration.walletColumnOrKey + "` = '" + playerStatistics.getWallet() + "'");
 		}
 
 		query = query + StringUtilities.joinStrings(fields, ", ") + " WHERE `" + configuration.statisticsUserIDColumn + "` = '" + playerStatistics.getUserID() + "'";

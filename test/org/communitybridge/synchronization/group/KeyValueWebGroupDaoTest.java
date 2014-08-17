@@ -1,8 +1,9 @@
-package org.communitybridge.groupsynchronizer;
+package org.communitybridge.synchronization.group;
 
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.RandomStringUtils;
 import org.communitybridge.main.Configuration;
@@ -14,13 +15,14 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import static org.mockito.Mockito.*;
 
-public class JunctionWebGroupDaoTest
+public class KeyValueWebGroupDaoTest
 {
 	private final String USER_ID = RandomStringUtils.randomNumeric(2);
 	private String group1 = RandomStringUtils.randomNumeric(2);
 	private String group2 = RandomStringUtils.randomNumeric(2);
+	private String group3 = RandomStringUtils.randomNumeric(2);
 	private String groups;
-	private WebGroupDao webGroupDao;
+	private KeyValueWebGroupDao webGroupDao;
 	private	Environment environment = new Environment();
 	private Configuration configuration = mock(Configuration.class);
 	private Log log = mock(Log.class);
@@ -34,7 +36,7 @@ public class JunctionWebGroupDaoTest
 		environment.setLog(log);
 		environment.setSql(sql);
 		DaoTestsHelper.setupConfiguration(configuration);
-		webGroupDao = new JunctionWebGroupDao(environment);
+		webGroupDao = new KeyValueWebGroupDao(environment);
 
 		when(sql.sqlQuery(anyString())).thenReturn(result);
 		when(result.next()).thenReturn(true, false);
@@ -42,57 +44,155 @@ public class JunctionWebGroupDaoTest
 	}
 
 	@Test
-	public void addGroupUsesCorrectQuery() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	public void addGroupUsesCorrectReadQuery() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
-		String query = "INSERT INTO `" + configuration.webappSecondaryGroupTable + "` "
-						 + "(`" + configuration.webappSecondaryGroupUserIDColumn + "`, `" + configuration.webappSecondaryGroupGroupIDColumn + "`) "
-						 + "VALUES ('" + USER_ID + "', '" + group1 +"')";
+		String query = webGroupDao.getSecondaryGroupReadQuery(USER_ID);
+		when(sql.sqlQuery(query)).thenReturn(result);
+		when(result.next()).thenReturn(false);
+		doNothing().when(sql).updateQuery(webGroupDao.getGroupIDInsertQuery(USER_ID, group1));
+		webGroupDao.addUserToGroup(USER_ID, group1, 0);
+		verify(sql).sqlQuery(query);
+	}
+
+	@Test
+	public void addGroupUsesCorrectUpdateQueryWhenRowDoesNotExist() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		String query = webGroupDao.getSecondaryGroupReadQuery(USER_ID);
+		when(sql.sqlQuery(query)).thenReturn(result);
+		when(result.next()).thenReturn(false);
+		query = webGroupDao.getGroupIDInsertQuery(USER_ID, group1);
 		doNothing().when(sql).insertQuery(query);
 		webGroupDao.addUserToGroup(USER_ID, group1, 0);
 		verify(sql).insertQuery(query);
 	}
 
 	@Test
-	public void addGroupUsesCorrectQueryWithOneAdditionalColumn() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	public void addGroupUsesCorrectUpdateQueryWhenRowExistsButIsNull() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
-		String additionalColumn = RandomStringUtils.randomAlphabetic(7);
-		String additionalValue = RandomStringUtils.randomAlphanumeric(7);
-		configuration.webappSecondaryAdditionalColumns.put(additionalColumn, additionalValue);
-		String query = "INSERT INTO `" + configuration.webappSecondaryGroupTable + "` "
-						 + "(`" + configuration.webappSecondaryGroupUserIDColumn + "`, `" + configuration.webappSecondaryGroupGroupIDColumn + "`, `" + additionalColumn + "`) "
-						 + "VALUES ('" + USER_ID + "', '" + group1 + "', '" + additionalValue + "')";
-		doNothing().when(sql).insertQuery(query);
+		groups = group1;
+		List<String> groupsAsList = new ArrayList<String>();
+		groupsAsList.add(group1);
+		String query = webGroupDao.getSecondaryGroupReadQuery(USER_ID);
+		when(sql.sqlQuery(query)).thenReturn(result);
+		when(result.next()).thenReturn(true);
+		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(null);
+		query = webGroupDao.getGroupIDsUpdateQuery(groupsAsList, USER_ID);
+		doNothing().when(sql).updateQuery(query);
 		webGroupDao.addUserToGroup(USER_ID, group1, 0);
-		verify(sql).insertQuery(query);
+		verify(sql).updateQuery(query);
 	}
 
 	@Test
-	public void addGroupUsesCorrectQueryWithTwoAdditionalColumns() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	public void addGroupUsesCorrectUpdateQueryWhenRowExistsButIsEmpty() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
-		String additionalColumn = RandomStringUtils.randomAlphabetic(3);
-		String additionalValue = RandomStringUtils.randomAlphanumeric(7);
-		String additionalColumn2 = RandomStringUtils.randomAlphabetic(4);
-		String additionalValue2 = RandomStringUtils.randomAlphanumeric(9);
-		configuration.webappSecondaryAdditionalColumns.put(additionalColumn, additionalValue);
-		configuration.webappSecondaryAdditionalColumns.put(additionalColumn2, additionalValue2);
-		String query = "INSERT INTO `" + configuration.webappSecondaryGroupTable + "` "
-						 + "(`" + configuration.webappSecondaryGroupUserIDColumn + "`, `" + configuration.webappSecondaryGroupGroupIDColumn + "`, `" + additionalColumn + "`, `" + additionalColumn2 + "`) "
-						 + "VALUES ('" + USER_ID + "', '" + group1 + "', '" + additionalValue + "', '" + additionalValue2 + "')";
-		doNothing().when(sql).insertQuery(query);
+		groups = group1;
+		List<String> groupsAsList = new ArrayList<String>();
+		groupsAsList.add(group1);
+		String query = webGroupDao.getSecondaryGroupReadQuery(USER_ID);
+		when(sql.sqlQuery(query)).thenReturn(result);
+		when(result.next()).thenReturn(true);
+		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn("");
+		query = webGroupDao.getGroupIDsUpdateQuery(groupsAsList, USER_ID);
+		doNothing().when(sql).updateQuery(query);
 		webGroupDao.addUserToGroup(USER_ID, group1, 0);
-		verify(sql).insertQuery(query);
+		verify(sql).updateQuery(query);
 	}
 
 	@Test
-	public void removeGroupUsesCorrectQuery() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	public void addGroupUsesCorrectUpdateQueryWhenRowExistsButIsWhitespace() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
 	{
-		String query = "DELETE FROM `" + configuration.webappSecondaryGroupTable + "` "
-								 + "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + USER_ID + "' "
-								 + "AND `" + configuration.webappSecondaryGroupGroupIDColumn + "` = '" + group1 + "' ";
+		groups = group1;
+		List<String> groupsAsList = new ArrayList<String>();
+		groupsAsList.add(group1);
+		String query = webGroupDao.getSecondaryGroupReadQuery(USER_ID);
+		when(sql.sqlQuery(query)).thenReturn(result);
+		when(result.next()).thenReturn(true);
+		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn("      ");
+		query = webGroupDao.getGroupIDsUpdateQuery(groupsAsList, USER_ID);
+		doNothing().when(sql).updateQuery(query);
+		webGroupDao.addUserToGroup(USER_ID, group1, 0);
+		verify(sql).updateQuery(query);
+	}
 
-		doNothing().when(sql).deleteQuery(query);
+	@Test
+	public void addGroupUsesCorrectUpdateQueryWhenRowExistsButIsOccupied() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		groups = group1;
+		List<String> groupsAsList = new ArrayList<String>();
+		groupsAsList.add(group2);
+		groupsAsList.add(group1);
+		String query = webGroupDao.getSecondaryGroupReadQuery(USER_ID);
+		when(sql.sqlQuery(query)).thenReturn(result);
+		when(result.next()).thenReturn(true);
+		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(group2);
+		query = webGroupDao.getGroupIDsUpdateQuery(groupsAsList, USER_ID);
+		doNothing().when(sql).updateQuery(query);
+		webGroupDao.addUserToGroup(USER_ID, group1, 0);
+		verify(sql).updateQuery(query);
+	}
+
+	@Test
+	public void removeGroupUsesCorrectReadQuery() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		String query = webGroupDao.getSecondaryGroupReadQuery(USER_ID);
+		when(sql.sqlQuery(query)).thenReturn(result);
+		when(result.next()).thenReturn(false);
 		webGroupDao.removeUserFromGroup(USER_ID, group1);
-		verify(sql).deleteQuery(query);
+		verify(sql).sqlQuery(query);
+	}
+
+	@Test
+	public void removeGroupHandlesNoResultOnRead() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		String query = webGroupDao.getSecondaryGroupReadQuery(USER_ID);
+		when(sql.sqlQuery(query)).thenReturn(result);
+		when(result.next()).thenReturn(false);
+		webGroupDao.removeUserFromGroup(USER_ID, group1);
+		verify(sql).sqlQuery(query);
+		verifyNoMoreInteractions(sql);
+	}
+
+	@Test
+	public void removeGroupUsesCorrectUpdateCallRemovingOneOfNone() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		testRemoveGroupUpdateQuery("", "");
+	}
+
+	@Test
+	public void removeGroupUsesCorrectUpdateCallRemovingOneOfOne() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		testRemoveGroupUpdateQuery(group1, "");
+	}
+
+	@Test
+	public void removeGroupUsesCorrectUpdateCallRemovingOneOfPair() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		testRemoveGroupUpdateQuery(group1 + "," + group2, group2);
+	}
+
+	@Test
+	public void removeGroupUsesCorrectUpdateCallRemovingOneOfThree() throws MalformedURLException, InstantiationException, IllegalAccessException, SQLException
+	{
+		testRemoveGroupUpdateQuery(group1 + "," + group2 + "," + group3, group2 + "," + group3);
+	}
+
+	private void testRemoveGroupUpdateQuery(String before, String after) throws SQLException, IllegalAccessException, MalformedURLException, InstantiationException
+	{
+		when(sql.sqlQuery(webGroupDao.getSecondaryGroupReadQuery(USER_ID))).thenReturn(result);
+		when(result.next()).thenReturn(true);
+		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(before);
+		String query = getRemoveGroupUpdateQuery(after);
+		doNothing().when(sql).updateQuery(query);
+		webGroupDao.removeUserFromGroup(USER_ID, group1);
+		verify(sql).updateQuery(query);
+	}
+
+	private String getRemoveGroupUpdateQuery(String after)
+	{
+		return "UPDATE `" + configuration.webappSecondaryGroupTable + "` "
+				 + "SET `" + configuration.webappSecondaryGroupGroupIDColumn + "` = '" + after + "' "
+				 + "WHERE `" + configuration.webappSecondaryGroupUserIDColumn + "` = '" + USER_ID + "' "
+				 + "AND `" + configuration.webappSecondaryGroupKeyColumn + "` = '" + configuration.webappSecondaryGroupKeyName + "'";
 	}
 
 	@Test
@@ -118,8 +218,8 @@ public class JunctionWebGroupDaoTest
 	@Test
 	public void getSecondaryGroupsWithEmptyStringReturnsEmptyList() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
-		group1 = "";
-		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(group1);
+		groups = "";
+		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
 		List<String> secondaryGroups = webGroupDao.getSecondaryGroupIDs(USER_ID);
 		assertEquals(0, secondaryGroups.size());
 	}
@@ -127,8 +227,8 @@ public class JunctionWebGroupDaoTest
 	@Test
 	public void getSecondaryGroupsWithWhitespaceStringReturnsEmptyList() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
-		group1 = "          ";
-		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(group1);
+		groups = "          ";
+		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
 		List<String> secondaryGroups = webGroupDao.getSecondaryGroupIDs(USER_ID);
 		assertEquals(0, secondaryGroups.size());
 	}
@@ -136,6 +236,7 @@ public class JunctionWebGroupDaoTest
 	@Test
 	public void getSecondaryGroupsWithNullReturnsEmptyList() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
+		groups = "          ";
 		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(null);
 		List<String> secondaryGroups = webGroupDao.getSecondaryGroupIDs(USER_ID);
 		assertEquals(0, secondaryGroups.size());
@@ -144,17 +245,18 @@ public class JunctionWebGroupDaoTest
 	@Test
 	public void getSecondaryGroupsReturnsOneGroupID() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
-		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(group1);
+		groups = RandomStringUtils.randomNumeric(2);
+		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
 		List<String> secondaryGroups = webGroupDao.getSecondaryGroupIDs(USER_ID);
 		assertEquals(1, secondaryGroups.size());
-		assertTrue(secondaryGroups.contains(group1));
+		assertEquals(groups, secondaryGroups.get(0));
 	}
 
 	@Test
 	public void getSecondaryGroupsReturnsTwoGroupIDs() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
-		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(group1, group2);
-		when(result.next()).thenReturn(true, true, false);
+		groups = group1 + "," + group2;
+		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
 		List<String> secondaryGroups = webGroupDao.getSecondaryGroupIDs(USER_ID);
 		assertEquals(2, secondaryGroups.size());
 		assertTrue(secondaryGroups.contains(group1));
@@ -164,8 +266,8 @@ public class JunctionWebGroupDaoTest
 	@Test
 	public void getSecondaryGroupsReturnsTwoCleanGroupIDs() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
-		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(group1 + "  ", group2);
-		when(result.next()).thenReturn(true, true, false);
+		groups = group1 + " , " + group2;
+		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
 		List<String> secondaryGroups = webGroupDao.getSecondaryGroupIDs(USER_ID);
 		assertEquals(2, secondaryGroups.size());
 		assertTrue(secondaryGroups.contains(group1));
@@ -175,8 +277,8 @@ public class JunctionWebGroupDaoTest
 	@Test
 	public void getSecondaryGroupsReturnsOnlyGroupIDs() throws IllegalAccessException, InstantiationException,MalformedURLException, SQLException
 	{
-		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn("  ", group2);
-		when(result.next()).thenReturn(true, true, false);
+		groups = " , " + group2;
+		when(result.getString(configuration.webappSecondaryGroupGroupIDColumn)).thenReturn(groups);
 		List<String> secondaryGroups = webGroupDao.getSecondaryGroupIDs(USER_ID);
 		assertEquals(1, secondaryGroups.size());
 		assertTrue(secondaryGroups.contains(group2));

@@ -1,11 +1,11 @@
-package org.communitybridge.groupsynchronizer;
+package org.communitybridge.synchronization.group;
 
 import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import static org.communitybridge.groupsynchronizer.WebGroupDao.EMPTY_LIST;
+import static org.communitybridge.synchronization.group.WebGroupDao.EMPTY_LIST;
 import org.communitybridge.main.Environment;
 import org.communitybridge.utility.StringUtilities;
 

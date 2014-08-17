@@ -1,7 +1,6 @@
 package org.communitybridge.achievement;
 
 import org.bukkit.entity.Player;
-import org.communitybridge.main.CommunityBridge;
 import org.communitybridge.main.Environment;
 
 public class AchievementAvatar extends Achievement
@@ -15,7 +14,7 @@ public class AchievementAvatar extends Achievement
 	public boolean playerQualifies(Player player, PlayerAchievementState state)
 	{
 		return environment.getConfiguration().avatarEnabled
-				&& CommunityBridge.webapp.playerHasAvatar(environment.getUserPlayerLinker().getUserID(player))
+				&& environment.getWebApplication().playerHasAvatar(environment.getUserPlayerLinker().getUserID(player))
 				&& state.getAvatarAchievements() < limit
 				&& canRewardAllItemRewards(player);
 	}
