@@ -3,7 +3,7 @@ package org.communitybridge.synchronization.dao;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import org.communitybridge.main.Configuration;
+import org.communitybridge.configuration.MoneyConfiguration;
 import org.communitybridge.main.Environment;
 
 public class MoneyDao
@@ -13,23 +13,23 @@ public class MoneyDao
 		String query;
 		String column;
 		ResultSet result;
-		Configuration configuration = environment.getConfiguration();
-		if (configuration.walletUsesKey)
+		MoneyConfiguration configuration = environment.getConfiguration().getMoney();
+		if (configuration.isUsesKey())
 		{
-			query = "SELECT `" + configuration.walletValueColumn + "` "
-						+ "FROM `" + configuration.walletTableName + "` "
-						+ "WHERE `" + configuration.walletUserIDColumn + "` = '" + userId + "' "
-						+ "AND " + configuration.walletKeyColumn + "` = '" + configuration.walletColumnOrKey + "'";
+			query = "SELECT `" + configuration.getValueColumn() + "` "
+						+ "FROM `" + configuration.getTableName() + "` "
+						+ "WHERE `" + configuration.getUserIDColumn() + "` = '" + userId + "' "
+						+ "AND " + configuration.getKeyColumn() + "` = '" + configuration.getColumnOrKey() + "'";
 			result = environment.getSql().sqlQuery(query);
-			column = configuration.walletValueColumn;
+			column = configuration.getValueColumn();
 		}
 		else
 		{
-			query = "SELECT `" + configuration.walletColumnOrKey + "` "
-						+ "FROM `" + configuration.walletTableName + "` "
-						+ "WHERE `" + configuration.walletUserIDColumn + "` = '" + userId + "'";
+			query = "SELECT `" + configuration.getColumnOrKey() + "` "
+						+ "FROM `" + configuration.getTableName() + "` "
+						+ "WHERE `" + configuration.getUserIDColumn() + "` = '" + userId + "'";
 			result = environment.getSql().sqlQuery(query);
-			column = configuration.walletColumnOrKey;
+			column = configuration.getColumnOrKey();
 		}
 		if (result.next())
 		{
@@ -44,19 +44,19 @@ public class MoneyDao
 	public void setBalance(Environment environment, String userId, Double balance) throws IllegalAccessException, InstantiationException, MalformedURLException
 	{
 		String query;
-		Configuration configuration = environment.getConfiguration();
-		if (configuration.walletUsesKey)
+		MoneyConfiguration configuration = environment.getConfiguration().getMoney();
+		if (configuration.isUsesKey())
 		{
-			query = "UPDATE `" + configuration.walletTableName + "` "
-			      + "SET `" + configuration.walletValueColumn + "` = '" + balance.toString() + "' "
-			  		+ "WHERE `" + configuration.walletUserIDColumn + "` = '" + userId + "'"
-						+ "AND " + configuration.walletKeyColumn + "` = '" + configuration.walletColumnOrKey + "'";
+			query = "UPDATE `" + configuration.getTableName() + "` "
+			      + "SET `" + configuration.getValueColumn() + "` = '" + balance.toString() + "' "
+			  		+ "WHERE `" + configuration.getUserIDColumn() + "` = '" + userId + "'"
+						+ "AND " + configuration.getKeyColumn() + "` = '" + configuration.getColumnOrKey() + "'";
 		}
 		else
 		{
-			query = "UPDATE `" + configuration.walletTableName + "` "
-						+ "SET `" + configuration.walletColumnOrKey + "` = '" + balance.toString() + "' "
-						+ "WHERE `" + configuration.walletUserIDColumn + "` = '" + userId + "'";
+			query = "UPDATE `" + configuration.getTableName() + "` "
+						+ "SET `" + configuration.getColumnOrKey() + "` = '" + balance.toString() + "' "
+						+ "WHERE `" + configuration.getUserIDColumn() + "` = '" + userId + "'";
 		}
 		environment.getSql().updateQuery(query);
 	}

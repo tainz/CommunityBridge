@@ -13,8 +13,9 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.communitybridge.configuration.MoneyConfiguration;
 import org.communitybridge.main.CommunityBridge;
-import org.communitybridge.main.Configuration;
+import org.communitybridge.configuration.Configuration;
 import org.communitybridge.main.Environment;
 import org.communitybridge.main.WebApplication;
 import org.communitybridge.permissionhandlers.PermissionHandler;
@@ -50,8 +51,10 @@ public class PlayerStateTest
   private CommunityBridge plugin = mock(CommunityBridge.class);
 	private Log log = mock(Log.class);
 	private Player player = mock(Player.class);
-	private MoneyDao money = mock(MoneyDao.class);
+	private MoneyDao moneyDao = mock(MoneyDao.class);
 	private WebApplication webApplication = mock(WebApplication.class);
+
+	private MoneyConfiguration moneyConfiguration = new MoneyConfiguration();
 
 	private YamlConfiguration playerData = mock(YamlConfiguration.class);
 	private File playerFile = mock(File.class);
@@ -68,11 +71,13 @@ public class PlayerStateTest
 		environment.setPermissionHandler(permissionHandler);
 		environment.setPlugin(plugin);
 		environment.setWebApplication(webApplication);
+		configuration.setMoney(moneyConfiguration);
 		configuration.simpleSynchronizationGroupsTreatedAsPrimary = new ArrayList<String>();
 		configuration.simpleSynchronizationGroupsTreatedAsPrimary.add(PRIMARY_GROUP_NAME);
 		configuration.groupSynchronizationActive = true;
 		configuration.webappPrimaryGroupEnabled = true;
 		configuration.webappSecondaryGroupEnabled = true;
+		when(configuration.getMoney()).thenReturn(moneyConfiguration);
 		when(player.getUniqueId()).thenReturn(UUID);
 		when(player.getName()).thenReturn(PLAYER_NAME);
 		when(webApplication.getUserPrimaryGroupID(USER_ID)).thenReturn(PRIMARY_GROUP_ID);
@@ -196,7 +201,7 @@ public class PlayerStateTest
 	{
 		double wallet = RandomUtils.nextDouble() + 1;
 		configuration.economyEnabled = true;
-		configuration.walletEnabled = true;
+		configuration.getMoney().setEnabled(true);
 
 		when(economy.getBalance(player)).thenReturn(wallet);
 
@@ -210,8 +215,8 @@ public class PlayerStateTest
 	{
 		double wallet = RandomUtils.nextDouble() + 1;
 		configuration.economyEnabled = true;
-		configuration.walletEnabled = true;
-		when(money.getBalance(environment, USER_ID)).thenReturn(wallet);
+		moneyConfiguration.setEnabled(true);
+		when(moneyDao.getBalance(environment, USER_ID)).thenReturn(wallet);
 		state.generate(environment, player, USER_ID);
 
 		assertEquals(wallet, state.getWebApplicationWallet(), 0);
@@ -264,7 +269,7 @@ public class PlayerStateTest
 	{
 		double wallet = RandomUtils.nextDouble() + 1;
 		configuration.economyEnabled = true;
-		configuration.walletEnabled = true;
+		configuration.getMoney().setEnabled(true);
 
 		when(economy.getBalance(player)).thenReturn(wallet);
 		state.generate(environment, player, USER_ID);
@@ -278,9 +283,9 @@ public class PlayerStateTest
 	{
 		double wallet = RandomUtils.nextDouble() + 1;
 		configuration.economyEnabled = true;
-		configuration.walletEnabled = true;
+		moneyConfiguration.setEnabled(true);
 
-		when(money.getBalance(environment, USER_ID)).thenReturn(wallet);
+		when(moneyDao.getBalance(environment, USER_ID)).thenReturn(wallet);
 		state.generate(environment, player, USER_ID);
 		PlayerState copy = state.copy();
 
@@ -302,10 +307,10 @@ public class PlayerStateTest
 		double mcWallet = RandomUtils.nextDouble() + 1;
 		double wbWallet = RandomUtils.nextDouble() + 1;
 		configuration.economyEnabled = true;
-		configuration.walletEnabled = true;
+		moneyConfiguration.setEnabled(true);
 
 		when(economy.getBalance(player)).thenReturn(mcWallet);
-		when(money.getBalance(environment, USER_ID)).thenReturn(wbWallet);
+		when(moneyDao.getBalance(environment, USER_ID)).thenReturn(wbWallet);
 
 		state.generate(environment, player, USER_ID);
 		state.save(player, playerFile, environment.getLog());
@@ -323,11 +328,11 @@ public class PlayerStateTest
 	@Test
 	public void saveHandlesIOException() throws IOException, IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
-		double money = RandomUtils.nextDouble() + 1;
+		double mcBalance = RandomUtils.nextDouble() + 1;
 		configuration.economyEnabled = true;
-		configuration.walletEnabled = true;
+		configuration.getMoney().setEnabled(true);
 
-		when(economy.getBalance(player)).thenReturn(money);
+		when(economy.getBalance(player)).thenReturn(mcBalance);
 		doNothing().when(playerData).set(anyString(), anyString());
 		String exceptionMessage = RandomStringUtils.randomAlphabetic(18);
 		doThrow(new IOException(exceptionMessage)).when(playerData).save(any(File.class));

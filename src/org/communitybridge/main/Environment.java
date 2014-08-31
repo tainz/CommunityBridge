@@ -1,5 +1,6 @@
 package org.communitybridge.main;
 
+import org.communitybridge.configuration.Configuration;
 import net.milkbowl.vault.economy.Economy;
 import org.communitybridge.linker.UserPlayerLinker;
 import org.communitybridge.permissionhandlers.PermissionHandler;

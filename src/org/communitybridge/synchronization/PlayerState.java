@@ -31,7 +31,7 @@ public class PlayerState
 
 	public void generate(Environment environment, Player player, String userId) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
-		if (environment.getConfiguration().economyEnabled && environment.getConfiguration().walletEnabled)
+		if (environment.getConfiguration().economyEnabled && environment.getConfiguration().getMoney().isEnabled())
 		{
 			minecraftWallet = environment.getEconomy().getBalance(player);
 			webApplicationWallet = money.getBalance(environment, userId);

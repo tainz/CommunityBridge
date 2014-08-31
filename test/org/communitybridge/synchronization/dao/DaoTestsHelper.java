@@ -1,7 +1,7 @@
 package org.communitybridge.synchronization.dao;
 
 import java.util.LinkedHashMap;
-import org.communitybridge.main.Configuration;
+import org.communitybridge.configuration.Configuration;
 
 public class DaoTestsHelper
 {

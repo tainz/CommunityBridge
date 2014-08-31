@@ -1,5 +1,6 @@
 package org.communitybridge.main;
 
+import org.communitybridge.configuration.Configuration;
 import org.communitybridge.synchronization.Synchronizer;
 import org.communitybridge.synchronization.PlayerState;
 import java.io.File;

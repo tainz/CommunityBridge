@@ -5,7 +5,8 @@ import net.milkbowl.vault.economy.Economy;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.entity.Player;
-import org.communitybridge.main.Configuration;
+import org.communitybridge.configuration.MoneyConfiguration;
+import org.communitybridge.configuration.Configuration;
 import org.communitybridge.main.Environment;
 import org.communitybridge.main.WebApplication;
 import org.communitybridge.synchronization.dao.MoneyDao;
@@ -33,7 +34,8 @@ public class MoneySynchronizerTest
 	private PlayerState previous = Mockito.mock(PlayerState.class);
 	private PlayerState current = Mockito.mock(PlayerState.class);
 	private PlayerState result = Mockito.mock(PlayerState.class);
-	private MoneyDao money = Mockito.mock(MoneyDao.class);
+	private MoneyConfiguration moneyConfiguration = new MoneyConfiguration();
+	private MoneyDao moneyDao = Mockito.mock(MoneyDao.class);
 
 	@InjectMocks
 	private MoneySynchronizer synchronizer = new MoneySynchronizer(environment);
@@ -44,19 +46,20 @@ public class MoneySynchronizerTest
 		environment.setConfiguration(configuration);
 		environment.setEconomy(economy);
 		environment.setWebApplication(webApplication);
+		Mockito.when(configuration.getMoney()).thenReturn(moneyConfiguration);
 	}
 
 	@Test
 	public void isActiveReturnsTrue()
 	{
-		configuration.walletEnabled = true;
+		moneyConfiguration.setEnabled(true);
 		Assert.assertTrue(synchronizer.isActive(environment));
 	}
 
 	@Test
 	public void isActiveReturnsFalse()
 	{
-		configuration.walletEnabled = false;
+		moneyConfiguration.setEnabled(false);
 		Assert.assertFalse(synchronizer.isActive(environment));
 	}
 
@@ -166,7 +169,7 @@ public class MoneySynchronizerTest
 
 		synchronizer.synchronize(environment, player, USER_ID, previous, current, result);
 
-		Mockito.verify(money).setBalance(Mockito.eq(environment), Mockito.eq(USER_ID),
+		Mockito.verify(moneyDao).setBalance(Mockito.eq(environment), Mockito.eq(USER_ID),
 																							AdditionalMatchers.eq(expected, DOUBLE_DELTA));
 	}
 
@@ -184,7 +187,7 @@ public class MoneySynchronizerTest
 
 		synchronizer.synchronize(environment, player, USER_ID, previous, current, result);
 
-		Mockito.verify(money).setBalance(Mockito.eq(environment), Mockito.eq(USER_ID),
+		Mockito.verify(moneyDao).setBalance(Mockito.eq(environment), Mockito.eq(USER_ID),
 																							AdditionalMatchers.eq(expected, DOUBLE_DELTA));
 	}
 

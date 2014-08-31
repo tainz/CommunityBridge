@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import org.communitybridge.linker.UserPlayerLinker;
 import org.communitybridge.main.BukkitWrapper;
 import org.communitybridge.main.CommunityBridge;
-import org.communitybridge.main.Configuration;
+import org.communitybridge.configuration.Configuration;
 import org.communitybridge.utility.Log;
 import org.communitybridge.main.Environment;
 import org.communitybridge.main.WebApplication;

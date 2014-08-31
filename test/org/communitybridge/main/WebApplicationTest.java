@@ -1,5 +1,6 @@
 package org.communitybridge.main;
 
+import org.communitybridge.configuration.Configuration;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
 import org.apache.commons.lang.RandomStringUtils;

@@ -1,5 +1,6 @@
 package org.communitybridge.main;
 
+import org.communitybridge.configuration.Configuration;
 import java.io.IOException;
 import java.util.logging.Level;
 import net.milkbowl.vault.economy.Economy;
@@ -95,7 +96,7 @@ public class CommunityBridge extends JavaPlugin
 
 		getServer().getPluginManager().registerEvents(new PlayerListener(environment), this);
 
-		if (environment.getConfiguration().economyEnabled	|| environment.getConfiguration().walletEnabled)
+		if (environment.getConfiguration().economyEnabled	|| environment.getConfiguration().getMoney().isEnabled())
 		{
 	    if (getServer().getPluginManager().getPlugin("Vault") == null)
 			{
@@ -399,6 +400,6 @@ public class CommunityBridge extends JavaPlugin
 	private void disableEconomyBasedFeatures()
 	{
 		environment.getConfiguration().economyEnabled = false;
-		environment.getConfiguration().walletEnabled = false;
+		environment.getConfiguration().getMoney().setEnabled(false);
 	}
 }

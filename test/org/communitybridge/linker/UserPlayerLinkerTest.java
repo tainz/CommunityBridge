@@ -4,7 +4,7 @@ import org.communitybridge.main.BukkitWrapper;
 import java.util.UUID;
 import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.entity.Player;
-import org.communitybridge.main.Configuration;
+import org.communitybridge.configuration.Configuration;
 import org.communitybridge.main.Environment;
 import org.junit.Test;
 import static org.junit.Assert.*;

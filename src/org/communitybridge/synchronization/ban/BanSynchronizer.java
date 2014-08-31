@@ -8,7 +8,7 @@ import org.bukkit.BanList;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.communitybridge.main.BukkitWrapper;
-import org.communitybridge.main.Configuration;
+import org.communitybridge.configuration.Configuration;
 import org.communitybridge.main.Environment;
 import org.communitybridge.synchronization.Synchronizer;
 import org.communitybridge.utility.Log;

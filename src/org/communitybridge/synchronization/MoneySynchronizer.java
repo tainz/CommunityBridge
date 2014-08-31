@@ -18,7 +18,7 @@ public class MoneySynchronizer extends Synchronizer implements PlayerSynchronize
 	@Override
 	public boolean isActive(Environment environment)
 	{
-		return environment.getConfiguration().walletEnabled;
+		return environment.getConfiguration().getMoney().isEnabled();
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package org.communitybridge.main;
+package org.communitybridge.configuration;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -21,6 +21,10 @@ import org.communitybridge.achievement.AchievementAvatar;
 import org.communitybridge.achievement.AchievementGroup;
 import org.communitybridge.achievement.AchievementPostCount;
 import org.communitybridge.achievement.AchievementSectionPostCount;
+import org.communitybridge.main.CommunityBridge;
+import org.communitybridge.main.Environment;
+import org.communitybridge.main.Messages;
+import org.communitybridge.main.SQL;
 import org.communitybridge.permissionhandlers.PermissionHandler;
 import org.communitybridge.permissionhandlers.PermissionHandlerBPermissions;
 import org.communitybridge.permissionhandlers.PermissionHandlerGroupManager;
@@ -105,13 +109,14 @@ public class Configuration
 	public String postCountPostCountColumn;
 
 	// Wallet config
-	public boolean walletEnabled;
-	public boolean walletUsesKey;
-	public String	walletTableName;
-	public String	walletUserIDColumn;
-	public String walletColumnOrKey;
-	public String walletKeyColumn;
-	public String walletValueColumn;
+	private MoneyConfiguration money;
+	private boolean walletEnabled;
+	private boolean walletUsesKey;
+	private String	walletTableName;
+	private String	walletUserIDColumn;
+	private String walletColumnOrKey;
+	private String walletKeyColumn;
+	private String walletValueColumn;
 
 	// Requirements Section
 	public boolean requireAvatar;
@@ -1677,5 +1682,21 @@ public class Configuration
 		}
 		sql = environment.getSql();
 		return analyze();
+	}
+
+	/**
+	 * @return the money
+	 */
+	public MoneyConfiguration getMoney()
+	{
+		return money;
+	}
+
+	/**
+	 * @param money the money to set
+	 */
+	public void setMoney(MoneyConfiguration money)
+	{
+		this.money = money;
 	}
 }

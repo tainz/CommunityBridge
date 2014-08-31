@@ -5,7 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.apache.commons.lang.math.RandomUtils;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.communitybridge.main.Configuration;
+import org.communitybridge.configuration.MoneyConfiguration;
+import org.communitybridge.configuration.Configuration;
 import org.communitybridge.main.Environment;
 import org.communitybridge.main.SQL;
 import org.junit.Assert;
@@ -20,6 +21,7 @@ public class MoneyDaoTest
 	MoneyDao dao = new MoneyDao();
 	private final Environment environment = new Environment();
 	private final Configuration configuration = mock(Configuration.class);
+	private final MoneyConfiguration moneyConfiguration = new MoneyConfiguration();
 	private final SQL sql = mock(SQL.class);
 	private final ResultSet result = mock(ResultSet.class);
 	private String KEYED_QUERY;
@@ -31,27 +33,29 @@ public class MoneyDaoTest
 	@Before
 	public void beforeEach() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
-		configuration.walletValueColumn = RandomStringUtils.randomAlphabetic(13);
-		configuration.walletTableName = RandomStringUtils.randomAlphabetic(10);
-		configuration.walletKeyColumn =  RandomStringUtils.randomAlphabetic(9);
-		configuration.walletUserIDColumn =  RandomStringUtils.randomAlphabetic(8);
-		configuration.walletColumnOrKey = RandomStringUtils.randomAlphabetic(7);
+		configuration.setMoney(moneyConfiguration);
+		moneyConfiguration.setValueColumn(RandomStringUtils.randomAlphabetic(13));
+		moneyConfiguration.setTableName(RandomStringUtils.randomAlphabetic(10));
+		moneyConfiguration.setKeyColumn(RandomStringUtils.randomAlphabetic(9));
+		moneyConfiguration.setUserIDColumn(RandomStringUtils.randomAlphabetic(8));
+		moneyConfiguration.setColumnOrKey(RandomStringUtils.randomAlphabetic(7));
 
 		environment.setConfiguration(configuration);
 		environment.setSql(sql);
-		KEYED_QUERY = "SELECT `" + configuration.walletValueColumn + "` "
-								 + "FROM `" + configuration.walletTableName + "` "
-								 + "WHERE `" + configuration.walletUserIDColumn + "` = '" + USER_ID + "' "
-								 + "AND " + configuration.walletKeyColumn + "` = '" + configuration.walletColumnOrKey + "'";
-		KEYLESS_QUERY = "SELECT `" + configuration.walletColumnOrKey + "` "
-									+ "FROM `" + configuration.walletTableName + "` "
-									+ "WHERE `" + configuration.walletUserIDColumn + "` = '" + USER_ID + "'";
+		KEYED_QUERY = "SELECT `" + moneyConfiguration.getValueColumn() + "` "
+								 + "FROM `" + moneyConfiguration.getTableName() + "` "
+								 + "WHERE `" + moneyConfiguration.getUserIDColumn() + "` = '" + USER_ID + "' "
+								 + "AND " + moneyConfiguration.getKeyColumn() + "` = '" + moneyConfiguration.getColumnOrKey() + "'";
+		KEYLESS_QUERY = "SELECT `" + moneyConfiguration.getColumnOrKey() + "` "
+									+ "FROM `" + moneyConfiguration.getTableName() + "` "
+									+ "WHERE `" + moneyConfiguration.getUserIDColumn() + "` = '" + USER_ID + "'";
 
+		when(configuration.getMoney()).thenReturn(moneyConfiguration);
 		when(sql.sqlQuery(KEYED_QUERY)).thenReturn(result);
 		when(sql.sqlQuery(KEYLESS_QUERY)).thenReturn(result);
 		when(result.next()).thenReturn(true);
-		when(result.getDouble(configuration.walletValueColumn)).thenReturn(KEYED_BALANCE);
-		when(result.getDouble(configuration.walletColumnOrKey)).thenReturn(KEYLESS_BALANCE);
+		when(result.getDouble(moneyConfiguration.getValueColumn())).thenReturn(KEYED_BALANCE);
+		when(result.getDouble(moneyConfiguration.getColumnOrKey())).thenReturn(KEYLESS_BALANCE);
 	}
 
 	@Test
@@ -63,7 +67,7 @@ public class MoneyDaoTest
 	@Test
 	public void getBalanceKeylessWhenEmptyResultSetReturnsZero() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
-		configuration.walletUsesKey = false;
+		moneyConfiguration.setUsesKey(false);
 		when(result.next()).thenReturn(false);
 		Assert.assertEquals(new Double(0.0), dao.getBalance(environment, USER_ID), 0.0);
 	}
@@ -71,21 +75,21 @@ public class MoneyDaoTest
 	@Test
 	public void getBalanceKeylessReturnsBalance() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
-		configuration.walletUsesKey = false;
+		moneyConfiguration.setUsesKey(false);
 		Assert.assertEquals(KEYLESS_BALANCE, dao.getBalance(environment, USER_ID), 0.0);
 	}
 
 	@Test
 	public void getBalanceUsesKeyNeverReturnsNull() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
-		configuration.walletUsesKey = true;
+		moneyConfiguration.setUsesKey(true);
 		Assert.assertNotNull(dao.getBalance(environment, USER_ID));
 	}
 
 	@Test
 	public void getBalanceKeyedWhenEmptyResultSetReturnsZero() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
-		configuration.walletUsesKey = true;
+		moneyConfiguration.setUsesKey(true);
 		when(result.next()).thenReturn(false);
 		Assert.assertEquals(new Double(0.0), dao.getBalance(environment, USER_ID), 0.0);
 	}
@@ -93,7 +97,7 @@ public class MoneyDaoTest
 	@Test
 	public void getBalanceUsesKeyReturnsBalance() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
-		configuration.walletUsesKey = true;
+		moneyConfiguration.setUsesKey(true);
 		Assert.assertEquals(KEYED_BALANCE, dao.getBalance(environment, USER_ID), 0.0);
 	}
 
@@ -101,10 +105,10 @@ public class MoneyDaoTest
 	public void setBalanceKeylessSetsBalance() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
 		Double balance = RandomUtils.nextDouble();
-		String query = "UPDATE `" + configuration.walletTableName + "` "
-						     + "SET `" + configuration.walletColumnOrKey + "` = '" + balance.toString() + "' "
-								 + "WHERE `" + configuration.walletUserIDColumn + "` = '" + USER_ID + "'";
-		configuration.walletUsesKey = false;
+		String query = "UPDATE `" + moneyConfiguration.getTableName() + "` "
+						     + "SET `" + moneyConfiguration.getColumnOrKey() + "` = '" + balance.toString() + "' "
+								 + "WHERE `" + moneyConfiguration.getUserIDColumn() + "` = '" + USER_ID + "'";
+		moneyConfiguration.setUsesKey(false);
 		dao.setBalance(environment, USER_ID, balance);
 		Mockito.verify(sql).updateQuery(query);
 	}
@@ -113,11 +117,11 @@ public class MoneyDaoTest
 	public void setBalanceKeyedSetsBalance() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
 		Double balance = RandomUtils.nextDouble();
-		String query = "UPDATE `" + configuration.walletTableName + "` "
-						     + "SET `" + configuration.walletValueColumn + "` = '" + balance.toString() + "' "
-								 + "WHERE `" + configuration.walletUserIDColumn + "` = '" + USER_ID + "'"
-								 + "AND " + configuration.walletKeyColumn + "` = '" + configuration.walletColumnOrKey + "'";
-		configuration.walletUsesKey = true;
+		String query = "UPDATE `" + moneyConfiguration.getTableName() + "` "
+						     + "SET `" + moneyConfiguration.getValueColumn() + "` = '" + balance.toString() + "' "
+								 + "WHERE `" + moneyConfiguration.getUserIDColumn() + "` = '" + USER_ID + "'"
+								 + "AND " + moneyConfiguration.getKeyColumn() + "` = '" + moneyConfiguration.getColumnOrKey() + "'";
+		moneyConfiguration.setUsesKey(true);
 		dao.setBalance(environment, USER_ID, balance);
 		Mockito.verify(sql).updateQuery(query);
 	}
