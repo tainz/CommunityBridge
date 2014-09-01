@@ -204,7 +204,7 @@ public class PlayerStateTest
 
 		state.generate(environment, player, USER_ID);
 
-		assertEquals(moneyConfiguration.getConfigurationString(), state.getMoneyConfigurationState());
+		assertEquals(moneyConfiguration.getConfigurationState(), state.getMoneyConfigurationState());
 	}
 
 	@Test
@@ -368,7 +368,7 @@ public class PlayerStateTest
 		verify(playerData).set("permissions-system.group-names", GROUP_NAMES);
 		verify(playerData).set("webapp.primary-group-id", PRIMARY_GROUP_ID);
 		verify(playerData).set("webapp.group-ids", GROUP_IDS);
-		verify(playerData).set("money.configuration-state", moneyConfiguration.getConfigurationString());
+		verify(playerData).set("money.configuration-state", moneyConfiguration.getConfigurationState());
 		verify(playerData).set("money.minecraft", mcWallet);
 		verify(playerData).set("money.web-application", wbWallet);
 		verify(playerData).save(any(File.class));
@@ -421,7 +421,7 @@ public class PlayerStateTest
 		when(playerData.getStringList("webapp.group-ids")).thenReturn(GROUP_IDS);
 		when(playerData.getString("webapp.primary-group-id", "")).thenReturn(PRIMARY_GROUP_ID);
 
-		when(playerData.getString("money.configuration-state", "")).thenReturn(moneyConfiguration.getConfigurationString());
+		when(playerData.getString("money.configuration-state", "")).thenReturn(moneyConfiguration.getConfigurationState());
 		when(playerData.getDouble("money.minecraft", 0)).thenReturn(mcWallet);
 		when(playerData.getDouble("money.web-application", 0)).thenReturn(waWallet);
 		state.load(playerFile);
@@ -429,7 +429,7 @@ public class PlayerStateTest
 		assertEquals(false, state.isNewFile());
 		assertEquals(mcWallet, state.getMinecraftMoney(), 0);
 		assertEquals(waWallet, state.getWebApplicationMoney(), 0);
-		assertEquals(moneyConfiguration.getConfigurationString(), state.getMoneyConfigurationState());
+		assertEquals(moneyConfiguration.getConfigurationState(), state.getMoneyConfigurationState());
 		assertEquals(PRIMARY_GROUP_ID, state.getWebappPrimaryGroupID());
 		assertEquals(PRIMARY_GROUP_NAME, state.getPermissionsSystemPrimaryGroupName());
 

@@ -11,12 +11,12 @@ public class MoneyConfigurationTest
 
 	@Test
 	public void getConfigurationStringShouldNeverReturnNull() {
-		Assert.assertNotNull(moneyConfiguration.getConfigurationString());
+		Assert.assertNotNull(moneyConfiguration.getConfigurationState());
 	}
 
 	@Test
 	public void getConfigurationStringWhenInactiveShouldReturnEmptyString() {
-		Assert.assertEquals("", moneyConfiguration.getConfigurationString());
+		Assert.assertEquals("", moneyConfiguration.getConfigurationState());
 	}
 
 	@Test
@@ -31,7 +31,7 @@ public class MoneyConfigurationTest
 		moneyConfiguration.setUserIdColumn(userIdColumn);
 		moneyConfiguration.setColumnOrKey(moneyColumn);
 
-		Assert.assertEquals(expected, moneyConfiguration.getConfigurationString());
+		Assert.assertEquals(expected, moneyConfiguration.getConfigurationState());
 	}
 
 	@Test
@@ -51,6 +51,6 @@ public class MoneyConfigurationTest
 		moneyConfiguration.setKeyColumn(keyColumn);
 		moneyConfiguration.setValueColumn(valueColumn);
 
-		Assert.assertEquals(expected, moneyConfiguration.getConfigurationString());
+		Assert.assertEquals(expected, moneyConfiguration.getConfigurationState());
 	}
 }

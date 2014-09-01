@@ -12,7 +12,7 @@ public class MoneyConfiguration
 	private String  keyColumn;
 	private String  valueColumn;
 
-	public String getConfigurationString()
+	public String getConfigurationState()
 	{
 		if (enabled)
 		{

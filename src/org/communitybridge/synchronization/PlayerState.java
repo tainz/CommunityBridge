@@ -35,7 +35,7 @@ public class PlayerState implements Cloneable
 	{
 		if (environment.getConfiguration().economyEnabled && environment.getConfiguration().getMoney().isEnabled())
 		{
-			moneyConfigurationState = environment.getConfiguration().getMoney().getConfigurationString();
+			moneyConfigurationState = environment.getConfiguration().getMoney().getConfigurationState();
 			minecraftMoney = environment.getEconomy().getBalance(player);
 			webApplicationMoney = money.getBalance(environment, userId);
 		}
