@@ -197,7 +197,18 @@ public class PlayerStateTest
 	}
 
 	@Test
-	public void generateSetsMinecraftWallet() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
+	public void generateSetsMoneyConfigurationState() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
+	{
+		configuration.economyEnabled = true;
+		configuration.getMoney().setEnabled(true);
+
+		state.generate(environment, player, USER_ID);
+
+		assertEquals(moneyConfiguration.getConfigurationString(), state.getMoneyConfigurationState());
+	}
+
+	@Test
+	public void generateSetsMinecraftMoney() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
 		double wallet = RandomUtils.nextDouble() + 1;
 		configuration.economyEnabled = true;
@@ -207,11 +218,11 @@ public class PlayerStateTest
 
 		state.generate(environment, player, USER_ID);
 
-		assertEquals(wallet, state.getMinecraftWallet(), 0);
+		assertEquals(wallet, state.getMinecraftMoney(), 0);
 	}
 
 	@Test
-	public void generateSetsWebApplicationWallet() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
+	public void generateSetsWebApplicationMoney() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
 		double wallet = RandomUtils.nextDouble() + 1;
 		configuration.economyEnabled = true;
@@ -219,53 +230,75 @@ public class PlayerStateTest
 		when(moneyDao.getBalance(environment, USER_ID)).thenReturn(wallet);
 		state.generate(environment, player, USER_ID);
 
-		assertEquals(wallet, state.getWebApplicationWallet(), 0);
+		assertEquals(wallet, state.getWebApplicationMoney(), 0);
 	}
 
 	@Test
-	public void copyNeverReturnsNull() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
+	public void cloneNeverReturnsNull() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
 		state.generate(environment, player, USER_ID);
-		PlayerState copy = state.copy();
-		assertNotNull(copy);
+		PlayerState clone = state.clone();
+		assertNotNull(clone);
 	}
 
 	@Test
-	public void copyCopiesPrimaryGroupId() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
+	public void cloneReturnsNewObject() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
 		state.generate(environment, player, USER_ID);
-		PlayerState copy = state.copy();
-		assertEquals(state.getWebappPrimaryGroupID(), copy.getWebappPrimaryGroupID());
+		PlayerState clone = state.clone();
+		assertNotSame(clone, state);
 	}
 
 	@Test
-	public void copyCopiesGroupIds() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
+	public void cloneClonesPrimaryGroupId() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
 		state.generate(environment, player, USER_ID);
-		PlayerState copy = state.copy();
-		assertEquals(state.getWebappGroupIDs(), copy.getWebappGroupIDs());
+		PlayerState clone = state.clone();
+		assertEquals(state.getWebappPrimaryGroupID(), clone.getWebappPrimaryGroupID());
 	}
 
 	@Test
-	public void copyCopiesPrimaryGroupName() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
+	public void cloneClonesGroupIds() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
 		state.generate(environment, player, USER_ID);
-		PlayerState copy = state.copy();
-
-		assertEquals(state.getPermissionsSystemPrimaryGroupName(), copy.getPermissionsSystemPrimaryGroupName());
+		PlayerState clone = state.clone();
+		assertEquals(state.getWebappGroupIDs(), clone.getWebappGroupIDs());
 	}
 
 	@Test
-	public void copyCopiesGroupNames() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
+	public void cloneClonesPrimaryGroupName() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
 		state.generate(environment, player, USER_ID);
-		PlayerState copy = state.copy();
+		PlayerState clone = state.clone();
 
-		assertEquals(state.getPermissionsSystemGroupNames(), copy.getPermissionsSystemGroupNames());
+		assertEquals(state.getPermissionsSystemPrimaryGroupName(), clone.getPermissionsSystemPrimaryGroupName());
 	}
 
 	@Test
-	public void copyCopiesMinecraftMoney() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
+	public void cloneClonesGroupNames() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
+	{
+		state.generate(environment, player, USER_ID);
+		PlayerState clone = state.clone();
+
+		assertEquals(state.getPermissionsSystemGroupNames(), clone.getPermissionsSystemGroupNames());
+	}
+
+	@Test
+	public void cloneClonesNewFile() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
+	{
+		PlayerState original = new PlayerState();
+
+		original.setNewFile(true);
+		PlayerState clone = original.clone();
+		assertEquals(original.isNewFile(), clone.isNewFile());
+
+		original.setNewFile(false);
+		clone = original.clone();
+		assertEquals(original.isNewFile(), clone.isNewFile());
+	}
+
+	@Test
+	public void cloneClonesMinecraftMoney() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
 		double wallet = RandomUtils.nextDouble() + 1;
 		configuration.economyEnabled = true;
@@ -273,13 +306,13 @@ public class PlayerStateTest
 
 		when(economy.getBalance(player)).thenReturn(wallet);
 		state.generate(environment, player, USER_ID);
-		PlayerState copy = state.copy();
+		PlayerState clone = state.clone();
 
-		assertEquals(wallet, copy.getMinecraftWallet(), 0);
+		assertEquals(wallet, clone.getMinecraftMoney(), 0);
 	}
 
 	@Test
-	public void copyCopiesWebApplicationMoney() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
+	public void cloneClonesWebApplicationMoney() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
 		double wallet = RandomUtils.nextDouble() + 1;
 		configuration.economyEnabled = true;
@@ -287,18 +320,33 @@ public class PlayerStateTest
 
 		when(moneyDao.getBalance(environment, USER_ID)).thenReturn(wallet);
 		state.generate(environment, player, USER_ID);
-		PlayerState copy = state.copy();
+		PlayerState clone = state.clone();
 
-		assertEquals(wallet, copy.getWebApplicationWallet(), 0);
+		assertEquals(wallet, clone.getWebApplicationMoney(), 0);
 	}
 
 	@Test
-	public void copyCopiesNewFile() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
+	public void cloneClonesMoneyConfigurationChanged() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{
-		state.generate(environment, player, USER_ID);
-		PlayerState copy = state.copy();
+		PlayerState original = new PlayerState();
 
-		assertEquals(state.isIsNewFile(), copy.isIsNewFile());
+		original.setMoneyConfigurationChanged(true);
+		PlayerState clone = original.clone();
+		assertEquals(original.hasMoneyConfigurationChanged(), clone.hasMoneyConfigurationChanged());
+
+		original.setMoneyConfigurationChanged(false);
+		clone = original.clone();
+		assertEquals(original.hasMoneyConfigurationChanged(), clone.hasMoneyConfigurationChanged());
+	}
+
+	@Test
+	public void cloneClonesMoneyConfigurationState() throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
+	{
+		PlayerState original = new PlayerState();
+		original.setMoneyConfigurationState(RandomStringUtils.randomAlphanumeric(13));
+
+		PlayerState clone = original.clone();
+		assertEquals(original.getMoneyConfigurationState(), clone.getMoneyConfigurationState());
 	}
 
 	@Test
@@ -316,12 +364,13 @@ public class PlayerStateTest
 		state.save(player, playerFile, environment.getLog());
 
 		verify(playerData).set("last-known-name", PLAYER_NAME);
-		verify(playerData).set("minecraft-money", mcWallet);
-		verify(playerData).set("web-application-money", wbWallet);
 		verify(playerData).set("permissions-system.primary-group-name", PRIMARY_GROUP_NAME);
 		verify(playerData).set("permissions-system.group-names", GROUP_NAMES);
 		verify(playerData).set("webapp.primary-group-id", PRIMARY_GROUP_ID);
 		verify(playerData).set("webapp.group-ids", GROUP_IDS);
+		verify(playerData).set("money.configuration-state", moneyConfiguration.getConfigurationString());
+		verify(playerData).set("money.minecraft", mcWallet);
+		verify(playerData).set("money.web-application", wbWallet);
 		verify(playerData).save(any(File.class));
 	}
 
@@ -348,7 +397,9 @@ public class PlayerStateTest
 		when(playerFile.exists()).thenReturn(false);
 		when(oldPlayerFile.exists()).thenReturn(false);
 		state.load(playerFile);
-		assertEquals(true, state.isIsNewFile());
+		assertTrue(state.isNewFile());
+		assertTrue(state.hasMoneyConfigurationChanged());
+		assertEquals("", state.getMoneyConfigurationState());
 		assertEquals("", state.getWebappPrimaryGroupID());
 		assertTrue("Group name list should be empty", state.getPermissionsSystemGroupNames().isEmpty());
 		assertTrue("Group id list should be empty", state.getWebappGroupIDs().isEmpty());
@@ -365,17 +416,20 @@ public class PlayerStateTest
 		when(oldPlayerFile.exists()).thenReturn(true);
 		PowerMockito.mockStatic(YamlConfiguration.class);
 		when(YamlConfiguration.loadConfiguration(playerFile)).thenReturn(playerData);
-		when(playerData.getDouble("minecraft-money", 0)).thenReturn(mcWallet);
-		when(playerData.getDouble("web-application-money", 0)).thenReturn(waWallet);
 		when(playerData.getStringList("permissions-system.group-names")).thenReturn(GROUP_NAMES);
 		when(playerData.getString("permissions-system.primary-group-name", "")).thenReturn(PRIMARY_GROUP_NAME);
 		when(playerData.getStringList("webapp.group-ids")).thenReturn(GROUP_IDS);
 		when(playerData.getString("webapp.primary-group-id", "")).thenReturn(PRIMARY_GROUP_ID);
+
+		when(playerData.getString("money.configuration-state", "")).thenReturn(moneyConfiguration.getConfigurationString());
+		when(playerData.getDouble("money.minecraft", 0)).thenReturn(mcWallet);
+		when(playerData.getDouble("money.web-application", 0)).thenReturn(waWallet);
 		state.load(playerFile);
 
-		assertEquals(false, state.isIsNewFile());
-		assertEquals(mcWallet, state.getMinecraftWallet(), 0);
-		assertEquals(waWallet, state.getWebApplicationWallet(), 0);
+		assertEquals(false, state.isNewFile());
+		assertEquals(mcWallet, state.getMinecraftMoney(), 0);
+		assertEquals(waWallet, state.getWebApplicationMoney(), 0);
+		assertEquals(moneyConfiguration.getConfigurationString(), state.getMoneyConfigurationState());
 		assertEquals(PRIMARY_GROUP_ID, state.getWebappPrimaryGroupID());
 		assertEquals(PRIMARY_GROUP_NAME, state.getPermissionsSystemPrimaryGroupName());
 

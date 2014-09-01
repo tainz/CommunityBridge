@@ -13,7 +13,7 @@ import org.communitybridge.main.Environment;
 import org.communitybridge.synchronization.dao.MoneyDao;
 import org.communitybridge.utility.Log;
 
-public class PlayerState
+public class PlayerState implements Cloneable
 {
 	private String webappPrimaryGroupID = "";
 	private List<String> webappGroupIDs = new ArrayList<String>();
@@ -21,10 +21,12 @@ public class PlayerState
 	private String permissionsSystemPrimaryGroupName = "";
 	private List<String> permissionsSystemGroupNames= new ArrayList<String>();
 
-	private double minecraftWallet = 0;
-	private double webApplicationWallet = 0;
+	private boolean moneyConfigurationChanged;
+	private String moneyConfigurationState = "";
+	private double minecraftMoney = 0;
+	private double webApplicationMoney = 0;
 
-	private boolean isNewFile;
+	private boolean newFile;
 
 	private FileConfiguration playerData = new YamlConfiguration();
 	private MoneyDao money = new MoneyDao();
@@ -33,8 +35,9 @@ public class PlayerState
 	{
 		if (environment.getConfiguration().economyEnabled && environment.getConfiguration().getMoney().isEnabled())
 		{
-			minecraftWallet = environment.getEconomy().getBalance(player);
-			webApplicationWallet = money.getBalance(environment, userId);
+			moneyConfigurationState = environment.getConfiguration().getMoney().getConfigurationString();
+			minecraftMoney = environment.getEconomy().getBalance(player);
+			webApplicationMoney = money.getBalance(environment, userId);
 		}
 		if (environment.getConfiguration().groupSynchronizationActive)
 		{
@@ -56,19 +59,23 @@ public class PlayerState
 		if (file.exists())
 		{
 			playerData = YamlConfiguration.loadConfiguration(file);
-			minecraftWallet = playerData.getDouble("minecraft-money", 0.0);
-			webApplicationWallet = playerData.getDouble("web-application-money", 0.0);
 			permissionsSystemGroupNames = playerData.getStringList("permissions-system.group-names");
 			permissionsSystemPrimaryGroupName = playerData.getString("permissions-system.primary-group-name", "");
 			webappGroupIDs = playerData.getStringList("webapp.group-ids");
 			webappPrimaryGroupID = playerData.getString("webapp.primary-group-id", "");
-			isNewFile = false;
+			newFile = false;
+
+			moneyConfigurationState = playerData.getString("money.configuration-state", "");
+			minecraftMoney = playerData.getDouble("money.minecraft", 0.0);
+			webApplicationMoney = playerData.getDouble("money.web-application", 0.0);
 		}
 		else
 		{
-			isNewFile = true;
-			minecraftWallet = 0.0;
-			webApplicationWallet = 0.0;
+			newFile = true;
+			moneyConfigurationChanged = true;
+			moneyConfigurationState = "";
+			minecraftMoney = 0.0;
+			webApplicationMoney = 0.0;
 			permissionsSystemGroupNames = new ArrayList<String>();
 			permissionsSystemPrimaryGroupName = "";
 			webappPrimaryGroupID = "";
@@ -79,12 +86,13 @@ public class PlayerState
 	public void save(Player player, File file, Log log)
 	{
 		playerData.set("last-known-name", player.getName());
-		playerData.set("minecraft-money", minecraftWallet);
-		playerData.set("web-application-money", webApplicationWallet);
 		playerData.set("permissions-system.primary-group-name", permissionsSystemPrimaryGroupName);
 		playerData.set("permissions-system.group-names", permissionsSystemGroupNames);
 		playerData.set("webapp.primary-group-id", webappPrimaryGroupID);
 		playerData.set("webapp.group-ids", webappGroupIDs);
+		playerData.set("money.configuration-state", moneyConfigurationState);
+		playerData.set("money.minecraft", minecraftMoney);
+		playerData.set("money.web-application", webApplicationMoney);
 
 		try
 		{
@@ -96,12 +104,17 @@ public class PlayerState
 		}
 	}
 
-	public PlayerState copy()
+	@Override
+	public PlayerState clone()
 	{
 		PlayerState copy = new PlayerState();
-		copy.isNewFile = isNewFile;
-		copy.setMinecraftWallet(minecraftWallet);
-		copy.setWebApplicationWallet(webApplicationWallet);
+
+		copy.setMoneyConfigurationChanged(moneyConfigurationChanged);
+		copy.setMoneyConfigurationState(moneyConfigurationState);
+		copy.setMinecraftMoney(minecraftMoney);
+		copy.setWebApplicationMoney(webApplicationMoney);
+
+		copy.setNewFile(newFile);
 		copy.setPermissionsSystemGroupNames(permissionsSystemGroupNames);
 		copy.setPermissionsSystemPrimaryGroupName(permissionsSystemPrimaryGroupName);
 		copy.setWebappGroupIDs(webappGroupIDs);
@@ -149,29 +162,34 @@ public class PlayerState
 		this.permissionsSystemGroupNames = permissionsSystemGroupNames;
 	}
 
-	public boolean isIsNewFile()
+	public boolean isNewFile()
 	{
-		return isNewFile;
+		return newFile;
 	}
 
-	public double getMinecraftWallet()
+	public void setNewFile(boolean newFile)
 	{
-		return minecraftWallet;
+		this.newFile = newFile;
 	}
 
-	public void setMinecraftWallet(double wallet)
+	public double getMinecraftMoney()
 	{
-		this.minecraftWallet = wallet;
+		return minecraftMoney;
 	}
 
-	public double getWebApplicationWallet()
+	public void setMinecraftMoney(double wallet)
 	{
-		return webApplicationWallet;
+		this.minecraftMoney = wallet;
 	}
 
-	public void setWebApplicationWallet(double wallet)
+	public double getWebApplicationMoney()
 	{
-		this.webApplicationWallet = wallet;
+		return webApplicationMoney;
+	}
+
+	public void setWebApplicationMoney(double wallet)
+	{
+		this.webApplicationMoney = wallet;
 	}
 
 	private String getPrimaryGroupName(Player player, Environment environment)
@@ -192,5 +210,25 @@ public class PlayerState
 			}
 			return "";
 		}
+	}
+
+	public boolean hasMoneyConfigurationChanged()
+	{
+		return moneyConfigurationChanged;
+	}
+
+	public void setMoneyConfigurationChanged(boolean moneyConfigurationChanged)
+	{
+		this.moneyConfigurationChanged = moneyConfigurationChanged;
+	}
+
+	public String getMoneyConfigurationState()
+	{
+		return moneyConfigurationState;
+	}
+
+	public void setMoneyConfigurationState(String moneyConfigurationState)
+	{
+		this.moneyConfigurationState = moneyConfigurationState;
 	}
 }

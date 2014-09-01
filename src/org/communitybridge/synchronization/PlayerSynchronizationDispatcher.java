@@ -60,7 +60,7 @@ public class PlayerSynchronizationDispatcher
 
 			previous.load(playerFile);
 			current.generate(environment, player, userID);
-			result = current.copy();
+			result = current.clone();
 
 			if (environment.getConfiguration().groupSynchronizationActive)
 			{

@@ -30,9 +30,9 @@ public class MoneySynchronizer extends Synchronizer implements PlayerSynchronize
 
 	private PlayerState synchronizeGameToWeb(Environment environment, PlayerState previous, PlayerState current, PlayerState result, String userId)
 	{
-		double change = current.getMinecraftWallet() - previous.getMinecraftWallet();
-		double amount = current.getWebApplicationWallet() + change;
-		result.setWebApplicationWallet(amount);
+		double change = current.getMinecraftMoney() - previous.getMinecraftMoney();
+		double amount = current.getWebApplicationMoney() + change;
+		result.setWebApplicationMoney(amount);
 		if (change != 0)
 		{
 			try
@@ -57,8 +57,8 @@ public class MoneySynchronizer extends Synchronizer implements PlayerSynchronize
 
 	private PlayerState synchronizeWebToGame(Economy economy, PlayerState previous, PlayerState current, PlayerState result, Player player)
 	{
-		double change = current.getWebApplicationWallet() - previous.getWebApplicationWallet();
-		result.setMinecraftWallet(current.getMinecraftWallet() + change);
+		double change = current.getWebApplicationMoney() - previous.getWebApplicationMoney();
+		result.setMinecraftMoney(current.getMinecraftMoney() + change);
 
 		if (change > 0)
 		{

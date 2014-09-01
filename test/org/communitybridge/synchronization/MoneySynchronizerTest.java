@@ -84,8 +84,8 @@ public class MoneySynchronizerTest
 		double webCurrent = webPrevious * 2;
 		double expected = webCurrent - webPrevious;
 
-		Mockito.when(previous.getWebApplicationWallet()).thenReturn(webPrevious);
-		Mockito.when(current.getWebApplicationWallet()).thenReturn(webCurrent);
+		Mockito.when(previous.getWebApplicationMoney()).thenReturn(webPrevious);
+		Mockito.when(current.getWebApplicationMoney()).thenReturn(webCurrent);
 
 		synchronizer.synchronize(environment, player, USER_ID, previous, current, result);
 
@@ -99,8 +99,8 @@ public class MoneySynchronizerTest
 		double webPrevious = webCurrent * 2;
 		double expected = Math.abs(webCurrent - webPrevious);
 
-		Mockito.when(previous.getWebApplicationWallet()).thenReturn(webPrevious);
-		Mockito.when(current.getWebApplicationWallet()).thenReturn(webCurrent);
+		Mockito.when(previous.getWebApplicationMoney()).thenReturn(webPrevious);
+		Mockito.when(current.getWebApplicationMoney()).thenReturn(webCurrent);
 
 		synchronizer.synchronize(environment, player, USER_ID, previous, current, result);
 
@@ -115,13 +115,13 @@ public class MoneySynchronizerTest
 		double webCurrent = webPrevious * 2;
 		double expected = mcCurrent + webCurrent - webPrevious;
 
-		Mockito.when(previous.getWebApplicationWallet()).thenReturn(webPrevious);
-		Mockito.when(current.getWebApplicationWallet()).thenReturn(webCurrent);
-		Mockito.when(current.getMinecraftWallet()).thenReturn(mcCurrent);
+		Mockito.when(previous.getWebApplicationMoney()).thenReturn(webPrevious);
+		Mockito.when(current.getWebApplicationMoney()).thenReturn(webCurrent);
+		Mockito.when(current.getMinecraftMoney()).thenReturn(mcCurrent);
 
 		synchronizer.synchronize(environment, player, USER_ID, previous, current, result);
 
-		Mockito.verify(result).setMinecraftWallet(AdditionalMatchers.eq(expected, DOUBLE_DELTA));
+		Mockito.verify(result).setMinecraftMoney(AdditionalMatchers.eq(expected, DOUBLE_DELTA));
 	}
 
 	@Test
@@ -132,13 +132,13 @@ public class MoneySynchronizerTest
 		double webPrevious = webCurrent * 2;
 		double expected = mcCurrent + webCurrent - webPrevious;
 
-		Mockito.when(previous.getWebApplicationWallet()).thenReturn(webPrevious);
-		Mockito.when(current.getWebApplicationWallet()).thenReturn(webCurrent);
-		Mockito.when(current.getMinecraftWallet()).thenReturn(mcCurrent);
+		Mockito.when(previous.getWebApplicationMoney()).thenReturn(webPrevious);
+		Mockito.when(current.getWebApplicationMoney()).thenReturn(webCurrent);
+		Mockito.when(current.getMinecraftMoney()).thenReturn(mcCurrent);
 
 		synchronizer.synchronize(environment, player, USER_ID, previous, current, result);
 
-		Mockito.verify(result).setMinecraftWallet(AdditionalMatchers.eq(expected, DOUBLE_DELTA));
+		Mockito.verify(result).setMinecraftMoney(AdditionalMatchers.eq(expected, DOUBLE_DELTA));
 	}
 
 	@Test
@@ -146,8 +146,8 @@ public class MoneySynchronizerTest
 	{
 		double webCurrent = RandomUtils.nextDouble();
 
-		Mockito.when(previous.getWebApplicationWallet()).thenReturn(webCurrent);
-		Mockito.when(current.getWebApplicationWallet()).thenReturn(webCurrent);
+		Mockito.when(previous.getWebApplicationMoney()).thenReturn(webCurrent);
+		Mockito.when(current.getWebApplicationMoney()).thenReturn(webCurrent);
 
 		synchronizer.synchronize(environment, player, USER_ID, previous, current, result);
 
@@ -163,9 +163,9 @@ public class MoneySynchronizerTest
 		double webCurrent = RandomUtils.nextDouble();
 		double expected = webCurrent + mcCurrent - mcPrevious;
 
-		Mockito.when(previous.getMinecraftWallet()).thenReturn(mcPrevious);
-		Mockito.when(current.getMinecraftWallet()).thenReturn(mcCurrent);
-		Mockito.when(current.getWebApplicationWallet()).thenReturn(webCurrent);
+		Mockito.when(previous.getMinecraftMoney()).thenReturn(mcPrevious);
+		Mockito.when(current.getMinecraftMoney()).thenReturn(mcCurrent);
+		Mockito.when(current.getWebApplicationMoney()).thenReturn(webCurrent);
 
 		synchronizer.synchronize(environment, player, USER_ID, previous, current, result);
 
@@ -181,9 +181,9 @@ public class MoneySynchronizerTest
 		double webCurrent = RandomUtils.nextDouble();
 		double expected = webCurrent + mcCurrent - mcPrevious;
 
-		Mockito.when(previous.getMinecraftWallet()).thenReturn(mcPrevious);
-		Mockito.when(current.getMinecraftWallet()).thenReturn(mcCurrent);
-		Mockito.when(current.getWebApplicationWallet()).thenReturn(webCurrent);
+		Mockito.when(previous.getMinecraftMoney()).thenReturn(mcPrevious);
+		Mockito.when(current.getMinecraftMoney()).thenReturn(mcCurrent);
+		Mockito.when(current.getWebApplicationMoney()).thenReturn(webCurrent);
 
 		synchronizer.synchronize(environment, player, USER_ID, previous, current, result);
 
@@ -199,13 +199,13 @@ public class MoneySynchronizerTest
 		double webCurrent = RandomUtils.nextDouble();
 		double expected = webCurrent + mcCurrent - mcPrevious;
 
-		Mockito.when(previous.getMinecraftWallet()).thenReturn(mcPrevious);
-		Mockito.when(current.getMinecraftWallet()).thenReturn(mcCurrent);
-		Mockito.when(current.getWebApplicationWallet()).thenReturn(webCurrent);
+		Mockito.when(previous.getMinecraftMoney()).thenReturn(mcPrevious);
+		Mockito.when(current.getMinecraftMoney()).thenReturn(mcCurrent);
+		Mockito.when(current.getWebApplicationMoney()).thenReturn(webCurrent);
 
 		synchronizer.synchronize(environment, player, USER_ID, previous, current, result);
 
-		Mockito.verify(result).setWebApplicationWallet(AdditionalMatchers.eq(expected, DOUBLE_DELTA));
+		Mockito.verify(result).setWebApplicationMoney(AdditionalMatchers.eq(expected, DOUBLE_DELTA));
 	}
 
 	@Test
@@ -214,9 +214,9 @@ public class MoneySynchronizerTest
 		double mcCurrent = RandomUtils.nextDouble();
 		double webCurrent = RandomUtils.nextDouble();
 
-		Mockito.when(previous.getMinecraftWallet()).thenReturn(mcCurrent);
-		Mockito.when(current.getMinecraftWallet()).thenReturn(mcCurrent);
-		Mockito.when(current.getWebApplicationWallet()).thenReturn(webCurrent);
+		Mockito.when(previous.getMinecraftMoney()).thenReturn(mcCurrent);
+		Mockito.when(current.getMinecraftMoney()).thenReturn(mcCurrent);
+		Mockito.when(current.getWebApplicationMoney()).thenReturn(webCurrent);
 
 		synchronizer.synchronize(environment, player, USER_ID, previous, current, result);
 

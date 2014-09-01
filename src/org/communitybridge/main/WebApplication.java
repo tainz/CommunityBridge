@@ -321,7 +321,7 @@ public class WebApplication extends Synchronizer
 			direction = "web";
 		}
 
-		if(configuration.simpleSynchronizationFirstDirection.startsWith("web") && previous.isIsNewFile()) {
+		if(configuration.simpleSynchronizationFirstDirection.startsWith("web") && previous.isNewFile()) {
 			direction = "web";
 		}
 
