@@ -1,6 +1,7 @@
 package org.communitybridge.configuration;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.communitybridge.utility.StringUtilities;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -23,7 +24,7 @@ public class MoneyConfigurationTest
 		String tableName = RandomStringUtils.randomAlphabetic(13);
 		String userIdColumn = RandomStringUtils.randomAlphabetic(6);
 		String moneyColumn = RandomStringUtils.randomAlphabetic(7);
-		String expected = tableName + "-" + userIdColumn + "-" + moneyColumn;
+		String expected = StringUtilities.rot13(tableName + "-" + userIdColumn + "-" + moneyColumn);
 		moneyConfiguration.setEnabled(true);
 		moneyConfiguration.setUsesKey(false);
 		moneyConfiguration.setTableName(tableName);
@@ -41,7 +42,7 @@ public class MoneyConfigurationTest
 		String keyColumn = RandomStringUtils.randomAlphabetic(8);
 		String valueColumn = RandomStringUtils.randomAlphabetic(9);
 
-		String expected = tableName + "-" + userIdColumn + "-" + key + "-" + keyColumn + "-" + valueColumn;
+		String expected = StringUtilities.rot13(tableName + "-" + userIdColumn + "-" + key + "-" + keyColumn + "-" + valueColumn);
 		moneyConfiguration.setEnabled(true);
 		moneyConfiguration.setUsesKey(true);
 		moneyConfiguration.setTableName(tableName);

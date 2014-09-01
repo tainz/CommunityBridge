@@ -22,7 +22,7 @@ public final class StringUtilities
 		{
 			leftVersion = "";
 		}
-		
+
 		if (rightVersion == null)
 		{
 			rightVersion = "";
@@ -214,6 +214,26 @@ public final class StringUtilities
 				result = result + ", ";
 			}
 			result = result + time + (time == 1 ? " second" : " seconds");
+		}
+
+		return result;
+	}
+
+	public static String rot13(String original)
+	{
+		String result = "";
+
+		if (original != null)
+		{
+			original = original.trim();
+			for (char c : original.toCharArray())
+			{
+				if       (c >= 'a' && c <= 'm') c += 13;
+				else if  (c >= 'A' && c <= 'M') c += 13;
+				else if  (c >= 'n' && c <= 'z') c -= 13;
+				else if  (c >= 'N' && c <= 'Z') c -= 13;
+				result = result + String.valueOf(c);
+			}
 		}
 
 		return result;

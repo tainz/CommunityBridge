@@ -1,5 +1,7 @@
 package org.communitybridge.configuration;
 
+import org.communitybridge.utility.StringUtilities;
+
 public class MoneyConfiguration
 {
 	private boolean enabled;
@@ -21,12 +23,12 @@ public class MoneyConfiguration
 
 	private String getKeyedConfigurationString()
 	{
-		return tableName + "-" + userIdColumn + "-" + columnOrKey + "-" + keyColumn + "-" + valueColumn;
+		return StringUtilities.rot13(tableName + "-" + userIdColumn + "-" + columnOrKey + "-" + keyColumn + "-" + valueColumn);
 	}
 
 	private String getKeylessConfigurationString()
 	{
-		return tableName + "-" + userIdColumn + "-" + columnOrKey;
+		return StringUtilities.rot13(tableName + "-" + userIdColumn + "-" + columnOrKey);
 	}
 
 	public boolean isEnabled()

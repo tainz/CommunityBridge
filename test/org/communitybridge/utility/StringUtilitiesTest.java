@@ -1,7 +1,10 @@
 package org.communitybridge.utility;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -373,5 +376,54 @@ public class StringUtilitiesTest
 		String result = StringUtilities.timeElapsedToString(176400);
 
 		assertTrue(result.equals("2 days, 1 hour"));
+	}
+
+	@Test
+	public void rot13WithNullReturnsEmptyString()
+	{
+		assertEquals("", StringUtilities.rot13(null));
+	}
+
+	@Test
+	public void rot13WithEmptyStringReturnsEmptyString()
+	{
+		assertEquals("", StringUtilities.rot13(""));
+	}
+
+	@Test
+	public void rot13WithBlankStringReturnsEmptyString()
+	{
+		assertEquals("", StringUtilities.rot13("   "));
+	}
+
+	@Test
+	public void rot13SubstitutesCharacters()
+	{
+		Map<String, String> map = buildSubstitutionMap();
+
+		for (Entry<String, String> entry : map.entrySet())
+		{
+			assertEquals(entry.getKey().toString(), entry.getValue().toString(), StringUtilities.rot13(entry.getKey().toString()));
+		}
+	}
+
+	private Map<String, String> buildSubstitutionMap()
+	{
+		Map<String, String> map = new HashMap<String, String>();
+		for (int i = 0; i <= 255; i++)
+		{
+			map.put(String.valueOf(i), String.valueOf(i));
+		}
+
+		for (char i = 65; i <= 90; i++)
+		{
+			char c = i;
+			if       (c >= 'a' && c <= 'm') c += 13;
+			else if  (c >= 'A' && c <= 'M') c += 13;
+			else if  (c >= 'n' && c <= 'z') c -= 13;
+			else if  (c >= 'N' && c <= 'Z') c -= 13;
+			map.put(String.valueOf(i), String.valueOf(c));
+		}
+		return map;
 	}
 }
