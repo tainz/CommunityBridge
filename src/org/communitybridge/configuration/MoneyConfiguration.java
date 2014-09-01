@@ -5,10 +5,29 @@ public class MoneyConfiguration
 	private boolean enabled;
 	private boolean usesKey;
 	private String	tableName;
-	private String	userIDColumn;
+	private String	userIdColumn;
 	private String  columnOrKey;
 	private String  keyColumn;
 	private String  valueColumn;
+
+	public String getConfigurationString()
+	{
+		if (enabled)
+		{
+			return usesKey ? getKeyedConfigurationString() : getKeylessConfigurationString();
+		}
+		return "";
+	}
+
+	private String getKeyedConfigurationString()
+	{
+		return tableName + "-" + userIdColumn + "-" + columnOrKey + "-" + keyColumn + "-" + valueColumn;
+	}
+
+	private String getKeylessConfigurationString()
+	{
+		return tableName + "-" + userIdColumn + "-" + columnOrKey;
+	}
 
 	public boolean isEnabled()
 	{
@@ -40,14 +59,14 @@ public class MoneyConfiguration
 		this.tableName = tableName;
 	}
 
-	public String getUserIDColumn()
+	public String getUserIdColumn()
 	{
-		return userIDColumn;
+		return userIdColumn;
 	}
 
-	public void setUserIDColumn(String userIDColumn)
+	public void setUserIdColumn(String userIDColumn)
 	{
-		this.userIDColumn = userIDColumn;
+		this.userIdColumn = userIDColumn;
 	}
 
 	public String getColumnOrKey()

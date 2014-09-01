@@ -18,7 +18,7 @@ public class MoneyDao
 		{
 			query = "SELECT `" + configuration.getValueColumn() + "` "
 						+ "FROM `" + configuration.getTableName() + "` "
-						+ "WHERE `" + configuration.getUserIDColumn() + "` = '" + userId + "' "
+						+ "WHERE `" + configuration.getUserIdColumn() + "` = '" + userId + "' "
 						+ "AND " + configuration.getKeyColumn() + "` = '" + configuration.getColumnOrKey() + "'";
 			result = environment.getSql().sqlQuery(query);
 			column = configuration.getValueColumn();
@@ -27,7 +27,7 @@ public class MoneyDao
 		{
 			query = "SELECT `" + configuration.getColumnOrKey() + "` "
 						+ "FROM `" + configuration.getTableName() + "` "
-						+ "WHERE `" + configuration.getUserIDColumn() + "` = '" + userId + "'";
+						+ "WHERE `" + configuration.getUserIdColumn() + "` = '" + userId + "'";
 			result = environment.getSql().sqlQuery(query);
 			column = configuration.getColumnOrKey();
 		}
@@ -49,14 +49,14 @@ public class MoneyDao
 		{
 			query = "UPDATE `" + configuration.getTableName() + "` "
 			      + "SET `" + configuration.getValueColumn() + "` = '" + balance.toString() + "' "
-			  		+ "WHERE `" + configuration.getUserIDColumn() + "` = '" + userId + "'"
+			  		+ "WHERE `" + configuration.getUserIdColumn() + "` = '" + userId + "'"
 						+ "AND " + configuration.getKeyColumn() + "` = '" + configuration.getColumnOrKey() + "'";
 		}
 		else
 		{
 			query = "UPDATE `" + configuration.getTableName() + "` "
 						+ "SET `" + configuration.getColumnOrKey() + "` = '" + balance.toString() + "' "
-						+ "WHERE `" + configuration.getUserIDColumn() + "` = '" + userId + "'";
+						+ "WHERE `" + configuration.getUserIdColumn() + "` = '" + userId + "'";
 		}
 		environment.getSql().updateQuery(query);
 	}

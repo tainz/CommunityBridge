@@ -37,18 +37,18 @@ public class MoneyDaoTest
 		moneyConfiguration.setValueColumn(RandomStringUtils.randomAlphabetic(13));
 		moneyConfiguration.setTableName(RandomStringUtils.randomAlphabetic(10));
 		moneyConfiguration.setKeyColumn(RandomStringUtils.randomAlphabetic(9));
-		moneyConfiguration.setUserIDColumn(RandomStringUtils.randomAlphabetic(8));
+		moneyConfiguration.setUserIdColumn(RandomStringUtils.randomAlphabetic(8));
 		moneyConfiguration.setColumnOrKey(RandomStringUtils.randomAlphabetic(7));
 
 		environment.setConfiguration(configuration);
 		environment.setSql(sql);
 		KEYED_QUERY = "SELECT `" + moneyConfiguration.getValueColumn() + "` "
 								 + "FROM `" + moneyConfiguration.getTableName() + "` "
-								 + "WHERE `" + moneyConfiguration.getUserIDColumn() + "` = '" + USER_ID + "' "
+								 + "WHERE `" + moneyConfiguration.getUserIdColumn() + "` = '" + USER_ID + "' "
 								 + "AND " + moneyConfiguration.getKeyColumn() + "` = '" + moneyConfiguration.getColumnOrKey() + "'";
 		KEYLESS_QUERY = "SELECT `" + moneyConfiguration.getColumnOrKey() + "` "
 									+ "FROM `" + moneyConfiguration.getTableName() + "` "
-									+ "WHERE `" + moneyConfiguration.getUserIDColumn() + "` = '" + USER_ID + "'";
+									+ "WHERE `" + moneyConfiguration.getUserIdColumn() + "` = '" + USER_ID + "'";
 
 		when(configuration.getMoney()).thenReturn(moneyConfiguration);
 		when(sql.sqlQuery(KEYED_QUERY)).thenReturn(result);
@@ -107,7 +107,7 @@ public class MoneyDaoTest
 		Double balance = RandomUtils.nextDouble();
 		String query = "UPDATE `" + moneyConfiguration.getTableName() + "` "
 						     + "SET `" + moneyConfiguration.getColumnOrKey() + "` = '" + balance.toString() + "' "
-								 + "WHERE `" + moneyConfiguration.getUserIDColumn() + "` = '" + USER_ID + "'";
+								 + "WHERE `" + moneyConfiguration.getUserIdColumn() + "` = '" + USER_ID + "'";
 		moneyConfiguration.setUsesKey(false);
 		dao.setBalance(environment, USER_ID, balance);
 		Mockito.verify(sql).updateQuery(query);
@@ -119,7 +119,7 @@ public class MoneyDaoTest
 		Double balance = RandomUtils.nextDouble();
 		String query = "UPDATE `" + moneyConfiguration.getTableName() + "` "
 						     + "SET `" + moneyConfiguration.getValueColumn() + "` = '" + balance.toString() + "' "
-								 + "WHERE `" + moneyConfiguration.getUserIDColumn() + "` = '" + USER_ID + "'"
+								 + "WHERE `" + moneyConfiguration.getUserIdColumn() + "` = '" + USER_ID + "'"
 								 + "AND " + moneyConfiguration.getKeyColumn() + "` = '" + moneyConfiguration.getColumnOrKey() + "'";
 		moneyConfiguration.setUsesKey(true);
 		dao.setBalance(environment, USER_ID, balance);
