@@ -1,10 +1,13 @@
 package org.communitybridge.configuration;
 
+import org.communitybridge.synchronization.SynchronizationDirection;
 import org.communitybridge.utility.StringUtilities;
 
-public class MoneyConfiguration
+public class SynchronizationConfiguration
 {
 	private boolean enabled;
+	private SynchronizationDirection direction;
+	private SynchronizationDirection firstDirection;
 	private boolean usesKey;
 	private String	tableName;
 	private String	userIdColumn;
@@ -99,5 +102,25 @@ public class MoneyConfiguration
 	public void setValueColumn(String valueColumn)
 	{
 		this.valueColumn = valueColumn;
+	}
+
+	public SynchronizationDirection getDirection()
+	{
+		return direction;
+	}
+
+	public void setDirection(SynchronizationDirection direction)
+	{
+		this.direction = direction;
+	}
+
+	public SynchronizationDirection getFirstDirection()
+	{
+		return firstDirection;
+	}
+
+	public void setFirstDirection(SynchronizationDirection firstDirection)
+	{
+		this.firstDirection = firstDirection;
 	}
 }

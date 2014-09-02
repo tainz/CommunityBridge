@@ -5,7 +5,7 @@ import net.milkbowl.vault.economy.Economy;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.entity.Player;
-import org.communitybridge.configuration.MoneyConfiguration;
+import org.communitybridge.configuration.SynchronizationConfiguration;
 import org.communitybridge.configuration.Configuration;
 import org.communitybridge.main.Environment;
 import org.communitybridge.main.WebApplication;
@@ -34,7 +34,7 @@ public class MoneySynchronizerTest
 	private PlayerState previous = Mockito.mock(PlayerState.class);
 	private PlayerState current = Mockito.mock(PlayerState.class);
 	private PlayerState result = Mockito.mock(PlayerState.class);
-	private MoneyConfiguration moneyConfiguration = new MoneyConfiguration();
+	private SynchronizationConfiguration moneyConfiguration = new SynchronizationConfiguration();
 	private MoneyDao moneyDao = Mockito.mock(MoneyDao.class);
 
 	@InjectMocks

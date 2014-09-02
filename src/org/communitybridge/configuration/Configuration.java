@@ -32,6 +32,7 @@ import org.communitybridge.permissionhandlers.PermissionHandlerPermissionsBukkit
 import org.communitybridge.permissionhandlers.PermissionHandlerPermissionsEx;
 import org.communitybridge.permissionhandlers.PermissionHandlerVault;
 import org.communitybridge.permissionhandlers.PermissionHandlerZPermissions;
+import org.communitybridge.synchronization.SynchronizationDirection;
 
 public class Configuration
 {
@@ -109,14 +110,7 @@ public class Configuration
 	public String postCountPostCountColumn;
 
 	// Wallet config
-	private MoneyConfiguration money;
-	private boolean walletEnabled;
-	private boolean walletUsesKey;
-	private String	walletTableName;
-	private String	walletUserIDColumn;
-	private String walletColumnOrKey;
-	private String walletKeyColumn;
-	private String walletValueColumn;
+	private SynchronizationConfiguration money = new SynchronizationConfiguration();
 
 	// Requirements Section
 	public boolean requireAvatar;
@@ -315,27 +309,27 @@ public class Configuration
 
 		}
 
-		if (walletEnabled)
+		if (money.isEnabled())
 		{
-			temp = checkTable("app-wallet-config.table-name", walletTableName);
+			temp = checkTable("money-synchronization.table-name", money.getTableName());
 			if (temp)
 			{
-				temp = temp & checkColumn("app-wallet-config.user-id-column", walletTableName, walletUserIDColumn);
-				if (walletUsesKey)
+				temp = temp & checkColumn("money-synchronization.user-id-column", money.getTableName(), money.getUserIdColumn());
+				if (money.isUsesKey())
 				{
-					temp = temp & checkColumn("app-wallet-config.key-column", walletTableName, walletKeyColumn);
-					temp = temp & checkColumn("app-wallet-config.value-column", walletTableName, walletValueColumn);
-					checkKeyColumnForKey("app-wallet-config.column-or-key-name", walletTableName, walletKeyColumn,	walletColumnOrKey);
+					temp = temp & checkColumn("money-synchronization.key-column", money.getTableName(), money.getKeyColumn());
+					temp = temp & checkColumn("money-synchronization.value-column", money.getTableName(), money.getValueColumn());
+					checkKeyColumnForKey("money-synchronization.column-or-key-name", money.getTableName(), money.getKeyColumn(),	money.getColumnOrKey());
 				}
 				else
 				{
-					temp = temp & checkColumn("app-wallet-config.column-or-key-name", walletTableName, walletColumnOrKey);
+					temp = temp & checkColumn("money-synchronization.column-or-key-name", money.getTableName(), money.getColumnOrKey());
 				}
 			}
 			if (!temp)
 			{
 				log.warning("Temporarily disabling wallet features due to previous error(s).");
-				walletEnabled = false;
+				money.setEnabled(false);
 			}
 		}
 
@@ -928,19 +922,28 @@ public class Configuration
 			postCountPostCountColumn = config.getString("app-post-count-config.post-count-column", "");
 		}
 
-		walletEnabled = config.getBoolean("app-wallet-config.enabled", false);
-		if (walletEnabled)
+		money.setEnabled(config.getBoolean("money-synchronization.enabled", false));
+		if (money.isEnabled())
 		{
-			walletTableName = config.getString("app-wallet-config.table-name", "");
-			walletUserIDColumn = config.getString("app-wallet-config.user-id-column", "");
-			walletColumnOrKey = config.getString("app-wallet-config.column-or-key-name", "");
-			walletUsesKey = config.getBoolean("app-wallet-config.uses-key", false);
-			if (walletUsesKey)
+			String direction = config.getString("money-synchronization.direction", "web-application");
+			if (direction.toLowerCase().startsWith("min")) {
+				money.setDirection(SynchronizationDirection.MINECRAFT);
+			}
+			else
 			{
-				walletKeyColumn =  config.getString("app-wallet-config.key-column", "");
-				walletValueColumn =  config.getString("app-wallet-config.value-column", "");
+				money.setDirection(SynchronizationDirection.WEB_APPLICATION);
+			}
+			money.setTableName(config.getString("money-synchronization.table-name", ""));
+			money.setUserIdColumn(config.getString("money-synchronization.user-id-column", ""));
+			money.setColumnOrKey(config.getString("money-synchronization.column-or-key-name", ""));
+			money.setUsesKey(config.getBoolean("money-synchronization.uses-key", false));
+			if (money.isUsesKey())
+			{
+				money.setKeyColumn(config.getString("money-synchronization.key-column", ""));
+				money.setValueColumn(config.getString("money-synchronization.value-column", ""));
 			}
 		}
+
 		// Requirements Section
 		requireAvatar = config.getBoolean("requirement.avatar", false) && avatarEnabled;
 		requireMinimumPosts = config.getBoolean("requirement.post-count.enabled", false) && postCountEnabled;
@@ -1008,12 +1011,12 @@ public class Configuration
 		String oldColumn = config.getString("statistics.trackers.wallet.column-or-key-name", "");
 		if (oldStatistic && !oldColumn.isEmpty())
 		{
-			environment.getLog().warning("Wallet configuration in the statistics section is deprecated. Use the new app-wallet-config section instead.");
-			walletEnabled = true;
-			walletTableName = statisticsTableName;
-			walletUsesKey = statisticsUsesKey;
-			walletKeyColumn =  statisticsKeyColumn;
-			walletValueColumn =  statisticsValueColumn;
+			environment.getLog().warning("Wallet configuration in the statistics section is deprecated. Use the new money-synchronization section instead.");
+			money.setEnabled(true);
+			money.setTableName(statisticsTableName);
+			money.setUsesKey(statisticsUsesKey);
+			money.setKeyColumn(statisticsKeyColumn);
+			money.setValueColumn(statisticsValueColumn);
 		}
 
 		// Web App group configuration
@@ -1093,10 +1096,10 @@ public class Configuration
 
 		// These are calculated from settings above.
 		groupSynchronizationActive = simpleSynchronizationEnabled && (webappPrimaryGroupEnabled || webappSecondaryGroupEnabled);
-		playerDataRequired = groupSynchronizationActive || walletEnabled;
-		playerSynchronizerRequired = groupSynchronizationActive || statisticsEnabled || useAchievements || walletEnabled;
+		playerDataRequired = groupSynchronizationActive || money.isEnabled();
+		playerSynchronizerRequired = groupSynchronizationActive || statisticsEnabled || useAchievements || money.isEnabled();
 		permissionsSystemRequired = !linkingUnregisteredGroup.isEmpty() || !linkingRegisteredGroup.isEmpty() || groupSynchronizationActive;
-		economyEnabled = useAchievements || walletEnabled;
+		economyEnabled = useAchievements || money.isEnabled();
 
 		if (permissionsSystemRequired)
 		{
@@ -1420,21 +1423,23 @@ public class Configuration
 			log.config(  "Post count user ID column            : " + postCountUserIDColumn);
 			log.config(  "Post count post count column         : " + postCountPostCountColumn);
 		}
-		log.config(    "Wallet config enabled                : " + walletEnabled);
-		if (walletEnabled)
+		log.config(    "Money config enabled                 : " + money.isEnabled());
+		if (money.isEnabled())
 		{
-			log.config(  "Wallet table name                    : " + walletTableName);
-			log.config(  "Wallet user ID column                : " + walletUserIDColumn);
-			log.config(  "Wallet uses key                      : " + walletUsesKey);
-			if (walletUsesKey)
+			log.config(  "Money direction                      : " + money.getDirection());
+			log.config(  "Money initial direction              : " + money.getFirstDirection());
+			log.config(  "Money table name                     : " + money.getTableName());
+			log.config(  "Money user ID column                 : " + money.getUserIdColumn());
+			log.config(  "Money uses key                       : " + money.isUsesKey());
+			if (money.isUsesKey())
 			{
-				log.config("Wallet key                           : " + walletColumnOrKey);
-				log.config("Wallet key column                    : " + walletKeyColumn);
-				log.config("Wallet value column                  : " + walletValueColumn);
+				log.config("Money key                            : " + money.getColumnOrKey());
+				log.config("Money key column                     : " + money.getKeyColumn());
+				log.config("Money value column                   : " + money.getValueColumn());
 			}
 			else
 			{
-				log.config("Wallet column                        : " + walletColumnOrKey);
+				log.config("Money column                         : " + money.getColumnOrKey());
 			}
 		}
 		log.config(    "Require avatars                      : " + requireAvatar);
@@ -1684,18 +1689,12 @@ public class Configuration
 		return analyze();
 	}
 
-	/**
-	 * @return the money
-	 */
-	public MoneyConfiguration getMoney()
+	public SynchronizationConfiguration getMoney()
 	{
 		return money;
 	}
 
-	/**
-	 * @param money the money to set
-	 */
-	public void setMoney(MoneyConfiguration money)
+	public void setMoney(SynchronizationConfiguration money)
 	{
 		this.money = money;
 	}

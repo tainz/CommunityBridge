@@ -377,9 +377,25 @@ app-post-count-config:
   # Column containing the user's post count.
   post-count-column:
 
-# Used for synchronizing cash. Requires Vault.
-app-wallet-config:
+# Used for synchronizing money. Requires Vault.
+money-synchronization:
   enabled: false
+  # Controls the "direction" of synchronization.
+  # Options are: two-way, web-application, or minecraft.
+  # - two-way: Changes on either side are synchronized to the other.
+  # - web-application: Changes made in the web-application are
+  #   synchronized to the Minecraft server.
+  # - minecraft: Changes made in Minecraft are synchronized to the
+  #   web-application.
+  direction: two-way
+
+  # CommunityBridge will use this setting to determine the direction
+  # of the synchronization when:
+  # * The player hasn't ever connected to the server before
+  # * The player's synchronization state file is missing from plugins/CommunityBridge/Players
+  # * There has been a change in the money synchronization configuration.
+  first-direction: web-application
+
   # Table that contains the user's money score
   table-name:
   # Column on the table that contains the user ID.
@@ -499,11 +515,6 @@ statistics:
       column-or-key-name:
       # String field with at least 100 characters of storage.
       formatted-column-or-key-name:
-
-    # Wallet. The amount of money the player currently has. REQUIRES VAULT.
-    wallet:
-      enabled: false
-      # Configuration for wallet is in the app-wallet-config section.
 
 #                             Ban Synchronization
 # -----------------------------------------------------------------------------

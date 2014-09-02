@@ -5,7 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.apache.commons.lang.math.RandomUtils;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.communitybridge.configuration.MoneyConfiguration;
+import org.communitybridge.configuration.SynchronizationConfiguration;
 import org.communitybridge.configuration.Configuration;
 import org.communitybridge.main.Environment;
 import org.communitybridge.main.SQL;
@@ -21,7 +21,7 @@ public class MoneyDaoTest
 	MoneyDao dao = new MoneyDao();
 	private final Environment environment = new Environment();
 	private final Configuration configuration = mock(Configuration.class);
-	private final MoneyConfiguration moneyConfiguration = new MoneyConfiguration();
+	private final SynchronizationConfiguration moneyConfiguration = new SynchronizationConfiguration();
 	private final SQL sql = mock(SQL.class);
 	private final ResultSet result = mock(ResultSet.class);
 	private String KEYED_QUERY;

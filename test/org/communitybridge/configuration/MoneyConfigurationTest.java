@@ -7,7 +7,7 @@ import org.junit.Test;
 
 public class MoneyConfigurationTest
 {
-	MoneyConfiguration moneyConfiguration = new MoneyConfiguration();
+	SynchronizationConfiguration moneyConfiguration = new SynchronizationConfiguration();
 
 	@Test
 	public void getConfigurationStringShouldNeverReturnNull() {

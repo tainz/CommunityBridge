@@ -3,7 +3,7 @@ package org.communitybridge.synchronization.dao;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import org.communitybridge.configuration.MoneyConfiguration;
+import org.communitybridge.configuration.SynchronizationConfiguration;
 import org.communitybridge.main.Environment;
 
 public class MoneyDao
@@ -13,7 +13,7 @@ public class MoneyDao
 		String query;
 		String column;
 		ResultSet result;
-		MoneyConfiguration configuration = environment.getConfiguration().getMoney();
+		SynchronizationConfiguration configuration = environment.getConfiguration().getMoney();
 		if (configuration.isUsesKey())
 		{
 			query = "SELECT `" + configuration.getValueColumn() + "` "
@@ -44,7 +44,7 @@ public class MoneyDao
 	public void setBalance(Environment environment, String userId, Double balance) throws IllegalAccessException, InstantiationException, MalformedURLException
 	{
 		String query;
-		MoneyConfiguration configuration = environment.getConfiguration().getMoney();
+		SynchronizationConfiguration configuration = environment.getConfiguration().getMoney();
 		if (configuration.isUsesKey())
 		{
 			query = "UPDATE `" + configuration.getTableName() + "` "
