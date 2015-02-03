@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Users/Thomas/Desktop/Programmering/spigot_server.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Thomas/Desktop/Testserver/plugins/Vault.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Thomas/Desktop/Testserver/plugins/bPermissions.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="C:/Users/Thomas/Desktop/Programmering/mockito-all-1.9.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Thomas/Desktop/Programmering/EssentialsGroupManager.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Thomas/Desktop/Programmering/powermock-mockito-junit-1.6.1/powermock-mockito-1.6.1-full.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Thomas/Desktop/Programmering/zPermissions-1.3beta1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Thomas/Desktop/Testserver/plugins/PermissionsEx.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Thomas/Desktop/Programmering/PermissionsBukkit-2.4.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

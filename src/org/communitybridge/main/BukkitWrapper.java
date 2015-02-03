@@ -1,6 +1,7 @@
 package org.communitybridge.main;
 
 import java.util.UUID;
+
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -15,6 +16,7 @@ public class BukkitWrapper
 		return Bukkit.getOfflinePlayer(uuid);
 	}
 
+	@SuppressWarnings("deprecation")
 	public OfflinePlayer getOfflinePlayer(String name)
 	{
 		return Bukkit.getOfflinePlayer(name);
@@ -40,6 +42,7 @@ public class BukkitWrapper
 		return Bukkit.getPluginManager();
 	}
 
+	@SuppressWarnings("deprecation")
 	public Player[] getOnlinePlayers()
 	{
 		return Bukkit.getOnlinePlayers();

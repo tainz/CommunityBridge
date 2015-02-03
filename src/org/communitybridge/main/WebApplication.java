@@ -532,7 +532,7 @@ public class WebApplication extends Synchronizer
 
 		if (configuration.healthEnabled)
 		{
-			playerStatistics.setHealth((double)player.getHealth());
+			playerStatistics.setHealth((double)player.getHealthScale());
 		}
 
 		if (configuration.lifeticksEnabled)

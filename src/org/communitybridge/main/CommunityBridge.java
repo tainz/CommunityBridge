@@ -2,7 +2,9 @@ package org.communitybridge.main;
 
 import java.io.IOException;
 import java.util.logging.Level;
+
 import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -242,19 +244,14 @@ public class CommunityBridge extends JavaPlugin
 	 * If linking-kick-unregistered is turned on, an unregistered player will
 	 * be kicked.
 	 */
-  private void remindPlayer(Player player)
-  {
+  private void remindPlayer(Player player) {
 		String userID = environment.getUserPlayerLinker().getUserID(player);
-    if (userID == null || userID.isEmpty())
-    {
+    if (userID == null || userID.isEmpty()) {
 			String playerName = player.getName();
-      if (environment.getConfiguration().linkingKickUnregistered)
-      {
+      if (environment.getConfiguration().linkingKickUnregistered) {
         player.kickPlayer(environment.getConfiguration().messages.get("link-unregistered-player"));
 				environment.getLog().info(playerName + " kicked because they are not registered.");
-      }
-      else
-      {
+      } else {
         player.sendMessage(ChatColor.RED + environment.getConfiguration().messages.get("link-unregistered-reminder"));
         environment.getLog().fine(playerName + " issued unregistered reminder notice");
       }
@@ -265,13 +262,12 @@ public class CommunityBridge extends JavaPlugin
 	 * Calls remindPlayer() for all connected players. Called by the reminder
 	 * task.
 	 */
-  private void remindUnregisteredPlayers()
-  {
-    environment.getLog().finest("Running unregistered auto reminder.");
+  @SuppressWarnings("deprecation")
+private void remindUnregisteredPlayers() {
+	  environment.getLog().finest("Running unregistered auto reminder.");
 
-    for (Player player : Bukkit.getOnlinePlayers())
-    {
-      remindPlayer(player);
+	  for (Player player : Bukkit.getOnlinePlayers()) {
+		  remindPlayer(player);
     }
     environment.getLog().finest("Unregistered auto reminder complete.");
   }
