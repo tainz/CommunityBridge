@@ -2,7 +2,7 @@ name: CommunityBridge
 version: 2.6.0.000
 description: Community Bridging plugin based off of ChillerCrafts ForumBridge plugin
 authors: [TEKAA92, DukeofRealms, Feaelin, NoRC, ChillerCraft]
-website: http://dev.bukkit.org/server-mods/communitybridge-fm/
+website: http://www.spigotmc.org/resources/communitybridge.2232/
 
 softdepend: [bPermissions, GroupManager, PermissionsBukkit, PermissionsEx, Vault, zPermissions]
 main: org.communitybridge.main.CommunityBridge
