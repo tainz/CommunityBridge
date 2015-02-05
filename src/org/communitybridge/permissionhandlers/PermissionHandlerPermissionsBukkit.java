@@ -2,8 +2,10 @@ package org.communitybridge.permissionhandlers;
 
 import com.platymuus.bukkit.permissions.Group;
 import com.platymuus.bukkit.permissions.PermissionsPlugin;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -75,6 +77,7 @@ public class PermissionHandlerPermissionsBukkit extends PermissionHandler
 		return isMemberOfGroup(player, group);
 	}
 
+	@SuppressWarnings("deprecation")
 	private boolean isMemberOfGroup(Player player, Group group)
 	{
 		return group.getPlayers().contains(player.getUniqueId().toString())
