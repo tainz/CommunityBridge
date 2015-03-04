@@ -24,3 +24,8 @@ nb-configuration.xml
 *\.tex~
 *\.yml~
 *.synctex.gz
+/bin
+
+CommunityBridge.smp.old
+CommunityBridge.smproj
+.project
