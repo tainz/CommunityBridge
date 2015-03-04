@@ -94,22 +94,8 @@ public class WebApplication extends Synchronizer
 				return true;
 			}
 		}
-		catch (SQLException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-			return false;
-		}
-		catch (MalformedURLException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-			return false;
-		}
-		catch (InstantiationException exception)
-		{
-			log.severe(exceptionBase + exception.getMessage());
-			return false;
-		}
-		catch (IllegalAccessException exception)
+		
+		catch (Exception exception)
 		{
 			log.severe(exceptionBase + exception.getMessage());
 			return false;
