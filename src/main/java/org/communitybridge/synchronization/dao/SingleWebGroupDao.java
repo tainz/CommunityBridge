@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import static org.communitybridge.synchronization.dao.WebGroupDao.EMPTY_LIST;
+
 import org.communitybridge.main.Environment;
 import org.communitybridge.utility.StringUtilities;
 

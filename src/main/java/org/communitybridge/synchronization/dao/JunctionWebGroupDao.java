@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+
 import org.communitybridge.main.Environment;
 
 public class JunctionWebGroupDao extends WebGroupDao
@@ -16,6 +17,7 @@ public class JunctionWebGroupDao extends WebGroupDao
 		super(environment);
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void addUserToGroup(String userID, String groupID, int currentGroupCount) throws IllegalAccessException, InstantiationException, MalformedURLException, SQLException
 	{

@@ -668,7 +668,7 @@ public class Configuration
 		errorBase = "Error while checking '" + keyName
 							+ "' set to '" + columnName + "': ";
 
-		if (columnName.isEmpty())
+		if (columnName == null || columnName.isEmpty())
 		{
 			log.severe(errorBase + "Empty column name.");
 			return false;

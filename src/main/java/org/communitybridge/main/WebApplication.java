@@ -2,6 +2,7 @@ package org.communitybridge.main;
 
 import org.communitybridge.synchronization.Synchronizer;
 import org.communitybridge.synchronization.PlayerState;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -10,6 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.communitybridge.achievement.Achievement;
@@ -966,6 +968,7 @@ public class WebApplication extends Synchronizer
 			add(userID, key, Integer.toString(data));
 		}
 
+		@SuppressWarnings("unused")
 		private void add(String userID, String key, double data)
 		{
 			add(userID, key, Double.toString(data));
