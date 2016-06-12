@@ -225,16 +225,16 @@ public class CommunityBridge extends JavaPlugin
 	private void autosyncStart()
   {
 		MinecraftUtilities.startTaskTimer(this,
-																			calculateTaskTicks(environment.getConfiguration().autoSyncEvery),
-																			new Runnable()
-																			{
-																				@Override
-																				public void run()
-																				{
-																					environment.getWebApplication().synchronizeAll();
-																				}
-																			}
-																		 );
+				calculateTaskTicks(environment.getConfiguration().autoSyncEvery),
+				new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						environment.getWebApplication().synchronizeAll();
+					}
+				}
+			 );
 		environment.getLog().fine("Auto synchronization started.");
   }
 

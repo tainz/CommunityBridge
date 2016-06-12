@@ -15,7 +15,7 @@ public class PlayerSynchronizationDispatcher
 	private List<Player> playerLocks = new ArrayList<Player>();
 	private PlayerState previous = new PlayerState();
 	private PlayerState current = new PlayerState();
-	private PlayerState result;
+	private PlayerState result = new PlayerState();
 	private MoneySynchronizer moneySynchronizer = new MoneySynchronizer(null);
 
 	public void synchronize(Environment environment)
@@ -57,9 +57,9 @@ public class PlayerSynchronizationDispatcher
 		{
 			PlayerFileFetcher fetcher = new PlayerFileFetcher();
 			File playerFile = fetcher.getPlayerFile(environment.getPlugin().getDataFolder(), player, true);
-
-			previous.load(playerFile);
+			
 			current.generate(environment, player, userID);
+			previous.load(playerFile, current.getMinecraftWallet());
 			result = current.copy();
 
 			if (environment.getConfiguration().groupSynchronizationActive)

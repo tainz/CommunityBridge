@@ -58,8 +58,14 @@ public class MoneySynchronizer extends Synchronizer implements PlayerSynchronize
 	private PlayerState synchronizeWebToGame(Economy economy, PlayerState previous, PlayerState current, PlayerState result, Player player)
 	{
 		double change = current.getWebApplicationWallet() - previous.getWebApplicationWallet();
-		result.setMinecraftWallet(current.getMinecraftWallet() + change);
-
+		double amount = current.getMinecraftWallet() + change;
+		result.setMinecraftWallet(amount);
+		/*
+		System.out.println("&cCurrent: "+current.getMinecraftWallet());
+		System.out.println("&cPrevious: "+previous.getMinecraftWallet());
+		System.out.println("&cChange: "+change);
+		System.out.println("&cAmount: "+amount);
+        */
 		if (change > 0)
 		{
 			economy.depositPlayer(player, change);

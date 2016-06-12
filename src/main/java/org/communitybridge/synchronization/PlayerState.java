@@ -51,13 +51,13 @@ public class PlayerState
 		}
 	}
 
-	public void load(File file)
+	public void load(File file, double def)
 	{
 		if (file.exists())
 		{
 			playerData = YamlConfiguration.loadConfiguration(file);
-			minecraftWallet = playerData.getDouble("minecraft-money", 0.0);
-			webApplicationWallet = playerData.getDouble("web-application-money", 0.0);
+			minecraftWallet = playerData.getDouble("minecraft-money", def);
+			webApplicationWallet = playerData.getDouble("web-application-money", def);
 			permissionsSystemGroupNames = playerData.getStringList("permissions-system.group-names");
 			permissionsSystemPrimaryGroupName = playerData.getString("permissions-system.primary-group-name", "");
 			webappGroupIDs = playerData.getStringList("webapp.group-ids");
@@ -67,8 +67,8 @@ public class PlayerState
 		else
 		{
 			isNewFile = true;
-			minecraftWallet = 0.0;
-			webApplicationWallet = 0.0;
+			minecraftWallet = def;
+			webApplicationWallet = def;
 			permissionsSystemGroupNames = new ArrayList<String>();
 			permissionsSystemPrimaryGroupName = "";
 			webappPrimaryGroupID = "";

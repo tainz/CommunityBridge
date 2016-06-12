@@ -250,7 +250,10 @@ public class WebApplication extends Synchronizer
 
 	public void synchronizeAll()
 	{
-		playerSynchronizer.synchronize(environment);
+		if (configuration.playerSynchronizerRequired)
+		{
+			playerSynchronizer.synchronize(environment);
+		}		
 
 		if (configuration.banSynchronizationEnabled)
 		{
@@ -300,12 +303,12 @@ public class WebApplication extends Synchronizer
 	{
 		String playerName = player.getName();
 		String direction = configuration.simpleSynchronizationDirection;
-
+		
 		// This can happen if the player disconnects after synchronization has
 		// already begun.
 		if (userID == null)
 		{
-			return null;
+			return result;
 		}
 
 		if (userID.equalsIgnoreCase(configuration.simpleSynchronizationSuperUserID))
@@ -314,7 +317,7 @@ public class WebApplication extends Synchronizer
 			// we'll do nothing at all with the super-user.
 			if (direction.startsWith("min"))
 			{
-				return null;
+				return result;
 			}
 
 			// Otherwise, we'll temporarily override the direction to be one-way
