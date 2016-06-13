@@ -1,0 +1,96 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>CommunityBridge</groupId>
+  <artifactId>CommunityBridge</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <dependencies>
+    
+		<!--Spigot-API-->
+        <dependency>
+          <groupId>org.spigotmc</groupId>
+          <artifactId>spigot-api</artifactId>
+          <version>1.9-R0.1-SNAPSHOT</version>
+          <!--  <version>1.8.8-R0.1-SNAPSHOT</version> -->
+        </dependency>
+        
+        <dependency>
+           <groupId>de.bananaco</groupId>
+           <artifactId>bPermissions</artifactId>            
+           <version>v2.12-DEV</version>
+           <scope>provided</scope>
+        </dependency> 
+        
+        <dependency>
+           <groupId>net.milkbowl.vault</groupId>
+           <artifactId>VaultAPI</artifactId>            
+           <version>LATEST</version>
+           <scope>provided</scope>
+        </dependency> 
+        
+        <dependency>
+			<groupId>EssentialsGroupManager</groupId>
+			<artifactId>EssentialsGroupManager</artifactId>
+			<version>v1</version>
+			<scope>system</scope>
+			<systemPath>D:/ProjetosBukkit/APIs/EssentialsGroupManager.jar</systemPath>
+		</dependency>
+		
+		<dependency>
+			<groupId>PermissionsBukkit</groupId>
+			<artifactId>PermissionsBukkit</artifactId>
+			<version>v1</version>
+			<scope>system</scope>
+			<systemPath>D:/ProjetosBukkit/APIs/PermissionsBukkit-2.5.jar</systemPath>
+		</dependency>
+		
+		<dependency>
+			<groupId>PermissionsEx</groupId>
+			<artifactId>PermissionsEx</artifactId>
+			<version>v1</version>
+			<scope>system</scope>
+			<systemPath>D:/ProjetosBukkit/APIs/PermissionsEx-1.23.4.jar</systemPath>
+		</dependency>
+		
+		<dependency>
+			<groupId>zPermissions</groupId>
+			<artifactId>zPermissions</artifactId>
+			<version>v1</version>
+			<scope>system</scope>
+			<systemPath>D:/ProjetosBukkit/APIs/zPermissions-1.3beta1.jar</systemPath>
+		</dependency>		
+        
+    </dependencies>
+    <repositories>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
+        </repository>
+        
+        <repository>
+            <id>vault-repo</id>
+            <url>http://nexus.theyeticave.net/content/repositories/pub_releases</url>
+        </repository>
+        
+        <repository>
+            <id>bPermissions-repo</id>
+            <url>http://maven.elmakers.com/repository/</url>
+        </repository>
+        
+    </repositories>
+    
+    <build>
+    <finalName>${project.name}</finalName>
+    <defaultGoal>clean package install</defaultGoal>
+    <plugins>
+        <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.1</version>
+        <configuration>
+          <source>1.7</source>
+          <target>1.7</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

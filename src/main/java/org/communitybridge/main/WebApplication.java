@@ -2,6 +2,7 @@ package org.communitybridge.main;
 
 import org.communitybridge.synchronization.Synchronizer;
 import org.communitybridge.synchronization.PlayerState;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -10,6 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.communitybridge.achievement.Achievement;
@@ -248,7 +250,10 @@ public class WebApplication extends Synchronizer
 
 	public void synchronizeAll()
 	{
-		playerSynchronizer.synchronize(environment);
+		if (configuration.playerSynchronizerRequired)
+		{
+			playerSynchronizer.synchronize(environment);
+		}		
 
 		if (configuration.banSynchronizationEnabled)
 		{
@@ -298,12 +303,12 @@ public class WebApplication extends Synchronizer
 	{
 		String playerName = player.getName();
 		String direction = configuration.simpleSynchronizationDirection;
-
+		
 		// This can happen if the player disconnects after synchronization has
 		// already begun.
 		if (userID == null)
 		{
-			return null;
+			return result;
 		}
 
 		if (userID.equalsIgnoreCase(configuration.simpleSynchronizationSuperUserID))
@@ -312,7 +317,7 @@ public class WebApplication extends Synchronizer
 			// we'll do nothing at all with the super-user.
 			if (direction.startsWith("min"))
 			{
-				return null;
+				return result;
 			}
 
 			// Otherwise, we'll temporarily override the direction to be one-way
@@ -966,6 +971,7 @@ public class WebApplication extends Synchronizer
 			add(userID, key, Integer.toString(data));
 		}
 
+		@SuppressWarnings("unused")
 		private void add(String userID, String key, double data)
 		{
 			add(userID, key, Double.toString(data));
